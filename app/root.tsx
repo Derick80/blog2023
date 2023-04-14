@@ -11,6 +11,7 @@ import {
 import { isAuthenticated } from './server/auth/auth.server'
 import Layout from './components/layout'
 import stylesheet from "~/tailwind.css"
+import { prisma } from './server/auth/prisma.server'
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -19,7 +20,8 @@ export const links: LinksFunction = () => [
 
 export async function loader({request}:LoaderArgs){
   const user = await isAuthenticated(request)
-  return json({user})
+  const categories = await prisma.category.findMany()
+  return json({user, categories})
 }
 export default function App() {
   const data = useLoaderData<typeof loader>()

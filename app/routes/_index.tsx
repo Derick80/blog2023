@@ -8,7 +8,9 @@ export const meta: V2_MetaFunction = () => {
 export default function Index() {
   const user = useOptionalUser()
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
+    <div
+    className='flex flex-col h-screen border-2 items-center'
+    >
       <h1>Welcome to Remix</h1>
       <ul>
         {user && (
