@@ -49,6 +49,7 @@ function NavigationBar(){
                                 alt={ user.username }
                             />
                     ) }
+                    welcome { user?.id }
             <Form className='base-form'
                 method='POST' action='/logout'
             >
