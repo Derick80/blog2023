@@ -14,7 +14,7 @@ export default function Index() {
         {user && (
           <li>
             <div className='flex flex-row'>
-              <p>{user.id}</p>
+              <p>{user.email}</p>
 
             </div>
 

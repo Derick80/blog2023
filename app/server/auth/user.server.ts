@@ -22,7 +22,6 @@ const defaultUserSelect = {
   email: true,
   username: true,
   avatarUrl: true,
-  role: true,
   _count: true
 }
 
@@ -32,7 +31,6 @@ const defaultPersonalSelect = {
   email: true,
   username: true,
   avatarUrl: true,
-  role: true,
   posts: true,
   _count: true
 }

@@ -10,7 +10,7 @@ if (!secret) {
 
 // revisit secure before production
 const cookieOptions = {
-  name: '_blog_session',
+  name: '_blogv4_session',
   httpOnly: true,
   sameSite: 'lax' as 'lax',
   path: '/',

@@ -1,4 +1,4 @@
-import { LinksFunction, LoaderArgs } from '@remix-run/node'
+import { LinksFunction, LoaderArgs, json } from '@remix-run/node'
 import {
   Links,
   LiveReload,
@@ -8,18 +8,18 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import styles from './tailwind.css'
 import { isAuthenticated } from './server/auth/auth.server'
 import Layout from './components/layout'
-export const links: LinksFunction = ()=>[
-  {
-    rel: 'stylesheet', href:styles
-  }
-]
+import stylesheet from "~/tailwind.css"
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
+];
 
 
 export async function loader({request}:LoaderArgs){
-  return ({user: isAuthenticated(request)})
+  const user = await isAuthenticated(request)
+  return json({user})
 }
 export default function App() {
   const data = useLoaderData<typeof loader>()
@@ -31,7 +31,9 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body
+        className=''
+      >
        <Layout>
           <Outlet />
           <ScrollRestoration />
