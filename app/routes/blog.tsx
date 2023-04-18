@@ -1,5 +1,6 @@
 import { LoaderArgs, json } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react'
+import Tags from '~/components/tags'
 import { prisma } from '~/server/auth/prisma.server'
 import { Post } from '~/server/schemas/post-schema'
 
@@ -22,14 +23,16 @@ export async function loader({request}:LoaderArgs){
 export default function BlogRoute(){
 
     const {posts} = useLoaderData<typeof loader>()
-console.log(posts, 'posts');
 
     return (
         <div
-            className='flex flex-col h-screen items-center border-2 w-full'
+            className='flex flex-col h-screen items-center border-2 w-full gap-4'
         >
 
-            <h1>Blog</h1>
+            <h1
+                className='text-4xl font-semibold'
+            >Blog</h1>
+            <Outlet />
 {posts.map(post => (
                 <BlogPreview
                     key={post.id}
@@ -40,38 +43,67 @@ console.log(posts, 'posts');
     )
 }
 
-function BlogPreview({post}:{post: Post}){
+export function BlogPreview({post}:{post: Post}){
     return (
         <div
-            className='flex flex-col h-screen items-center border-2 w-full'
+            className='flex flex-col gap-2 border-2 w-full'
         >
-<Outlet />
-            <h1>Blog</h1>
-            <h1>{post.title}</h1>
-            <p>{post.content}</p>
-            <Tags
-                categories={post.categories}
-            />
-            <>{post.user.username}</>
+{/* Card header */}
+           <div className='flex flex-row gap-2 items-center'>
+                <h1
+                    className='text-4xl font-semibold'
+                >{ post.title }</h1>
+                <h3
+                    className='text-2xl font-semibold'
+                >{ post.slug }</h3>
+           </div>
+           {/* card content and image */}
+<div className='flex flex-row gap-2 border-2 border-red-500'>
+                <img
+                src={post.imageUrl}
+                alt={post.title}
+                className='w-1/2'
+                />
+                <div dangerouslySetInnerHTML={{__html: post.content}} />
+
+              </div>
+{/* tags container */}
+
+                <Tags
+                    categories={ post.categories }
+                />
+{/* card footer */}
+            <div
+                className='flex flex-row gap-2 border-2 border-green-500'
+            >
+
+            <p>{post.user.username}</p>
+            <p>{post.likes.length}</p>
+            </div>
+{/* card actions */}
+        <div className='flex flex-row gap-2 border-2 border-yellow-500'>
+
+            <Actions postId={post.id} />
+            </div>
         </div>
     )
 }
 
-function Tags({categories}:{categories: Post['categories']}){
-    console.log(categories, 'categories');
+
+
+    function Actions({postId}:{postId: Post['id']}){
 
         return (
             <div
                 className='flex flex-row gap-2'
             >
-                {categories.map(category => (
-                    <div
-                    className='border-2'
-                        key={category.id}
-                    >{category.value}</div>
-                ))}
+                <Link to={ `/blog/${postId}` }>View</Link>
+                <Link to={ `/blog/${postId}/edit` }>Edit</Link>
+                <Form method='post' action={ `/blog/${postId}/delete` }>
+                    <button>Delete</button>
+                </Form>
+
             </div>
         )
     }
-
 

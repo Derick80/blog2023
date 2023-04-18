@@ -7,67 +7,34 @@ const secret = process.env.SESSION_SECRET
 if (!secret) {
   throw new Error('SESSION_SECRET is not set')
 }
-
+const ONE_YEAR = 60 * 60 * 24 * 365
 // revisit secure before production
 const cookieOptions = {
-  name: '_blogv4_session',
+  name: '__message',
   httpOnly: true,
   sameSite: 'lax' as 'lax',
   path: '/',
+  expires: new Date(Date.now() + ONE_YEAR * 1000),
   secrets: [secret],
   secure: false
 }
+
+export const {commitSession, getSession} = createCookieSessionStorage({
+  cookie: cookieOptions
+})
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: cookieOptions
 })
 
-export const getSession = async (request: Request) => {
-  const session = await sessionStorage.getSession(request.headers.get('Cookie'))
 
-  return session
+
+export type ToastMessage = { message: string; type: 'success' | 'error' }
+
+export function setSuccessMessage(session: Session, message: string) {
+  session.flash('toastMessage', { message, type: 'success' } as ToastMessage)
 }
 
-export const commitSession = async (session: Session) => {
-  const headers = new Headers({
-    'Set-Cookie': await sessionStorage.commitSession(session)
-  })
-
-  return headers
-}
-// Flash
-type Flash = {
-  type?: 'default' | 'success' | 'error'
-  message?: string
-}
-
-const flashKey = 'flashMessage'
-
-export const flash = async (
-  session: Session,
-  message: string,
-  type: Flash['type'] = 'default'
-) => {
-  session.flash(flashKey, JSON.stringify({ type, message }))
-
-  return session
-}
-
-export const flashAndCommit = async (
-  request: Request,
-  message: string,
-  type: Flash['type'] = 'default'
-) => {
-  const session = await getSession(request)
-  await flash(session, message, type)
-  const headers = await commitSession(session)
-  return headers
-}
-
-export const getFlash = async (request: Request) => {
-  const session = await getSession(request)
-  const flash: Flash = JSON.parse(session.get(flashKey) || '{}')
-  const headers = await commitSession(session)
-
-  return { ...flash, headers }
+export function setErrorMessage(session: Session, message: string) {
+  session.flash('toastMessage', { message, type: 'error' } as ToastMessage)
 }

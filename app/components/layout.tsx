@@ -7,7 +7,7 @@ import { useOptionalUser } from '~/utilities'
 export default function Layout({ children }: { children: React.ReactNode}){
 
     return(
-        <div className='flex flex-col h-screen'>
+        <div className='flex flex-col h-full'>
             <NavigationBar />
            <div className='flex flex-col h-full flex-grow p-2'>
            <LeftNavigationBar />
@@ -18,7 +18,6 @@ export default function Layout({ children }: { children: React.ReactNode}){
                 </div>
 
 
-            <Footer />
             </div>
     )
 }

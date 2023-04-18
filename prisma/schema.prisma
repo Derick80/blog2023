@@ -25,6 +25,7 @@ model User {
   messages Message[]
   accounts Account[]
   tokens Token[]
+  notes Note[]
 
 
 
@@ -36,10 +37,18 @@ model Profile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
 }
-
+model Note {
+  id String @id @default(cuid())
+  title String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 model Post {
   id String @id @default(cuid())
   title String
+  slug String @unique
   content String
   imageUrl String
   published Boolean @default(false)

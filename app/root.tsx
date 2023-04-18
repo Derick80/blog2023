@@ -11,6 +11,9 @@ import {
 import { isAuthenticated } from './server/auth/auth.server'
 import Layout from './components/layout'
 import stylesheet from "~/tailwind.css"
+import { ToastMessage, commitSession, getSession } from './server/auth/session.server'
+import React from 'react'
+import { Toaster, toast } from "react-hot-toast";
 import { prisma } from './server/auth/prisma.server'
 
 export const links: LinksFunction = () => [
@@ -21,10 +24,48 @@ export const links: LinksFunction = () => [
 export async function loader({request}:LoaderArgs){
   const user = await isAuthenticated(request)
   const categories = await prisma.category.findMany()
-  return json({user, categories})
+  const session = await getSession(request.headers.get('Cookie'))
+  const toastMessage = session.get("toastMessage") as ToastMessage
+
+  if (!toastMessage) {
+    return json({ toastMessage: null })
+  }
+
+  if (!toastMessage.type) {
+    throw new Error("Message should have a type")
+  }
+
+  return json(
+    { toastMessage,user, categories },
+    { headers: { "Set-Cookie": await commitSession(session) } }
+  )
 }
 export default function App() {
-  const data = useLoaderData<typeof loader>()
+  const { toastMessage } = useLoaderData<typeof loader>()
+console.log(toastMessage, 'toastMessage');
+
+  React.useEffect(() => {
+    if (!toastMessage) {
+      return
+    }
+    const { message, type } = toastMessage
+
+    switch (type) {
+      case "success":
+        toast.success(message)
+        break
+      case "error":
+        toast.error(message)
+        break
+      default:
+        throw new Error(`${type} is not handled`)
+    }
+  }, [toastMessage]);
+
+
+
+
+
   return (
     <html lang="en">
       <head>
@@ -37,7 +78,11 @@ export default function App() {
         className=''
       >
        <Layout>
-          <Outlet />
+          <Outlet
+
+          />
+          <Toaster />
+
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
