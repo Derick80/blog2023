@@ -15,6 +15,7 @@ import { ToastMessage, commitSession, getSession } from './server/auth/session.s
 import React from 'react'
 import { Toaster, toast } from "react-hot-toast";
 import { prisma } from './server/auth/prisma.server'
+import { User, UserType } from './user-schema'
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -22,10 +23,10 @@ export const links: LinksFunction = () => [
 
 
 export async function loader({request}:LoaderArgs){
-  const user = await isAuthenticated(request)
-  const categories = await prisma.category.findMany()
   const session = await getSession(request.headers.get('Cookie'))
-  const toastMessage = session.get("toastMessage") as ToastMessage
+
+
+  const toastMessage =await session.get("toastMessage") as ToastMessage
 
   if (!toastMessage) {
     return json({ toastMessage: null })
@@ -35,14 +36,18 @@ export async function loader({request}:LoaderArgs){
     throw new Error("Message should have a type")
   }
 
+  const user = await isAuthenticated(request)
+
+
+
+
   return json(
-    { toastMessage,user, categories },
-    { headers: { "Set-Cookie": await commitSession(session) } }
+    { toastMessage,session,user },
   )
 }
 export default function App() {
-  const { toastMessage } = useLoaderData<typeof loader>()
-console.log(toastMessage, 'toastMessage');
+  const data = useLoaderData()
+const {toastMessage} = data
 
   React.useEffect(() => {
     if (!toastMessage) {

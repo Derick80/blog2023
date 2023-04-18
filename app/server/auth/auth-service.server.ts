@@ -9,13 +9,6 @@ export const createPasswordHash = async (password: string) => {
   return hashedPassword
 }
 
-export const validatePassword = async (
-  password: string,
-  passwordHash: string
-) => {
-  const isMatchingPassword = await compare(password, passwordHash)
-  return isMatchingPassword
-}
 
 const getTokenExpiration = (tokenType: TokenType) => {
   switch (tokenType) {

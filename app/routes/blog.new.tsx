@@ -85,6 +85,7 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 export default function NewPostRoute(){
     const actionData = useActionData<typeof action>()
     console.log(actionData, 'actionData');
+    // fetch categories from the server
 const categoryFetcher = useFetcher()
     useEffect(() => {
         if (categoryFetcher.state === "idle" && categoryFetcher.data == null) {
@@ -92,15 +93,6 @@ const categoryFetcher = useFetcher()
         }
     }, [categoryFetcher]);
 
-    const categories = categoryFetcher.data
-
-    console.log(categoryFetcher.data, 'categories');
-
-    useEffect(() => {
-        if(actionData?.post){
-            toast('Post created', {icon: '🎉'})
-        }
-    }, [actionData])
 
 
     return (
@@ -131,14 +123,20 @@ const categoryFetcher = useFetcher()
                 <label htmlFor='categories'>Categories</label>
                 <div>
                     <select name='categories' id='categories' multiple>
-                        { categoryFetcher?.data?.categories.map(category => (
+                        { categoryFetcher?.data?.categories.map((category: {
+                            id: string,
+                            value: string,
+                            label: string
+
+                        } ) => (
                             <option
-                                key={ category.id }
-                                value={ category.value }
+                                key={category.id}
+                                value={category.value}
                             >
-                                { category.label }
+                                {category.label}
                             </option>
-                        )) }
+                        ))}
+
                     </select>
 
                 </div>

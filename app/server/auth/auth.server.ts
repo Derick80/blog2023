@@ -28,7 +28,7 @@ export const setUserSessionAndCommit = async (
   request: Request,
   userId: User['id']
 ) => {
-  const session = await getSession(request)
+  const session = await getSession(request.headers.get('Cookie') ?? '')
   await setUserSession(session, userId)
   const headers = new Headers({
     'Set-Cookie': await sessionStorage.commitSession(session)
