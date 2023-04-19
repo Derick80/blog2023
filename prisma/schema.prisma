@@ -25,18 +25,13 @@ model User {
   messages Message[]
   accounts Account[]
   tokens Token[]
-  notes Note[]
-
-
+  notes Note[]  
+  favorites Favorite[]
+  projects Project[]
 
 }
 
-model Profile {
-  id String @id @default(cuid())
-  bio String?
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
-}
+
 model Note {
   id String @id @default(cuid())
   title String
@@ -49,8 +44,10 @@ model Post {
   id String @id @default(cuid())
   title String
   slug String @unique
+  description String
   content String
   imageUrl String
+  featured Boolean @default(false)
   published Boolean @default(false)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
@@ -58,6 +55,7 @@ model Post {
   updatedAt DateTime @updatedAt()
   comments Comment[]
   likes Like[]
+  favorites Favorite[]
   categories Category[]
 }
 
@@ -81,6 +79,7 @@ model Category {
   label    String
   value    String    @unique
   posts    Post[]
+  projects Project[]
 
 }
 
@@ -100,9 +99,47 @@ model Like {
   @@index([postId])
   @@index([userId])
 }
+model Favorite {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-
-
+  @@id([postId, userId])
+  @@index([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+model Profile {
+  id             String   @id @unique @default(uuid())
+  firstName      String
+  lastName       String
+  bio            String
+  location       String
+  education      String
+  occupation     String
+  employer       String
+  profilePicture String   @default("https://res.cloudinary.com/dch-photo/image/upload/v1672092441/stock/image_FILL0_wght400_GRAD0_opsz48_loo0xo.png")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String  @unique
+  email          String
+}
+model Project {
+  id          String     @id @unique @default(uuid())
+  title       String
+  description String
+  projectImg  String
+  projectUrl  String
+  githubUrl   String
+  createdAt   DateTime   @default(now())
+  categories  Category[]
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId      String
+}
 model Token {
   id        String    @id @default(cuid())
   token     String

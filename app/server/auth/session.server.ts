@@ -7,14 +7,12 @@ const secret = process.env.SESSION_SECRET
 if (!secret) {
   throw new Error('SESSION_SECRET is not set')
 }
-const ONE_YEAR = 60 * 60 * 24 * 365
 // revisit secure before production
 const cookieOptions = {
   name: '__message',
   httpOnly: true,
   sameSite: 'lax' as 'lax',
   path: '/',
-  expires: new Date(Date.now() + ONE_YEAR * 1000),
   secrets: [secret],
   secure: false
 }

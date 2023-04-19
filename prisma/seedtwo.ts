@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import { User } from "~/user-schema";
 const prisma = new PrismaClient();
 
-// Generate user data
 async function generateTestData(numberofPosts: number) {
   // create a new user
   const basePassword = "EGtAUQgz";
@@ -72,45 +71,18 @@ async function generateMe(numberofPosts: number) {
         published: true,
         user: {
           connect: {
-            id: "clgo4xewd000065dj9ffl9ice",
+            id: me.id,
           },
         },
       },
     });
   }
 }
-const categorySeed = [
-  { value: "Javascript", label: "Javascript" },
-  { value: "React", label: "React" },
-  { value: "Node", label: "Node" },
-  {
-    value: "Typescript",
-    label: "Typescript",
-  },
-  { value: "Next", label: "Next" },
-  { value: "Remix", label: "Remix" },
-  { value: "Prisma", label: "Prisma" },
-  { value: "TailwindCss", label: "TailwindCss" },
-  { value: "Cloudinary", label: "Cloudinary" },
-  { value: "Postgres", label: "Postgres" },
-  { value: "Coding", label: "Coding" },
-  { value: "Genetics", label: "Genetics" },
-  { value: "Biology", label: "Biology" },
-  { value: "Science", label: "Science" },
-  { value: "Technology", label: "Technology" },
-  { value: "Books", label: "Books" },
-  { value: "Travel", label: "Travel" },
-  { value: "Music", label: "Music" },
-  { value: "Japan", label: "Japan" },
-];
+
 async function seed() {
   await generateTestData(20);
   await generateTestData(5);
   await generateMe(5);
-  await prisma.category.createMany({
-    data: categorySeed,
-  });
-
   console.log(`Database has been seeded. 🌱`);
 }
 

@@ -29,7 +29,7 @@ export async function action({request, params}:ActionArgs){
     if(!post){
         setErrorMessage(session, 'Could not delete post')
     }else{
-        setSuccessMessage(session, 'post deleted successfully')
+        setSuccessMessage(session, `Post ${post.title} deleted`)
     }
 
     return redirect('/blog', {headers:{
