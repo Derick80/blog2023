@@ -17,16 +17,12 @@ const schema = z.object({
   password: z.string().min(8, "password must be at least 8 characters"),
 });
 export const registerStrategy = new FormStrategy(async ({ form }) => {
-  const result = schema.parse(await form);
-  const { email, password, username } = result;
-  if (!email || !password || !username) {
-    return json(
-      { error: "Email, password, and username are required" },
-      {
-        status: 400,
-      }
-    );
-  }
+  const email = form.get("email");
+  const username = form.get("username");
+  const password = form.get("password");
+  invariant(typeof email === "string", "Email is not a string");
+  invariant(typeof username === "string", "username is not a string");
+
   const existingUser = await getUser({ email });
   if (existingUser) {
     throw new Error("User already exists");
