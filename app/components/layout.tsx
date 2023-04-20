@@ -3,8 +3,7 @@ import {
   ExitIcon,
   GitHubLogoIcon,
   HomeIcon,
-  LinkedInLogoIcon,
-  TwitterLogoIcon
+  LinkedInLogoIcon
 } from '@radix-ui/react-icons'
 import { ColBox } from './boxes'
 import { Form, Link, NavLink } from '@remix-run/react'

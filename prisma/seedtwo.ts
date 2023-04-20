@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-import { User } from '~/user-schema'
 const prisma = new PrismaClient()
 
 async function generateTestData(numberofPosts: number) {
