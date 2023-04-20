@@ -11,6 +11,10 @@
 - Since Mantine is css in js with emotion server there are a lot of things that don't work if you implement the entire thing. Therefore I just used clientprovider in entry.client.tsx - `import { ClientProvider } from "@mantine/remix";` -
 - and then `<MantineProvider withGlobalStyles withNormalizeCSS> <html lang="en"> <head> <StylesPlaceholder />` - in root.tsx
 
+
+## Component References
+- Accordian - https://github.com/AllanSimoyi/PersonalWebsite/blob/main/app/core/components/AccordionItem.tsx
+- 
 ## Fly Setup
 
 1. [Install `flyctl`](https://fly.io/docs/getting-started/installing-flyctl/)

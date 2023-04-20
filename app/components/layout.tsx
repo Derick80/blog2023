@@ -1,6 +1,13 @@
-import { ArrowUpIcon, ExitIcon, HomeIcon } from '@radix-ui/react-icons'
+import {
+  ArrowUpIcon,
+  ExitIcon,
+  GitHubLogoIcon,
+  HomeIcon,
+  LinkedInLogoIcon,
+  TwitterLogoIcon
+} from '@radix-ui/react-icons'
 import { ColBox } from './boxes'
-import { Form, NavLink } from '@remix-run/react'
+import { Form, Link, NavLink } from '@remix-run/react'
 import Button from './button'
 import { useOptionalUser } from '~/utilities'
 import { Affix, Transition, rem } from '@mantine/core'
@@ -36,6 +43,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Affix>
         </div>
       </div>
+      <footer className='flex flex-row items-center justify-center gap-2 p-2'>
+        <Link
+          to='https://www.linkedin.com/in/dhoskinson/'
+          referrerPolicy='no-referrer'
+          target='_blank'
+        >
+          <LinkedInLogoIcon />
+        </Link>
+        <p className='p'>Copyrite {new Date().getFullYear()}</p>
+        <Link
+          referrerPolicy='no-referrer'
+          target='_blank'
+          to='https://www.github.com/Derick80'
+        >
+          <GitHubLogoIcon />
+        </Link>
+      </footer>
     </div>
   )
 }
@@ -44,7 +68,7 @@ function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-10 mx-auto flex h-16 w-full flex-row items-baseline justify-around p-1 md:p-2'>
+    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-baseline justify-around bg-slate-50 p-1 md:p-2'>
       <h1 className='text-2xl font-bold'>Vanished</h1>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -160,6 +184,17 @@ function LeftNavigationBar() {
       >
         <p className='text-sm font-semibold'>Chat</p>
       </NavLink>
+      <NavLink
+        to='ui-components'
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? 'underline' : '',
+            color: isPending ? 'red' : 'black'
+          }
+        }}
+      >
+        <p className='text-sm font-semibold'>UI</p>
+      </NavLink>
     </div>
   )
 }
@@ -168,6 +203,7 @@ function RightNavigationBar() {
     <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start'>
       {' '}
       <ColBox>
+        I think 'ads' go here
         <HomeIcon />
         <HomeIcon />
         <HomeIcon />

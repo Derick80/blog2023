@@ -3,7 +3,12 @@ module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
   theme: {
     darkmode: "media",
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Roboto', 'sans-serif'],
+        Montserrat:['Montserrat', 'sans-serif'],
+      }
+    },
   },
   plugins: [],
 };
