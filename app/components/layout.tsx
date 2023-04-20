@@ -5,6 +5,7 @@ import Button from "./button";
 import { useOptionalUser } from "~/utilities";
 import { Affix, Transition, rem } from "@mantine/core";
 import { useWindowScroll } from "@mantine/hooks";
+import clsx from "clsx";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [scroll, scrollTo] = useWindowScroll();
@@ -46,17 +47,49 @@ function NavigationBar() {
   return (
     <div className="flex fixed z-10 left-0 right-0 top-0 flex-row justify-around items-baseline w-full md:w-4/s6 mx-auto h-16 p-1 md:p-2">
       <h1 className="text-2xl font-bold">Vanished</h1>
-      <NavLink to="/">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/"
+      >
         <p className="text-sm font-semibold">Home</p>
       </NavLink>
-      <NavLink to="/blog">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/blog"
+      >
         <p className="text-sm font-semibold">Blog</p>
       </NavLink>
 
-      <NavLink to="/about">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/about"
+      >
         <p className="text-sm font-semibold">About</p>
       </NavLink>
-      <NavLink to="/projects">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/projects"
+      >
         <p className="text-sm font-semibold">Projects</p>
       </NavLink>
       <div> </div>
@@ -84,16 +117,48 @@ function NavigationBar() {
 function LeftNavigationBar() {
   return (
     <div className="flex flex-row md:flex-col w-full md:w-1/6 p-2 items-center justify-center md:justify-start md:mt-20 gap-2">
-      <NavLink to="/blog/new">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/blog/new"
+      >
         <p className="text-sm font-semibold">New Post</p>
       </NavLink>
-      <NavLink to="/drafts">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/drafts"
+      >
         <p className="text-sm font-semibold">Drafts</p>
       </NavLink>
-      <NavLink to="/users">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/users"
+      >
         <p className="text-sm font-semibold">Users</p>
       </NavLink>
-      <NavLink to="/chats">
+      <NavLink
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? "underline" : "",
+            color: isPending ? "red" : "black",
+          };
+        }}
+        to="/chats"
+      >
         <p className="text-sm font-semibold">Chat</p>
       </NavLink>
     </div>
