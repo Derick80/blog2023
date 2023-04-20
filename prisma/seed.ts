@@ -72,7 +72,7 @@ async function generateMe(numberofPosts: number) {
         published: true,
         user: {
           connect: {
-            id: "clgo4xewd000065dj9ffl9ice",
+            id: "clgol7fzc000065jpgsae8nos",
           },
         },
       },

@@ -13,8 +13,7 @@ processes = []
   auto_rollback = true
 
 [[services]]
-  http_checks = []
-  internal_port = 8080
+  internal_port = 5432
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
@@ -23,11 +22,11 @@ processes = []
     soft_limit = 20
     type = "connections"
 
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
 
+  [[services.ports]]
+    handlers = ["pg_tls"]
+    port = 5432
+    
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443

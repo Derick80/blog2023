@@ -54,7 +54,7 @@ function NavigationBar() {
       {/* <Switch size="md" onLabel={<SunIcon />} offLabel={<MoonIcon />} /> */}
       <ScrollToTop />
 
-      {user && (
+      {user ? (
         <Form
           className="flex items-center justify-center p-1"
           method="POST"
@@ -64,6 +64,10 @@ function NavigationBar() {
             <ExitIcon />
           </Button>
         </Form>
+      ) : (
+        <NavLink to="/login">
+          <p className="text-sm font-semibold">Login</p>
+        </NavLink>
       )}
       <ScrollToTop />
     </div>

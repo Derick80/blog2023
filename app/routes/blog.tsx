@@ -1,6 +1,8 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
+import React from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { ScrollToTop } from "~/components/scroll-to-top";
 import Tags from "~/components/tags";
 import { prisma } from "~/server/auth/prisma.server";
@@ -27,13 +29,15 @@ export default function BlogRoute() {
   const { posts } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex flex-col h-screen items-center border-2 w-full gap-4">
+    <div className="flex flex-col h- items-center border-2 w-full gap-4">
       <h1 className="text-4xl font-semibold">Blog</h1>
       <Outlet />
-      {posts.map((post) => (
-        <BlogPreview key={post.id} post={post} />
-      ))}
-      <ScrollToTop />
+      <div>
+        {posts.map((post) => (
+          <BlogPreview key={post.id} post={post} />
+        ))}
+        <ScrollToTop />
+      </div>
     </div>
   );
 }

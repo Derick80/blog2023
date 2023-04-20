@@ -86,10 +86,24 @@ export default function App() {
           <Meta />
           <Links />
         </head>
-        <body className="">
+        <body className="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50">
           <Layout>
             <Outlet />
-            <Toaster />
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                success: {
+                  style: {
+                    background: "green",
+                  },
+                },
+                error: {
+                  style: {
+                    background: "red",
+                  },
+                },
+              }}
+            />
 
             <ScrollRestoration />
             <Scripts />

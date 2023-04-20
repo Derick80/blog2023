@@ -1,5 +1,5 @@
 import { Input, MultiSelect, Switch } from "@mantine/core";
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -26,6 +26,18 @@ import {
 import { createPost } from "~/server/post.server";
 import type { Category } from "~/server/schemas/post-schema";
 import { validateAction } from "~/utilities";
+export async function loader({ request }: LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const user = await isAuthenticated(request);
+  if (!user) {
+    setErrorMessage(session, "Unauthorized");
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  }
+}
 
 export const schema = z.object({
   title: z.string().min(5, "Title should be at least 5 characters").max(100),
@@ -46,9 +58,12 @@ export async function action({ request }: ActionArgs) {
   // check if the user is authenticated
   const user = await isAuthenticated(request);
   if (!user) {
-    throw new Error(
-      "You are not authenticated. Please login to create a new post"
-    );
+    setErrorMessage(session, "Unauthorized");
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
   }
   const userId = user.id;
   const { formData, errors } = await validateAction({ request, schema });
