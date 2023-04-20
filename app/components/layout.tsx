@@ -1,14 +1,16 @@
-import { ExitIcon, HomeIcon } from "@radix-ui/react-icons";
+import { ArrowUpIcon, ExitIcon, HomeIcon } from "@radix-ui/react-icons";
 import { ColBox } from "./boxes";
 import { Form, NavLink } from "@remix-run/react";
 import Button from "./button";
 import { useOptionalUser } from "~/utilities";
+import { Affix, Transition, rem } from "@mantine/core";
+import { useWindowScroll } from "@mantine/hooks";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [scroll, scrollTo] = useWindowScroll();
+
   return (
     <div className=" ">
-      <div className="border-2 fixed top-20 z-10 right-1 rounded-full w-8 h-20"></div>
-
       <NavigationBar />
 
       <div className="flex flex-col md:flex-row h-full flex-grow p-2 mt-20 md:mt-12">
@@ -17,7 +19,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
         <RightNavigationBar />
-        <div></div>
+        <div>
+          <Affix position={{ bottom: rem(20), right: rem(20) }}>
+            <Transition transition="slide-up" mounted={scroll.y > 0}>
+              {(transitionStyles) => (
+                <Button
+                  variant="primary_filled"
+                  style={transitionStyles}
+                  onClick={() => scrollTo({ y: 0 })}
+                >
+                  <ArrowUpIcon />
+                  Scroll to top
+                </Button>
+              )}
+            </Transition>
+          </Affix>
+        </div>
       </div>
     </div>
   );

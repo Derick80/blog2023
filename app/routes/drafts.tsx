@@ -5,6 +5,8 @@ import { prisma } from "~/server/auth/prisma.server";
 import { useLoaderData } from "@remix-run/react";
 import { BlogPreview } from "./blog";
 import type { Post } from "~/server/schemas/post-schema";
+import { Card, Group, Image, Text } from "@mantine/core";
+import Tags from "~/components/tags";
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request);
   if (!user) {
@@ -34,9 +36,34 @@ export default function DraftsRoute() {
     drafts: Post[];
   }>();
   return (
-    <div className="">
+    <div className="flex flex-col gap-2">
       {drafts.map((draft: Post) => (
-        <BlogPreview key={draft.id} post={draft} />
+        // <BlogPreview key={draft.id} post={draft} />
+        <Card key={draft.id} shadow="sm" padding="md" radius="md" withBorder>
+          <Card.Section>
+            <Image
+              fit="cover"
+              src={draft.imageUrl}
+              alt={draft.title}
+              height={160}
+            />
+          </Card.Section>
+          <Group position="apart" mt="md" mb="xs">
+            <Text weight={500}>{draft.title}</Text>
+            <Tags categories={draft.categories} />
+          </Group>
+          <Text size="sm" color="dimmed">
+            {draft.content}
+          </Text>
+          <Group position="apart" mt="md" mb="xs">
+            <Text size="sm" color="dimmed">
+              {draft.createdAt}
+            </Text>
+            <Text size="sm" color="dimmed">
+              {draft.updatedAt}
+            </Text>
+          </Group>
+        </Card>
       ))}
     </div>
   );
