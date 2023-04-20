@@ -3,6 +3,7 @@ import { json } from '@remix-run/node'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import { RowBox } from '~/components/boxes'
 import Button from '~/components/button'
+import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { getUsers } from '~/server/user.server'
 
 export async function loader({ request }: LoaderArgs) {
@@ -41,11 +42,15 @@ export default function UsersIndex() {
             key={user.id}
           >
             <RowBox>
-              <img
-                className='h-10 w-10 rounded-full'
-                src={user.avatarUrl}
-                alt={user.username}
-              />
+              {user.avatarUrl ? (
+                <img
+                  className='h-10 w-10 rounded-full'
+                  src={user.avatarUrl}
+                  alt={user.username}
+                />
+              ) : (
+                <UserPlaceHolder />
+              )}
               <h3 className='text-xl font-bold'>{user.username}</h3>
             </RowBox>
             <p>{user.email}</p>
@@ -56,7 +61,9 @@ export default function UsersIndex() {
                   <p className='text-xs'>Posts: {user._count.posts}</p>
                 </Link>
               </Button>
-              <Link to={`/users/${user.username}`}>View User</Link>
+              <Button size='small' variant='ghost'>
+                <Link to={`/users/${user.username}`}>View User</Link>
+              </Button>
             </RowBox>
           </li>
         ))}

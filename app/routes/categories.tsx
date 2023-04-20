@@ -1,6 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
+import { RowBox } from '~/components/boxes'
 import Tags from '~/components/tags'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/auth/prisma.server'
@@ -19,9 +20,11 @@ export default function CategoriesRoute() {
   return (
     <div>
       <h1>Categories</h1>
-      {data.categories.map((category) => (
-        <Tags key={category.id} categories={[category]} />
-      ))}
+      <RowBox className='flex-wrap'>
+        {data.categories.map((category) => (
+          <Tags key={category.id} categories={[category]} />
+        ))}
+      </RowBox>
       <Outlet />
     </div>
   )

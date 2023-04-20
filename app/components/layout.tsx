@@ -67,7 +67,7 @@ function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-baseline justify-around bg-slate-50 p-1 md:p-2'>
+    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-baseline justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
       <h1 className='text-2xl font-bold'>Vanished</h1>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -78,7 +78,7 @@ function NavigationBar() {
         }}
         to='/'
       >
-        <p className='text-sm font-semibold'>Home</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>Home</p>
       </NavLink>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -89,7 +89,7 @@ function NavigationBar() {
         }}
         to='/blog'
       >
-        <p className='text-sm font-semibold'>Blog</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>Blog</p>
       </NavLink>
 
       <NavLink
@@ -101,7 +101,7 @@ function NavigationBar() {
         }}
         to='/about'
       >
-        <p className='text-sm font-semibold'>About</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>About</p>
       </NavLink>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -112,7 +112,7 @@ function NavigationBar() {
         }}
         to='/projects'
       >
-        <p className='text-sm font-semibold'>Projects</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>Projects</p>
       </NavLink>
       <div> </div>
       {/* <Switch size="md" onLabel={<SunIcon />} offLabel={<MoonIcon />} /> */}
@@ -129,7 +129,7 @@ function NavigationBar() {
         </Form>
       ) : (
         <NavLink to='/login'>
-          <p className='text-sm font-semibold'>Login</p>
+          <p className='text-sm font-semibold dark:text-slate-50'>Login</p>
         </NavLink>
       )}
     </div>
@@ -138,7 +138,7 @@ function NavigationBar() {
 
 function LeftNavigationBar() {
   return (
-    <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start'>
+    <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start '>
       <NavLink
         style={({ isActive, isPending }) => {
           return {
@@ -148,7 +148,7 @@ function LeftNavigationBar() {
         }}
         to='/blog/new'
       >
-        <p className='text-sm font-semibold'>New Post</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>New Post</p>
       </NavLink>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -159,7 +159,7 @@ function LeftNavigationBar() {
         }}
         to='/drafts'
       >
-        <p className='text-sm font-semibold'>Drafts</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>Drafts</p>
       </NavLink>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -170,7 +170,18 @@ function LeftNavigationBar() {
         }}
         to='/users'
       >
-        <p className='text-sm font-semibold'>Users</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>Users</p>
+      </NavLink>
+      <NavLink
+        to='/categories'
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? 'underline' : '',
+            color: isPending ? 'red' : 'black'
+          }
+        }}
+      >
+        <p className='text-sm font-semibold dark:text-slate-50'>Categories</p>
       </NavLink>
       <NavLink
         style={({ isActive, isPending }) => {
@@ -181,7 +192,7 @@ function LeftNavigationBar() {
         }}
         to='/chats'
       >
-        <p className='text-sm font-semibold'>Chat</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>Chat</p>
       </NavLink>
       <NavLink
         to='ui-components'
@@ -192,7 +203,18 @@ function LeftNavigationBar() {
           }
         }}
       >
-        <p className='text-sm font-semibold'>UI</p>
+        <p className='text-sm font-semibold dark:text-slate-50'>UI</p>
+      </NavLink>
+      <NavLink
+        to='/cv'
+        style={({ isActive, isPending }) => {
+          return {
+            textDecorationLine: isActive ? 'underline' : '',
+            color: isPending ? 'red' : 'black'
+          }
+        }}
+      >
+        <p className='text-sm font-semibold dark:text-slate-50'>CV</p>
       </NavLink>
     </div>
   )
