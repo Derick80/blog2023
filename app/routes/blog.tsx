@@ -2,8 +2,6 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
 import React from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { ScrollToTop } from "~/components/scroll-to-top";
 import Tags from "~/components/tags";
 import { prisma } from "~/server/auth/prisma.server";
 import type { Post } from "~/server/schemas/post-schema";
@@ -19,6 +17,9 @@ export async function loader({ request }: LoaderArgs) {
       likes: true,
       favorites: true,
       categories: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
@@ -36,7 +37,6 @@ export default function BlogRoute() {
         {posts.map((post) => (
           <BlogPreview key={post.id} post={post} />
         ))}
-        <ScrollToTop />
       </div>
     </div>
   );

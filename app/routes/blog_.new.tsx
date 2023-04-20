@@ -37,6 +37,7 @@ export async function loader({ request }: LoaderArgs) {
       },
     });
   }
+  return json({ user });
 }
 
 export const schema = z.object({
