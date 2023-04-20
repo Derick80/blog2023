@@ -1,5 +1,5 @@
 import { prisma } from "./auth/prisma.server";
-import { CategoryForm } from "./schemas/post-schema";
+import type { CategoryForm } from "./schemas/post-schema";
 
 export type PostInput = {
   title: string;

@@ -21,7 +21,6 @@ import {
 import React from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { prisma } from "./server/auth/prisma.server";
-import { User, UserType } from "./user-schema";
 import { StylesPlaceholder } from "@mantine/remix";
 import { MantineProvider } from "@mantine/core";
 

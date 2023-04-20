@@ -1,6 +1,6 @@
-import { faker } from "@faker-js/faker";
-import { MultiSelect, Switch } from "@mantine/core";
-import { ActionArgs, json, redirect } from "@remix-run/node";
+import { Input, MultiSelect, Switch } from "@mantine/core";
+import type { ActionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   Form,
   isRouteErrorResponse,
@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { z } from "zod";
 import ImageUploader from "~/components/blog-ui/image-fetcher";
 import Button from "~/components/button";
+import TipTap from "~/components/tip-tap";
 import { isAuthenticated } from "~/server/auth/auth.server";
 import {
   commitSession,
@@ -23,7 +24,7 @@ import {
   setSuccessMessage,
 } from "~/server/auth/session.server";
 import { createPost } from "~/server/post.server";
-import { Category } from "~/server/schemas/post-schema";
+import type { Category } from "~/server/schemas/post-schema";
 import { validateAction } from "~/utilities";
 
 export const schema = z.object({
@@ -114,7 +115,7 @@ export default function NewPostRoute() {
       categoryFetcher.load("/categories");
     }
   }, [categoryFetcher]);
-  // const categories = categoryFetcher.data?.categories;
+
   return (
     <div className="flex flex-col h-full w-fit mx-auto p-1">
       <ImageUploader setUrl={setUrl} />
@@ -127,7 +128,7 @@ export default function NewPostRoute() {
           value={url}
         />
         <label htmlFor="title">Title</label>
-        <input
+        <Input
           className="rounded-md border text-sm text-slate12"
           id="title"
           name="title"
@@ -146,7 +147,7 @@ export default function NewPostRoute() {
           </p>
         )}
         <label htmlFor="description">Description</label>
-        <input
+        <Input
           type="text"
           className="rounded-md border text-sm text-slate12"
           placeholder="Description..."
@@ -165,7 +166,8 @@ export default function NewPostRoute() {
         )}
 
         <label htmlFor="content">Content</label>
-        <input id="content" name="content" placeholder="Content" />
+
+        <TipTap />
         <label htmlFor="categories">Categories</label>
         <div className="p-1">
           <MultiSelect
