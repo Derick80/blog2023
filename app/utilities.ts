@@ -1,9 +1,9 @@
-import { useMatches } from "@remix-run/react";
-import { useMemo } from "react";
-import type { ZodError, ZodSchema } from "zod";
-import type { UserType } from "./user-schema";
+import { useMatches } from '@remix-run/react'
+import { useMemo } from 'react'
+import type { ZodError, ZodSchema } from 'zod'
+import type { UserType } from './user-schema'
 
-const DEFAULT_REDIRECT = "/";
+const DEFAULT_REDIRECT = '/'
 
 /**
  * This should be used any time the redirect path is user-provided
@@ -16,15 +16,15 @@ export function safeRedirect(
   to: FormDataEntryValue | string | null | undefined,
   defaultRedirect: string = DEFAULT_REDIRECT
 ) {
-  if (!to || typeof to !== "string") {
-    return defaultRedirect;
+  if (!to || typeof to !== 'string') {
+    return defaultRedirect
   }
 
-  if (!to.startsWith("/") || to.startsWith("//")) {
-    return defaultRedirect;
+  if (!to.startsWith('/') || to.startsWith('//')) {
+    return defaultRedirect
   }
 
-  return to;
+  return to
 }
 
 /**
@@ -36,62 +36,62 @@ export function safeRedirect(
 export function useMatchesData(
   id: string
 ): Record<string, unknown> | undefined {
-  const matchingRoutes = useMatches();
+  const matchingRoutes = useMatches()
   const route = useMemo(
     () => matchingRoutes.find((route) => route.id === id),
     [matchingRoutes, id]
-  );
-  return route?.data;
+  )
+  return route?.data
 }
 
 function isUser(user: any): user is UserType {
-  return user && typeof user === "object" && typeof user.email === "string";
+  return user && typeof user === 'object' && typeof user.email === 'string'
 }
 
 export function useOptionalUser(): UserType | undefined {
-  const data = useMatchesData("root");
+  const data = useMatchesData('root')
   if (!data || !isUser(data.user)) {
-    return undefined;
+    return undefined
   }
-  return data.user;
+  return data.user
 }
 
 export function useUser(): UserType {
-  const maybeUser = useOptionalUser();
+  const maybeUser = useOptionalUser()
   if (!maybeUser) {
     throw new Error(
-      "No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead."
-    );
+      'No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead.'
+    )
   }
-  return maybeUser;
+  return maybeUser
 }
-type ActionErrors<T> = Partial<Record<keyof T, string>>;
+type ActionErrors<T> = Partial<Record<keyof T, string>>
 
 export async function validateAction<ActionInput>({
   request,
-  schema,
+  schema
 }: {
-  request: Request;
-  schema: ZodSchema;
+  request: Request
+  schema: ZodSchema
 }) {
-  const body = Object.fromEntries(await request.formData()) as ActionInput;
+  const body = Object.fromEntries(await request.formData()) as ActionInput
 
   try {
-    const formData = schema.parse(body) as ActionInput;
-    return { formData, errors: null };
+    const formData = schema.parse(body) as ActionInput
+    return { formData, errors: null }
   } catch (error) {
-    console.log(error);
+    console.log(error)
 
-    const errors = error as ZodError<ActionInput>;
+    const errors = error as ZodError<ActionInput>
 
     return {
       formData: body,
       errors: errors.issues.reduce((acc: ActionErrors<ActionInput>, curr) => {
-        const key = curr.path[0] as keyof ActionInput;
+        const key = curr.path[0] as keyof ActionInput
 
-        acc[key] = curr.message;
-        return acc;
-      }, {}),
-    };
+        acc[key] = curr.message
+        return acc
+      }, {})
+    }
   }
 }

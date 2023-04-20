@@ -1,49 +1,49 @@
-import type { ActionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionArgs } from '@remix-run/node'
+import { redirect } from '@remix-run/node'
 import {
   isAuthenticated,
-  setUserSessionAndCommit,
-} from "~/server/auth/auth.server";
-import { prisma } from "~/server/auth/prisma.server";
+  setUserSessionAndCommit
+} from '~/server/auth/auth.server'
+import { prisma } from '~/server/auth/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage,
-  setSuccessMessage,
-} from "~/server/auth/session.server";
+  setSuccessMessage
+} from '~/server/auth/session.server'
 
 export async function action({ request, params }: ActionArgs) {
-  const user = await isAuthenticated(request);
-  const session = await getSession(request.headers.get("Cookie"));
+  const user = await isAuthenticated(request)
+  const session = await getSession(request.headers.get('Cookie'))
 
   if (!user) {
-    setErrorMessage(session, "Unauthorized");
-    return redirect("/login", {
+    setErrorMessage(session, 'Unauthorized')
+    return redirect('/login', {
       headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
+        'Set-Cookie': await commitSession(session)
+      }
+    })
   }
-  const postId = params.postId;
-  if (typeof postId !== "string") {
-    return new Response("Invalid postId", { status: 400 });
+  const postId = params.postId
+  if (typeof postId !== 'string') {
+    return new Response('Invalid postId', { status: 400 })
   }
 
   const post = await prisma.post.delete({
     where: {
-      id: postId,
-    },
-  });
+      id: postId
+    }
+  })
 
   if (!post) {
-    setErrorMessage(session, "Could not delete post");
+    setErrorMessage(session, 'Could not delete post')
   } else {
-    setSuccessMessage(session, `Post ${post.title} deleted`);
+    setSuccessMessage(session, `Post ${post.title} deleted`)
   }
 
-  return redirect("/blog", {
+  return redirect('/blog', {
     headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+      'Set-Cookie': await commitSession(session)
+    }
+  })
 }

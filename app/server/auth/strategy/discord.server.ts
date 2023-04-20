@@ -45,7 +45,9 @@ export const discordStrategy = new DiscordStrategy(
     const user = await createUser({
       email: profile.emails ? profile.emails[0].value : '',
       username: profile.displayName,
-      avatarUrl: profile.photos ? profile.photos[0].value : faker.internet.avatar(),
+      avatarUrl: profile.photos
+        ? profile.photos[0].value
+        : faker.internet.avatar(),
       account: {
         provider: profile.provider,
         providerAccountId: profile.id,

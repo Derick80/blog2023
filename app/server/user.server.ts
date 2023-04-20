@@ -1,4 +1,4 @@
-import { prisma } from "./auth/prisma.server";
+import { prisma } from './auth/prisma.server'
 
 export async function getUsers() {
   const users = await prisma.user.findMany({
@@ -12,10 +12,10 @@ export async function getUsers() {
           posts: true,
           favorites: true,
           comments: true,
-          likes: true,
-        },
-      },
-    },
-  });
-  return users;
+          likes: true
+        }
+      }
+    }
+  })
+  return users
 }

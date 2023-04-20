@@ -37,8 +37,6 @@ export default function Login() {
             <DiscordLogoIcon className='h-5 w-5' />
           </button>
         </SocialLoginForm>
-
-
       </div>
 
       <div className='mb-2 mt-2 flex flex-col items-center justify-center md:mb-5 md:mt-5'>

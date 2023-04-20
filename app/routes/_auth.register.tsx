@@ -6,9 +6,6 @@ import { AuthForm } from '~/components/auth/auth-form'
 import { SocialLoginForm } from '~/components/auth/social-login-form'
 import { authenticator } from '~/server/auth/auth.server'
 
-
-
-
 export async function action({ request }: LoaderArgs) {
   try {
     return await authenticator.authenticate('register', request, {

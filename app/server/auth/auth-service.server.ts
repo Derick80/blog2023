@@ -9,7 +9,6 @@ export const createPasswordHash = async (password: string) => {
   return hashedPassword
 }
 
-
 const getTokenExpiration = (tokenType: TokenType) => {
   switch (tokenType) {
     case 'RESET_PASSWORD':

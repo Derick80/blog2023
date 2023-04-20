@@ -35,7 +35,6 @@ const defaultPersonalSelect = {
   _count: true
 }
 
-
 export async function getUserById(userId: string) {
   return await prisma.user.findUnique({
     where: {
@@ -85,8 +84,6 @@ export const createUser = async (
     data,
     select: defaultUserSelect
   })
-
-
 
   return user
 }

@@ -1,6 +1,6 @@
-import { Input, MultiSelect, Switch } from "@mantine/core";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { Input, MultiSelect, Switch } from '@mantine/core'
+import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 import {
   Form,
   isRouteErrorResponse,
@@ -8,80 +8,80 @@ import {
   useFetcher,
   useNavigation,
   useRouteError,
-  useRouteLoaderData,
-} from "@remix-run/react";
-import React from "react";
-import { useEffect } from "react";
-import { z } from "zod";
-import ImageUploader from "~/components/blog-ui/image-fetcher";
-import Button from "~/components/button";
-import TipTap from "~/components/tip-tap";
-import { isAuthenticated } from "~/server/auth/auth.server";
+  useRouteLoaderData
+} from '@remix-run/react'
+import React from 'react'
+import { useEffect } from 'react'
+import { z } from 'zod'
+import ImageUploader from '~/components/blog-ui/image-fetcher'
+import Button from '~/components/button'
+import TipTap from '~/components/tip-tap'
+import { isAuthenticated } from '~/server/auth/auth.server'
 import {
   commitSession,
   getSession,
   setErrorMessage,
-  setSuccessMessage,
-} from "~/server/auth/session.server";
-import { createPost } from "~/server/post.server";
-import type { Category } from "~/server/schemas/post-schema";
-import { validateAction } from "~/utilities";
+  setSuccessMessage
+} from '~/server/auth/session.server'
+import { createPost } from '~/server/post.server'
+import type { Category } from '~/server/schemas/post-schema'
+import { validateAction } from '~/utilities'
 export async function loader({ request }: LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  const user = await isAuthenticated(request);
+  const session = await getSession(request.headers.get('Cookie'))
+  const user = await isAuthenticated(request)
   if (!user) {
-    setErrorMessage(session, "Unauthorized");
-    return redirect("/login", {
+    setErrorMessage(session, 'Unauthorized')
+    return redirect('/login', {
       headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
+        'Set-Cookie': await commitSession(session)
+      }
+    })
   }
-  return json({ user });
+  return json({ user })
 }
 
 export const schema = z.object({
-  title: z.string().min(5, "Title should be at least 5 characters").max(100),
+  title: z.string().min(5, 'Title should be at least 5 characters').max(100),
   description: z
     .string()
-    .min(10, "Description should be at least 10 characters")
+    .min(10, 'Description should be at least 10 characters')
     .max(100),
-  imageUrl: z.string().url("Image URL should be a valid URL"),
+  imageUrl: z.string().url('Image URL should be a valid URL'),
   featured: z.coerce.boolean(),
   content: z.string().min(1).max(1000),
-  categories: z.string(),
-});
+  categories: z.string()
+})
 
-type ActionInput = z.infer<typeof schema>;
+type ActionInput = z.infer<typeof schema>
 export async function action({ request }: ActionArgs) {
   // get the session from the request for toast messages
-  const session = await getSession(request.headers.get("Cookie"));
+  const session = await getSession(request.headers.get('Cookie'))
   // check if the user is authenticated
-  const user = await isAuthenticated(request);
+  const user = await isAuthenticated(request)
   if (!user) {
-    setErrorMessage(session, "Unauthorized");
-    return redirect("/login", {
+    setErrorMessage(session, 'Unauthorized')
+    return redirect('/login', {
       headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
+        'Set-Cookie': await commitSession(session)
+      }
+    })
   }
-  const userId = user.id;
-  const { formData, errors } = await validateAction({ request, schema });
+  const userId = user.id
+  const { formData, errors } = await validateAction({ request, schema })
   if (errors) {
-    return json({ errors }, { status: 422 });
+    return json({ errors }, { status: 422 })
   }
 
   const { title, description, content, imageUrl, featured, categories } =
-    formData as ActionInput;
+    formData as ActionInput
 
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  const cats = categories?.split(",");
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  const cats = categories?.split(',')
   const category = cats.map((cat) => {
     return {
-      value: cat,
-    };
-  });
+      value: cat
+    }
+  })
 
   const post = await createPost({
     title,
@@ -91,133 +91,133 @@ export async function action({ request }: ActionArgs) {
     featured,
     slug,
     userId,
-    categories: category,
-  });
+    categories: category
+  })
 
   if (!post) {
-    setErrorMessage(session, `Could not create post`);
+    setErrorMessage(session, `Could not create post`)
   } else {
-    setSuccessMessage(session, `Post ${post.title} created`);
+    setSuccessMessage(session, `Post ${post.title} created`)
   }
 
-  return redirect("/blog", {
+  return redirect('/blog', {
     headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+      'Set-Cookie': await commitSession(session)
+    }
+  })
 }
 
 export default function NewPostRoute() {
-  const actionData = useActionData<{ errors: ActionInput }>();
-  const [url, setUrl] = React.useState("");
+  const actionData = useActionData<{ errors: ActionInput }>()
+  const [url, setUrl] = React.useState('')
 
-  const [selected, setSelected] = React.useState<string>("");
+  const [selected, setSelected] = React.useState<string>('')
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   const text =
-    navigation.state === "submitting"
-      ? "Saving..."
-      : navigation.state === "loading"
-      ? "Saved!"
-      : "Save";
+    navigation.state === 'submitting'
+      ? 'Saving...'
+      : navigation.state === 'loading'
+      ? 'Saved!'
+      : 'Save'
 
-  const { categories } = useRouteLoaderData("root") as {
-    categories: Category[];
-  };
+  const { categories } = useRouteLoaderData('root') as {
+    categories: Category[]
+  }
   // fetch categories from the server
-  const categoryFetcher = useFetcher();
+  const categoryFetcher = useFetcher()
   useEffect(() => {
-    if (categoryFetcher.state === "idle" && categoryFetcher.data == null) {
-      categoryFetcher.load("/categories");
+    if (categoryFetcher.state === 'idle' && categoryFetcher.data == null) {
+      categoryFetcher.load('/categories')
     }
-  }, [categoryFetcher]);
+  }, [categoryFetcher])
 
   return (
-    <div className="flex flex-col h-full w-fit mx-auto p-1">
+    <div className='mx-auto flex h-full w-fit flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
 
-      <Form className="flex flex-col w-full" method="post">
+      <Form className='flex w-full flex-col' method='post'>
         <input
-          type="hidden"
-          className="rounded-xl text-slate12"
-          name="imageUrl"
+          type='hidden'
+          className='text-slate12 rounded-xl'
+          name='imageUrl'
           value={url}
         />
-        <label htmlFor="title">Title</label>
+        <label htmlFor='title'>Title</label>
         <Input
-          className="rounded-md border text-sm text-slate12"
-          id="title"
-          name="title"
-          type="text"
-          placeholder="Title"
+          className='text-slate12 rounded-md border text-sm'
+          id='title'
+          name='title'
+          type='text'
+          placeholder='Title'
           defaultValue={actionData?.errors?.title}
           aria-invalid={Boolean(actionData?.errors?.title) || undefined}
           aria-errormessage={
-            actionData?.errors?.title ? "title-error" : undefined
+            actionData?.errors?.title ? 'title-error' : undefined
           }
           onChange={(e) => console.log(e.target.value)}
         />
         {actionData?.errors?.title && (
-          <p id="title-error" className="text-red-500">
+          <p id='title-error' className='text-red-500'>
             {actionData?.errors?.title}
           </p>
         )}
-        <label htmlFor="description">Description</label>
+        <label htmlFor='description'>Description</label>
         <Input
-          type="text"
-          className="rounded-md border text-sm text-slate12"
-          placeholder="Description..."
-          name="description"
+          type='text'
+          className='text-slate12 rounded-md border text-sm'
+          placeholder='Description...'
+          name='description'
           defaultValue={actionData?.errors?.description}
           aria-invalid={Boolean(actionData?.errors?.description) || undefined}
           aria-errormessage={
-            actionData?.errors?.description ? "description-error" : undefined
+            actionData?.errors?.description ? 'description-error' : undefined
           }
           onChange={(e) => console.log(e.target.value)}
         />
         {actionData?.errors?.description && (
-          <p id="description-error" role="alert" className="text-red-500">
+          <p id='description-error' role='alert' className='text-red-500'>
             {actionData?.errors?.description}
           </p>
         )}
 
-        <label htmlFor="content">Content</label>
+        <label htmlFor='content'>Content</label>
 
         <TipTap />
-        <label htmlFor="categories">Categories</label>
-        <div className="p-1">
+        <label htmlFor='categories'>Categories</label>
+        <div className='p-1'>
           <MultiSelect
-            shadow="xl"
+            shadow='xl'
             data={categories}
             onChange={(e) => {
-              setSelected(e.join(","));
+              setSelected(e.join(','))
             }}
-          />{" "}
+          />{' '}
           {actionData?.errors?.categories && (
-            <p id="categories-error" role="alert" className="text-red-500">
+            <p id='categories-error' role='alert' className='text-red-500'>
               {actionData?.errors?.categories}
             </p>
           )}
-          <label htmlFor="featured">Featured</label>
+          <label htmlFor='featured'>Featured</label>
           <Switch
-            name="featured"
+            name='featured'
             onChange={(e) => console.log(e.target.value)}
             defaultChecked={false}
           />
         </div>
-        <input type="hidden" name="categories" value={selected} />
-        <div className="flex justify-center">
-          <Button variant="primary" type="submit">
+        <input type='hidden' name='categories' value={selected} />
+        <div className='flex justify-center'>
+          <Button variant='primary' type='submit'>
             {text}
           </Button>
         </div>
       </Form>
     </div>
-  );
+  )
 }
 
 export function ErrorBoundary() {
-  const error = useRouteError();
+  const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
@@ -225,19 +225,19 @@ export function ErrorBoundary() {
         <h1>Status:{error.status}</h1>
         <p>{error.data.message}</p>
       </div>
-    );
+    )
   }
-  let errorMessage = "unknown error";
+  let errorMessage = 'unknown error'
   if (error instanceof Error) {
-    errorMessage = error.message;
-  } else if (typeof error === "string") {
-    errorMessage = error;
+    errorMessage = error.message
+  } else if (typeof error === 'string') {
+    errorMessage = error
   }
   return (
     <div>
-      <h1 className="text-2xl font-bold">uh Oh..</h1>
-      <p className="text-xl">something went wrong</p>
+      <h1 className='text-2xl font-bold'>uh Oh..</h1>
+      <p className='text-xl'>something went wrong</p>
       <pre>{errorMessage}</pre>
     </div>
-  );
+  )
 }

@@ -17,15 +17,13 @@ const cookieOptions = {
   secure: false
 }
 
-export const {commitSession, getSession} = createCookieSessionStorage({
+export const { commitSession, getSession } = createCookieSessionStorage({
   cookie: cookieOptions
 })
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: cookieOptions
 })
-
-
 
 export type ToastMessage = { message: string; type: 'success' | 'error' }
 
