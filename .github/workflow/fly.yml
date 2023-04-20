@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy to Fly
-        uses: superfly/flyctl-action@v1
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        run: flyctl deploy --remote-only
         with:
           args: deploy
