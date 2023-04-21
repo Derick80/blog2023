@@ -10,7 +10,6 @@ import {
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
-import formatRFC7231 from 'date-fns/esm/formatRFC7231'
 import dayjs from 'dayjs'
 import React from 'react'
 import CommentBox from '~/components/blog-ui/comments/comment-box'
@@ -18,22 +17,24 @@ import FavoriteContainer from '~/components/favorite-container'
 import LikeContainer from '~/components/like-container'
 import Tags from '~/components/tags'
 import { getPosts } from '~/server/post.server'
-import type { Post } from '~/server/schemas/schemas'
+import type { CommentWithChildren, Post } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import Button from '~/components/button'
 import { ShareButton } from '~/components/share-button'
-import { ListComments } from '~/components/blog-ui/comments/comment-list'
+import CommentContainer from '~/components/blog-ui/comments/comment-list'
 dayjs.extend(relativeTime)
 export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
+  const comments = await posts.map((post) => post.comments).flat()
+  console.log(comments, 'comments')
 
-  return json({ posts })
+  return json({ posts, comments })
 }
 
 export default function BlogRoute() {
-  const { posts } = useLoaderData<typeof loader>()
+  const { posts, comments } = useLoaderData<typeof loader>()
 
   return (
     <div className='h- flex w-full flex-col items-center gap-4 border-2'>
@@ -41,16 +42,21 @@ export default function BlogRoute() {
       <Outlet />
       <div>
         {posts.map((post) => (
-          <BlogPreview key={post.id} post={post} />
+          <BlogPreview key={post.id} post={post} comments={post.comments} />
         ))}
       </div>
     </div>
   )
 }
 
-export function BlogPreview({ post }: { post: Post }) {
-  const fetcher = useFetcher()
-  const [open, setOpen] = React.useState(false)
+export function BlogPreview({
+  post,
+  comments
+}: {
+  post: Post
+  comments: CommentWithChildren[]
+}) {
+  const [open, setOpen] = React.useState(true)
   return (
     <div className='static flex w-full flex-col gap-2 border-2'>
       {/* Card header */}
@@ -65,7 +71,6 @@ export function BlogPreview({ post }: { post: Post }) {
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
       {/* tags container */}
-
       <Tags categories={post.categories} />
       {/* card footer */}
       <div className='flex flex-row items-center gap-2 border-2 border-green-500 p-1'>
@@ -79,8 +84,7 @@ export function BlogPreview({ post }: { post: Post }) {
           variant='ghost'
           size='tiny'
           onClick={() => {
-            fetcher.load(`/blog/${post.id}/comment`)
-            setOpen((prev) => !prev)
+            setOpen(!open)
           }}
         >
           <ChatBubbleIcon />
@@ -96,10 +100,7 @@ export function BlogPreview({ post }: { post: Post }) {
       </div>
       <Divider />
       <CommentBox postId={post.id} />
-
-      {open && fetcher.data && (
-        <ListComments comments={(fetcher.data as any).comments} />
-      )}
+      {open && <CommentContainer postId={post.id} />}
     </div>
   )
 }

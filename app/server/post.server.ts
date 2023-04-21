@@ -53,15 +53,24 @@ export async function getPosts() {
       categories: true,
       comments: {
         include: {
-          user: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              avatarUrl: true
+            }
+          },
           children: {
             include: {
-              user: true
+              user: true,
+              children: true
             }
           }
         }
       }
     },
+
     orderBy: {
       createdAt: 'desc'
     }

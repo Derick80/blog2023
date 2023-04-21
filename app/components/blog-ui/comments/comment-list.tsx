@@ -1,120 +1,179 @@
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  useMatches,
-  useRouteLoaderData
-} from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import React from 'react'
-import { UserPlaceHolder } from '~/resources/user-placeholder'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
-import formComments from './format-comments'
 import Button from '~/components/button'
+import { useMatchesData } from '~/utilities'
+import { ColBox, RowBox } from '~/components/boxes'
+import { Avatar } from '@mantine/core'
+import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
+import { AnimatePresence, motion } from 'framer-motion'
 
+function getReplyCountText(count: number) {
+  if (count === 0 || !count) {
+    return ''
+  }
+
+  if (count === 1) {
+    return '1 reply'
+  }
+
+  return `${count} replies`
+}
+// COmment Container is the parent component that holds all the main comment data
 export default function CommentContainer({ postId }: { postId: string }) {
-  const fetcher = useFetcher()
+  const matches = useMatchesData('routes/blog')
+  const comments = matches?.comments as CommentWithChildren[]
+
+  function filterComments(comments: any, postId: string) {
+    return comments.filter(
+      (comment: { postId: string }) => comment.postId === postId
+    )
+  }
+  const filteredComments = filterComments(comments, postId)
+
+  return (
+    <div className='flex flex-col'>
+      {filteredComments.map((comment: CommentWithChildren) => (
+        <Comment
+          key={comment?.id}
+          comments={comment}
+          children={comment.children}
+        />
+      ))}
+    </div>
+  )
+}
+
+//
+function SiblingComments({ commentId }: { commentId: string }) {
+  const sibFetcher = useFetcher()
 
   React.useEffect(() => {
-    if (fetcher.state === 'idle' && !fetcher.data) {
-      fetcher.load(`/blog/${postId}/comment`)
+    if (sibFetcher.state === 'idle') {
+      sibFetcher.load(`/comment/${commentId}`)
     }
-  }, [fetcher, postId])
+  }, [])
 
-  if (!fetcher.data) return null
-
-  const { comments } = fetcher.data as { comments: CommentWithChildren[] }
-
-  console.log(fetcher.data, 'comments')
+  console.log(sibFetcher?.data?.comments, 'sibFetcher.data')
 
   return (
     <>
-      <ListComments comments={comments} />{' '}
-    </>
-  )
-}
-
-function Comment({ comment }: { comment: CommentWithChildren }) {
-  const { message, children } = comment
-
-  return (
-    <>
-      <div className='flex items-center'>
-        <div className='flex-shrink-0'>
-          {comment.user?.avatarUrl ? (
-            <img
-              className='h-10 w-10 rounded-full'
-              src={comment?.user?.avatarUrl}
-              alt=''
+      <div className='ml-5'>
+        {sibFetcher?.data?.comments?.map((comment: CommentWithChildren) => (
+          <>
+            <Comment key={comment?.id} comments={comment} />
+            <CommentActions
+              commentId={comment.id}
+              postId={comment.postId}
+              userId={comment.userId}
+              replyCount={comment.children?.length}
             />
-          ) : (
-            <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-400'>
-              <UserPlaceHolder />
-            </div>
-          )}
-        </div>
-        <div className='ml-4'>
-          <div className='text-sm'>
-            <Link
-              to={`/users/${comment.user.username}`}
-              className='font-medium text-gray-900'
-            >
-              {comment.user.username}
-            </Link>
-          </div>
-          <div className='mt-1 text-sm text-gray-700'>
-            <p>{message}</p>
-          </div>
-        </div>
+          </>
+        ))}
       </div>
-      <div className='flex flex-row'>
-        <CommentActions
-          commentId={comment.id}
-          postId={comment.postId}
-          userId={comment.userId}
-        />
-      </div>
-      {children ? <ListComments comments={children} /> : null}
     </>
   )
 }
-export function ListComments({
+//  This is the comment component that holds the comment and the reply button
+function Comment({
   comments
 }: {
-  comments: CommentWithChildren[]
+  comments: CommentWithChildren & {
+    children?: CommentWithChildren[]
+  }
 }) {
+  const [open, setOpen] = React.useState(false)
+  const [isReplying, setIsReplying] = React.useState(false)
+
   return (
-    <>
-      {comments.map((comment) => {
-        return <Comment key={comment.id} comment={comment} />
-      })}
-    </>
+    <div className='flex flex-col gap-1 rounded-md  shadow-md'>
+      <RowBox className='relative'>
+        <Avatar
+          src={comments?.user?.avatarUrl}
+          alt={comments?.user?.username}
+          radius='xl'
+          size='sm'
+        />
+        <ColBox>
+          <p className='text-xs font-medium text-gray-700 dark:text-slate-50'></p>
+          <div className='relative rounded-md bg-slate-900/30 p-1'>
+            {comments?.user?.username}
+
+            <p className='flex w-full text-sm'>{comments?.message}</p>
+            <div className='absolute flex w-full items-center'>
+              <div className='flex flex-grow' />
+              <Button
+                className='absolute -top-0 right-0'
+                variant='ghost'
+                size='small'
+                onClick={() => setIsReplying(!isReplying)}
+              >
+                {isReplying ? 'Cancel' : 'Reply'}
+              </Button>
+            </div>
+          </div>
+        </ColBox>
+        <div className='flex flex-grow' />
+        <Button
+          variant='icon_unfilled'
+          size='small'
+          className='flex flex-row justify-between gap-2 text-xs'
+          onClick={() => setOpen((open) => !open)}
+        >
+          <p className='flex flex-row gap-2 text-xs'>
+            {getReplyCountText(comments.children?.length)}
+          </p>
+          {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </Button>
+      </RowBox>
+      <RowBox className='mt-5 w-full'>
+        {
+          <AnimatePresence>
+            {isReplying && (
+              <motion.div
+                className='relative ml-5 w-full'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <CommentBox
+                  postId={comments.postId}
+                  parentId={comments.id}
+                  userId={comments.userId}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        }
+        <div className='flex flex-grow' />
+      </RowBox>
+      {
+        <AnimatePresence>
+          {open && <SiblingComments commentId={comments.id} />}
+        </AnimatePresence>
+      }
+    </div>
   )
 }
 
 function CommentActions({
   commentId,
   postId,
-  userId
+  userId,
+  replyCount
 }: {
   commentId: string
+
   postId: string
   userId: string
+  replyCount: number
 }) {
-  const [isReplying, setIsReplying] = React.useState(false)
-
   return (
-    <div className='flex flex-row gap-2'>
-      <Button
-        variant='primary_filled'
-        size='small'
-        onClick={() => setIsReplying(!isReplying)}
-      >
-        {isReplying ? 'Cancel' : 'Reply'}
-      </Button>
-      {isReplying && (
-        <CommentBox postId={postId} parentId={commentId} userId={userId} />
-      )}
+    <div className='flex w-full flex-row gap-2'>
+      <CommentBox postId={postId} parentId={commentId} userId={userId} />
+
+      <div className='flex flex-grow' />
     </div>
   )
 }

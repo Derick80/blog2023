@@ -1,10 +1,16 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import { ActionArgs, LoaderArgs, redirect } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { prisma } from '~/server/auth/prisma.server'
 import { validateAction } from '~/utilities'
+import {
+  commitSession,
+  getSession,
+  setErrorMessage
+} from '~/server/auth/session.server'
+import formatComments from '~/components/blog-ui/comments/format-comments'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
@@ -14,12 +20,7 @@ export async function loader({ request, params }: LoaderArgs) {
       postId
     },
     include: {
-      user: true,
-      children: {
-        include: {
-          user: true
-        }
-      }
+      user: true
     }
   })
 
@@ -36,6 +37,7 @@ export async function action({ request, params }: ActionArgs) {
   if (!user) {
     return json({ error: 'Not authenticated' })
   }
+  const session = await getSession(request.headers.get('Cookie'))
 
   const { postId } = zx.parseParams(params, { postId: z.string() })
 
@@ -47,37 +49,39 @@ export async function action({ request, params }: ActionArgs) {
 
   const { message, parentId } = formData as ActionInput
 
-  if (!parentId) {
-    return await prisma.comment.create({
-      data: {
-        message,
-        userId: user.id,
-        postId,
-        createdBy: user.username
-      }
-    })
-  } else if (parentId) {
-    return await prisma.comment.create({
-      data: {
-        message,
-        user: {
-          connect: {
-            id: user.id
-          }
-        },
-        post: {
-          connect: {
-            id: postId
-          }
-        },
-
+  const comment = await prisma.comment.create({
+    data: {
+      message,
+      user: {
+        connect: {
+          id: user.id
+        }
+      },
+      ...(parentId && {
         parent: {
           connect: {
             id: parentId
           }
-        },
-        createdBy: user.username
-      }
-    })
+        }
+      }),
+      post: {
+        connect: {
+          id: postId
+        }
+      },
+      createdBy: user.username
+    }
+  })
+
+  if (!comment) {
+    setErrorMessage(session, 'Something went wrong')
+  } else {
+    setErrorMessage(session, 'Comment posted')
+  }
+
+  return {
+    headers: {
+      'Set-Cookie': await commitSession(session)
+    }
   }
 }
