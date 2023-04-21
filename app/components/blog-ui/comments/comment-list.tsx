@@ -8,28 +8,31 @@ import {
 import React from 'react'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
-import Button from './button'
 import CommentBox from './comment-box'
+import formComments from './format-comments'
+import Button from '~/components/button'
 
-// export default function CommentContainer({ postId }: { postId: string }) {
-//   const fetcher = useFetcher()
+export default function CommentContainer({ postId }: { postId: string }) {
+  const fetcher = useFetcher()
 
-//   React.useEffect(() => {
-//     if (fetcher.state === 'idle' && !fetcher.data) {
-//       fetcher.load(`/blog/${postId}/comment`)
-//     }
-//   }, [fetcher, postId])
+  React.useEffect(() => {
+    if (fetcher.state === 'idle' && !fetcher.data) {
+      fetcher.load(`/blog/${postId}/comment`)
+    }
+  }, [fetcher, postId])
 
-//   if (!fetcher.data) return null
+  if (!fetcher.data) return null
 
-//   const { comments } = fetcher.data as { comments: CommentWithChildren[] }
+  const { comments } = fetcher.data as { comments: CommentWithChildren[] }
 
-//   return (
-//     <>
-//       <ListComments comments={comments} />
-//     </>
-//   )
-// }
+  console.log(fetcher.data, 'comments')
+
+  return (
+    <>
+      <ListComments comments={comments} />{' '}
+    </>
+  )
+}
 
 function Comment({ comment }: { comment: CommentWithChildren }) {
   const { message, children } = comment
@@ -107,7 +110,7 @@ function CommentActions({
         size='small'
         onClick={() => setIsReplying(!isReplying)}
       >
-        Reply
+        {isReplying ? 'Cancel' : 'Reply'}
       </Button>
       {isReplying && (
         <CommentBox postId={postId} parentId={commentId} userId={userId} />

@@ -7,11 +7,6 @@ import { prisma } from '~/server/auth/prisma.server'
 import { validateAction } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
-  const user = await isAuthenticated(request)
-  if (!user) {
-    return json({ error: 'Not authenticated' })
-  }
-
   const { postId } = zx.parseParams(params, { postId: z.string() })
 
   const comments = await prisma.comment.findMany({

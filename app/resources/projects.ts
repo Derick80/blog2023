@@ -1,9 +1,9 @@
-const projects = [
+export const projects = [
   {
     id: 'be56d035-9164-4ad0-b929-8b7802e1e00e',
     title: 'A Cellular Wind',
     description: "A Cellular Wind is a blog that I'm writing",
-    projectImg:
+    projectImage:
       'https://res.cloudinary.com/dch-photo/image/upload/v1681854400/wzrjntlj3s8aqdbgmaxc.png',
     projectUrl: 'https://cellularwind.com/',
     githubUrl: 'https://github.com/Derick80/astro-blog',
@@ -43,7 +43,7 @@ const projects = [
     id: '4da5dc46-2350-45db-a810-5b06af0e77f6',
     title: 'To Do App',
     description: 'A simple todo application created with Remix',
-    projectImg:
+    projectImage:
       'https://res.cloudinary.com/dch-photo/image/upload/v1681854627/ve402op3lbngdzjuhoby.png',
     projectUrl: 'https://dchtodos.fly.dev/',
     githubUrl: 'https://github.com/Derick80/todos',
@@ -69,7 +69,7 @@ const projects = [
     title: 'DNA Reverse Complement ',
     description:
       'A simple DNA reverse complement app.  Enter a DNA sequence and get the reverse complement back',
-    projectImg:
+    projectImage:
       'https://res.cloudinary.com/dch-photo/image/upload/v1679951416/f4druehyvkialpjgajbm.png',
     projectUrl: 'https://dna-tawny.vercel.app/',
     githubUrl: 'https://github.com/Derick80/dna',
@@ -94,8 +94,8 @@ const projects = [
     id: '126db16f-e505-42b6-abc1-af715f7924e3',
     title: 'T3 Stack S3 Image Upload with Blog Post',
     description:
-      "I have been coding for a bout a year and just deployed a personal blog using remix-run where I implemented blog postings with s3 image uploads.  I have been wanting to try the t3 stack so I decided to make a minimal reproduction of my efforts since different methods are involved. \n\n Still not sure about the query / axios methods and I probably don't need dropzone but  I understand kind of what they do and ultimately the result but it feels less clear than the methods I used in remix.  In particular these tutorials used a separate router for the s3 image upload but also their data models were slightly different than mine. Feel like my approach is maybe a more common pattern? ",
-    projectImg:
+      'I wanted to try a new technology stack so I replicated Image upload functionality from my social media apps in the T3 stack.',
+    projectImage:
       'https://res.cloudinary.com/dch-photo/image/upload/v1680132957/rbk0xpqxkptfi90ddnhu.png',
     projectUrl: 'https://trpc-blog-two.vercel.app/',
     githubUrl: 'https://github.com/Derick80/trpc-blog',
@@ -121,7 +121,7 @@ const projects = [
     title: 'Japan 2023 Image Carousel',
     description:
       'An Image Carousel built with React and Typescript and Tailwindcss',
-    projectImg:
+    projectImage:
       'https://remix-bucket.s3.us-east-2.amazonaws.com/mystock/photogallery.png',
     projectUrl: 'https://photogallery-3r9pc82rg-derick80.vercel.app/',
     githubUrl: 'https://github.com/Derick80/photogallery',
@@ -182,7 +182,7 @@ const projects = [
     title: 'Budget App',
     description:
       'A budget app built with React and Typescript and Tailwindcss and Remix-run metaframework',
-    projectImg:
+    projectImage:
       'https://remix-bucket.s3.us-east-2.amazonaws.com/mystock/bankapp.png',
     projectUrl: 'https://bank23-jhumheegh-derick80.vercel.app/',
     githubUrl: 'https://github.com/Derick80/bank23',
@@ -238,7 +238,7 @@ const projects = [
     title: 'Social Media Blog V2',
     description:
       'A social media blog built with React and Typescript and Tailwindcss with new functionality',
-    projectImg:
+    projectImage:
       'https://remix-bucket.s3.us-east-2.amazonaws.com/mystock/blogv2.png',
     projectUrl: 'derickhoskinson.com',
     githubUrl: 'https://github.com/Derick80/blog',
@@ -304,7 +304,7 @@ const projects = [
     title: 'Personal Blog 1.0 ',
     description:
       'A personal blog built with Remix and Typescript. This was the first first largely non-tutorial app that I built',
-    projectImg:
+    projectImage:
       'https://remix-bucket.s3.us-east-2.amazonaws.com/mystock/blogV1.png',
     projectUrl: 'https://derickcurtis.com/',
     githubUrl: 'https://github.com/Derick80/blog_social_media',
@@ -364,7 +364,7 @@ const projects = [
     id: '297deb25-03d9-4982-a4fc-6c6ec7b280c3',
     title: 'Memory Game',
     description: 'A simple memory game built with React and Typescript',
-    projectImg:
+    projectImage:
       'https://remix-bucket.s3.us-east-2.amazonaws.com/mystock/memory.png',
     projectUrl: 'https://codesandbox.io/s/wow-memory-game-02b34',
     githubUrl: 'https://github.com/Derick80/mindgame',

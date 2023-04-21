@@ -10,14 +10,22 @@ import {
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
+import formatRFC7231 from 'date-fns/esm/formatRFC7231'
+import dayjs from 'dayjs'
 import React from 'react'
-import CommentBox from '~/components/comment-box'
-import { ListComments } from '~/components/comment-list'
+import CommentBox from '~/components/blog-ui/comments/comment-box'
+import FavoriteContainer from '~/components/favorite-container'
+import LikeContainer from '~/components/like-container'
 import Tags from '~/components/tags'
 import { getPosts } from '~/server/post.server'
 import type { Post } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
-
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { ChatBubbleIcon } from '@radix-ui/react-icons'
+import Button from '~/components/button'
+import { ShareButton } from '~/components/share-button'
+import { ListComments } from '~/components/blog-ui/comments/comment-list'
+dayjs.extend(relativeTime)
 export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
 
@@ -41,6 +49,8 @@ export default function BlogRoute() {
 }
 
 export function BlogPreview({ post }: { post: Post }) {
+  const fetcher = useFetcher()
+  const [open, setOpen] = React.useState(false)
   return (
     <div className='static flex w-full flex-col gap-2 border-2'>
       {/* Card header */}
@@ -58,9 +68,27 @@ export function BlogPreview({ post }: { post: Post }) {
 
       <Tags categories={post.categories} />
       {/* card footer */}
-      <div className='flex flex-row gap-2 border-2 border-green-500'>
-        <p>{post.user.username}</p>
-        <p>{post.likes.length}</p>
+      <div className='flex flex-row items-center gap-2 border-2 border-green-500 p-1'>
+        <LikeContainer
+          postId={post.id}
+          likeCounts={post.likes.length}
+          likes={post.likes}
+        />
+        <FavoriteContainer favorites={post.favorites} postId={post.id} />
+        <Button
+          variant='ghost'
+          size='tiny'
+          onClick={() => {
+            fetcher.load(`/blog/${post.id}/comment`)
+            setOpen((prev) => !prev)
+          }}
+        >
+          <ChatBubbleIcon />
+          <p className='sub'>{post.comments.length}</p>
+        </Button>
+        <ShareButton id={post.id} />
+        <div className='flex flex-grow' />
+        <p>{dayjs(post.createdAt).fromNow()}</p>
       </div>
       {/* card actions */}
       <div className='flex flex-row gap-2 border-2 border-yellow-500'>
@@ -68,7 +96,10 @@ export function BlogPreview({ post }: { post: Post }) {
       </div>
       <Divider />
       <CommentBox postId={post.id} />
-      <ListComments comments={post.comments} />
+
+      {open && fetcher.data && (
+        <ListComments comments={(fetcher.data as any).comments} />
+      )}
     </div>
   )
 }

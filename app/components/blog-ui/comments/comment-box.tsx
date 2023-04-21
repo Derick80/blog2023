@@ -1,5 +1,6 @@
-import { Post } from '@prisma/client'
+import type { Post } from '@prisma/client'
 import { useFetcher } from '@remix-run/react'
+import Button from '~/components/button'
 import { useOptionalUser } from '~/utilities'
 
 export default function CommentBox({
@@ -17,23 +18,27 @@ export default function CommentBox({
     <div className='flex flex-col gap-2'>
       {user && (
         <commentFetcher.Form
-          className='flex flex-col gap-2 text-black'
-          reloadDocument={true}
+          className='flex flex-col gap-2'
           action={`/blog/${postId}/comment`}
           method='POST'
         >
           <input type='hidden' name='postId' value={postId} />
           {parentId && <input type='hidden' name='parentId' value={parentId} />}
 
-          <label htmlFor='message'>Comment</label>
+          <label
+            className='text-sm font-medium text-gray-700 dark:text-slate-50'
+            htmlFor='message'
+          >
+            Comment
+          </label>
           <textarea
             id='message'
             name='message'
-            className='text-slate12 block w-full rounded-xl border-2 p-2 text-sm'
+            className='block w-full rounded-xl border-2 p-2 text-sm text-black'
           />
-          <button type='submit'>
+          <Button variant='primary_filled' size='small' type='submit'>
             {parentId ? 'Post reply' : 'Post a comment'}
-          </button>
+          </Button>
         </commentFetcher.Form>
       )}
     </div>
