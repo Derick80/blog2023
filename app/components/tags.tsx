@@ -1,5 +1,5 @@
 import { NavLink } from '@remix-run/react'
-import { Post } from '~/server/schemas/post-schema'
+import { Post } from '~/server/schemas/schemas'
 
 export default function Tags({
   categories

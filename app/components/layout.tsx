@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Affix>
         </div>
       </div>
-      <footer className='flex flex-row items-center justify-center gap-2 p-2'>
+      {/* <footer className='flex flex-row items-center justify-center gap-2 p-2'>
         <Link
           to='https://www.linkedin.com/in/dhoskinson/'
           referrerPolicy='no-referrer'
@@ -58,7 +58,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         >
           <GitHubLogoIcon />
         </Link>
-      </footer>
+      </footer> */}
     </div>
   )
 }

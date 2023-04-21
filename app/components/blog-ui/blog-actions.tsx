@@ -1,4 +1,4 @@
-import type { Post } from '~/server/schemas/post-schema'
+import type { Post } from '~/server/schemas/schemas'
 import Button from '../button'
 import { Form, Link } from '@remix-run/react'
 

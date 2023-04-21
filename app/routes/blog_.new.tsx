@@ -24,7 +24,7 @@ import {
   setSuccessMessage
 } from '~/server/auth/session.server'
 import { createPost } from '~/server/post.server'
-import type { Category } from '~/server/schemas/post-schema'
+import type { Category } from '~/server/schemas/schemas'
 import { validateAction } from '~/utilities'
 export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'))

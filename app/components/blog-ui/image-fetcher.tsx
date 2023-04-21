@@ -39,11 +39,13 @@ export default function ImageUploader({ setUrl }: any) {
             name='imageUrl'
             onChange={setUrl(fetcher?.data.imageUrl)}
           />
-          <img
-            src={fetcher?.data?.imageUrl}
-            alt={'no'}
-            className='h-full w-full object-cover'
-          />
+          {fetcher.data.imageUrl && (
+            <img
+              src={fetcher?.data?.imageUrl}
+              alt={'no'}
+              className='h-full w-full object-cover'
+            />
+          )}
         </div>
       ) : null}
     </>

@@ -1,5 +1,5 @@
 import { prisma } from './auth/prisma.server'
-import type { CategoryForm } from './schemas/post-schema'
+import type { CategoryForm } from './schemas/schemas'
 
 export type PostInput = {
   title: string
@@ -39,4 +39,32 @@ export async function createPost(data: PostInput) {
     }
   })
   return post
+}
+
+export async function getPosts() {
+  const posts = await prisma.post.findMany({
+    where: {
+      published: true
+    },
+    include: {
+      user: true,
+      likes: true,
+      favorites: true,
+      categories: true,
+      comments: {
+        include: {
+          user: true,
+          children: {
+            include: {
+              user: true
+            }
+          }
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
+  return posts
 }

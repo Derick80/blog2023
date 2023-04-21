@@ -53,7 +53,6 @@ export async function loader({ request }: LoaderArgs) {
 export default function App() {
   const data = useLoaderData<typeof loader>()
   const { toastMessage, user } = data
-  console.log(user, 'user')
 
   React.useEffect(() => {
     if (!toastMessage) {

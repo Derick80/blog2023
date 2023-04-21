@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { prisma } from '~/server/auth/prisma.server'
 import { useLoaderData } from '@remix-run/react'
 import { BlogPreview } from './blog'
-import type { Post } from '~/server/schemas/post-schema'
+import type { Post } from '~/server/schemas/schemas'
 import { Card, Group, Image, Text } from '@mantine/core'
 import Tags from '~/components/tags'
 export async function loader({ request, params }: LoaderArgs) {

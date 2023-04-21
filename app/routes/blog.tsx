@@ -1,27 +1,25 @@
+import { Divider } from '@mantine/core'
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Form, Link, Outlet, useLoaderData } from '@remix-run/react'
+import {
+  Form,
+  Link,
+  Outlet,
+  isRouteErrorResponse,
+  useFetcher,
+  useLoaderData,
+  useRouteError
+} from '@remix-run/react'
 import React from 'react'
+import CommentBox from '~/components/comment-box'
+import { ListComments } from '~/components/comment-list'
 import Tags from '~/components/tags'
-import { prisma } from '~/server/auth/prisma.server'
-import type { Post } from '~/server/schemas/post-schema'
+import { getPosts } from '~/server/post.server'
+import type { Post } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
-// remember to change published to false
+
 export async function loader({ request }: LoaderArgs) {
-  const posts = await prisma.post.findMany({
-    where: {
-      published: true
-    },
-    include: {
-      user: true,
-      likes: true,
-      favorites: true,
-      categories: true
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
+  const posts = await getPosts()
 
   return json({ posts })
 }
@@ -51,7 +49,9 @@ export function BlogPreview({ post }: { post: Post }) {
       </div>
       {/* card content and image */}
       <div className='flex flex-row gap-2 border-2 border-red-500'>
-        <img src={post.imageUrl} alt={post.title} className='w-1/2' />
+        {post.imageUrl && (
+          <img src={post.imageUrl} alt={post.title} className='w-1/2' />
+        )}
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
       {/* tags container */}
@@ -66,6 +66,9 @@ export function BlogPreview({ post }: { post: Post }) {
       <div className='flex flex-row gap-2 border-2 border-yellow-500'>
         <Actions postId={post.id} userId={post.user.id} />
       </div>
+      <Divider />
+      <CommentBox postId={post.id} />
+      <ListComments comments={post.comments} />
     </div>
   )
 }
@@ -89,6 +92,32 @@ function Actions({
           </Form>
         </>
       )}
+    </div>
+  )
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>oops</h1>
+        <h1>Status:{error.status}</h1>
+        <p>{error.data.message}</p>
+      </div>
+    )
+  }
+  let errorMessage = 'unknown error'
+  if (error instanceof Error) {
+    errorMessage = error.message
+  } else if (typeof error === 'string') {
+    errorMessage = error
+  }
+  return (
+    <div>
+      <h1 className='text-2xl font-bold'>uh Oh..</h1>
+      <p className='text-xl'>something went wrong</p>
+      <pre>{errorMessage}</pre>
     </div>
   )
 }
