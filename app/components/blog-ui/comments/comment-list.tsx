@@ -25,7 +25,7 @@ export default function CommentContainer({ postId }: { postId: string }) {
   const matches = useMatchesData('routes/blog')
   const comments = matches?.comments as CommentWithChildren[]
 
-  function filterComments(comments: any, postId: string) {
+  function filterComments(comments: CommentWithChildren[], postId: string) {
     return comments.filter(
       (comment: { postId: string }) => comment.postId === postId
     )
@@ -55,8 +55,6 @@ function SiblingComments({ commentId }: { commentId: string }) {
     }
   }, [])
 
-  console.log(sibFetcher?.data?.comments, 'sibFetcher.data')
-
   return (
     <>
       <div className='ml-5'>
@@ -77,11 +75,13 @@ function SiblingComments({ commentId }: { commentId: string }) {
 }
 //  This is the comment component that holds the comment and the reply button
 function Comment({
-  comments
+  comments,
+  children
 }: {
   comments: CommentWithChildren & {
     children?: CommentWithChildren[]
   }
+  children?: CommentWithChildren[]
 }) {
   const [open, setOpen] = React.useState(false)
   const [isReplying, setIsReplying] = React.useState(false)

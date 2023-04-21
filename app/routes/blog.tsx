@@ -6,7 +6,6 @@ import {
   Link,
   Outlet,
   isRouteErrorResponse,
-  useFetcher,
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
@@ -24,6 +23,7 @@ import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import Button from '~/components/button'
 import { ShareButton } from '~/components/share-button'
 import CommentContainer from '~/components/blog-ui/comments/comment-list'
+import { ColBox } from '~/components/boxes'
 dayjs.extend(relativeTime)
 export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
@@ -34,39 +34,36 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function BlogRoute() {
-  const { posts, comments } = useLoaderData<typeof loader>()
+  const { posts } = useLoaderData<typeof loader>()
 
   return (
-    <div className='h- flex w-full flex-col items-center gap-4 border-2'>
+    <div className='h- flex w-full flex-col items-center gap-2'>
       <h1 className='text-4xl font-semibold'>Blog</h1>
       <Outlet />
-      <div>
-        {posts.map((post) => (
-          <BlogPreview key={post.id} post={post} comments={post.comments} />
-        ))}
-      </div>
+      {posts.map((post) => (
+        <BlogPreview key={post.id} post={post} comments={post.comments} />
+      ))}
     </div>
   )
 }
 
 export function BlogPreview({
-  post,
-  comments
+  post
 }: {
   post: Post
   comments: CommentWithChildren[]
 }) {
-  const [open, setOpen] = React.useState(true)
+  const [open, setOpen] = React.useState(false)
   return (
-    <div className='static flex w-full flex-col gap-2 border-2'>
+    <div className='static flex w-full flex-col gap-2 rounded-md border-2'>
       {/* Card header */}
-      <div className='flex flex-row items-center gap-2'>
-        <h1 className='text-4xl font-semibold'>{post.title}</h1>
+      <div className='gap- flex flex-row items-center'>
+        <h1 className='text-xl font-semibold'>{post.title}</h1>
       </div>
       {/* card content and image */}
       <div className='flex flex-row gap-2 border-2 border-red-500'>
         {post.imageUrl && (
-          <img src={post.imageUrl} alt={post.title} className='w-1/2' />
+          <img src={post.imageUrl} alt={post.title} className='prose w-1/2' />
         )}
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
@@ -99,8 +96,10 @@ export function BlogPreview({
         <Actions postId={post.id} userId={post.user.id} />
       </div>
       <Divider />
-      <CommentBox postId={post.id} />
-      {open && <CommentContainer postId={post.id} />}
+      <ColBox className='px-1'>
+        <CommentBox postId={post.id} />
+        {open && <CommentContainer postId={post.id} />}
+      </ColBox>
     </div>
   )
 }

@@ -4,13 +4,13 @@ export const education = [
     degree: 'Genetics PhD',
     location: 'Boston, MA',
     startDate: '2006',
-    endDate: '2014',
+    endDate: '2014'
   },
   {
     institution: 'University of Massachusetts Boston',
     degree: 'Bachelors of Science in Biology',
     location: 'Boston, MA',
     startDate: '2002',
-    endDate: '2006',
+    endDate: '2006'
   }
 ]

@@ -3,11 +3,10 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
 import { prisma } from '~/server/auth/prisma.server'
-import { useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
+
 export async function loader({ request, params }: LoaderArgs) {
   const { commentId } = zx.parseParams(params, { commentId: z.string() })
-  console.log(commentId, 'commentId')
 
   const comments = await prisma.comment.findMany({
     where: {
@@ -18,7 +17,6 @@ export async function loader({ request, params }: LoaderArgs) {
       user: true
     }
   })
-  console.log(comments, 'comments')
 
   return json({ comments })
 }
