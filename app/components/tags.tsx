@@ -7,11 +7,11 @@ export default function Tags({
   categories: Post['categories']
 }) {
   return (
-    <div className='flex flex-row gap-1 p-1'>
+    <div className='mx-auto flex flex-row gap-1'>
       {categories.map((category) => (
         <NavLink
           to={`/blog/${category.value}`}
-          className='rounded-md border-2 p-1 text-xs'
+          className='rounded-md border-2 bg-slate-900 p-1 text-xs text-slate-50 dark:bg-slate-50 dark:text-black'
           key={category.id}
         >
           {category.value}

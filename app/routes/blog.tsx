@@ -34,24 +34,32 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function BlogRoute() {
-  const { posts } = useLoaderData<typeof loader>()
+  const data = useLoaderData<typeof loader>()
 
   return (
     <div className='h- flex w-full flex-col items-center gap-2'>
       <h1 className='text-4xl font-semibold'>Blog</h1>
-      <Outlet />
-      {posts.map((post) => (
-        <BlogPreview key={post.id} post={post} comments={post.comments} />
+      {/* <Outlet /> */}
+      {data.posts.map((post) => (
+        <BlogPreview key={post.id} post={post}  />
       ))}
     </div>
   )
+}
+
+export type BlogPreviewProps = {
+  post: Post
+  comments: CommentWithChildren[]
+}
+
+export type BlogPreviewPropstwo = {
+  post: Post
 }
 
 export function BlogPreview({
   post
 }: {
   post: Post
-  comments: CommentWithChildren[]
 }) {
   const [open, setOpen] = React.useState(false)
   return (
@@ -61,22 +69,27 @@ export function BlogPreview({
         <h1 className='text-xl font-semibold'>{post.title}</h1>
       </div>
       {/* card content and image */}
-      <div className='flex flex-row gap-2 border-2 border-red-500'>
+      <div className='flex flex-row gap-2'>
         {post.imageUrl && (
           <img src={post.imageUrl} alt={post.title} className='prose w-1/2' />
         )}
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
       {/* tags container */}
-      <Tags categories={post.categories} />
+      <div className='flex flex-row flex-wrap'>
+        <Tags categories={post.categories} />
+      </div>
       {/* card footer */}
       <div className='flex flex-row items-center gap-2 border-2 border-green-500 p-1'>
-        <LikeContainer
-          postId={post.id}
-          likeCounts={post.likes.length}
-          likes={post.likes}
-        />
-        <FavoriteContainer favorites={post.favorites} postId={post.id} />
+        {post.likes && post.favorites && (
+          <><LikeContainer
+            postId={post.id}
+            likeCounts={post.likes.length}
+            likes={post.likes} /><FavoriteContainer favorites={post.favorites} postId={post.id} /></>
+        )
+          
+        
+        }
         <Button
           variant='ghost'
           size='tiny'
@@ -85,7 +98,7 @@ export function BlogPreview({
           }}
         >
           <ChatBubbleIcon />
-          <p className='sub'>{post.comments.length}</p>
+          {post.comments && <p className='sub'>{post.comments.length}</p>}{' '}
         </Button>
         <ShareButton id={post.id} />
         <div className='flex flex-grow' />

@@ -1,5 +1,5 @@
 import { LoaderArgs, json, redirect } from '@remix-run/node'
-import { useLoaderData, Outlet } from '@remix-run/react'
+import { useLoaderData, Outlet, Link } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/auth/prisma.server'
@@ -30,9 +30,26 @@ export async function loader({ request }: LoaderArgs) {
       }
     },
     select: {
-      id: true
+      id: true,
+      users: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+          email: true
+        }
+      },
+      messages: {
+        select: {
+          id: true,
+          content: true,
+          userId: true
+        }
+      }
     }
   })
+  const users = chats.map((user) => user.users)
+  console.log(users, 'users')
 
   return json({ chats })
 }
@@ -44,9 +61,13 @@ export default function ChatsRoute() {
       <h1>Chats</h1>
       {data.chats.map((chat) => (
         <div key={chat.id}>
-          {/* <Outlet
-                        context={`/chats/${chat.id}`}
-                     /> */}
+          {chat.users.map((user) => (
+            <Link key={user.id} to={`/users/${user.id}`}>
+              {user.username}
+            </Link>
+          ))}
+
+          <Outlet context={`/chats/${chat.id}`} />
         </div>
       ))}
       <hr />

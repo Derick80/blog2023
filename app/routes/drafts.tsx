@@ -6,6 +6,7 @@ import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
 import { Card, Group, Image, Text } from '@mantine/core'
 import Tags from '~/components/tags'
+import { BlogPreview } from './blog'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -37,15 +38,15 @@ export default function DraftsRoute() {
   return (
     <div className='flex flex-col gap-2'>
       {drafts.map((draft: Post) => (
-        // <BlogPreview key={draft.id} post={draft} />
-        <Card key={draft.id} shadow='sm' padding='md' radius='md' withBorder>
+        <><BlogPreview key={draft.id} post={draft}
+          comments={draft.comments}
+        /><Card key={draft.id} shadow='sm' padding='md' radius='md' withBorder>
           <Card.Section>
             <Image
               fit='cover'
               src={draft.imageUrl}
               alt={draft.title}
-              height={160}
-            />
+              height={160} />
           </Card.Section>
           <Group position='apart' mt='md' mb='xs'>
             <Text weight={500}>{draft.title}</Text>
@@ -62,7 +63,7 @@ export default function DraftsRoute() {
               {draft.updatedAt}
             </Text>
           </Group>
-        </Card>
+        </Card></>
       ))}
     </div>
   )

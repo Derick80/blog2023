@@ -2,13 +2,17 @@ import type { V2_MetaFunction } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: 'New Remix App' }]
+  return [{ title: 'New Remix App' },
+    { name: 'description', content: 'A new Remix app' }
+    ,
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+  ]
 }
 
 export default function Index() {
   const user = useOptionalUser()
   return (
-    <div className='flex h-screen flex-col items-center border-2'>
+    <div className='flex h-screen flex-col items-center'>
       <h1>Welcome to Remix</h1>
       <ul>
         {user && (

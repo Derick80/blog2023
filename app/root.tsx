@@ -34,7 +34,7 @@ export async function loader({ request }: LoaderArgs) {
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
   if (!toastMessage) {
-    return json({ toastMessage: null, user, session, categories })
+    return json({ toastMessage: null, user, categories })
   }
 
   if (!toastMessage.type) {
@@ -42,7 +42,7 @@ export async function loader({ request }: LoaderArgs) {
   }
 
   return json(
-    { toastMessage, user, session, categories },
+    { toastMessage, user, categories },
     {
       headers: {
         'Set-Cookie': await commitSession(session)

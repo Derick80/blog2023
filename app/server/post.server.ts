@@ -41,6 +41,38 @@ export async function createPost(data: PostInput) {
   return post
 }
 
+export async function updatePost(data: PostInput & { postId: string }) {
+  const post = await prisma.post.update({
+    where: {
+      id: data.postId
+    },
+    data: {
+      title: data.title,
+      slug: data.slug,
+      description: data.description,
+      content: data.content,
+      imageUrl: data.imageUrl,
+      featured: data.featured,
+      user: {
+        connect: {
+          id: data.userId
+        }
+      },
+      categories: {
+        connectOrCreate: data.categories.map((category) => ({
+          where: {
+            value: category.value
+          },
+          create: {
+            value: category.value,
+            label: category.value
+          }
+        }))
+      }
+    }
+  })
+  return post
+}
 export async function getPosts() {
   const posts = await prisma.post.findMany({
     where: {

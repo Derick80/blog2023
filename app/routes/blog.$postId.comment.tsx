@@ -10,7 +10,6 @@ import {
   getSession,
   setErrorMessage
 } from '~/server/auth/session.server'
-import formatComments from '~/components/blog-ui/comments/format-comments'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })

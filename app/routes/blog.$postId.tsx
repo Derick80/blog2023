@@ -1,42 +1,44 @@
 import { LoaderArgs, json } from '@remix-run/node'
 import {
+  Outlet,
   isRouteErrorResponse,
   useLoaderData,
-  useRouteError
+  useMatches,
+  useParams,
+  useRouteError,
+  useRouteLoaderData
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { prisma } from '~/server/auth/prisma.server'
+import { Category, Post } from '~/server/schemas/schemas'
+import { useMatchesData } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
-  const post = await prisma.post.findUnique({
-    where: {
-      id: postId
-    },
-    include: {
-      user: true,
-      likes: true,
-      favorites: true,
-      categories: true
-    }
-  })
 
-  return json({ post })
+  return json({})
 }
 
-export default function BlogRoute() {
+export default function BlogPostRoute() {
   const data = useLoaderData<typeof loader>()
+  const params = useParams()
+
+  const matches = useRouteLoaderData('routes/blog') as {
+    posts: Post[]
+  }
+
+  const match = matches?.posts.find(
+    (match) => match.id === params.postId
+  ) as Post
+  console.log(match, 'match')
+
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto border-2'>
       <h1>Blog</h1>
-      <summary>
-        <details>
-          <pre className='flex w-full flex-col flex-wrap items-center justify-center border-2'>
-            <code>{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        </details>
-      </summary>
+      <div className='flex flex-col items-center gap-4'>
+        <h1 className='text-4xl font-semibold'>{match.title}</h1>
+      </div>
     </div>
   )
 }
