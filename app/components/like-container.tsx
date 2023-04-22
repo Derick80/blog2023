@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core'
+import { Text, Tooltip } from '@mantine/core'
 import {
   ActivityLogIcon,
   HeartFilledIcon,
@@ -53,30 +53,29 @@ export default function LikeContainer({
   return (
     <>
       {currentUser ? (
-        <button className='text-blue-500' onClick={toggleLike}>
+        <button className='' onClick={toggleLike}>
           {isLiked ? (
-            <div className='flex flex-row space-x-1'>
+            <div className='flex flex-row items-center gap-1'>
               <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
-              <p className='space-x-1 text-xs'>{likeCount}</p>
+              <p className='text-[15px]'>{likeCount}</p>
             </div>
           ) : (
-            <div className='flex flex-row space-x-1'>
+            <div className='flex flex-row items-center gap-1'>
               <HeartIcon />
-              <p className='space-x-1 text-xs'>{likeCount}</p>
+              <p className='text-[15px]'>{likeCount}</p>
             </div>
           )}
         </button>
       ) : (
         <>
-          <Text>
-            <Text>Liked by: {likeCount}</Text>
-          </Text>
-          <NavLink
-            to='/login'
-            style={{ textDecoration: 'none', color: 'currentcolor' }}
+          <Tooltip
+            label='You must be logged in to like this post'
+            position='top'
+            withArrow
+            arrowSize={8}
           >
-            <ActivityLogIcon />
-          </NavLink>
+            <HeartIcon />
+          </Tooltip>
         </>
       )}
     </>

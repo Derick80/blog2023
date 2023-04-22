@@ -12,15 +12,8 @@ import { z } from 'zod'
 import { useMatchesData, validateAction } from '~/utilities'
 import { prisma } from '~/server/auth/prisma.server'
 import { updatePost } from '~/server/post.server'
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useMatches,
-  useParams,
-  useRouteLoaderData
-} from '@remix-run/react'
-import { Category, Post } from '~/server/schemas/schemas'
+import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
 import TipTap from '~/components/tip-tap'
 import { MultiSelect, Switch } from '@mantine/core'
@@ -129,21 +122,17 @@ export default function PostEdit() {
   const [selected, setSelected] = React.useState<string[]>(
     data.post.categories.map((category) => category.value)
   )
-  
-  const [url, setUrl] = React.useState(data.post.imageUrl || '')
- 
 
+  const [url, setUrl] = React.useState(data.post.imageUrl || '')
 
   return (
     <div className=''>
-      <Form
-        id='post-edit'
-        className='flex w-full flex-col' method='POST'>
+      <Form id='post-edit' className='flex w-full flex-col' method='POST'>
         <label htmlFor='title'>Title</label>
         <input
           type='text'
           name='title'
-          className='text-black rounded-md border text-sm'
+          className='rounded-md border text-sm text-black'
           defaultValue={data.post.title}
           aria-invalid={Boolean(actionData?.errors?.title) || undefined}
           aria-errormessage={
@@ -159,7 +148,7 @@ export default function PostEdit() {
         <input
           type='text'
           name='description'
-          className='text-black rounded-md border text-sm'
+          className='rounded-md border text-sm text-black'
           defaultValue={data.post.description}
           aria-invalid={Boolean(actionData?.errors?.description) || undefined}
           aria-errormessage={
@@ -182,20 +171,16 @@ export default function PostEdit() {
         )}
 
         <label htmlFor='categories'>Categories</label>
-        <div className='p-1 w-fit'>
+        <div className='w-fit p-1'>
           <MultiSelect
             name='categories'
-            shadow='xl' data={categories} 
+            shadow='xl'
+            data={categories}
             value={selected.map((category) => {
               return category.valueOf()
-
-            }
-            )}
+            })}
             onChange={setSelected}
           />
-
-            
-          
         </div>
 
         <div className='text-slate12 mb-5 mt-5 flex flex-row items-center justify-end gap-2'>

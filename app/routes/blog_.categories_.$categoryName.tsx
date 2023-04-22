@@ -2,7 +2,9 @@ import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/server/auth/prisma.server'
-import { BlogPreview } from './blog'
+import BlogCard from '~/components/blog-ui/blog-card'
+import CommentBox from '~/components/blog-ui/comments/comment-box'
+import { useMatchesData } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { categoryName } = params
@@ -22,7 +24,17 @@ export async function loader({ request, params }: LoaderArgs) {
       user: true,
       likes: true,
       favorites: true,
-      categories: true
+      categories: true,
+      comments: {
+        include: {
+          user: true,
+          children: {
+            include: {
+              user: true
+            }
+          }
+        }
+      }
     }
   })
 
@@ -31,11 +43,17 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export default function BlogRoute() {
   const { posts } = useLoaderData<typeof loader>()
+  console.log(posts.length, 'posts')
+
+  const parentData = useMatchesData('/blog')
+  console.log(parentData, 'parentData')
 
   return (
     <div className='flex h-screen w-full flex-col items-center gap-4 border-2'>
       {posts.map((post) => (
-        <BlogPreview key={post.id} post={post} />
+        <BlogCard key={post.id} post={post}>
+          <CommentBox postId={post.id} />
+        </BlogCard>
       ))}
     </div>
   )

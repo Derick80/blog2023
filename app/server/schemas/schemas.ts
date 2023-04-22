@@ -8,7 +8,21 @@ import type { Comment as PrismaComment } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
 import type { Category as PrismaCategory } from '@prisma/client'
 
-export type User = SerializeFrom<Omit<PrismaUser, 'password'>>
+export type User = Omit<PrismaUser, 'password' | 'createdAt' | 'updatedAt'>
+
+export type UserType = User & {
+  _count: {
+    favorites: number
+    accounts: number
+    tokens: number
+    posts: number
+    comments: number
+    likes: number
+    projects: number
+    books: number
+    messages: number
+  }
+}
 
 export type Like = SerializeFrom<PrismaLike>
 export type Favorite = SerializeFrom<PrismaFavorite>
@@ -27,6 +41,11 @@ export type Post = SerializeFrom<PrismaPost> & {
   favorites: Like[]
   categories: Category[]
   comments: CommentWithChildren[]
+  _count?: {
+    likes: number
+    favorites: number
+    comments: number
+  }
 }
 
 export type CategoryForm = {

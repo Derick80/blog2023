@@ -39,7 +39,8 @@ export async function loader({ request, params }: LoaderArgs) {
                   id: true,
                   email: true,
                   username: true,
-                  avatarUrl: true
+                  avatarUrl: true,
+                  chats: true
                 }
               }
             }
@@ -103,13 +104,15 @@ export async function action({ request, params }: ActionArgs) {
     }
   }
 }
-type LoaderData = Partial<User> & { user: Partial<User> } & {
-  chats: Chat[] & { users: User[]; chats: Chat[] }[]
-}
 
 export default function UserRoute() {
-  const data = useLoaderData<LoaderData>()
-  console.log(data, 'chat')
+  const data = useLoaderData<{
+    user: User & {
+      chats: (Chat & {
+        users: User
+      })[]
+    }
+  }>()
 
   const loggedInUser = useOptionalUser()
   const isOwnProfile = loggedInUser?.id === data?.user?.id
@@ -126,7 +129,6 @@ export default function UserRoute() {
           )
       )
     : null
-  console.log({ oneOnOneChat })
 
   return (
     <div>
@@ -137,7 +139,7 @@ export default function UserRoute() {
           <RowBox>
             <img
               className='h-10 w-10 rounded-full'
-              src={data.user.avatarUrl}
+              src={data.user.avatarUrl || ''}
               alt='avatar'
             />
             <h3 className='text-xl font-bold'>{data.user.username}</h3>

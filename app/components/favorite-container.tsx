@@ -1,10 +1,15 @@
-import { Button } from '@mantine/core'
-import { BookmarkFilledIcon, BookmarkIcon } from '@radix-ui/react-icons'
-import type { FormMethod } from '@remix-run/react'
+import {
+  ActivityLogIcon,
+  BookmarkFilledIcon,
+  BookmarkIcon
+} from '@radix-ui/react-icons'
+import { FormMethod, NavLink } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import { Favorite } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
+import Button from './button'
+import { Tooltip } from '@mantine/core'
 
 export type FavoriteContainerProps = {
   postId: string
@@ -43,13 +48,29 @@ export default function FavoriteContainer({
 
   return (
     <>
-      <button className='text-blue-500' onClick={toggleFavorite}>
-        {isFavorite ? (
-          <BookmarkFilledIcon style={{ color: 'red', fill: 'red' }} />
-        ) : (
+      {currentUser ? (
+        <Button
+          variant='ghost'
+          size='tiny'
+          className=''
+          onClick={toggleFavorite}
+        >
+          {isFavorite ? (
+            <BookmarkFilledIcon style={{ color: 'red', fill: 'red' }} />
+          ) : (
+            <BookmarkIcon />
+          )}
+        </Button>
+      ) : (
+        <Tooltip
+          label='Login to favorite'
+          position='top'
+          withArrow
+          arrowSize={8}
+        >
           <BookmarkIcon />
-        )}
-      </button>
+        </Tooltip>
+      )}
     </>
   )
 }

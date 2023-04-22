@@ -4,9 +4,9 @@ import { json, redirect } from '@remix-run/node'
 import { prisma } from '~/server/auth/prisma.server'
 import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
-import { Card, Group, Image, Text } from '@mantine/core'
-import Tags from '~/components/tags'
 import { BlogPreview } from './blog'
+import CommentBox from '~/components/blog-ui/comments/comment-box'
+import BlogCard from '~/components/blog-ui/blog-card'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -21,7 +21,10 @@ export async function loader({ request, params }: LoaderArgs) {
       user: true,
       likes: true,
       favorites: true,
-      categories: true
+      categories: true,
+      _count: {
+        select: { likes: true, favorites: true, comments: true }
+      }
     }
   })
   if (!drafts) {
@@ -38,32 +41,12 @@ export default function DraftsRoute() {
   return (
     <div className='flex flex-col gap-2'>
       {drafts.map((draft: Post) => (
-        <><BlogPreview key={draft.id} post={draft}
-          comments={draft.comments}
-        /><Card key={draft.id} shadow='sm' padding='md' radius='md' withBorder>
-          <Card.Section>
-            <Image
-              fit='cover'
-              src={draft.imageUrl}
-              alt={draft.title}
-              height={160} />
-          </Card.Section>
-          <Group position='apart' mt='md' mb='xs'>
-            <Text weight={500}>{draft.title}</Text>
-            <Tags categories={draft.categories} />
-          </Group>
-          <Text size='sm' color='dimmed'>
-            {draft.content}
-          </Text>
-          <Group position='apart' mt='md' mb='xs'>
-            <Text size='sm' color='dimmed'>
-              {draft.createdAt}
-            </Text>
-            <Text size='sm' color='dimmed'>
-              {draft.updatedAt}
-            </Text>
-          </Group>
-        </Card></>
+        <>
+          <BlogPreview key={draft.id} post={draft} />
+          <BlogCard post={draft}>
+            <CommentBox postId={draft.id} />
+          </BlogCard>
+        </>
       ))}
     </div>
   )

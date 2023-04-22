@@ -1,4 +1,4 @@
-import { ActionArgs, LoaderArgs, redirect } from '@remix-run/node'
+import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { z } from 'zod'

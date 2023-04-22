@@ -1,4 +1,5 @@
-import { ActionArgs, redirect } from '@remix-run/node'
+import type { ActionArgs } from '@remix-run/node'
+import { redirect } from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/auth/prisma.server'

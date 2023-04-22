@@ -14,7 +14,7 @@ import {
 import { Category } from '~/server/schemas/schemas'
 import { useMatchesData } from '~/utilities'
 export async function loader({ request, params }: LoaderArgs) {
-    // I don't have to return the categories data because I can useMatchesdata to get it from already existing spot in root on the client
+  // I don't have to return the categories data because I can useMatchesdata to get it from already existing spot in root on the client
   const categoryId = zx.parseParams(params, {
     categoryId: z.string()
   }).categoryId

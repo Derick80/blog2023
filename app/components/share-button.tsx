@@ -8,7 +8,7 @@ import {
   Share1Icon,
   TwitterLogoIcon
 } from '@radix-ui/react-icons'
-import { Button, Flex, Popover } from '@mantine/core'
+import { Flex, Popover } from '@mantine/core'
 import toast from 'react-hot-toast'
 
 type Props = {
@@ -36,7 +36,7 @@ export const ShareButton = ({ id }: Props) => {
       <Popover width={300} position='top' withArrow>
         <Popover.Target>
           <button
-            className='text-blue-500'
+            className=''
             onClick={() => {
               if (navigator.share) {
                 navigator.share({

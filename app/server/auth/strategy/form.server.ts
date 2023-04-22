@@ -32,7 +32,7 @@ export const loginStrategy = new FormStrategy(async ({ form }) => {
     !passwordHash ||
     (passwordHash && !(await bcrypt.compare(password, passwordHash)))
   ) {
-    throw new Error('Invalid email or password')
+    throw new Error('Invalid email or password uuugh')
   }
   return user.id
 })

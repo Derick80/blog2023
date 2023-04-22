@@ -1,5 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
-import { isAuthenticated } from '~/server/auth/auth.server'
+import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
 import { prisma } from '~/server/auth/prisma.server'

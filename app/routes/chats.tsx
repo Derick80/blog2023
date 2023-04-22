@@ -1,6 +1,6 @@
-import { LoaderArgs, json, redirect } from '@remix-run/node'
+import type { LoaderArgs } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Outlet, Link } from '@remix-run/react'
-import invariant from 'tiny-invariant'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/auth/prisma.server'
 import {

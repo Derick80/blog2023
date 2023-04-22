@@ -1,7 +1,7 @@
 import { useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
-import type { UserType } from './user-schema'
+import type { UserType } from './server/schemas/schemas'
 
 const DEFAULT_REDIRECT = '/'
 

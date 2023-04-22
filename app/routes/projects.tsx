@@ -1,16 +1,11 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { json, redirect } from '@remix-run/node'
-import { Card, Image, SimpleGrid } from '@mantine/core'
+import { json } from '@remix-run/node'
+import { Card, SimpleGrid } from '@mantine/core'
 import { projects } from '~/resources/projects'
 import { RowBox } from '~/components/boxes'
 import { Link } from '@remix-run/react'
-import Button from '~/components/button'
-import {
-  ExitIcon,
-  GitHubLogoIcon,
-  OpenInNewWindowIcon
-} from '@radix-ui/react-icons'
+import { GitHubLogoIcon, OpenInNewWindowIcon } from '@radix-ui/react-icons'
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)

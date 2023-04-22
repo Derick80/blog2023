@@ -1,18 +1,15 @@
-import { LoaderArgs, json } from '@remix-run/node'
+import type { LoaderArgs } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import {
-  Outlet,
   isRouteErrorResponse,
   useLoaderData,
-  useMatches,
   useParams,
   useRouteError,
   useRouteLoaderData
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import { prisma } from '~/server/auth/prisma.server'
-import { Category, Post } from '~/server/schemas/schemas'
-import { useMatchesData } from '~/utilities'
+import type { Post } from '~/server/schemas/schemas'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })

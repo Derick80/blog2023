@@ -2,9 +2,9 @@ import type { V2_MetaFunction } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: 'New Remix App' },
-    { name: 'description', content: 'A new Remix app' }
-    ,
+  return [
+    { title: 'New Remix App' },
+    { name: 'description', content: 'A new Remix app' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ]
 }

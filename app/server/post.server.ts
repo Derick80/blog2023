@@ -85,6 +85,7 @@ export async function getPosts() {
       categories: true,
       comments: {
         include: {
+          _count: true,
           user: {
             select: {
               id: true,

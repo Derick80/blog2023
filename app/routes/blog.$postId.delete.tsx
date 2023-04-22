@@ -1,9 +1,8 @@
 import type { ActionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import {
-  isAuthenticated,
-  setUserSessionAndCommit
-} from '~/server/auth/auth.server'
+import { z } from 'zod'
+import { zx } from 'zodix'
+import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/auth/prisma.server'
 import {
   commitSession,
@@ -13,6 +12,11 @@ import {
 } from '~/server/auth/session.server'
 
 export async function action({ request, params }: ActionArgs) {
+  const { postId } = zx.parseParams(params, { postId: z.string() })
+  if (!postId) {
+    throw new Error('Post id is required')
+  }
+
   const user = await isAuthenticated(request)
   const session = await getSession(request.headers.get('Cookie'))
 
@@ -23,10 +27,6 @@ export async function action({ request, params }: ActionArgs) {
         'Set-Cookie': await commitSession(session)
       }
     })
-  }
-  const postId = params.postId
-  if (typeof postId !== 'string') {
-    return new Response('Invalid postId', { status: 400 })
   }
 
   const post = await prisma.post.delete({
