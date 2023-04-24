@@ -19,6 +19,9 @@ import React from 'react'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import CommentContainer from './comments/comment-list'
 import { RowBox } from '../boxes'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export type Props = {
   post: Post
@@ -53,7 +56,7 @@ export default function BlogCard({ post, children }: Props) {
 
         <Group position='apart' mt='md' mb='xs'>
           <Text size='sm' color='dimmed'>
-            {post.likes.length > 0 && <>Liked by {post.likes.length} </>}
+            {post.likes.length > 0 && <>Liked by {post?.likes?.length} </>}
           </Text>
           <RowBox>
             <Text size='sm' color='dimmed'>
@@ -69,11 +72,13 @@ export default function BlogCard({ post, children }: Props) {
         </Group>
         <Group position='apart' mt='md' mb='xs'>
           <Group position='left' mt='xs' mb='xs'>
-            <LikeContainer
-              postId={post.id}
-              likes={post.likes}
-              likeCounts={post.likes.length}
-            />
+            {post.likes.length > 0 && (
+              <LikeContainer
+                postId={post.id}
+                likes={post.likes}
+                likeCounts={post?.likes?.length}
+              />
+            )}
             <FavoriteContainer postId={post.id} favorites={post.favorites} />
             <ShareButton id={post.id} />
           </Group>
@@ -86,7 +91,7 @@ export default function BlogCard({ post, children }: Props) {
               </Form>
             </VerticalMenu>
 
-            {post.comments.length > 0 && (
+            {post.comments && (
               <>
                 <RowBox>
                   <p className='sub'>{post.comments.length}</p>

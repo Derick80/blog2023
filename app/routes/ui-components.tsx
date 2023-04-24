@@ -3,7 +3,9 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
-import { PaperPlaneIcon } from '@radix-ui/react-icons'
+import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, PlusIcon } from '@radix-ui/react-icons'
+import React from 'react'
+import MenuBox from '~/components/site-menus'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -14,9 +16,11 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export default function ComponentsIndex() {
   return (
-    <div className='flex flex-col gap-1'>
+    <div className='flex flex-col justify-start gap-1'>
       <h1 className='text-2xl font-bold'>UI Components</h1>
-      <RowBox>
+      <RowBox
+        className=''
+      >
         <ColBox>
           <div className='flex flex-col items-start gap-2'>
             <ColBox className='items-start'>
@@ -255,8 +259,17 @@ export default function ComponentsIndex() {
             </ColBox>
           </div>
         </ColBox>
-        <ColBox className=''>Second column here</ColBox>
+        <ColBox className='justify-start'>
+          Second column here
+          <MenuBox
+            title='About'
+
+          >
+            </MenuBox>
+        </ColBox>
       </RowBox>
     </div>
   )
 }
+
+

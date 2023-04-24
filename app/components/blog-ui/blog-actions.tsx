@@ -6,7 +6,6 @@ export default function Actions({ postId }: { postId: Post['id'] }) {
   return (
     <div className='flex flex-row gap-2'>
       <Button variant='primary_filled' size='tiny'>
-        {' '}
         <Link to={`/blog/${postId}`}>View</Link>
       </Button>{' '}
       <Button variant='primary_filled' size='tiny'>

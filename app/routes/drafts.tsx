@@ -5,7 +5,6 @@ import { prisma } from '~/server/auth/prisma.server'
 import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
 import { BlogPreview } from './blog'
-import CommentBox from '~/components/blog-ui/comments/comment-box'
 import BlogCard from '~/components/blog-ui/blog-card'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
@@ -44,7 +43,7 @@ export default function DraftsRoute() {
         <>
           <BlogPreview key={draft.id} post={draft} />
           <BlogCard post={draft}>
-            <CommentBox postId={draft.id} />
+            {/* <CommentBox postId={draft.id} /> */}
           </BlogCard>
         </>
       ))}

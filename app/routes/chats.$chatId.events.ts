@@ -1,17 +1,21 @@
-import type { LoaderArgs } from '@remix-run/node'
+import { LoaderArgs, redirect } from '@remix-run/node'
 import { eventStream } from 'remix-utils'
-import invariant from 'tiny-invariant'
+import { z } from 'zod'
+import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { chatEmitter, EVENTS } from '~/server/auth/chat.server'
 import { prisma } from '~/server/auth/prisma.server'
 
 export async function loader({ request, params }: LoaderArgs) {
   const currentUser = await isAuthenticated(request)
-  invariant(currentUser, 'You must be logged in to access this page')
+
+  if (!currentUser) return redirect('/login')
+  const { chatId } = zx.parseParams(params, { chatId: z.string() })
+
   const userId = currentUser.id
   const hasAccess = await prisma.chat.findFirst({
     where: {
-      id: params.chatsId,
+      id: chatId,
       users: {
         some: {
           id: userId

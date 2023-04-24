@@ -49,7 +49,6 @@ export async function loader({ request }: LoaderArgs) {
     }
   })
   const users = chats.map((user) => user.users)
-  console.log(users, 'users')
 
   return json({ chats })
 }
@@ -61,17 +60,23 @@ export default function ChatsRoute() {
       <h1>Chats</h1>
       {data.chats.map((chat) => (
         <div key={chat.id}>
-          {chat.users.map((user) => (
-            <Link key={user.id} to={`/users/${user.id}`}>
-              {user.username}
-            </Link>
-          ))}
+          <Link to={`/chats/${chat.id}`}>
+            {chat.users.map((user) => (
+              <div key={user.id}>
+                <img
+                  src={user.avatarUrl ?? ''}
+                  alt={''}
+                  className='h-8 w-8 rounded-full'
+                />
+                <div>{user.username}</div>
+              </div>
+            ))}
+          </Link>
 
           <Outlet context={`/chats/${chat.id}`} />
         </div>
       ))}
       <hr />
-      <Outlet />
     </div>
   )
 }

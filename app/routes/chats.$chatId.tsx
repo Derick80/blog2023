@@ -1,6 +1,7 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import { ActionArgs, LoaderArgs, redirect } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
+  useActionData,
   useFetcher,
   useLoaderData,
   useParams,
@@ -9,19 +10,30 @@ import {
 import { useEffect, useRef } from 'react'
 import { useEventSource } from 'remix-utils'
 import invariant from 'tiny-invariant'
+import { z } from 'zod'
+import { zx } from 'zodix'
 import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { EVENTS, chatEmitter } from '~/server/auth/chat.server'
 import { prisma } from '~/server/auth/prisma.server'
+import {
+  commitSession,
+  getSession,
+  setErrorMessage,
+  setSuccessMessage
+} from '~/server/auth/session.server'
+import { validateAction } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
-  invariant(params.chatId, 'chatId is required')
+  const { chatId } = zx.parseParams(params, { chatId: z.string() })
   const user = await isAuthenticated(request)
-  invariant(user, 'User is not authenticated')
+  if (!user) {
+    return redirect('/login')
+  }
   const userId = user.id
   const chat = await prisma.chat.findFirst({
     where: {
-      id: params.chatId,
+      id: chatId,
       users: {
         some: {
           id: userId
@@ -52,29 +64,74 @@ export async function loader({ request, params }: LoaderArgs) {
   }
   return json({ chat, timestamp: Date.now() })
 }
+const schema = z.object({
+  action: z.string(),
+  content: z.string().min(1, 'Message must be at least 1 character long')
+})
+
+type ActionInput = z.infer<typeof schema>
 
 export async function action({ request, params }: ActionArgs) {
+  const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
-  invariant(user, 'User is not authenticated')
-  invariant(params.chatId, 'chatId is required')
+  if (!user) {
+    setErrorMessage(session, 'Unauthorized')
+    return redirect('/login', {
+      headers: {
+        'Set-Cookie': await commitSession(session)
+      }
+    })
+  }
+
+  const chatId = zx.parseParams(params, { chatId: z.string() }).chatId
+
+  if (!chatId) {
+    setErrorMessage(session, 'Chat not found')
+    return redirect('/chats', {
+      headers: {
+        'Set-Cookie': await commitSession(session)
+      }
+    })
+  }
+
   const userId = user.id
-  const formData = await request.formData()
-  const { action, content } = Object.fromEntries(formData)
-  invariant(typeof content === 'string', 'content invalid')
+
+  const { formData, errors } = await validateAction({ request, schema })
+
+  if (errors) {
+    setErrorMessage(session, 'Invalid form data')
+    return json({ errors }, { status: 422 })
+  }
+
+  const { action, content } = formData as ActionInput
   switch (action) {
     case 'send-message': {
-      await prisma.message.create({
+      const sent = await prisma.message.create({
         data: {
           content,
           userId,
-          chatId: params.chatId
+          chatId: chatId
         },
         select: {
           id: true
         }
       })
+
+      if (!sent) {
+        setErrorMessage(session, 'Failed to send message')
+      } else {
+        setSuccessMessage(session, 'Message sent')
+      }
+
       chatEmitter.emit(EVENTS.NEW_MESSAGE, { timestamp: Date.now() })
-      return json({ success: true })
+      return json(
+        { success: true },
+        {
+          headers: {
+            'Set-Cookie': await commitSession(session)
+          }
+        }
+      )
     }
     default: {
       throw new Error(`Unexpected action: ${action}`)
@@ -83,7 +140,7 @@ export async function action({ request, params }: ActionArgs) {
 }
 export default function ChatRoute() {
   const { chatId } = useParams()
-
+  const actionData = useActionData<typeof action>()
   const data = useLoaderData<typeof loader>()
   const messageFetcher = useFetcher<typeof action>()
   const chatUpdateData = useEventSource(`/chats/${chatId}/events`)
@@ -98,13 +155,14 @@ export default function ChatRoute() {
     revalidator.revalidate()
   }, [chatUpdateData])
   const messages = [...data.chat.messages]
+  console.log(messages, 'messages')
 
   return (
     <div className='items- mb-10 flex h-screen w-full flex-col overflow-auto border-2'>
       <h1>Chat</h1>
 
       <div className='flex flex-col gap-2 text-xs'>
-        {data.chat.messages.map((message) => {
+        {messages.map((message) => {
           const sender = data.chat.users.find(
             (user) => user.id === message.userId
           )
@@ -140,6 +198,10 @@ export default function ChatRoute() {
           name='content'
           className='w-full rounded-xl border-2 text-black'
         />
+        {actionData?.errors?.content && (
+          <div className='text-red-500'>{actionData.errors.content}</div>
+        )}
+
         <Button
           variant='primary_filled'
           type='submit'

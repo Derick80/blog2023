@@ -3,7 +3,7 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { Card, SimpleGrid } from '@mantine/core'
 import { projects } from '~/resources/projects'
-import { RowBox } from '~/components/boxes'
+import { ColBox, RowBox } from '~/components/boxes'
 import { Link } from '@remix-run/react'
 import { GitHubLogoIcon, OpenInNewWindowIcon } from '@radix-ui/react-icons'
 
@@ -37,6 +37,39 @@ export default function ProjectIndex() {
             <Card.Section>
               <p className='text-sm'>{project.description}</p>
             </Card.Section>
+            <Card.Section>
+              <ColBox className='p-1'>
+                <h3 className='text-base'>Implementations</h3>
+                <ul>
+                  {project?.implementations?.map((implementation) => (
+                    <li
+                      className='list-disc text-teal-400'
+                      key={implementation.id}
+                    >
+                      <div className='flex flex-row items-center'>
+                        <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                          {implementation.task}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </ColBox>
+            </Card.Section>
+
+            <Card.Section>
+              <RowBox className='p-1'>
+                {project.categories.map((category) => (
+                  <div
+                    className='flex items-center rounded-md bg-slate-50 p-1 text-black hover:border-2 hover:border-white '
+                    key={category.id}
+                  >
+                    <p className='text-xs'>{category.value}</p>
+                  </div>
+                ))}
+              </RowBox>
+            </Card.Section>
+
             <Card.Section>
               <RowBox className='p-1'>
                 <Link to={project.githubUrl}>

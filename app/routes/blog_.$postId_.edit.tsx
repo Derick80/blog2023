@@ -44,7 +44,7 @@ const schema = z.object({
   description: z
     .string()
     .min(10, 'Description should be at least 10 characters')
-    .max(100),
+    .max(1000),
   imageUrl: z.string().url('Image URL should be a valid URL'),
   featured: z.coerce.boolean(),
   content: z.string().min(1).max(1000),

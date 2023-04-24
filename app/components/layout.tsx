@@ -6,11 +6,13 @@ import {
   LinkedInLogoIcon
 } from '@radix-ui/react-icons'
 import { ColBox } from './boxes'
-import { Form, Link, NavLink } from '@remix-run/react'
+import { Form, Link, NavLink, useFetcher } from '@remix-run/react'
 import Button from './button'
 import { useOptionalUser } from '~/utilities'
-import { Affix, Transition, rem } from '@mantine/core'
+import { Affix, Avatar, Transition, rem } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
+import { action } from '~/routes/actions.cloudinary'
+import { BrandIcon } from '~/resources/brand-icon'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [scroll, scrollTo] = useWindowScroll()
@@ -67,8 +69,8 @@ function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-baseline justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
-      <h1 className='text-2xl font-bold'>Vanished</h1>
+    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
+      <BrandIcon />
       <NavLink
         style={({ isActive, isPending }) => {
           return {
@@ -137,6 +139,7 @@ function NavigationBar() {
 }
 
 function LeftNavigationBar() {
+  const user = useOptionalUser()
   return (
     <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start '>
       <NavLink
@@ -216,16 +219,57 @@ function LeftNavigationBar() {
       >
         <p className='text-sm font-semibold dark:text-slate-50'>CV</p>
       </NavLink>
+      <Avatar
+        size='md'
+        radius='xl'
+        src={user?.avatarUrl}
+        alt={user?.username}
+      />
     </div>
   )
 }
 function RightNavigationBar() {
+  const messageFetcher = useFetcher<typeof action>()
+
   return (
     <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start'>
       {' '}
       <ColBox>
         I think 'ads' go here
-        <HomeIcon />
+        <Form method='POST'>
+          <Button
+            variant='primary_filled'
+            size='base'
+            type='submit'
+            name='action'
+            value='create-chat'
+          >
+            Create Chat
+          </Button>
+        </Form>
+        <messageFetcher.Form
+          method='post'
+          onSubmit={(event) => {
+            const form = event.currentTarget
+            requestAnimationFrame(() => {
+              form.reset()
+            })
+          }}
+        >
+          <input
+            type='text'
+            name='content'
+            className='w-full rounded-xl border-2 text-black'
+          />
+          <Button
+            variant='primary_filled'
+            type='submit'
+            name='action'
+            value='send-message'
+          >
+            Send
+          </Button>
+        </messageFetcher.Form>
         <HomeIcon />
         <HomeIcon />
       </ColBox>

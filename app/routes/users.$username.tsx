@@ -1,12 +1,16 @@
-import type { Chat, User } from '.prisma/client'
+import type { Chat } from '@prisma/client'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link, Form } from '@remix-run/react'
 import invariant from 'tiny-invariant'
+import { z } from 'zod'
 import { RowBox } from '~/components/boxes'
+import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/auth/prisma.server'
-import { useOptionalUser } from '~/utilities'
+import { getSession, setErrorMessage } from '~/server/auth/session.server'
+import type { User } from '~/server/schemas/schemas'
+import { useOptionalUser, validateAction } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
   const username = params.username
@@ -56,11 +60,32 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ user })
 }
 
+const schema = z.object({
+  action: z.enum(['create-chat'])
+})
+
+type ActionInput = z.infer<typeof schema>
+
 export async function action({ request, params }: ActionArgs) {
+  const session = await getSession(request.headers.get('Cookie'))
+
   const user = await isAuthenticated(request)
-  invariant(user, 'User is not authenticated')
-  const formData = await request.formData()
-  const action = await formData.get('action')
+  if (!user) {
+    setErrorMessage(session, 'You must be logged in to create a chat')
+    return redirect(`/login?redirect=/users/${params.username}`)
+  }
+
+  const { formData, errors } = await validateAction<ActionInput>({
+    request,
+    schema
+  })
+
+  if (errors) {
+    setErrorMessage(session, `Invalid action: ${errors}`)
+    return redirect(`/users/${params.username}`)
+  }
+
+  const { action } = formData
 
   switch (action) {
     case 'create-chat': {
@@ -115,6 +140,9 @@ export default function UserRoute() {
   }>()
 
   const loggedInUser = useOptionalUser()
+  console.log(loggedInUser?.id, 'loggedInUser')
+  console.log(data?.user?.id, 'data?.user?.id')
+
   const isOwnProfile = loggedInUser?.id === data?.user?.id
 
   const oneOnOneChat = loggedInUser
@@ -163,10 +191,16 @@ export default function UserRoute() {
         <Link to={`/chats/${oneOnOneChat.id}`}>Chat </Link>
       ) : (
         <>
-          <Form method='post'>
-            <button type='submit' name='action' value='create-chat'>
+          <Form method='POST'>
+            <Button
+              variant='primary_filled'
+              size='base'
+              type='submit'
+              name='action'
+              value='create-chat'
+            >
               Create Chat
-            </button>
+            </Button>
           </Form>
         </>
       )}
