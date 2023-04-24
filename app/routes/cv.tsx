@@ -3,13 +3,24 @@ import { Link } from '@remix-run/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback } from 'react'
 import { ColBox, RowBox } from '~/components/boxes'
-import { pubs } from '~/resources/pubs'
+import { blurb } from '~/resources/resume/blurb'
+import { pubs } from '~/resources/resume/pubs'
+import { skills } from '~/resources/resume/skills'
 import { work_experience } from '~/resources/workexperience'
 
 export default function Cv() {
+  const [open, setOpen] = React.useState(false)
   return (
     <>
       <div className='items-censter flex flex-col justify-center gap-1 font-Montserrat'>
+        <ColBox>
+          <h1 className='text-2xl font-bold'>Derick Hoskinson, PhD</h1>
+          <h2 className='text-xl font-bold'></h2>
+          <p className='text-sm'>
+            <span className='text-xs'>{blurb.blurb}</span>
+          </p>
+        </ColBox>
+
         <h1 className='text-2xl font-bold'>Work Experience</h1>
 
         {work_experience.map((job, index) => (
@@ -71,6 +82,31 @@ export default function Cv() {
             </AccordianTriggerPub>
           </div>
         ))}
+        <h1 className='text-2xl font-bold'>Education</h1>
+
+        <ColBox className='flex flex-col items-stretch gap-2 rounded-md p-1'>
+          <div className='flex flex-row justify-between gap-2 text-xs'>
+            <h1 className='text-2xl font-bold'>Skills</h1>
+            <button type='button' onClick={() => setOpen(!open)}>
+              {open ? (
+                <ChevronUpIcon className='text-teal-400' />
+              ) : (
+                <ChevronDownIcon className='text-teal-400' />
+              )}
+            </button>
+          </div>
+          {open && (
+            <ul className='flex flex-row flex-wrap gap-2'>
+              {skills.map((skill, index) => (
+                <li className='rounded-md border-2 p-1 text-xs ' key={index}>
+                  <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                    {skill.skill}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </ColBox>
       </div>
     </>
   )

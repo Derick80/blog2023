@@ -31,23 +31,13 @@ export const projects = [
     categories: [
       {
         id: '1d3410c7-9494-4d73-b143-c7bb805817d8',
-        label: 'Fantasy',
-        value: 'Fantasy'
+        label: 'Astro',
+        value: 'Astro'
       },
       {
         id: '8f206d44-4fcc-4f90-a9e2-80c175b9f061',
-        label: 'Cloudinary',
-        value: 'Cloudinary'
-      },
-      {
-        id: 'b88035e3-5c6e-484a-aac3-c853b3cba014',
-        label: 'Art',
-        value: 'Art'
-      },
-      {
-        id: 'ba447bb8-abe6-4a99-ba9a-bb436dca1626',
-        label: 'Genetics',
-        value: 'Genetics'
+        label: 'Markdown',
+        value: 'Markdown'
       }
     ],
     user: {
@@ -98,8 +88,33 @@ export const projects = [
     categories: [
       {
         id: '80e98747-5dc0-465f-907e-4fea069d6c3c',
-        label: 'Coding',
-        value: 'Coding'
+        label: 'TypeScript',
+        value: 'TypeScript'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
+        label: 'Remix',
+        value: 'Remix'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
+        label: 'TailwindCSS',
+        value: 'TailwindCSS'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f064',
+        label: 'React',
+        value: 'React'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f065',
+        label: 'Prisma',
+        value: 'Prisma'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f066',
+        label: 'Postgres',
+        value: 'Postgres'
       }
     ],
     user: {
@@ -126,6 +141,21 @@ export const projects = [
         id: 'ba447bb8-abe6-4a99-ba9a-bb436dca1626',
         label: 'Genetics',
         value: 'Genetics'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f061',
+        label: 'React',
+        value: 'React'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
+        label: 'TailwindCSS',
+        value: 'TailwindCSS'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
+        label: 'TypeScript',
+        value: 'TypeScript'
       }
     ],
     user: {
@@ -170,6 +200,36 @@ export const projects = [
         id: 'c46e0554-c284-4580-89ce-83c4323c86a6',
         label: 'CockroachDB',
         value: 'CockroachDB'
+      },
+      {
+        id: 'c46e0554-c284-4580-89ce-83c4323c86a7',
+        label: 'React',
+        value: 'React'
+      },
+      {
+        id: 'c46e0554-c284-4580-89ce-83c4323c86a8',
+        label: 'TailwindCSS',
+        value: 'TailwindCSS'
+      },
+      {
+        id: 'c46e0554-c284-4580-89ce-83c4323c86a9',
+        label: 'Prisma',
+        value: 'Prisma'
+      },
+      {
+        id: 'c46e0554-c284-4580-89ce-83c4323c86a10',
+        label: 'React Query',
+        value: 'React Query'
+      },
+      {
+        id: 'c46e0554-c284-4580-89ce-83c4323c86a11',
+        label: 'React Hook Form',
+        value: 'React Hook Form'
+      },
+      {
+        id: 'c46e0554-c284-4580-89ce-83c4323c86a12',
+        label: 'React Router',
+        value: 'React Router'
       }
     ],
     user: {

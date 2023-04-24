@@ -1,39 +1,66 @@
-import { ChevronUpIcon, ChevronDownIcon } from "@radix-ui/react-icons"
-import React from "react"
-
+import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
+import { NavLink } from '@remix-run/react'
+import React from 'react'
 
 export type MenuBoxProps = {
-    title: string
-    children: React.ReactNode
+  title: string
 }
-export default function MenuBox({ title, children }: MenuBoxProps) {
-    const [menu, setMenu] = React.useState(false)
-    return (
-      <div className='relative flex w-full flex-col'>
-        <div className='flex w-full items-center justify-between'>
-          <h6 className='text-sm font-bold'>{title}</h6>
-          <div className='flex items-center'>
-            <button onClick={() => setMenu(!menu)}>
-             {menu ? <ChevronUpIcon 
-              className='text-teal-400'
-              /> : <ChevronDownIcon
-              className='text-teal-400'
-  
-              />}
-            </button>
+export default function MenuBox({ title }: MenuBoxProps) {
+  const [menu, setMenu] = React.useState(false)
+  return (
+    <div className='flex flex-col'>
+      <div className='flex w-full items-center'>
+        <h6 className='text-sm font-bold'>{title}</h6>
+        <button onClick={() => setMenu(!menu)}>
+          {menu ? (
+            <ChevronUpIcon className='text-teal-400' />
+          ) : (
+            <ChevronDownIcon className='text-teal-400' />
+          )}
+        </button>
+      </div>
+      {menu && (
+        <div
+          className='relative  flex flex-col  border-none'
+          onMouseLeave={() => setMenu(!menu)}
+        >
+          <div className='absolute z-10 flex w-fit flex-col items-center justify-between rounded-md bg-white dark:bg-slate-900'>
+            <MapMenuItems menuItems={MenuItems} />
           </div>
         </div>
-        {menu && (
-          <div className='flex w-full flex-col border-2'>
-            <div className='flex flex-col w-full items-center justify-between'>
-              <h6 className='text-sm font-bold'>Menu</h6>
-              <div className='flex items-center'>things here</div>
-              <div className='flex items-center'>things here</div>
-              <div className='flex items-center'>things here</div>
-              <div className='flex items-center'>things here</div>
-            </div>
-          </div>
-        )}
-      </div>
-    )
+      )}
+    </div>
+  )
+}
+
+export const MenuItems = [
+  {
+    title: 'CV',
+    path: '/cv'
+  },
+  {
+    title: 'Categories',
+    path: '/categories'
+  },
+
+  {
+    title: 'Users',
+    path: '/users'
+  },
+  {
+    title: 'UI',
+    path: '/ui-components'
   }
+]
+
+function MapMenuItems({ menuItems }: { menuItems: typeof MenuItems }) {
+  return (
+    <>
+      {menuItems.map((item, index) => (
+        <NavLink key={index} to={item.path}>
+          {item.title}
+        </NavLink>
+      ))}
+    </>
+  )
+}

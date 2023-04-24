@@ -13,6 +13,7 @@ import { Affix, Avatar, Transition, rem } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { action } from '~/routes/actions.cloudinary'
 import { BrandIcon } from '~/resources/brand-icon'
+import MenuBox from './site-menus'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [scroll, scrollTo] = useWindowScroll()
@@ -22,11 +23,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <NavigationBar />
 
       <div className='mt-20 flex h-full flex-grow flex-col p-2 md:mt-12 md:flex-row'>
-        <LeftNavigationBar />
         <main className='flex-grsow relative mx-auto mt-5 flex w-full flex-col p-2 md:w-4/6 md:p-4'>
           {children}
         </main>
-        <RightNavigationBar />
         <div>
           <Affix position={{ bottom: rem(20), right: rem(20) }}>
             <Transition transition='slide-up' mounted={scroll.y > 0}>
@@ -71,6 +70,7 @@ function NavigationBar() {
   return (
     <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
       <BrandIcon />
+
       <NavLink
         style={({ isActive, isPending }) => {
           return {
@@ -116,19 +116,29 @@ function NavigationBar() {
       >
         <p className='text-sm font-semibold dark:text-slate-50'>Projects</p>
       </NavLink>
-      <div> </div>
+      <MenuBox title='Links' />
+
       {/* <Switch size="md" onLabel={<SunIcon />} offLabel={<MoonIcon />} /> */}
 
       {user ? (
-        <Form
-          className='flex items-center justify-center p-1'
-          method='POST'
-          action='/logout'
-        >
-          <Button variant='danger_filled' size='base'>
-            <ExitIcon />
-          </Button>
-        </Form>
+        <div className='flex flex-row gap-2 p-2'>
+          <Avatar
+            src={user.avatarUrl}
+            alt={user.username}
+            radius='xl'
+            size='sm'
+          />
+
+          <Form
+            className='flex items-center justify-center p-1'
+            method='POST'
+            action='/logout'
+          >
+            <Button variant='icon_unfilled' size='small'>
+              <ExitIcon />
+            </Button>
+          </Form>
+        </div>
       ) : (
         <NavLink to='/login'>
           <p className='text-sm font-semibold dark:text-slate-50'>Login</p>
@@ -235,7 +245,6 @@ function RightNavigationBar() {
     <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start'>
       {' '}
       <ColBox>
-        I think 'ads' go here
         <Form method='POST'>
           <Button
             variant='primary_filled'
