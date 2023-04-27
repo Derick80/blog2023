@@ -47,13 +47,7 @@ export const AuthForm = ({ authType }: Props) => {
             description='Email must be valid'
             withAsterisk
           />
-          <label>Username</label>
-          <TextInput
-            placeholder='Username'
-            name='username'
-            description='Username must contain at least 3 characters'
-            withAsterisk
-          />
+         
         </>
       )}
       {authType !== 'request' && (
