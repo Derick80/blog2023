@@ -21,34 +21,50 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ comments })
 }
 
-
 const schema = z.object({
-  commentId: z.string(),
+  action: z.string().optional(),
   message: z.string()
 })
 
 export type ActionData = z.infer<typeof schema>
-export async function action({request, params}:ActionArgs){
-  const {commentId} = zx.parseParams(params, {commentId: z.string()})
- const {formData, errors} = await validateAction({request, schema})
+export async function action({ request, params }: ActionArgs) {
+  console.log(params, 'params')
 
-  if(errors){
-    return json({errors})
+  const { commentId } = zx.parseParams(params, { commentId: z.string() })
+  console.log(commentId, 'commentId')
+
+  const { formData, errors } = await validateAction({ request, schema })
+
+  if (errors) {
+    return json({ errors })
   }
 
-  const {message} = formData as ActionData
+  const { message, action } = formData as ActionData
 
-  const comment = await prisma.comment.update({
-    where: {
-      id: commentId
-    },
-    data: {
-      message
-    }
+  switch (action) {
+    case 'edit':
+      await prisma.comment.update({
+        where: {
+          id: commentId
+        },
+        data: {
+          message
+        }
+      })
+      return json({ message: 'success' })
+    case 'delete':
+      await prisma.comment.delete({
+        where: {
+          id: commentId
+        }
+      })
+      return json({ message: 'success' })
+      break
+    default:
+      break
+  }
 
-  })
-
-  return json({comment})
+  return json({ message: 'success' })
 }
 
 // export default function Index() {

@@ -6,7 +6,7 @@ import {
   TypographyStylesProvider,
   Avatar
 } from '@mantine/core'
-import { Link, Form } from '@remix-run/react'
+import { Link, Form, NavLink } from '@remix-run/react'
 import dayjs from 'dayjs'
 import FavoriteContainer from '../favorite-container'
 import LikeContainer from '../like-container'
@@ -43,7 +43,11 @@ export default function BlogCard({ post, children }: Props) {
 
         <Group position='apart' mt='md' mb='xs'>
           <TypographyStylesProvider>
-            <Text weight={500}>{post.title}</Text>
+            <NavLink to={`/blog/${post.id}`}>
+              <Text size='lg' weight={700}>
+                {post.title}
+              </Text>
+            </NavLink>
           </TypographyStylesProvider>
           <Tags categories={post.categories} />
         </Group>

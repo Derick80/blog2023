@@ -46,12 +46,6 @@ export default function CommentBox({
               <input type='hidden' name='parentId' value={parentId} />
             )}
 
-            {/* <label
-            className='text-sm font-medium text-gray-700 dark:text-slate-50'
-            htmlFor='message'
-          >
-            Comment
-          </label> */}
             <input
               id='message'
               name='message'

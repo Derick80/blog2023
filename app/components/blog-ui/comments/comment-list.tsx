@@ -31,12 +31,6 @@ export default function CommentContainer({ postId }: { postId: string }) {
     )
   }
   const filteredComments = filterComments(comments, postId)
-  
-
-
-
-
-
 
   return (
     <div className='flex flex-col'>
@@ -79,7 +73,7 @@ function SiblingComments({ commentId }: { commentId: string }) {
     </>
   )
 }
-//  This is the comment component that holds the comment and the reply button
+//  This is the comment component that holds the comment and the reply button.  This is the place to add the edit button and the delete button
 function Comment({
   comments,
   children
@@ -92,39 +86,43 @@ function Comment({
   const [open, setOpen] = React.useState(false)
   const [editing, setEditing] = React.useState(false)
   const [isReplying, setIsReplying] = React.useState(false)
+  const commentEditFetcher = useFetcher()
 
   return (
-    <div className='flex flex-col gap-1 rounded-md  shadow-md'>
-      <RowBox className='relative'>
+    <div
+      className='rounded- flex w-full flex-col gap-1
+      shadow-md'
+    >
+      <RowBox className='relative w-full border-2 p-1'>
         <Avatar
           src={comments?.user?.avatarUrl}
           alt={comments?.user?.username}
           radius='xl'
           size='sm'
         />
-        <ColBox>
-          <p className='text-xs font-medium text-gray-700 dark:text-slate-50'></p>
-          <div className='relative rounded-md bg-slate-900/30 p-1'>
+        <ColBox className='ml-2 mt-2 flex w-full flex-col'>
+          <div className='relative w-full rounded-md bg-slate-900/30 p-1'>
             {comments?.user?.username}
 
-          {
-            editing ? (
-              <Form method="POST" action={`/comment/${comments.id}/edit`}>
+            {editing ? (
+              <commentEditFetcher.Form
+                className='w-full'
+                method='POST'
+                action={`/comment/${comments.id}`}
+              >
                 <textarea
-                  name="message"
+                  name='message'
                   defaultValue={comments.message}
-                  className="w-full"
+                  className='w-full'
                 />
-                <button type="submit">Submit</button>
-                </Form>
-                
-
+                <button name='action' value='edit' type='submit'>
+                  Submit
+                </button>
+              </commentEditFetcher.Form>
             ) : (
-              <p className='flex w-full text-sm'>{comments?.message}</p>
-            )
-
-          }
-            <div className='absolute flex w-full items-center'>
+              <p className='flex text-sm'>{comments?.message}</p>
+            )}
+            <div className=' flex w-full items-center justify-between'>
               <Button
                 variant='icon_unfilled'
                 size='small'
@@ -135,10 +133,11 @@ function Comment({
                   {editing ? 'Cancel' : 'Edit'}
                 </p>
               </Button>
-              
+
               <div className='flex flex-grow' />
+
               <Button
-                className='absolute -top-0 right-0'
+                className=''
                 variant='ghost'
                 size='small'
                 onClick={() => setIsReplying(!isReplying)}
@@ -148,24 +147,20 @@ function Comment({
             </div>
           </div>
         </ColBox>
-        <div className='flex flex-grow' />
         <Button
           variant='icon_unfilled'
           size='small'
-          className='flex flex-row justify-between gap-2 text-xs'
+          className='flex flex-row items-center justify-between gap-1 text-xs'
           onClick={() => setOpen((open) => !open)}
         >
           <p className='flex flex-row gap-2 text-xs text-black'>
             {getReplyCountText(comments.children?.length)}
-          </p>
-          {open ? <ChevronUpIcon
-            className='text-teal-400'
-          /> : <ChevronDownIcon
-          className='text-teal-400'
 
-          />}
+            {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </p>
         </Button>
       </RowBox>
+      <RowBox>Actions</RowBox>
       <RowBox className='mt-5 w-full'>
         {
           <AnimatePresence>
@@ -199,20 +194,18 @@ function Comment({
 function CommentActions({
   commentId,
   postId,
-  userId,
-  replyCount
+  userId
 }: {
   commentId: string
 
   postId: string
   userId: string
-  replyCount: number
 }) {
   return (
     <div className='flex w-full flex-row gap-2'>
       <CommentBox postId={postId} parentId={commentId} userId={userId} />
-
       <div className='flex flex-grow' />
+      stuff
     </div>
   )
 }
