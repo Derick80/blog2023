@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for remix-blog-23 on 2023-04-20T15:02:46-05:00
+# fly.toml app configuration file generated for remix-blog-23-1 on 2023-04-24T18:53:22-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "remix-blog-23"
+app = "remix-blog-23-1"
 kill_signal = "SIGINT"
 kill_timeout = 5
 primary_region = "ord"
@@ -12,7 +12,6 @@ processes = []
 [build]
 
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true

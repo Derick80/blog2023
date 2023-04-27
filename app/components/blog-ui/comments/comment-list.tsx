@@ -1,4 +1,4 @@
-import { useFetcher } from '@remix-run/react'
+import { Form, useFetcher } from '@remix-run/react'
 import React from 'react'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
@@ -31,6 +31,12 @@ export default function CommentContainer({ postId }: { postId: string }) {
     )
   }
   const filteredComments = filterComments(comments, postId)
+  
+
+
+
+
+
 
   return (
     <div className='flex flex-col'>
@@ -84,6 +90,7 @@ function Comment({
   children?: CommentWithChildren[]
 }) {
   const [open, setOpen] = React.useState(false)
+  const [editing, setEditing] = React.useState(false)
   const [isReplying, setIsReplying] = React.useState(false)
 
   return (
@@ -100,8 +107,35 @@ function Comment({
           <div className='relative rounded-md bg-slate-900/30 p-1'>
             {comments?.user?.username}
 
-            <p className='flex w-full text-sm'>{comments?.message}</p>
+          {
+            editing ? (
+              <Form method="POST" action={`/comment/${comments.id}/edit`}>
+                <textarea
+                  name="message"
+                  defaultValue={comments.message}
+                  className="w-full"
+                />
+                <button type="submit">Submit</button>
+                </Form>
+                
+
+            ) : (
+              <p className='flex w-full text-sm'>{comments?.message}</p>
+            )
+
+          }
             <div className='absolute flex w-full items-center'>
+              <Button
+                variant='icon_unfilled'
+                size='small'
+                className='flex flex-row justify-between gap-2 text-xs'
+                onClick={() => setEditing((editing) => !editing)}
+              >
+                <p className='flex flex-row gap-2 text-xs text-black'>
+                  {editing ? 'Cancel' : 'Edit'}
+                </p>
+              </Button>
+              
               <div className='flex flex-grow' />
               <Button
                 className='absolute -top-0 right-0'
@@ -121,10 +155,15 @@ function Comment({
           className='flex flex-row justify-between gap-2 text-xs'
           onClick={() => setOpen((open) => !open)}
         >
-          <p className='flex flex-row gap-2 text-xs'>
+          <p className='flex flex-row gap-2 text-xs text-black'>
             {getReplyCountText(comments.children?.length)}
           </p>
-          {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          {open ? <ChevronUpIcon
+            className='text-teal-400'
+          /> : <ChevronDownIcon
+          className='text-teal-400'
+
+          />}
         </Button>
       </RowBox>
       <RowBox className='mt-5 w-full'>
