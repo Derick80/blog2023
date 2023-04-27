@@ -71,7 +71,7 @@ async function generateMe(numberofPosts: number) {
         published: true,
         user: {
           connect: {
-            id: "clgpm4ixl0000653t9x16lo5r",
+            id: me.id,
           },
         },
       },
@@ -103,12 +103,12 @@ const categorySeed = [
   { value: "Japan", label: "Japan" },
 ];
 async function seed() {
-  await generateTestData(5);
-  await generateTestData(5);
+  // await generateTestData(5);
+  // await generateTestData(5);
   await generateMe(5);
-  await prisma.category.createMany({
-    data: categorySeed,
-  });
+  // await prisma.category.createMany({
+  //   data: categorySeed,
+  // });
 
   console.log(`Database has been seeded. 🌱`);
 }

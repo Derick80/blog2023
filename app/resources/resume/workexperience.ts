@@ -57,7 +57,7 @@ export const work_experience = [
       },
       {
         id: 4,
-        duty: 'ained proficiency in the R programming language and experience using Python, JavaScript, HTML, and CSS. '
+        duty: 'Gained proficiency in the R programming language and experience using Python, JavaScript, HTML, and CSS. '
       }
     ]
   },

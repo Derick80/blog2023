@@ -6,7 +6,7 @@ import { ColBox, RowBox } from '~/components/boxes'
 import { blurb } from '~/resources/resume/blurb'
 import { pubs } from '~/resources/resume/pubs'
 import { skills } from '~/resources/resume/skills'
-import { work_experience } from '~/resources/workexperience'
+import { work_experience } from '~/resources/resume/workexperience'
 
 export default function Cv() {
   const [open, setOpen] = React.useState(false)
