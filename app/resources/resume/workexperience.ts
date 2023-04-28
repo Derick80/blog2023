@@ -40,7 +40,7 @@ export const work_experience = [
   {
     id: 2,
     institution: 'Tempus Labs',
-longInstitution: 'Tempus Labs',
+    longInstitution: 'Tempus Labs',
     period: 'June 2017 - Febuary 2019',
     title: 'Clinical Scientist',
     duties: [
@@ -65,7 +65,7 @@ longInstitution: 'Tempus Labs',
   {
     id: 3,
     institution: `Harvard Medical School`,
-    longInstitution: `Laboratory for Molecular Medicine at Partners Healthcare Personalized Medicine and Brigham and Women’s Hospital`,   
+    longInstitution: `Laboratory for Molecular Medicine at Partners Healthcare Personalized Medicine and Brigham and Women’s Hospital`,
     period: 'June 2015 - June 2017',
     title: 'Clinical Knowlege Curation Coordinator',
     duties: [

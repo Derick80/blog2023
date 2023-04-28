@@ -47,7 +47,6 @@ export const AuthForm = ({ authType }: Props) => {
             description='Email must be valid'
             withAsterisk
           />
-         
         </>
       )}
       {authType !== 'request' && (

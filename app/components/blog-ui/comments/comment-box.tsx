@@ -52,14 +52,22 @@ export default function CommentBox({
               placeholder='Enter your comment here...'
               className='w-full rounded-xl border-2 p-2 text-xs text-black'
             />
-            <Button
-              className='absolute right-0 top-8'
-              variant='ghost'
-              size='tiny'
-              type='submit'
-            >
-              {parentId ? 'Post reply' : 'Post a comment'}
-            </Button>
+            {user ? (
+              <Button
+                className='absolute right-0 top-8'
+                variant='ghost'
+                size='tiny'
+                type='submit'
+              >
+                {parentId ? 'Post reply' : 'Post a comment'}
+              </Button>
+            ) : (
+              <>
+                <p className='text-xs text-black'>
+                  You must be logged in to comment.
+                </p>
+              </>
+            )}
             <RowBox>
               <div className='flex flex-grow' />
             </RowBox>

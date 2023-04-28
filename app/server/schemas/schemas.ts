@@ -1,4 +1,4 @@
-import type { Post as PrismaPost } from '@prisma/client'
+import type { CommentLike, Post as PrismaPost } from '@prisma/client'
 
 import type { User as PrismaUser } from '@prisma/client'
 
@@ -32,6 +32,7 @@ export type Comment = SerializeFrom<PrismaComment>
 export type CommentWithChildren = SerializeFrom<PrismaComment> & {
   user: User
   children: CommentWithChildren[]
+  likes: CommentLike[]
 }
 
 export type Category = SerializeFrom<PrismaCategory>
@@ -45,6 +46,7 @@ export type Post = SerializeFrom<PrismaPost> & {
     likes: number
     favorites: number
     comments: number
+    commentsLikes: number
   }
 }
 

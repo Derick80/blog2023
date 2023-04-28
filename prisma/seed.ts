@@ -105,10 +105,10 @@ const categorySeed = [
 async function seed() {
   // await generateTestData(5);
   // await generateTestData(5);
-  await generateMe(5);
-  // await prisma.category.createMany({
-  //   data: categorySeed,
-  // });
+  // await generateMe(5);
+  await prisma.category.createMany({
+    data: categorySeed,
+  });
 
   console.log(`Database has been seeded. 🌱`);
 }

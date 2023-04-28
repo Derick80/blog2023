@@ -86,6 +86,7 @@ export async function getPosts() {
       comments: {
         include: {
           _count: true,
+          likes: true,
           user: {
             select: {
               id: true,

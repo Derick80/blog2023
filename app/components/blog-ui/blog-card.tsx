@@ -3,8 +3,7 @@ import {
   Text,
   Image,
   Group,
-  TypographyStylesProvider,
-  Avatar
+  TypographyStylesProvider
 } from '@mantine/core'
 import { Link, Form, NavLink } from '@remix-run/react'
 import dayjs from 'dayjs'
@@ -28,7 +27,7 @@ export type Props = {
   children?: React.ReactNode
 }
 export default function BlogCard({ post, children }: Props) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(true)
   return (
     <div className='w-full'>
       <Card key={post.id} shadow='sm' padding='md' radius='md' withBorder>
@@ -66,53 +65,54 @@ export default function BlogCard({ post, children }: Props) {
             <Text size='sm' color='dimmed'>
               {dayjs(post.createdAt).fromNow()} by
             </Text>
-            <Avatar
-              className=''
-              src={post.user.avatarUrl}
-              size='sm'
-              radius='xl'
-            />
+            <div className='flex items-center'>
+              <Image
+                src={post.imageUrl}
+                alt={post.title}
+                width={30}
+                height={30}
+                radius='xl'
+                className='mr-2'
+              />
+            </div>
           </RowBox>
         </Group>
-        <Group position='apart' mt='md' mb='xs'>
-          <Group position='left' mt='xs' mb='xs'>
-            {post.likes.length > 0 && (
-              <LikeContainer
-                postId={post.id}
-                likes={post.likes}
-                likeCounts={post?.likes?.length}
-              />
-            )}
-            <FavoriteContainer postId={post.id} favorites={post.favorites} />
-            <ShareButton id={post.id} />
-          </Group>
-          <Group position='right' mt='xs' mb='xs'>
-            <VerticalMenu>
-              <Link to={`/blog/${post.id}`}>View</Link>
-              <Link to={`/blog/${post.id}/edit`}>Edit</Link>
-              <Form method='post' action={`/blog/${post.id}/delete`}>
-                <button type='submit'>Delete</button>
-              </Form>
-            </VerticalMenu>
+        <RowBox>
+          <LikeContainer
+            postId={post.id}
+            likes={post.likes}
+            likeCounts={post?.likes?.length}
+          />
 
-            {post.comments && (
-              <>
-                <RowBox>
-                  <p className='sub'>{post.comments.length}</p>
-                  <Button
-                    variant='ghost'
-                    size='tiny'
-                    onClick={() => {
-                      setOpen(!open)
-                    }}
-                  >
-                    <ChatBubbleIcon />{' '}
-                  </Button>
-                </RowBox>
-              </>
-            )}
-          </Group>
-        </Group>
+          <FavoriteContainer postId={post.id} favorites={post.favorites} />
+          <ShareButton id={post.id} />
+
+          <div className='flex flex-grow' />
+          <VerticalMenu>
+            <Link to={`/blog/${post.id}`}>View</Link>
+            <Link to={`/blog/${post.id}/edit`}>Edit</Link>
+            <Form method='post' action={`/blog/${post.id}/delete`}>
+              <button type='submit'>Delete</button>
+            </Form>
+          </VerticalMenu>
+
+          {post.comments && (
+            <>
+              <RowBox>
+                <p className='sub'>{post.comments.length}</p>
+                <Button
+                  variant='ghost'
+                  size='tiny'
+                  onClick={() => {
+                    setOpen(!open)
+                  }}
+                >
+                  <ChatBubbleIcon />{' '}
+                </Button>
+              </RowBox>
+            </>
+          )}
+        </RowBox>
         {children}
         {open && <CommentContainer postId={post.id} />}
       </Card>

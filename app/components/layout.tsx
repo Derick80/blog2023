@@ -1,17 +1,9 @@
-import {
-  ArrowUpIcon,
-  ExitIcon,
-  GitHubLogoIcon,
-  HomeIcon,
-  LinkedInLogoIcon
-} from '@radix-ui/react-icons'
-import { ColBox } from './boxes'
-import { Form, Link, NavLink, useFetcher } from '@remix-run/react'
+import { ArrowUpIcon, ExitIcon } from '@radix-ui/react-icons'
+import { Form, NavLink } from '@remix-run/react'
 import Button from './button'
 import { useOptionalUser } from '~/utilities'
 import { Affix, Avatar, Transition, rem } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
-import { action } from '~/routes/actions.cloudinary'
 import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
 
@@ -144,144 +136,6 @@ function NavigationBar() {
           <p className='text-sm font-semibold dark:text-slate-50'>Login</p>
         </NavLink>
       )}
-    </div>
-  )
-}
-
-function LeftNavigationBar() {
-  const user = useOptionalUser()
-  return (
-    <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start '>
-      <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-        to='/blog/new'
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>New Post</p>
-      </NavLink>
-      <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-        to='/drafts'
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>Drafts</p>
-      </NavLink>
-      <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-        to='/users'
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>Users</p>
-      </NavLink>
-      <NavLink
-        to='/categories'
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>Categories</p>
-      </NavLink>
-      <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-        to='/chats'
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>Chat</p>
-      </NavLink>
-      <NavLink
-        to='ui-components'
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>UI</p>
-      </NavLink>
-      <NavLink
-        to='/cv'
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
-        }}
-      >
-        <p className='text-sm font-semibold dark:text-slate-50'>CV</p>
-      </NavLink>
-      <Avatar
-        size='md'
-        radius='xl'
-        src={user?.avatarUrl}
-        alt={user?.username}
-      />
-    </div>
-  )
-}
-function RightNavigationBar() {
-  const messageFetcher = useFetcher<typeof action>()
-
-  return (
-    <div className='flex w-full flex-row items-center justify-center gap-2 p-2 md:mt-20 md:w-1/6 md:flex-col md:justify-start'>
-      {' '}
-      <ColBox>
-        <Form method='POST'>
-          <Button
-            variant='primary_filled'
-            size='base'
-            type='submit'
-            name='action'
-            value='create-chat'
-          >
-            Create Chat
-          </Button>
-        </Form>
-        <messageFetcher.Form
-          method='post'
-          onSubmit={(event) => {
-            const form = event.currentTarget
-            requestAnimationFrame(() => {
-              form.reset()
-            })
-          }}
-        >
-          <input
-            type='text'
-            name='content'
-            className='w-full rounded-xl border-2 text-black'
-          />
-          <Button
-            variant='primary_filled'
-            type='submit'
-            name='action'
-            value='send-message'
-          >
-            Send
-          </Button>
-        </messageFetcher.Form>
-        <HomeIcon />
-        <HomeIcon />
-      </ColBox>
     </div>
   )
 }

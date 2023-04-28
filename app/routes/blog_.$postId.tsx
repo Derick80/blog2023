@@ -8,6 +8,7 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogCard from '~/components/blog-ui/blog-card'
+import CommentBox from '~/components/blog-ui/comments/comment-box'
 import { prisma } from '~/server/auth/prisma.server'
 import type { Post } from '~/server/schemas/schemas'
 
@@ -34,10 +35,12 @@ export default function BlogPostRoute() {
   }>()
 
   return (
-    <div className='mx-auto h-full w-full items-center gap-4 overflow-auto border-2'>
+    <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       <h1>Blog</h1>
       <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data.post} />
+        <BlogCard post={data.post}>
+          <CommentBox postId={data.post.id} />
+        </BlogCard>
       </div>
     </div>
   )
