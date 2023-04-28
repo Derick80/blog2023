@@ -2,7 +2,7 @@ import { ArrowUpIcon, ExitIcon } from '@radix-ui/react-icons'
 import { Form, NavLink } from '@remix-run/react'
 import Button from './button'
 import { useOptionalUser } from '~/utilities'
-import { Affix, Avatar, Transition, rem } from '@mantine/core'
+import { Affix, Avatar, Transition, rem, Image } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
@@ -113,16 +113,17 @@ function NavigationBar() {
       {/* <Switch size="md" onLabel={<SunIcon />} offLabel={<MoonIcon />} /> */}
 
       {user ? (
-        <div className='flex flex-row gap-2 p-2'>
-          <Avatar
+        <div className='flex flex-row items-center gap-2 p-2'>
+          <Image
             src={user.avatarUrl}
             alt={user.username}
             radius='xl'
-            size='sm'
+            width={24}
+            height={24}
           />
 
           <Form
-            className='flex items-center justify-center p-1'
+            className='m-0 flex items-center justify-center p-1'
             method='POST'
             action='/logout'
           >

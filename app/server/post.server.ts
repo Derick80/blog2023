@@ -98,7 +98,8 @@ export async function getPosts() {
           children: {
             include: {
               user: true,
-              children: true
+              children: true,
+              likes: true
             }
           }
         }

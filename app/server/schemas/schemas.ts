@@ -27,12 +27,16 @@ export type UserType = User & {
 export type Like = SerializeFrom<PrismaLike>
 export type Favorite = SerializeFrom<PrismaFavorite>
 
-export type Comment = SerializeFrom<PrismaComment>
+export type Comment = SerializeFrom<PrismaComment> & {
+  user: User
+  likes: SerializeFrom<CommentLike>[]
+}
+
 
 export type CommentWithChildren = SerializeFrom<PrismaComment> & {
   user: User
   children: CommentWithChildren[]
-  likes: CommentLike[]
+  likes: SerializeFrom<CommentLike>[]
 }
 
 export type Category = SerializeFrom<PrismaCategory>
