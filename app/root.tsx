@@ -23,7 +23,7 @@ import { StylesPlaceholder } from '@mantine/remix'
 import { MantineProvider } from '@mantine/core'
 
 export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: stylesheet }
+  { rel: 'stylesheet', href: stylesheet, preload: true }
 ]
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
 export async function loader({ request }: LoaderArgs) {

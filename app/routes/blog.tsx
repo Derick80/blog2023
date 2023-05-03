@@ -40,7 +40,7 @@ export default function BlogRoute() {
     <div className='h- flex w-full flex-col items-center gap-2'>
       <h1 className='text-4xl font-semibold'>Blog</h1>
 
-      {data.posts.map((post) => (
+      {data && data.posts.map((post) => (
         <BlogCard key={post.id} post={post}>
           <CommentBox postId={post.id} />
         </BlogCard>

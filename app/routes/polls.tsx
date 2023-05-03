@@ -1,5 +1,4 @@
 import {
-  Form,
   Link,
   Outlet,
   useActionData,
@@ -10,7 +9,6 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { prisma } from '~/server/auth/prisma.server'
 import React from 'react'
-import { RowBox } from '~/components/boxes'
 import VotingMachine from '~/components/voting-machine'
 import {
   commitSession,
