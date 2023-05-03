@@ -6,12 +6,13 @@ import CommentBox from './comment-box'
 import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
 import { ColBox, RowBox } from '~/components/boxes'
-import { Tooltip, Image } from '@mantine/core'
+import { Tooltip, Image, Divider } from '@mantine/core'
 import {
   ChevronUpIcon,
   ChevronDownIcon,
   HeartFilledIcon,
-  HeartIcon
+  HeartIcon,
+  CircleIcon
 } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { CommentLike } from '@prisma/client'
@@ -32,7 +33,6 @@ function getReplyCountText(count: number) {
 export default function CommentContainer({ postId }: { postId: string }) {
   const matches = useMatchesData('routes/blog')
   const comments = matches?.comments as CommentWithChildren[]
-  console.log(comments, 'comments')
 
   function filterComments(comments: CommentWithChildren[], postId: string) {
     return comments?.filter(
@@ -120,12 +120,13 @@ function Comment({
                 message={comments.message}
               />
             ) : (
-              <p className='flex text-sm'>{comments?.message}</p>
+              <p className='flex text-sm prose'>{comments?.message}</p>
             )}
+            <Divider />
             <RowBox>
               {user?.id === comments.userId && (
                 <div className='flex w-full flex-row gap-2'>
-                  <div className=' flex w-full items-center justify-between'>
+                  <div className=' flex w-full items-baseline justify-center'>
                     <Button
                       variant='icon_unfilled'
                       size='small'
@@ -139,11 +140,12 @@ function Comment({
                     <deleteFetcher.Form
                       method='POST'
                       action={`/comment/${comments.id}`}
+                      className='flex flex-row'
                     >
                       <Button
                         variant='icon_unfilled'
                         size='small'
-                        className='flex flex-row justify-between gap-2 text-xs'
+                        className='flex flex-row gap-2 text-xs'
                         type='submit'
                         name='action'
                         value='delete'
@@ -173,17 +175,18 @@ function Comment({
                 </p>
               )}
             </RowBox>
-          </div>
+          
 
           <CommentActionBox
             commentId={comments.id}
             commentLength={comments?.likes?.length}
             likes={comments.likes}
           />
-          <div className='flex flex-col gap-1'></div>
-        </ColBox>
-
-        {comments.children?.length > 0 && (
+          </div>
+          <RowBox
+            className='flex justify-between'>
+              <div></div>
+               {comments.children?.length > 0 && (
           <Button
             variant='icon_unfilled'
             size='small'
@@ -197,6 +200,11 @@ function Comment({
             </p>
           </Button>
         )}
+            </RowBox>
+          <div className='flex flex-col gap-1'></div>
+        </ColBox>
+
+       
       </RowBox>
       <RowBox className='mt- w-full'>
         {
@@ -237,7 +245,6 @@ function CommentActionBox({
   commentLength: number
   likes: SerializeFrom<CommentLike[]>
 }) {
-  const [editing, setEditing] = React.useState(false)
 
   return (
     <div className='bottom-0 left-1 flex  flex-row items-center justify-between gap-2'>
@@ -246,16 +253,7 @@ function CommentActionBox({
         commentLikesNumber={commentLength}
         likes={likes}
       />
-      <Button
-        variant='icon_unfilled'
-        size='small'
-        className='flex flex-row justify-between gap-2 text-xs'
-        onClick={() => setEditing((editing) => !editing)}
-      >
-        <p className='flex flex-row gap-2 text-xs text-black'>
-          {editing ? 'Cancel' : 'Edit'}
-        </p>
-      </Button>
+   
     </div>
   )
 }
@@ -314,7 +312,7 @@ function LikeComment({
           {liked ? (
             <div className='flex flex-row items-center gap-1'>
               <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
-              <p className='absolute  -bottom-1 right-0 text-[10px]'>
+              <p className='text-[10px]'>
                 {likeCount}
               </p>
             </div>
@@ -323,7 +321,7 @@ function LikeComment({
               <HeartIcon />
 
               {likeCount > 0 && (
-                <p className='absolute  -bottom-1 right-0 text-[10px]'>
+                <p className='absolute left-0 right-0 text-[10px]'>
                   {likeCount}
                 </p>
               )}
@@ -358,7 +356,7 @@ function CommentEditForm({
   const commentEditFetcher = useFetcher()
 
   React.useEffect(() => {
-    if (commentEditFetcher.state === 'submitting' && formRef.current) {
+    if (commentEditFetcher.state === 'submitting' && formRef?.current) {
       formRef.current?.reset()
     }
   }, [commentEditFetcher.state])
@@ -370,10 +368,19 @@ function CommentEditForm({
       method='POST'
       action={`/comment/${commentId}`}
     >
-      <textarea name='message' defaultValue={message} className='w-full' />
+      <textarea name='message' defaultValue={message} className='w-full'
+        autoFocus
+      />
       <button name='action' value='edit' type='submit'>
-        Submit
+        {commentEditFetcher.state === 'submitting' ? (
+            <CircleIcon     />
+          ) : (
+            'Edit'
+          )
+          }
+
       </button>
+
     </commentEditFetcher.Form>
   )
 }
