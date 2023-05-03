@@ -1,9 +1,15 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import { ActionArgs, LoaderArgs, redirect } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
 import { prisma } from '~/server/auth/prisma.server'
 import { z } from 'zod'
 import { validateAction } from '~/utilities'
+import {
+  commitSession,
+  getSession,
+  setErrorMessage,
+  setSuccessMessage
+} from '~/server/auth/session.server'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { commentId } = zx.parseParams(params, { commentId: z.string() })
@@ -30,6 +36,7 @@ const schema = z.object({
 
 export type ActionData = z.infer<typeof schema>
 export async function action({ request, params }: ActionArgs) {
+  const session = await getSession(request.headers.get('Cookie'))
   console.log(params, 'params')
 
   const { commentId } = zx.parseParams(params, { commentId: z.string() })
@@ -61,7 +68,7 @@ export async function action({ request, params }: ActionArgs) {
 
   switch (action) {
     case 'edit':
-      await prisma.comment.update({
+      const updated = await prisma.comment.update({
         where: {
           id: commentId
         },
@@ -69,14 +76,41 @@ export async function action({ request, params }: ActionArgs) {
           message
         }
       })
-      return json({ message: 'success' })
+      if (!updated) {
+        setErrorMessage(session, 'Something went wrong')
+      } else {
+        setSuccessMessage(session, 'Comment updated')
+      }
+      return json(
+        {
+          message: 'success'
+        },
+        {
+          headers: {
+            'Set-Cookie': await commitSession(session)
+          }
+        }
+      )
     case 'delete':
-      await prisma.comment.delete({
+      const deleted = await prisma.comment.delete({
         where: {
           id: commentId
         }
       })
-      return json({ message: 'success' })
+      if (!deleted) {
+        setErrorMessage(session, 'Something went wrong')
+      } else {
+        setSuccessMessage(session, 'Comment deleted')
+      }
+
+      return json(
+        { message: 'success' },
+        {
+          headers: {
+            'Set-Cookie': await commitSession(session)
+          }
+        }
+      )
     default:
       break
   }

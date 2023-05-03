@@ -4,6 +4,7 @@ import { json } from '@remix-run/node'
 import {
   Form,
   Link,
+  NavLink,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError
@@ -18,11 +19,15 @@ import { getPosts } from '~/server/post.server'
 import type { CommentWithChildren, Post } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { ChatBubbleIcon } from '@radix-ui/react-icons'
+import {
+  ChatBubbleIcon,
+  ChevronDownIcon,
+  ChevronUpIcon
+} from '@radix-ui/react-icons'
 import Button from '~/components/button'
 import { ShareButton } from '~/components/share-button'
 import CommentContainer from '~/components/blog-ui/comments/comment-list'
-import { ColBox } from '~/components/boxes'
+import { ColBox, RowBox } from '~/components/boxes'
 import VerticalMenu from '~/components/vertical-menu'
 import BlogCard from '~/components/blog-ui/blog-card'
 dayjs.extend(relativeTime)
@@ -38,13 +43,14 @@ export default function BlogRoute() {
 
   return (
     <div className='h- flex w-full flex-col items-center gap-2'>
-      <h1 className='text-4xl font-semibold'>Blog</h1>
+      <BlogMenu />
 
-      {data && data.posts.map((post) => (
-        <BlogCard key={post.id} post={post}>
-          <CommentBox postId={post.id} />
-        </BlogCard>
-      ))}
+      {data &&
+        data.posts.map((post) => (
+          <BlogCard key={post.id} post={post}>
+            <CommentBox postId={post.id} />
+          </BlogCard>
+        ))}
     </div>
   )
 }
@@ -156,3 +162,55 @@ export function ErrorBoundary() {
     </div>
   )
 }
+function BlogMenu() {
+  const [menu, setMenu] = React.useState(false)
+
+  return (
+    <div className='relative'>
+      <RowBox className='w-full items-center'>
+        <h1 className='text-2xl font-bold'>Blog</h1>
+        <button
+          onClick={() => {
+            setMenu(!menu)
+          }}
+        >
+          {menu ? (
+            <ChevronUpIcon className='text-teal-400' />
+          ) : (
+            <ChevronDownIcon className='text-teal-400' />
+          )}
+        </button>
+      </RowBox>
+      {menu && (
+        <div className='absolute left-0 right-0 z-10 items-center rounded-md bg-slate-50 p-2 dark:bg-slate-900'>
+          <MapMenuItems menuItems={BlogItems} />
+        </div>
+      )}
+    </div>
+  )
+}
+function MapMenuItems({ menuItems }: { menuItems: typeof BlogItems }) {
+  return (
+    <div className='flex flex-col items-center gap-2'>
+      {menuItems.map((item, index) => (
+        <NavLink key={index} to={item.path}>
+          {item.title}
+        </NavLink>
+      ))}
+    </div>
+  )
+}
+export const BlogItems = [
+  {
+    title: 'New Post',
+    path: '/blog/new'
+  },
+  {
+    title: 'All Posts',
+    path: '/blog'
+  },
+  {
+    title: 'Drafts',
+    path: '/drafts'
+  }
+]

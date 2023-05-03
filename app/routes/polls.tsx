@@ -1,9 +1,4 @@
-import {
-  Link,
-  Outlet,
-  useActionData,
-  useLoaderData
-} from '@remix-run/react'
+import { Link, Outlet, useActionData, useLoaderData } from '@remix-run/react'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
@@ -90,7 +85,7 @@ export async function action({ request, params }: ActionArgs) {
     } else {
       setSuccessMessage(session, `You have voted for ${updated.option.value}`)
     }
-    return redirect('/polls', {
+    return redirect('/', {
       headers: {
         'Set-Cookie': await commitSession(session)
       }
@@ -110,7 +105,7 @@ export async function action({ request, params }: ActionArgs) {
     setSuccessMessage(session, 'You have already voted')
   }
 
-  return redirect('/polls', {
+  return redirect('/', {
     headers: {
       'Set-Cookie': await commitSession(session)
     }
@@ -119,25 +114,25 @@ export async function action({ request, params }: ActionArgs) {
 export default function () {
   const data = useLoaderData<typeof loader>()
   const actionData = useActionData<typeof action>()
-
+  // need these ? because data is undefined before a first poll is created.
   React.useEffect(() => {
-    setVoteTotal(Number(data.polls[0].votes.length))
+    setVoteTotal(Number(data?.polls[0]?.votes?.length) || 0)
   }, [data.polls])
 
   const [voteTotal, setVoteTotal] = React.useState<number>(
-    Number(data.polls[0].votes.length)
+    Number(data?.polls[0]?.votes?.length) || 0
   )
   return (
     <div className='flex flex-col gap-1'>
-      <h1 className=''>
+      <h1 className='flex flex-col'>
         <Link to='/polls'>Polls</Link>
         <Link to='/polls/new'>New Poll</Link>
       </h1>
 
-      {data.polls.map((poll) => (
+      {data?.polls?.map((poll) => (
         <VotingMachine
           key={poll.id}
-          initVoteTotal={poll.votes.length}
+          initVoteTotal={poll?.votes?.length || 0}
           poll={poll}
         />
       ))}

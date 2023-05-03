@@ -38,7 +38,7 @@ export default function BlogPostRoute() {
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       <h1>Blog</h1>
       <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data.post}>
+        <BlogCard post={data?.post}>
           <CommentBox postId={data.post.id} />
         </BlogCard>
       </div>

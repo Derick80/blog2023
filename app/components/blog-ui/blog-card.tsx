@@ -80,7 +80,7 @@ export default function BlogCard({ post, children }: Props) {
         <RowBox>
           <LikeContainer
             postId={post.id}
-            likes={post.likes}
+            likes={post?.likes}
             likeCounts={post?.likes?.length}
           />
 
@@ -99,7 +99,7 @@ export default function BlogCard({ post, children }: Props) {
           {post.comments && (
             <>
               <RowBox>
-                <p className='sub'>{post.comments.length}</p>
+                <p className='sub'>{post?.comments?.length}</p>
                 <Button
                   variant='ghost'
                   size='tiny'

@@ -53,7 +53,7 @@ export const MenuItems = [
   }
 ]
 
-function MapMenuItems({ menuItems }: { menuItems: typeof MenuItems }) {
+export function MapMenuItems({ menuItems }: { menuItems: typeof MenuItems }) {
   return (
     <>
       {menuItems.map((item, index) => (

@@ -3,7 +3,12 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import { prisma } from '~/server/auth/prisma.server'
-import { commitSession, getSession, setErrorMessage, setSuccessMessage } from '~/server/auth/session.server'
+import {
+  commitSession,
+  getSession,
+  setErrorMessage,
+  setSuccessMessage
+} from '~/server/auth/session.server'
 import Button from '~/components/button'
 export async function action({ request, params }: ActionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
@@ -32,27 +37,26 @@ export async function action({ request, params }: ActionArgs) {
     }
   })
 
-  if(!poll) {
+  if (!poll) {
     setErrorMessage(session, 'Poll creation failed')
     return json({ error: 'Poll creation failed' })
-  }else{
+  } else {
     setSuccessMessage(session, 'Poll created successfully')
-
-  } 
+  }
   return redirect('/polls', {
     headers: {
       'Set-Cookie': await commitSession(session)
-
     }
   })
-
-    
 }
 
 export default function PollCreationIndex() {
   return (
     <div className='h-full w-full border-2'>
-      <Form method='POST' className='flex w-full  flex-col rounded-md border-2'>
+      <Form
+        method='POST'
+        className='flex w-full flex-col rounded-md border-2 text-black'
+      >
         <label htmlFor='title'>Title</label>
         <input type='text' name='title' placeholder='Title' />
         <label htmlFor='description'>Description</label>
@@ -60,10 +64,9 @@ export default function PollCreationIndex() {
         <label htmlFor='options'>Options</label>
         <input type='text' name='options' placeholder='Options' />
 
-        <Button 
-          variant='primary_filled'
-          size='base'
-        type='submit'>Submit</Button>
+        <Button variant='primary_filled' size='base' type='submit'>
+          Submit
+        </Button>
       </Form>
     </div>
   )

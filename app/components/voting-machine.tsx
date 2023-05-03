@@ -41,10 +41,9 @@ export default function VotingMachine({
   })
   console.log(hasVoted, 'hasVoted')
 
-  const votes = poll.votes.filter((vote) => {
+  const votes = poll?.votes?.filter((vote) => {
     return vote.userId === currentUserId
   })
-  console.log(votes, 'votes')
 
   const [voteTotal, setVoteTotal] = React.useState<number>(initVoteTotal)
   const [options, setOptions] = React.useState(
@@ -70,62 +69,90 @@ export default function VotingMachine({
     setVoteTotal(initVoteTotal)
   }, [initVoteTotal])
 
+  console.log(voteTotal, 'voteTotal')
+
+  const [voting, setVoting] = React.useState(false)
   return (
-    <div className='flex flex-col flex-wrap border-2'>
+    <div className='flex w-full flex-col flex-wrap'>
       <h3 className='text-xl'>{poll.title}</h3>
       <p className='text-xs italic'>{poll.description}</p>
       {poll.options.map((option) => {
         return (
-          <div className='' key={option.id}>
-            <div className='flex flex-col flex-wrap bg-red-100'>
-              <div
-                className='flex h-full items-center justify-between bg-green-500'
-                style={{
-                  width: `${((option.votes.length / voteTotal) * 100).toFixed(
-                    0
-                  )}%`
-                }}
-              >
-                <p>{option.value}</p>
-
+          <div className='relative flex w-full p-1 ' key={option.id}>
+            <div className='flex w-full flex-col '>
+              <div className='relative flex h-full  w-full items-center justify-between bg-blue-500'>
+                <p className='z-20 inline-block w-full text-xs text-white'>
+                  {option.value}
+                </p>
+                <div
+                  className='absolute z-10 flex h-full w-full items-center justify-between bg-gradient-to-r from-orange-700 to-orange-50'
+                  style={{
+                    width: `${(
+                      (option?.votes?.length / voteTotal) *
+                      100
+                    ).toFixed(0)}%`
+                  }}
+                ></div>
                 <RowBox>
-                  {
-                    option.votes.length > 0 ? (
-                        <><p>{((option.votes.length / voteTotal) * 100).toFixed(0)}%</p><p>({option.votes.length})</p></>
-                    ) : null
-                    
-                  }
+                  {option.votes.length > 0 ? (
+                    <>
+                      <p className='z-30 text-xs text-white'>
+                        {((option?.votes?.length / voteTotal) * 100).toFixed(0)}
+                        %
+                      </p>
+                      <p className='z-30 text-xs text-white'>
+                        ({option.votes.length})
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className='z-30 text-xs text-white'>0%</p>
+                      <p className='z-30 text-xs text-white'>(0)</p>
+                    </>
+                  )}
                 </RowBox>
               </div>
             </div>
           </div>
         )
       })}
-      <Form method='POST' action='/polls'>
-        <input type='hidden' name='pollId' value={poll.id} />
-        {poll.options.map((option) => {
-          return (
-            <div className='' key={option.id}>
-              <label htmlFor={option.value}>{option.value}</label>
-              <input
-                type='radio'
-                name='option'
-                defaultValue={option.id}
-                value={option.id}
-              />
-              {actionData?.errors?.option && (
-                <p id='option-error' className='text-red-500'>
-                  {actionData?.errors?.option}
-                </p>
-              )}
-            </div>
-          )
-        })}
-          <Button 
+      <div className='mx-auto flex w-1/2 p-1'>
+        <Button
           variant='primary_filled'
           size='base'
-        type='submit'>Submit</Button>
-      </Form>
+          onClick={() => setVoting(!voting)}
+          className='bg-blue-500'
+        >
+          Vote
+        </Button>
+      </div>
+      {voting && (
+        <Form method='POST' action='/polls'>
+          <input type='hidden' name='pollId' value={poll.id} />
+          {poll.options.map((option) => {
+            return (
+              <div className='flex items-center gap-1 p-1' key={option.id}>
+                <input
+                  type='radio'
+                  name='option'
+                  defaultValue={option.id}
+                  value={option.id}
+                />
+                <label htmlFor={option.value}>{option.value}</label>
+
+                {actionData?.errors?.option && (
+                  <p id='option-error' className='text-red-500'>
+                    {actionData?.errors?.option}
+                  </p>
+                )}
+              </div>
+            )
+          })}
+          <Button variant='primary_filled' size='base' type='submit'>
+            Submit
+          </Button>
+        </Form>
+      )}
     </div>
   )
 }

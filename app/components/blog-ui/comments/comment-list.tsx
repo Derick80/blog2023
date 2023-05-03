@@ -1,11 +1,12 @@
-import { Form, FormMethod, useFetcher } from '@remix-run/react'
+import { Form, FormMethod } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import React from 'react'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
 import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
 import { ColBox, RowBox } from '~/components/boxes'
-import {  Tooltip ,Image} from '@mantine/core'
+import { Tooltip, Image } from '@mantine/core'
 import {
   ChevronUpIcon,
   ChevronDownIcon,
@@ -13,7 +14,8 @@ import {
   HeartIcon
 } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CommentLike } from '@prisma/client'
+import type { CommentLike } from '@prisma/client'
+import type { SerializeFrom } from '@remix-run/node'
 
 function getReplyCountText(count: number) {
   if (count === 0 || !count) {
@@ -30,21 +32,23 @@ function getReplyCountText(count: number) {
 export default function CommentContainer({ postId }: { postId: string }) {
   const matches = useMatchesData('routes/blog')
   const comments = matches?.comments as CommentWithChildren[]
+  console.log(comments, 'comments')
 
   function filterComments(comments: CommentWithChildren[], postId: string) {
-    return comments.filter(
+    return comments?.filter(
       (comment: { postId: string }) => comment.postId === postId
     )
   }
   const filteredComments = filterComments(comments, postId)
 
+  if (!filteredComments) return null
   return (
     <div className='flex flex-col'>
       {filteredComments.map((comment: CommentWithChildren) => (
         <Comment
           key={comment?.id}
           comments={comment}
-          children={comment.children}
+          children={comment?.children}
         />
       ))}
     </div>
@@ -92,6 +96,7 @@ function Comment({
   const [open, setOpen] = React.useState(false)
   const [editing, setEditing] = React.useState(false)
   const [isReplying, setIsReplying] = React.useState(false)
+  const deleteFetcher = useFetcher()
 
   return (
     <div
@@ -101,16 +106,14 @@ function Comment({
       <RowBox className='relative w-full p-1'>
         <ColBox className='ml-2 mt-2 flex w-full flex-col'>
           <div className='bg-slsate-900/30 relative w-full rounded-md border-2 p-1'>
-          <Image
-            src={comments?.user?.avatarUrl}
-            alt={comments?.user?.username}
-            radius='xl'
-            width={24}
-            height={24}
-          />
-            
+            <Image
+              src={comments?.user?.avatarUrl}
+              alt={comments?.user?.username}
+              radius='xl'
+              width={24}
+              height={24}
+            />
             {comments?.user?.username} replied ...
-        
             {editing ? (
               <CommentEditForm
                 commentId={comments.id}
@@ -121,7 +124,7 @@ function Comment({
             )}
             <RowBox>
               {user?.id === comments.userId && (
-                <div className='flex w-full flex-row gap-2 bg-purple-500'>
+                <div className='flex w-full flex-row gap-2'>
                   <div className=' flex w-full items-center justify-between'>
                     <Button
                       variant='icon_unfilled'
@@ -133,6 +136,23 @@ function Comment({
                         {editing ? 'Cancel' : 'Edit'}
                       </p>
                     </Button>
+                    <deleteFetcher.Form
+                      method='POST'
+                      action={`/comment/${comments.id}`}
+                    >
+                      <Button
+                        variant='icon_unfilled'
+                        size='small'
+                        className='flex flex-row justify-between gap-2 text-xs'
+                        type='submit'
+                        name='action'
+                        value='delete'
+                      >
+                        <p className='flex flex-row gap-2 text-xs text-black'>
+                          {editing ? 'Cancel' : 'Delete'}
+                        </p>
+                      </Button>
+                    </deleteFetcher.Form>
                   </div>
                 </div>
               )}
@@ -215,7 +235,7 @@ function CommentActionBox({
 }: {
   commentId: string
   commentLength: number
-  likes: CommentLike[]
+  likes: SerializeFrom<CommentLike[]>
 }) {
   const [editing, setEditing] = React.useState(false)
 
@@ -246,7 +266,7 @@ function LikeComment({
 }: {
   commentId: string
   commentLikesNumber: number
-  likes: CommentLike[]
+  likes: SerializeFrom<CommentLike[]>
 }) {
   const likeCommentFetcher = useFetcher()
   const user = useOptionalUser()
@@ -333,9 +353,19 @@ function CommentEditForm({
   commentId: string
   message: string
 }) {
+  const formRef = React.useRef<HTMLFormElement>(null)
+
   const commentEditFetcher = useFetcher()
+
+  React.useEffect(() => {
+    if (commentEditFetcher.state === 'submitting' && formRef.current) {
+      formRef.current?.reset()
+    }
+  }, [commentEditFetcher.state])
+
   return (
     <commentEditFetcher.Form
+      ref={formRef}
       className='w-full'
       method='POST'
       action={`/comment/${commentId}`}

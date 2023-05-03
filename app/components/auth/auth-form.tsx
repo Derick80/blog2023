@@ -51,6 +51,14 @@ export const AuthForm = ({ authType }: Props) => {
       )}
       {authType !== 'request' && (
         <>
+          <label className=''>Username</label>
+          <TextInput
+            placeholder='Username'
+            name='username'
+            description='Username must be at least 3 characters long'
+            withAsterisk
+          />
+
           <label>Password</label>
           <PasswordInput
             name='password'
