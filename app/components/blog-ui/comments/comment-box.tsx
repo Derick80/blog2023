@@ -35,13 +35,15 @@ export default function CommentBox({
             action={`/blog/${postId}/comment`}
             method='POST'
           >
-            <Image
+         <div className='w-6 h-6'>
+         <Image
               src={user?.avatarUrl}
               alt={user?.username}
-              width={40}
-              height={40}
+              width={24}
+              height={24}
               radius='xl'
             />
+          </div>
             <input type='hidden' name='postId' value={postId} />
             {parentId && (
               <input type='hidden' name='parentId' value={parentId} />

@@ -5,7 +5,7 @@ import CommentBox from './comment-box'
 import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
 import { ColBox, RowBox } from '~/components/boxes'
-import { Avatar, Tooltip ,Image} from '@mantine/core'
+import {  Tooltip ,Image} from '@mantine/core'
 import {
   ChevronUpIcon,
   ChevronDownIcon,
@@ -101,8 +101,7 @@ function Comment({
       <RowBox className='relative w-full p-1'>
         <ColBox className='ml-2 mt-2 flex w-full flex-col'>
           <div className='bg-slsate-900/30 relative w-full rounded-md border-2 p-1'>
-            {comments?.user?.username} replied ...
-            <Image
+          <Image
             src={comments?.user?.avatarUrl}
             alt={comments?.user?.username}
             radius='xl'
@@ -110,6 +109,8 @@ function Comment({
             height={24}
           />
             
+            {comments?.user?.username} replied ...
+        
             {editing ? (
               <CommentEditForm
                 commentId={comments.id}
