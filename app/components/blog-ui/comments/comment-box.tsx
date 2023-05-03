@@ -1,4 +1,4 @@
-import { Avatar } from '@mantine/core'
+import { Avatar, Image } from '@mantine/core'
 import type { Post } from '@prisma/client'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
@@ -35,10 +35,11 @@ export default function CommentBox({
             action={`/blog/${postId}/comment`}
             method='POST'
           >
-            <Avatar
+            <Image
               src={user?.avatarUrl}
               alt={user?.username}
-              size='sm'
+              width={40}
+              height={40}
               radius='xl'
             />
             <input type='hidden' name='postId' value={postId} />
