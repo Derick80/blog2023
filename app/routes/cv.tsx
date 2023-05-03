@@ -7,7 +7,7 @@ import { blurb } from '~/resources/resume/blurb'
 import { pubs } from '~/resources/resume/pubs'
 import { skills } from '~/resources/resume/skills'
 import { work_experience } from '~/resources/resume/workexperience'
-
+import { education } from '~/resources/resume/education'
 export default function Cv() {
   const [open, setOpen] = React.useState(false)
   return (
@@ -53,6 +53,7 @@ export default function Cv() {
             className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
           >
             <h3 className='text-md font-Montserrat'>{pub.title}</h3>
+
             <AccordianTriggerPub pub={pub}>
               <div className='flex flex-col items-start px-4'>
                 <ul>
@@ -83,19 +84,26 @@ export default function Cv() {
           </div>
         ))}
         <h1 className='text-2xl font-bold'>Education</h1>
-
+        <ColBox>
+          {education.map((edu, index) => (
+            <div
+              key={index}
+              className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
+            >
+              <h3 className='text-md font-Montserrat'>{edu.institution}</h3>
+              <RowBox className='flex flex-row items-center justify-between'>
+                <h4 className='text-md font-Montserrat'>{edu.degree}</h4>
+                <h4 className='text-md font-Montserrat'>
+                  {edu.startDate} - {edu.endDate}
+                </h4>
+              </RowBox>
+            </div>
+          ))}
+        </ColBox>
         <ColBox className='flex flex-col items-stretch gap-2 rounded-md p-1'>
-          <div className='flex flex-row justify-between gap-2 text-xs'>
+          <div className='flex flex-col justify-between gap-2 text-xs'>
             <h1 className='text-2xl font-bold'>Skills</h1>
-            <button type='button' onClick={() => setOpen(!open)}>
-              {open ? (
-                <ChevronUpIcon className='text-teal-400' />
-              ) : (
-                <ChevronDownIcon className='text-teal-400' />
-              )}
-            </button>
-          </div>
-          {open && (
+
             <ul className='flex flex-row flex-wrap gap-2'>
               {skills.map((skill, index) => (
                 <li className='rounded-md border-2 p-1 text-xs ' key={index}>
@@ -105,7 +113,7 @@ export default function Cv() {
                 </li>
               ))}
             </ul>
-          )}
+          </div>
         </ColBox>
       </div>
     </>

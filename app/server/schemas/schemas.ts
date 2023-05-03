@@ -32,7 +32,6 @@ export type Comment = SerializeFrom<PrismaComment> & {
   likes: SerializeFrom<CommentLike>[]
 }
 
-
 export type CommentWithChildren = SerializeFrom<PrismaComment> & {
   user: User
   children: CommentWithChildren[]
