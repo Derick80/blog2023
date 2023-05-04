@@ -19,8 +19,13 @@ import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import CommentContainer from './comments/comment-list'
 import { RowBox } from '../boxes'
 import relativeTime from 'dayjs/plugin/relativeTime'
-
+import applicationStyleSheet from '~/components/blog-ui/blog-card.css'
+import { LinksFunction } from '@remix-run/node'
 dayjs.extend(relativeTime)
+
+export const links: LinksFunction= () => {
+  return [{ rel: 'stylesheet', href: applicationStyleSheet }]
+}
 
 export type Props = {
   post: Post
@@ -29,9 +34,9 @@ export type Props = {
 export default function BlogCard({ post, children }: Props) {
   const [open, setOpen] = React.useState(true)
   return (
-    <div className='w-full'>
+    <div className='w-full '>
       <Card key={post.id} shadow='sm' padding='md' radius='md' withBorder>
-        <Card.Section className='relative'>
+        <Card.Section className='relative books'>
           <Image
             fit='cover'
             src={post.imageUrl}
@@ -67,10 +72,10 @@ export default function BlogCard({ post, children }: Props) {
             </Text>
             <div className='flex items-center'>
               <Image
-                src={post.imageUrl}
+                src={post.user.avatarUrl}
                 alt={post.title}
-                width={30}
-                height={30}
+                width={24}
+                height={24}
                 radius='xl'
                 className='mr-2'
               />
@@ -91,8 +96,12 @@ export default function BlogCard({ post, children }: Props) {
           <VerticalMenu>
             <Link to={`/blog/${post.id}`}>View</Link>
             <Link to={`/blog/${post.id}/edit`}>Edit</Link>
-            <Form method='post' action={`/blog/${post.id}/delete`}>
-              <button type='submit'>Delete</button>
+            <Form 
+            id='delete-post'
+            method='POST' action={`/blog/${post.id}/delete`}>
+              <button
+                form='delete-post'
+              type='submit'>Delete</button>
             </Form>
           </VerticalMenu>
 
@@ -107,7 +116,7 @@ export default function BlogCard({ post, children }: Props) {
                     setOpen(!open)
                   }}
                 >
-                  <ChatBubbleIcon />{' '}
+                  <ChatBubbleIcon />
                 </Button>
               </RowBox>
             </>

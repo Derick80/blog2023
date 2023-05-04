@@ -49,7 +49,7 @@ export default function BlogRoute() {
   console.log(parentData, 'parentData')
 
   return (
-    <div className='flex h-screen w-full flex-col items-center gap-4 border-2'>
+    <div className='flex h-screen w-full flex-col items-center gap-4'>
       {posts.map((post) => (
         <BlogCard key={post.id} post={post}>
           <CommentBox postId={post.id} />

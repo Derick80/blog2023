@@ -13,6 +13,15 @@ export const skills = [
     skill: 'Variant Classification'
   },
   {
+    skill: 'FDA Submissions'
+  },
+  {
+    skill: 'In Silco Analysis'
+  },
+  {
+    skill: 'Family Studies'
+  },
+  {
     skill: 'Population Databases'
   },
   {
@@ -29,5 +38,30 @@ export const skills = [
   },
   {
     skill: 'Python'
+  },
+  {
+    skill: 'HTML'
+  },
+  {
+    skill: 'CSS'
+  },
+  {
+    skill: 'GitHub'
+  },
+  {
+    skill: 'Regex'
+  },
+  {
+    skill: 'Data Wrangling'
+  },
+  {
+    skill: 'Data Visualization'
+  },
+  {
+    skill: 'Data Analysis'
+  },
+  {
+    skill: 'Cloud Computing'
   }
+
 ]

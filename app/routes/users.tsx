@@ -5,6 +5,7 @@ import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { getUsers } from '~/server/user.server'
+import { useOptionalUser } from '~/utilities'
 
 export async function loader({ request }: LoaderArgs) {
   const users = await getUsers()
@@ -17,9 +18,11 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function UsersIndex() {
+  const user = useOptionalUser()
+  const userId = user?.id
   const data = useLoaderData<{
     users: {
-      id: number
+      id: string
       username: string
       email: string
       avatarUrl: string
@@ -43,15 +46,29 @@ export default function UsersIndex() {
               key={user.id}
             >
               <RowBox>
-                {user.avatarUrl ? (
+                {user.avatarUrl ? (<>
                   <img
                     className='h-10 w-10 rounded-full'
                     src={user.avatarUrl}
                     alt={user.username}
                   />
+                   {
+                   userId === user.id && (
+                      <Button size='small' variant='primary_filled'>
+                        <Link to={`/users/${user.username}/edit`}>
+                          Edit Profile
+                        </Link>
+                      </Button>
+                    )
+                      
+                  }
+                  </>
                 ) : (
                   <UserPlaceHolder />
                 )}
+               
+
+             
                 <h3 className='text-xl font-bold'>{user.username}</h3>
               </RowBox>
               <p>{user.email}</p>

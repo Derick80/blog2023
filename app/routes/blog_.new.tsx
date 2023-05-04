@@ -15,6 +15,7 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import Button from '~/components/button'
+import SelectBox from '~/components/select-box'
 import TipTap from '~/components/tip-tap'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import {
@@ -76,12 +77,14 @@ export async function action({ request }: ActionArgs) {
     formData as ActionInput
 
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-  const cats = categories?.split(',')
+  const cats = categories?.split(', ')
   const category = cats.map((cat) => {
     return {
       value: cat
     }
   })
+  console.log(categories, 'category');
+  
 
   const post = await createPost({
     title,
@@ -91,7 +94,14 @@ export async function action({ request }: ActionArgs) {
     featured,
     slug,
     userId,
-    categories: category
+    categories: categories.split(',').map((cat) => {
+      return {
+        value: cat
+      }
+    }
+    )
+
+
   })
 
   if (!post) {
@@ -132,6 +142,8 @@ export default function NewPostRoute() {
     }
   }, [categoryFetcher])
 
+ 
+    
   return (
     <div className='mx-auto flex h-full w-fit flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
@@ -184,6 +196,10 @@ export default function NewPostRoute() {
         <label htmlFor='content'>Content</label>
 
         <TipTap />
+        <SelectBox 
+          
+        options={categories} onChange={(e) => console.log(e)} />
+
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>
           <MultiSelect

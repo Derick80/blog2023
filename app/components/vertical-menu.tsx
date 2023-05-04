@@ -20,7 +20,7 @@ export default function VerticalMenu({
       </Button>
       {open && (
         <div
-          onClick={() => setOpen((open) => !open)}
+          
           onMouseLeave={() => setOpen((open) => !open)}
           className='absolute right-0 top-0 z-10 flex flex-col items-center gap-1 rounded-md bg-slate-800 p-2 text-xs text-slate-50 shadow-lg'
         >

@@ -62,7 +62,9 @@ export default function ChatsRoute() {
         <div key={chat.id}>
           <Link to={`/chats/${chat.id}`}>
             {chat.users.map((user) => (
-              <div key={user.id}>
+              <div
+                
+              key={user.id}>
                 <img
                   src={user.avatarUrl ?? ''}
                   alt={''}

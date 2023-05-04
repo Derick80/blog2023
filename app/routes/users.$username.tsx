@@ -1,7 +1,7 @@
 import type { Chat } from '@prisma/client'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { useLoaderData, Link, Form } from '@remix-run/react'
+import { useLoaderData, Link, Form, Outlet } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { RowBox } from '~/components/boxes'
@@ -161,7 +161,7 @@ export default function UserRoute() {
   return (
     <div>
       <h1>User</h1>
-
+    <Outlet />
       <ul className='flex w-full flex-col items-center gap-1 md:gap-2'>
         <li className='flex w-full flex-row justify-between gap-1 rounded-lg border-2 p-1 md:gap-2 md:p-2'>
           <RowBox>

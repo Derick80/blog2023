@@ -32,7 +32,7 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export const schema = z.object({
-  categoryName: z.string().min(1).max(50).optional(),
+  categoryName: z.string().min(3).max(50).optional(),
   action: z.enum(['create', 'delete']),
   categoryId: z.string().optional()
 })

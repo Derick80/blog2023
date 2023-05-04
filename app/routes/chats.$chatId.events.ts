@@ -1,3 +1,4 @@
+import { Message } from '@prisma/client'
 import { LoaderArgs, redirect } from '@remix-run/node'
 import { eventStream } from 'remix-utils'
 import { z } from 'zod'
@@ -30,13 +31,13 @@ export async function loader({ request, params }: LoaderArgs) {
   if (!hasAccess) {
     return new Response('Access Denied', { status: 403 })
   }
-  return eventStream(request.signal, (send) => {
-    function handler(message: string) {
-      send('message', message)
+  return eventStream(request.signal, function setup(send) {
+    function listener(message: Message) {
+      send({ event: 'new-message', data: message.id })
     }
-    chatEmitter.addListener(EVENTS.NEW_MESSAGE, handler)
+    chatEmitter.addListener('message', listener)
     return () => {
-      chatEmitter.removeListener(EVENTS.NEW_MESSAGE, handler)
+      chatEmitter.removeListener('message', listener)
     }
   })
 }

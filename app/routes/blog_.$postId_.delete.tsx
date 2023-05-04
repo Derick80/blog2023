@@ -41,7 +41,7 @@ export async function action({ request, params }: ActionArgs) {
     setSuccessMessage(session, `Post ${post.title} deleted`)
   }
 
-  return redirect('/blog', {
+  return await redirect('/blog', {
     headers: {
       'Set-Cookie': await commitSession(session)
     }

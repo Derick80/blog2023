@@ -4,12 +4,12 @@ import {
   useActionData,
   useFetcher,
   useLoaderData,
+  useNavigation,
   useParams,
   useRevalidator
 } from '@remix-run/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useTransition } from 'react'
 import { useEventSource } from 'remix-utils'
-import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import Button from '~/components/button'
@@ -22,7 +22,7 @@ import {
   setErrorMessage,
   setSuccessMessage
 } from '~/server/auth/session.server'
-import { validateAction } from '~/utilities'
+import { useOptionalUser, validateAction } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { chatId } = zx.parseParams(params, { chatId: z.string() })
@@ -106,56 +106,60 @@ export async function action({ request, params }: ActionArgs) {
   const { action, content } = formData as ActionInput
   switch (action) {
     case 'send-message': {
-      const sent = await prisma.message.create({
+      const message = await prisma.message.create({
         data: {
           content,
           userId,
-          chatId: chatId
+           chatId
         },
         select: {
           id: true
         }
       })
 
-      if (!sent) {
-        setErrorMessage(session, 'Failed to send message')
-      } else {
-        setSuccessMessage(session, 'Message sent')
-      }
+      // if (!message) {
+      //   setErrorMessage(session, 'Failed to send message')
+      // } else {
+      //   setSuccessMessage(session, 'Message message')
+      // }
 
-      chatEmitter.emit(EVENTS.NEW_MESSAGE, { timestamp: Date.now() })
-      return json(
-        { success: true },
+      chatEmitter.emit("message", message.id)
+      return json(null,{status:204})  ,
         {
           headers: {
             'Set-Cookie': await commitSession(session)
           }
         }
-      )
+      
     }
     default: {
       throw new Error(`Unexpected action: ${action}`)
     }
   }
+
 }
 export default function ChatRoute() {
   const { chatId } = useParams()
   const actionData = useActionData<typeof action>()
   const data = useLoaderData<typeof loader>()
   const messageFetcher = useFetcher<typeof action>()
-  const chatUpdateData = useEventSource(`/chats/${chatId}/events`)
-  const revalidator = useRevalidator()
+  const chatUpdateData = useEventSource(`/chats/${chatId}/events`,{
+    event:'new-message'
+  })
+  const {revalidate} = useRevalidator()
   const mounted = useRef(false)
 
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true
-      return
-    }
-    revalidator.revalidate()
-  }, [chatUpdateData])
+  let lastMessageId = useEventSource(`/chats/${chatId}/events`, {
+    event:'new-message',
+  })
+
+
+  useEffect(() => revalidate(),[chatUpdateData , revalidate])
+
+
   const messages = [...data.chat.messages]
   console.log(messages, 'messages')
+const user = useOptionalUser()
 
   return (
     <div className='items- mb-10 flex h-screen w-full flex-col overflow-auto border-2'>
@@ -177,7 +181,9 @@ export default function ChatRoute() {
                 <div className='flex flex-row'>
                   <div className='font-bold'>{sender?.username}</div>
                 </div>
-                <div>{message.content}</div>
+                <div
+                  className={`${sender?.id === user?.id ? 'bg-blue-300' : 'bg-gray-400'} p-2 rounded-xl`}
+                >{message.content}</div>
               </div>
             </div>
           )
@@ -185,7 +191,8 @@ export default function ChatRoute() {
       </div>
       <hr />
       <messageFetcher.Form
-        method='post'
+        method='POST'
+        className='mt-10'
         onSubmit={(event) => {
           const form = event.currentTarget
           requestAnimationFrame(() => {

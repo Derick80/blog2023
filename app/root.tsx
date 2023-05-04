@@ -21,6 +21,7 @@ import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/auth/prisma.server'
 import { StylesPlaceholder } from '@mantine/remix'
 import { MantineProvider } from '@mantine/core'
+import ChatWidget from './components/chat-widget'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -86,6 +87,7 @@ export default function App() {
         <body className='bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'>
           <Layout>
             <Outlet />
+            <ChatWidget />
             <Toaster
               position='bottom-right'
               toastOptions={{
