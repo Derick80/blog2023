@@ -1,12 +1,23 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderArgs ,V2_MetaFunction} from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Link, Outlet, useLoaderData } from '@remix-run/react'
+import { Link, Outlet,  useLoaderData } from '@remix-run/react'
 import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { getUsers } from '~/server/user.server'
 import { useOptionalUser } from '~/utilities'
+export const meta: V2_MetaFunction = () => {
+  return [
+    {
+      title: `https://derickchoskinson.com Users`,
+    },
+    {
+      name: 'description',
+      content: `https://derickchoskinson.com Users`,
+    }
 
+  ]
+}
 export async function loader({ request }: LoaderArgs) {
   const users = await getUsers()
 
@@ -36,8 +47,10 @@ export default function UsersIndex() {
   }>()
 
   return (
-    <div className='mx-auto flex flex-row items-center gap-2 md:gap-4'>
-      <ColBox>
+    <div className='mx-auto border-2 w-full flex flex-col md:flex-row items-center gap-2 md:gap-4'>
+      <ColBox
+        className=''
+      >
         <h1 className='text-2xl font-bold md:text-3xl'>Users</h1>
         <ul className='flex w-full flex-col items-center gap-1 md:gap-2'>
           {data.users.map((user) => (
@@ -46,29 +59,25 @@ export default function UsersIndex() {
               key={user.id}
             >
               <RowBox>
-                {user.avatarUrl ? (<>
-                  <img
-                    className='h-10 w-10 rounded-full'
-                    src={user.avatarUrl}
-                    alt={user.username}
-                  />
-                   {
-                   userId === user.id && (
+                {user.avatarUrl ? (
+                  <>
+                    <img
+                      className='h-10 w-10 rounded-full'
+                      src={user.avatarUrl}
+                      alt={user.username}
+                    />
+                    {userId === user.id && (
                       <Button size='small' variant='primary_filled'>
                         <Link to={`/users/${user.username}/edit`}>
                           Edit Profile
                         </Link>
                       </Button>
-                    )
-                      
-                  }
+                    )}
                   </>
                 ) : (
                   <UserPlaceHolder />
                 )}
-               
 
-             
                 <h3 className='text-xl font-bold'>{user.username}</h3>
               </RowBox>
               <p>{user.email}</p>

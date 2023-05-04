@@ -23,7 +23,7 @@ import applicationStyleSheet from '~/components/blog-ui/blog-card.css'
 import { LinksFunction } from '@remix-run/node'
 dayjs.extend(relativeTime)
 
-export const links: LinksFunction= () => {
+export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: applicationStyleSheet }]
 }
 
@@ -36,7 +36,7 @@ export default function BlogCard({ post, children }: Props) {
   return (
     <div className='w-full '>
       <Card key={post.id} shadow='sm' padding='md' radius='md' withBorder>
-        <Card.Section className='relative books'>
+        <Card.Section className='books relative'>
           <Image
             fit='cover'
             src={post.imageUrl}
@@ -96,12 +96,14 @@ export default function BlogCard({ post, children }: Props) {
           <VerticalMenu>
             <Link to={`/blog/${post.id}`}>View</Link>
             <Link to={`/blog/${post.id}/edit`}>Edit</Link>
-            <Form 
-            id='delete-post'
-            method='POST' action={`/blog/${post.id}/delete`}>
-              <button
-                form='delete-post'
-              type='submit'>Delete</button>
+            <Form
+              id='delete-post'
+              method='POST'
+              action={`/blog/${post.id}/delete`}
+            >
+              <button form='delete-post' type='submit'>
+                Delete
+              </button>
             </Form>
           </VerticalMenu>
 

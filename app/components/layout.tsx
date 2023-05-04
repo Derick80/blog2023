@@ -6,6 +6,8 @@ import { Affix, Transition, rem, Image } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
+import HoverOverCard from './hovercard/hover-card'
+import HoverOCard from './hovercard/hover2'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [scroll, scrollTo] = useWindowScroll()
@@ -64,22 +66,16 @@ function NavigationBar() {
       <BrandIcon />
 
       <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
+        className={({ isActive, isPending }) => {
+          return isActive ? 'underline' : ''
         }}
         to='/'
       >
         <p className='text-sm font-semibold dark:text-slate-50'>Home</p>
       </NavLink>
       <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
+        className={({ isActive, isPending }) => {
+          return isActive ? 'underline' : ''
         }}
         to='/blog'
       >
@@ -87,22 +83,16 @@ function NavigationBar() {
       </NavLink>
 
       <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
+        className={({ isActive, isPending }) => {
+          return isActive ? 'underline' : ''
         }}
         to='/about'
       >
         <p className='text-sm font-semibold dark:text-slate-50'>About</p>
       </NavLink>
       <NavLink
-        style={({ isActive, isPending }) => {
-          return {
-            textDecorationLine: isActive ? 'underline' : '',
-            color: isPending ? 'red' : 'black'
-          }
+        className={({ isActive, isPending }) => {
+          return isActive ? 'underline' : ''
         }}
         to='/projects'
       >
@@ -114,14 +104,8 @@ function NavigationBar() {
 
       {user ? (
         <div className='flex flex-row items-center gap-2 p-2'>
-          <Image
-            src={user.avatarUrl}
-            alt={user.username}
-            radius='xl'
-            width={24}
-            height={24}
-          />
-
+          <HoverOverCard />
+      
           <Form
             className='m-0 flex items-center justify-center p-1'
             method='POST'

@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { projects } from '~/resources/projects'
@@ -12,18 +12,29 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ user })
 }
 
+
+export const meta: V2_MetaFunction = () => {
+  return [
+    {
+      title: `Derick's Projects`,
+    },
+  ]
+}
+
 export default function ProjectIndex() {
   return (
     <div>
-      <h1>Projects</h1>
+      <h1 className='text-center text-3xl font-bold text-slate-900 dark:text-slate-50'>
+        Projects
+      </h1>
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {projects.map((project) => (
           <div
-            className='rounded-md border-2 shadow-md dark:bg-slate-900 dark:text-slate-50'
+            className='rounded-md border-2 shadow-md drop-shadow-md dark:bg-slate-900  dark:text-slate-50'
             key={project.id}
           >
             <div>
-              <h4 className='dark:text-slate-50'>{project.title}</h4>
+              <h4 className='p-1 dark:text-slate-50'>{project.title}</h4>
 
               <img
                 src={project.projectImage}

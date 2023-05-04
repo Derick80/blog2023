@@ -110,7 +110,7 @@ export async function action({ request, params }: ActionArgs) {
         data: {
           content,
           userId,
-           chatId
+          chatId
         },
         select: {
           id: true
@@ -123,43 +123,41 @@ export async function action({ request, params }: ActionArgs) {
       //   setSuccessMessage(session, 'Message message')
       // }
 
-      chatEmitter.emit("message", message.id)
-      return json(null,{status:204})  ,
+      chatEmitter.emit('message', message.id)
+      return (
+        json(null, { status: 204 }),
         {
           headers: {
             'Set-Cookie': await commitSession(session)
           }
         }
-      
+      )
     }
     default: {
       throw new Error(`Unexpected action: ${action}`)
     }
   }
-
 }
 export default function ChatRoute() {
   const { chatId } = useParams()
   const actionData = useActionData<typeof action>()
   const data = useLoaderData<typeof loader>()
   const messageFetcher = useFetcher<typeof action>()
-  const chatUpdateData = useEventSource(`/chats/${chatId}/events`,{
-    event:'new-message'
+  const chatUpdateData = useEventSource(`/chats/${chatId}/events`, {
+    event: 'new-message'
   })
-  const {revalidate} = useRevalidator()
+  const { revalidate } = useRevalidator()
   const mounted = useRef(false)
 
   let lastMessageId = useEventSource(`/chats/${chatId}/events`, {
-    event:'new-message',
+    event: 'new-message'
   })
 
-
-  useEffect(() => revalidate(),[chatUpdateData , revalidate])
-
+  useEffect(() => revalidate(), [chatUpdateData, revalidate])
 
   const messages = [...data.chat.messages]
   console.log(messages, 'messages')
-const user = useOptionalUser()
+  const user = useOptionalUser()
 
   return (
     <div className='items- mb-10 flex h-screen w-full flex-col overflow-auto border-2'>
@@ -182,8 +180,12 @@ const user = useOptionalUser()
                   <div className='font-bold'>{sender?.username}</div>
                 </div>
                 <div
-                  className={`${sender?.id === user?.id ? 'bg-blue-300' : 'bg-gray-400'} p-2 rounded-xl`}
-                >{message.content}</div>
+                  className={`${
+                    sender?.id === user?.id ? 'bg-blue-300' : 'bg-gray-400'
+                  } rounded-xl p-2`}
+                >
+                  {message.content}
+                </div>
               </div>
             </div>
           )

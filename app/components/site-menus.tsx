@@ -50,6 +50,10 @@ export const MenuItems = [
   {
     title: 'UI',
     path: '/ui-components'
+  },
+  {
+    title: 'Beta',
+    path: '/beta'
   }
 ]
 
@@ -57,7 +61,11 @@ export function MapMenuItems({ menuItems }: { menuItems: typeof MenuItems }) {
   return (
     <>
       {menuItems.map((item, index) => (
-        <NavLink key={index} to={item.path}>
+        <NavLink
+          className='p-1 text-sm font-bold text-slate-900 dark:text-slate-50'
+          key={index}
+          to={item.path}
+        >
           {item.title}
         </NavLink>
       ))}

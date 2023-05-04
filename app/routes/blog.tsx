@@ -1,5 +1,5 @@
 import { Divider } from '@mantine/core'
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   Form,
@@ -31,6 +31,15 @@ import { ColBox, RowBox } from '~/components/boxes'
 import VerticalMenu from '~/components/vertical-menu'
 import BlogCard from '~/components/blog-ui/blog-card'
 dayjs.extend(relativeTime)
+
+export const meta: V2_MetaFunction = () => {
+  return [
+    {
+      title: `Derick's Blog`,
+    }
+  ]
+}
+
 export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
   const comments = await posts.map((post) => post.comments).flat()

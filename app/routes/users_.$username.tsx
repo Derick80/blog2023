@@ -161,7 +161,7 @@ export default function UserRoute() {
   return (
     <div>
       <h1>User</h1>
-    <Outlet />
+      <Outlet />
       <ul className='flex w-full flex-col items-center gap-1 md:gap-2'>
         <li className='flex w-full flex-row justify-between gap-1 rounded-lg border-2 p-1 md:gap-2 md:p-2'>
           <RowBox>

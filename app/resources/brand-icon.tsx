@@ -1,6 +1,6 @@
 export function BrandIcon() {
   return (
-    <div className='h-10 w-10'>
+    <div className='flex h-10 w-10'>
       <svg
         version='1.1'
         id='Layer_1'

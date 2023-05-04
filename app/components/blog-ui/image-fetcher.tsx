@@ -1,5 +1,4 @@
-import { useFetcher, useSubmit } from '@remix-run/react'
-import React from 'react'
+import { useFetcher } from '@remix-run/react'
 import Button from '../button'
 
 export default function ImageUploader({ setUrl }: any) {
@@ -23,7 +22,7 @@ export default function ImageUploader({ setUrl }: any) {
         <label htmlFor='imageUrl' className='subtitle'></label>
         <input
           id='imageUrl'
-          className='text-slate12 block w-full rounded-xl border-2 p-2 text-sm'
+          className=' block w-full rounded-xl border-2 p-2 text-xs cursor-pointer '
           type='file'
           name='imageUrl'
           accept='image/*'

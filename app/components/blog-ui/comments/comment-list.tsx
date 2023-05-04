@@ -120,7 +120,7 @@ function Comment({
                 message={comments.message}
               />
             ) : (
-              <p className='flex text-sm prose'>{comments?.message}</p>
+              <p className='prose flex text-sm'>{comments?.message}</p>
             )}
             <Divider />
             <RowBox>
@@ -175,36 +175,31 @@ function Comment({
                 </p>
               )}
             </RowBox>
-          
-
-          <CommentActionBox
-            commentId={comments.id}
-            commentLength={comments?.likes?.length}
-            likes={comments.likes}
-          />
+            <CommentActionBox
+              commentId={comments.id}
+              commentLength={comments?.likes?.length}
+              likes={comments.likes}
+            />
           </div>
-          <RowBox
-            className='flex justify-between'>
-              <div></div>
-               {comments.children?.length > 0 && (
-          <Button
-            variant='icon_unfilled'
-            size='small'
-            className='flex flex-row items-center justify-between gap-1 text-xs'
-            onClick={() => setOpen((open) => !open)}
-          >
-            <p className='flex flex-row gap-2 text-xs text-black'>
-              {getReplyCountText(comments.children?.length)}
+          <RowBox className='flex justify-between'>
+            <div></div>
+            {comments.children?.length > 0 && (
+              <Button
+                variant='icon_unfilled'
+                size='small'
+                className='flex flex-row items-center justify-between gap-1 text-xs'
+                onClick={() => setOpen((open) => !open)}
+              >
+                <p className='flex flex-row gap-2 text-xs text-black'>
+                  {getReplyCountText(comments.children?.length)}
 
-              {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
-            </p>
-          </Button>
-        )}
-            </RowBox>
+                  {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                </p>
+              </Button>
+            )}
+          </RowBox>
           <div className='flex flex-col gap-1'></div>
         </ColBox>
-
-       
       </RowBox>
       <RowBox className='mt- w-full'>
         {
@@ -245,7 +240,6 @@ function CommentActionBox({
   commentLength: number
   likes: SerializeFrom<CommentLike[]>
 }) {
-
   return (
     <div className='bottom-0 left-1 flex  flex-row items-center justify-between gap-2'>
       <LikeComment
@@ -253,7 +247,6 @@ function CommentActionBox({
         commentLikesNumber={commentLength}
         likes={likes}
       />
-   
     </div>
   )
 }
@@ -312,9 +305,7 @@ function LikeComment({
           {liked ? (
             <div className='flex flex-row items-center gap-1'>
               <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
-              <p className='text-[10px]'>
-                {likeCount}
-              </p>
+              <p className='text-[10px]'>{likeCount}</p>
             </div>
           ) : (
             <div className='flex flex-row items-center gap-1'>
@@ -368,19 +359,15 @@ function CommentEditForm({
       method='POST'
       action={`/comment/${commentId}`}
     >
-      <textarea name='message' defaultValue={message} className='w-full'
+      <textarea
+        name='message'
+        defaultValue={message}
+        className='w-full'
         autoFocus
       />
       <button name='action' value='edit' type='submit'>
-        {commentEditFetcher.state === 'submitting' ? (
-            <CircleIcon     />
-          ) : (
-            'Edit'
-          )
-          }
-
+        {commentEditFetcher.state === 'submitting' ? <CircleIcon /> : 'Edit'}
       </button>
-
     </commentEditFetcher.Form>
   )
 }

@@ -15,7 +15,6 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import Button from '~/components/button'
-import SelectBox from '~/components/select-box'
 import TipTap from '~/components/tip-tap'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import {
@@ -49,7 +48,7 @@ export const schema = z.object({
     .max(1000),
   imageUrl: z.string().url('Image URL should be a valid URL'),
   featured: z.coerce.boolean(),
-  content: z.string().min(1).max(1000),
+  content: z.string().min(1).max(50000),
   categories: z.string()
 })
 
@@ -83,8 +82,7 @@ export async function action({ request }: ActionArgs) {
       value: cat
     }
   })
-  console.log(categories, 'category');
-  
+  console.log(categories, 'category')
 
   const post = await createPost({
     title,
@@ -98,10 +96,7 @@ export async function action({ request }: ActionArgs) {
       return {
         value: cat
       }
-    }
-    )
-
-
+    })
   })
 
   if (!post) {
@@ -142,8 +137,6 @@ export default function NewPostRoute() {
     }
   }, [categoryFetcher])
 
- 
-    
   return (
     <div className='mx-auto flex h-full w-fit flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
@@ -196,9 +189,7 @@ export default function NewPostRoute() {
         <label htmlFor='content'>Content</label>
 
         <TipTap />
-        <SelectBox 
-          
-        options={categories} onChange={(e) => console.log(e)} />
+       
 
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>
