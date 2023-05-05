@@ -12,12 +12,11 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ user })
 }
 
-
 export const meta: V2_MetaFunction = () => {
   return [
     {
-      title: `Derick's Projects`,
-    },
+      title: `Derick's Projects`
+    }
   ]
 }
 
@@ -30,7 +29,7 @@ export default function ProjectIndex() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
         {projects.map((project) => (
           <div
-            className='rounded-md border-2 shadow-md drop-shadow-md dark:bg-slate-900  dark:text-slate-50'
+            className='flex h-fit flex-col justify-around rounded-md border-2 shadow-md drop-shadow-md dark:bg-slate-900  dark:text-slate-50'
             key={project.id}
           >
             <div>

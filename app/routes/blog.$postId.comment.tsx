@@ -78,9 +78,9 @@ export async function action({ request, params }: ActionArgs) {
     setErrorMessage(session, 'Comment posted')
   }
 
-  return redirect(`/blog`, {
+  return {
     headers: {
       'Set-Cookie': await commitSession(session)
     }
-  })
+  }
 }

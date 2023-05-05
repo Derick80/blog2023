@@ -105,7 +105,7 @@ function NavigationBar() {
       {user ? (
         <div className='flex flex-row items-center gap-2 p-2'>
           <HoverOverCard />
-      
+
           <Form
             className='m-0 flex items-center justify-center p-1'
             method='POST'

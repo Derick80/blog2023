@@ -40,7 +40,7 @@ export default function Button({
     success:
       'rounded border-2  border-green-500 dark:text-slate-50 hover:bg-green-600 hover:border-green-600 hover:text-slate-50 capitalize',
     warning:
-      'rounded border-2 border-yellow-200 dark:text-slate-50 hover:bg-yellow-300 hover:border-yellow-200 hover:text-slate-50 capitalize',
+      'rounded border-2 border-orange-200 dark:text-slate-50 hover:bg-orange-300 hover:border-orange-200 hover:text-slate-50 capitalize',
     danger:
       'rounded border-2 border-red-500 dark:text-slate-50 hover:bg-red-600 hover:border-red-600 hover:text-slate-50 capitalize',
     primary:
@@ -49,7 +49,7 @@ export default function Button({
     success_filled:
       'rounded border-2 bg-green-500 border-green-500 text-slate-50 hover:bg-green-600 hover:border-green-600 capitalize',
     warning_filled:
-      'rounded border-2 bg-yellow-200 border-yellow-200 darK:text-slate-50 hover:bg-yellow-300 hover:border-yellow-300 capitalize',
+      'rounded border-2 bg-orange-500 border-orange-500  hover:bg-orange-300 hover:border-orange-300 capitalize ',
     danger_filled:
       'rounded border-2 bg-red-500 border-red-500 text-slate-50 hover:bg-red-600 hover:border-red-600 capitalize',
     primary_filled:

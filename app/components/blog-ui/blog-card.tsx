@@ -20,7 +20,7 @@ import CommentContainer from './comments/comment-list'
 import { RowBox } from '../boxes'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import applicationStyleSheet from '~/components/blog-ui/blog-card.css'
-import { LinksFunction } from '@remix-run/node'
+import type { LinksFunction } from '@remix-run/node'
 dayjs.extend(relativeTime)
 
 export const links: LinksFunction = () => {
@@ -35,7 +35,7 @@ export default function BlogCard({ post, children }: Props) {
   const [open, setOpen] = React.useState(true)
   return (
     <div className='w-full '>
-      <Card key={post.id} shadow='sm' padding='md' radius='md' withBorder>
+      <Card key={post.id} shadow='xl' padding='md' radius='md' withBorder>
         <Card.Section className='books relative'>
           <Image
             fit='cover'

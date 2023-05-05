@@ -21,7 +21,7 @@ export default function VerticalMenu({
       {open && (
         <div
           onMouseLeave={() => setOpen((open) => !open)}
-          className='absolute right-0 top-0 z-10 flex flex-col items-center gap-1 rounded-md bg-slate-800 p-2 text-xs text-slate-50 shadow-lg'
+          className='flex-csol absolute right-0 top-0 z-50 flex items-center gap-1 rounded-md bg-slate-800 p-2 text-xs text-slate-50 shadow-lg'
         >
           {children}
         </div>

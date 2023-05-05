@@ -5,32 +5,32 @@
 @tailwind utilities;
 
 .container {
-    align-items: center;
-    position: relative;
-    max-width: 600px;
-    height: auto;
-    border: 2px solid #ffffff;
-    margin: 10px auto;
-    padding: 30px;
-    box-sizing: border-box;
-    background: #ffffff;
-    z-index: 10;
+  align-items: center;
+  position: relative;
+  max-width: 600px;
+  height: auto;
+  border: 2px solid #ffffff;
+  margin: 10px auto;
+  padding: 30px;
+  box-sizing: border-box;
+  background: #ffffff;
+  z-index: 10;
 }
 
-.container:after{
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    border-top: 2px solid transparent;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    border-left: 2px solid transparent;
-    top: 20px;
-    right: 52%;
-    left: 46%;
-    content: '';
-    z-index: 0;
-    transform: rotate(45deg);
-    margin-top: -25px;
-    background: #ffffff;
+.container:after {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border-top: 2px solid transparent;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  border-left: 2px solid transparent;
+  top: 20px;
+  right: 52%;
+  left: 46%;
+  content: '';
+  z-index: 0;
+  transform: rotate(45deg);
+  margin-top: -25px;
+  background: #ffffff;
 }

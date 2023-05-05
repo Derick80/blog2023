@@ -1,4 +1,4 @@
-import { V2_MetaFunction, useLoaderData } from '@remix-run/react'
+import { V2_MetaFunction, useLoaderData, useNavigation } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
@@ -83,10 +83,16 @@ export default function Index() {
   console.log(data, 'data')
 
   const initialVotes = data.latestPoll?.votes?.length || 0
-
+  const navigate = useNavigation()
   const user = useOptionalUser()
   return (
-    <div className='flex flex-col'>
+    <div
+      className={
+        navigate.state === 'loading'
+          ? 'opacity-25 transition-opacity delay-200'
+          : 'flex flex-col'
+      }
+    >
       <h1>Welcome to My Social Media App</h1>
       <ColBox>
         <h3 className='text-center'>Latest Poll</h3>

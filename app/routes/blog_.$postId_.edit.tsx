@@ -12,7 +12,13 @@ import { z } from 'zod'
 import { useMatchesData, validateAction } from '~/utilities'
 import { prisma } from '~/server/auth/prisma.server'
 import { updatePost } from '~/server/post.server'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+  useNavigation
+} from '@remix-run/react'
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
 import TipTap from '~/components/tip-tap'
@@ -108,6 +114,8 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function PostEdit() {
+  // use Navigate to go back to the previous page
+  const navigate = useNavigate()
   const data = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: Record<string, string> }>()
 
@@ -213,6 +221,14 @@ export default function PostEdit() {
           size='small'
         >
           Update
+        </Button>
+        <Button
+          type='button'
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
+          Cancel
         </Button>
       </div>
     </div>

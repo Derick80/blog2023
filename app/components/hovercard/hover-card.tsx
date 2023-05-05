@@ -20,7 +20,6 @@ export default function HoverOverCard() {
   }, [userFetcher])
 
   const loggedInUser = userFetcher.data?.user as User
-  
 
   const [hover, setHover] = React.useState(false)
   return (
@@ -51,21 +50,16 @@ export default function HoverOverCard() {
                   </h3>
                 </Link>
 
-                <p className='text-xs text-gray-500'>
-                  {loggedInUser.email}
-                </p>
+                <p className='text-xs text-gray-500'>{loggedInUser.email}</p>
                 {currentUserId === loggedInUser.id && (
                   <Button size='small' variant='primary_filled'>
-                  <Link to={`/users/${userFetcher.data.user.username}/edit`}>
-                    Edit Profile
-                  </Link>
-                </Button>
-                )
-                }
+                    <Link to={`/users/${userFetcher.data.user.username}/edit`}>
+                      Edit Profile
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
-           
-
           </HoverCard.Content>
         </HoverCard.Root>
       )}

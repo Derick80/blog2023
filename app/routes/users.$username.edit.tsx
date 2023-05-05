@@ -102,15 +102,16 @@ export default function UserEdit() {
   const [url, setUrl] = React.useState(data.currentUser.avatarUrl || '')
 
   return (
-    <div className='border-2 rounded-md p-2 h-full flex flex-col gap-2 items-center'>
+    <div className='flex h-full flex-col items-center gap-2 rounded-md border-2 p-2'>
       <ImageUploader setUrl={setUrl} />
-      <div className='flex flex-col w-12 h-12 mx-auto'>
-      <img src={url} alt='avatar' />
+      <div className='mx-auto flex h-12 w-12 flex-col'>
+        <img src={url} alt='avatar' />
       </div>
       <Form
-      id='updateUser'
-        className='flex flex-col gap-2 justify-center items-center w-full'
-      method='post'>
+        id='updateUser'
+        className='flex w-full flex-col items-center justify-center gap-2'
+        method='post'
+      >
         <input
           type='hidden'
           name='imageUrl'
@@ -118,13 +119,15 @@ export default function UserEdit() {
           onChange={(e) => setUrl(e.target.value)}
         />
         {actionData?.errors?.imageUrl && <p>{actionData?.errors?.imageUrl}</p>}
-       
       </Form>
       <Button
-          form='updateUser'
-      variant='primary_filled' size='base' type='submit'>
-          Update
-        </Button>
+        form='updateUser'
+        variant='primary_filled'
+        size='base'
+        type='submit'
+      >
+        Update
+      </Button>
     </div>
   )
 }

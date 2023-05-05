@@ -1,22 +1,19 @@
-import { Form, FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
 import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
-import { ColBox, RowBox } from '~/components/boxes'
-import { Tooltip, Image, Divider } from '@mantine/core'
+import { RowBox } from '~/components/boxes'
+import { Image } from '@mantine/core'
 import {
-  ChevronUpIcon,
-  ChevronDownIcon,
-  HeartFilledIcon,
-  HeartIcon,
-  CircleIcon
-} from '@radix-ui/react-icons'
+  ChevronDownIcon} from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { CommentLike } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
+import VerticalMenu from '~/components/vertical-menu'
+import LikeComment from './comment-like-box'
+import EditCommentForm from './edit-comment-form'
 
 function getReplyCountText(count: number) {
   if (count === 0 || !count) {
@@ -29,21 +26,22 @@ function getReplyCountText(count: number) {
 
   return `${count} replies`
 }
-// COmment Container is the parent component that holds all the main comment data
+// COmment Container is the parent component that holds all the main comment data. Since I retrieve all the comments in the blog loader I first filter here by postId and THEN since I call the comment component recursively I filter again by parentId.
 export default function CommentContainer({ postId }: { postId: string }) {
   const matches = useMatchesData('routes/blog')
   const comments = matches?.comments as CommentWithChildren[]
 
+  // This function filters the comments by postId and then filters out the comments that have a parentId.
   function filterComments(comments: CommentWithChildren[], postId: string) {
-    return comments?.filter(
-      (comment: { postId: string }) => comment.postId === postId
-    )
+    return comments
+      ?.filter((comment: { postId: string }) => comment.postId === postId)
+      .filter((comment) => !comment.parentId)
   }
   const filteredComments = filterComments(comments, postId)
 
   if (!filteredComments) return null
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col rounded-md'>
       {filteredComments.map((comment: CommentWithChildren) => (
         <Comment
           key={comment?.id}
@@ -57,6 +55,7 @@ export default function CommentContainer({ postId }: { postId: string }) {
 
 //
 function SiblingComments({ commentId }: { commentId: string }) {
+  // the fuction takes the commentID as a param and loads data from the loader that contains the sibling comments of the parent ID. This is the data that is passed to the comment component recursively to display the sibling comments
   const sibFetcher = useFetcher()
 
   React.useEffect(() => {
@@ -67,11 +66,12 @@ function SiblingComments({ commentId }: { commentId: string }) {
 
   return (
     <>
-      <div className='ml-5'>
+      <div className='ml-5 rounded-md shadow-lg'>
         {sibFetcher?.data?.comments?.map((comment: CommentWithChildren) => (
           <>
             <Comment key={comment?.id} comments={comment} />
-            <CommentActions
+            <CommentReplyBox
+              
               commentId={comment.id}
               postId={comment.postId}
               userId={comment.userId}
@@ -98,14 +98,28 @@ function Comment({
   const [isReplying, setIsReplying] = React.useState(false)
   const deleteFetcher = useFetcher()
 
+  // using the deleteFetcher to delete the comment with onClick solves the weird riddle of fetcher.form and items-center
+  const onClick = () => {
+    deleteFetcher.submit(
+      {
+        commentId: comments.id,
+        action: 'delete'
+      },
+      {
+        method: 'post',
+        action: `/comment/${comments.id}`
+      }
+    )
+  }
+
   return (
     <div
-      className='rounded- flex w-full flex-col gap-1
-      shadow-md'
+      className='flex w-full flex-col gap-1 rounded-md
+      shadow-md drop-shadow-md'
     >
       <RowBox className='relative w-full p-1'>
-        <ColBox className='ml-2 mt-2 flex w-full flex-col'>
-          <div className='bg-slsate-900/30 relative w-full rounded-md border-2 p-1'>
+        <div className='relative w-full rounded-md  p-1'>
+          <RowBox>
             <Image
               src={comments?.user?.avatarUrl}
               alt={comments?.user?.username}
@@ -113,93 +127,90 @@ function Comment({
               width={24}
               height={24}
             />
-            {comments?.user?.username} replied ...
-            {editing ? (
-              <CommentEditForm
-                commentId={comments.id}
-                message={comments.message}
-              />
-            ) : (
-              <p className='prose flex text-sm'>{comments?.message}</p>
-            )}
-            <Divider />
-            <RowBox>
-              {user?.id === comments.userId && (
-                <div className='flex w-full flex-row gap-2'>
-                  <div className=' flex w-full items-baseline justify-center'>
-                    <Button
-                      variant='icon_unfilled'
-                      size='small'
-                      className='flex flex-row justify-between gap-2 text-xs'
-                      onClick={() => setEditing((editing) => !editing)}
-                    >
-                      <p className='flex flex-row gap-2 text-xs text-black'>
-                        {editing ? 'Cancel' : 'Edit'}
-                      </p>
-                    </Button>
-                    <deleteFetcher.Form
-                      method='POST'
-                      action={`/comment/${comments.id}`}
-                      className='flex flex-row'
-                    >
-                      <Button
-                        variant='icon_unfilled'
-                        size='small'
-                        className='flex flex-row gap-2 text-xs'
-                        type='submit'
-                        name='action'
-                        value='delete'
-                      >
-                        <p className='flex flex-row gap-2 text-xs text-black'>
-                          {editing ? 'Cancel' : 'Delete'}
-                        </p>
-                      </Button>
-                    </deleteFetcher.Form>
-                  </div>
-                </div>
-              )}
+            <p className='text-xs text-slate-900'>
+              {comments?.user?.username} replied ...
+            </p>
+          </RowBox>
+          {editing ? (
+            <EditCommentForm
+              setEditing={setEditing}
+              commentId={comments.id}
+              message={comments.message}
+            />
+          ) : (
+            <p className='prose flex text-sm'>{comments?.message}</p>
+          )}
+          <div className='flex w-full items-center'>
 
-              <div className='flex flex-grow'></div>
-              {user ? (
-                <Button
-                  className=''
-                  variant='ghost'
-                  size='small'
-                  onClick={() => setIsReplying(!isReplying)}
-                >
-                  {isReplying ? 'Cancel' : 'Reply'}
-                </Button>
-              ) : (
-                <p>
-                  <a href='/login'>Login</a> to reply
-                </p>
-              )}
-            </RowBox>
-            <CommentActionBox
+            <UserCommentResponseBox
               commentId={comments.id}
               commentLength={comments?.likes?.length}
               likes={comments.likes}
             />
-          </div>
-          <RowBox className='flex justify-between'>
-            <div></div>
-            {comments.children?.length > 0 && (
-              <Button
-                variant='icon_unfilled'
-                size='small'
-                className='flex flex-row items-center justify-between gap-1 text-xs'
-                onClick={() => setOpen((open) => !open)}
-              >
-                <p className='flex flex-row gap-2 text-xs text-black'>
-                  {getReplyCountText(comments.children?.length)}
+            {user?.id === comments.userId && (
+              <>
+                <VerticalMenu>
+                  <Button
+                    variant={editing ? 'danger_filled' : 'warning_filled'}
+                    size='small'
+                    className='flex flex-row justify-between gap-2 text-xs'
+                    onClick={() => setEditing((editing) => !editing)}
+                  >
+                    <p className='flex flex-row gap-2 text-xs text-black '>
+                      {editing ? 'Cancel' : 'Edit'}
+                    </p>
+                  </Button>
 
-                  {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                </p>
-              </Button>
+                  <Button
+                    onClick={onClick}
+                    variant='danger_filled'
+                    size='tiny'
+                    type='submit'
+                    name='action'
+                    value='delete'
+                  >
+                    Delete
+                  </Button>
+                </VerticalMenu>
+              </>
             )}
-          </RowBox>
-          <div className='flex flex-col gap-1'></div>
-        </ColBox>
+
+            {user ? (
+              <Button
+                className=''
+                variant={isReplying ? 'warning_filled' : 'primary_filled'}
+                size='small'
+                onClick={() => setIsReplying(!isReplying)}
+              >
+                {isReplying ? 'Cancel' : 'Reply'}
+              </Button>
+            ) : (
+              <p>
+                <a href='/login'>Login</a> to reply
+              </p>
+            )}
+          </div>
+        </div>
+
+        {comments.children?.length > 0 && !open ? (
+          <Button
+            variant='icon_unfilled'
+            size='small'
+            className='flex flex-row items-center justify-between gap-1 text-xs'
+            onClick={() => setOpen((open) => !open)}
+          >
+        
+            <p className='flex flex-row gap-2 text-xs text-black '>
+              {getReplyCountText(comments.children?.length)}
+              <ChevronDownIcon />
+            </p>
+          </Button>
+        ): (
+          <div className='flex flex-grow'/>
+        )
+      
+      }
+        <div className='flex flex-col gap-1'></div>
       </RowBox>
       <RowBox className='mt- w-full'>
         {
@@ -231,7 +242,8 @@ function Comment({
   )
 }
 
-function CommentActionBox({
+// although underutilized this holds the like button.  
+function UserCommentResponseBox({
   commentId,
   commentLength,
   likes
@@ -241,7 +253,7 @@ function CommentActionBox({
   likes: SerializeFrom<CommentLike[]>
 }) {
   return (
-    <div className='bottom-0 left-1 flex  flex-row items-center justify-between gap-2'>
+    <div className='flex w-full  flex-row items-center justify-between gap-2'>
       <LikeComment
         commentId={commentId}
         commentLikesNumber={commentLength}
@@ -250,141 +262,24 @@ function CommentActionBox({
     </div>
   )
 }
-function LikeComment({
-  commentId,
-  commentLikesNumber,
-  likes
-}: {
-  commentId: string
-  commentLikesNumber: number
-  likes: SerializeFrom<CommentLike[]>
-}) {
-  const likeCommentFetcher = useFetcher()
-  const user = useOptionalUser()
 
-  const currentUser = user?.id || ''
-  const userLikedComment = likes?.find(({ userId }) => {
-    return userId === currentUser
-  })
-    ? true
-    : false
 
-  const [likeCount, setLikeCount] = React.useState(commentLikesNumber || 0)
-  const [liked, setLiked] = React.useState(userLikedComment)
+// This box is passed a commentId which is passed to the comment form so that a user can reply to a previous comment
 
-  const toggleLike = async () => {
-    let method: FormMethod = 'delete'
-    if (userLikedComment) {
-      setLiked(false)
-      setLikeCount(likeCount - 1)
-    } else {
-      method = 'post'
-      setLiked(true)
-      setLikeCount(likeCount + 1)
-    }
-
-    likeCommentFetcher.submit(
-      {
-        userId: currentUser,
-        commentId
-      },
-      {
-        method,
-        action: `/comment/${commentId}/like`
-      }
-    )
-  }
-
-  return (
-    <>
-      {user ? (
-        <button
-          // className='absolute bottom-1 left-2 z-10'
-          onClick={toggleLike}
-        >
-          {liked ? (
-            <div className='flex flex-row items-center gap-1'>
-              <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
-              <p className='text-[10px]'>{likeCount}</p>
-            </div>
-          ) : (
-            <div className='flex flex-row items-center gap-1'>
-              <HeartIcon />
-
-              {likeCount > 0 && (
-                <p className='absolute left-0 right-0 text-[10px]'>
-                  {likeCount}
-                </p>
-              )}
-            </div>
-          )}
-        </button>
-      ) : (
-        <>
-          <Tooltip
-            label='You must be logged in to like this post'
-            position='top'
-            withArrow
-            arrowSize={8}
-          >
-            <HeartIcon />
-          </Tooltip>
-        </>
-      )}
-    </>
-  )
-}
-
-function CommentEditForm({
-  commentId,
-  message
-}: {
-  commentId: string
-  message: string
-}) {
-  const formRef = React.useRef<HTMLFormElement>(null)
-
-  const commentEditFetcher = useFetcher()
-
-  React.useEffect(() => {
-    if (commentEditFetcher.state === 'submitting' && formRef?.current) {
-      formRef.current?.reset()
-    }
-  }, [commentEditFetcher.state])
-
-  return (
-    <commentEditFetcher.Form
-      ref={formRef}
-      className='w-full'
-      method='POST'
-      action={`/comment/${commentId}`}
-    >
-      <textarea
-        name='message'
-        defaultValue={message}
-        className='w-full'
-        autoFocus
-      />
-      <button name='action' value='edit' type='submit'>
-        {commentEditFetcher.state === 'submitting' ? <CircleIcon /> : 'Edit'}
-      </button>
-    </commentEditFetcher.Form>
-  )
-}
-
-function CommentActions({
+function CommentReplyBox({
   commentId,
   postId,
-  userId
+  userId,
+  setIsReplying
 }: {
   commentId: string
-
+  setIsReplying?: React.Dispatch<React.SetStateAction<boolean>>
   postId: string
   userId: string
 }) {
   return (
-    <div className='flex w-full flex-row gap-2'>
-      <CommentBox postId={postId} parentId={commentId} userId={userId} />
-    </div>
+      <CommentBox postId={postId} parentId={commentId} userId={userId}
+        setIsReplying={setIsReplying}
+      />
   )
 }

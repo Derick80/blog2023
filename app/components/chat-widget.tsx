@@ -20,7 +20,7 @@ export default function ChatWidget() {
   }
 
   return chatPanelOpen ? (
-    <div className='fixed bottom-10 right-10 h-96 w-96 border-2 bg-white dark:bg-gray-800 text-gray-500'>
+    <div className='fixed bottom-10 right-10 h-96 w-96 border-2 bg-white text-gray-500 dark:bg-gray-800'>
       <Button
         onClick={() => setChatPanelOpen(false)}
         variant='primary_filled'

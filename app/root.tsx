@@ -1,4 +1,8 @@
-import type { LinksFunction, LoaderArgs, V2_MetaFunction } from '@remix-run/node'
+import type {
+  LinksFunction,
+  LoaderArgs,
+  V2_MetaFunction
+} from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   Links,
@@ -30,55 +34,55 @@ export const links: LinksFunction = () => [
 export const meta: V2_MetaFunction = () => {
   return [
     {
-      name:'viewport',
-      content:'width=device-width, initial-scale=1'
+      name: 'viewport',
+      content: 'width=device-width, initial-scale=1'
     },
     {
-      property:'og:title',
-      content:'Derick\'s Remix Blog'
+      property: 'og:title',
+      content: "Derick's Remix Blog"
     },
     {
-      property:'og:description',
-      content:'A blog about web development Genetics and other things'
+      property: 'og:description',
+      content: 'A blog about web development Genetics and other things'
     },
     {
-      property:'og:image',
-        content:`https://res.cloudinary.com/dch-photo/image/upload/v1683172202/ixhymfdz3ivktm3j0kul.webp`
+      property: 'og:image',
+      content: `https://res.cloudinary.com/dch-photo/image/upload/v1683172202/ixhymfdz3ivktm3j0kul.webp`
     },
     {
-      property:'og:url',
-      content:'https://derickchoskinson.com'
+      property: 'og:url',
+      content: 'https://derickchoskinson.com'
     },
     {
-      property:'og:type',
-      content:'website'
+      property: 'og:type',
+      content: 'website'
     },
     {
-      name:'twitter:card',
-      content:'summary_large_image'
+      name: 'twitter:card',
+      content: 'summary_large_image'
     },
     {
-      name:'twitter:creator',
-      content:'@GeneticsStar'
+      name: 'twitter:creator',
+      content: '@GeneticsStar'
     },
     {
-      name:'twitter:title',
-      content:'Derick\'s Remix Blog'
+      name: 'twitter:title',
+      content: "Derick's Remix Blog"
     },
     {
-      name:'twitter:description',
-      content:'A blog about web development Genetics and other things'
+      name: 'twitter:description',
+      content: 'A blog about web development Genetics and other things'
     },
     {
-      name:'twitter:image',
-      content:`https://res.cloudinary.com/dch-photo/image/upload/v1683130418/ibtrqmrqbchxm9pqfta0.jpg`
+      name: 'twitter:image',
+      content: `https://res.cloudinary.com/dch-photo/image/upload/v1683130418/ibtrqmrqbchxm9pqfta0.jpg`
     },
     {
-      name:'twitter:site',
-      content:'@GeneticsStar'
+      name: 'twitter:site',
+      content: '@GeneticsStar'
     },
     {
-      title:`Derick's Remix Blog`,
+      title: `Derick's Remix Blog`
     }
   ]
 }
@@ -174,18 +178,12 @@ export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
-      <div
-        className='flex flex-col items-center justify-center w-full h-full text-center'
-      >
-        <h1
-          className='text-2xl font-bold text-red-500'
-        >Uh Oh!...</h1>
-        <h1
-          className='text-2xl font-bold text-red-500'
-        >Status:{error.status}</h1>
-        <p
-          className='text-xl'
-        >{error.data.message}</p>
+      <div className='flex h-full w-full flex-col items-center justify-center text-center'>
+        <h1 className='text-2xl font-bold text-red-500'>Uh Oh!...</h1>
+        <h1 className='text-2xl font-bold text-red-500'>
+          Status:{error.status}
+        </h1>
+        <p className='text-xl'>{error.data.message}</p>
       </div>
     )
   }
@@ -196,9 +194,7 @@ export function ErrorBoundary() {
     errorMessage = error
   }
   return (
-    <div
-      className='flex flex-col items-center justify-center w-full h-full text-center'
-    >
+    <div className='flex h-full w-full flex-col items-center justify-center text-center'>
       <h1 className='text-2xl font-bold'>uh Oh..</h1>
       <p className='text-xl'>something went wrong</p>
       <pre>{errorMessage}</pre>

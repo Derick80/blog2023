@@ -9,11 +9,10 @@ import { skills } from '~/resources/resume/skills'
 import { work_experience } from '~/resources/resume/workexperience'
 import { education } from '~/resources/resume/education'
 
-
 export const meta: V2_MetaFunction = () => {
   return [
     {
-      title: `Derick Hoskinson's Resume`,
+      title: `Derick Hoskinson's Resume`
     }
   ]
 }

@@ -189,7 +189,6 @@ export default function NewPostRoute() {
         <label htmlFor='content'>Content</label>
 
         <TipTap />
-       
 
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>

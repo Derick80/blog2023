@@ -8,23 +8,25 @@ import { useOptionalUser } from '~/utilities'
 
 export default function CommentBox({
   postId,
-  parentId
+  parentId,
+  setIsReplying
 }: {
   postId: Post['id']
   parentId?: string
-  userId?: string
+  userId?: string,
+  setIsReplying?: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const user = useOptionalUser()
   const commentFetcher = useFetcher()
 
   const formRef = React.useRef<HTMLFormElement>(null)
-
+let isDone = commentFetcher.state=== 'idle' && commentFetcher.data != null
   React.useEffect(() => {
-    if (commentFetcher.state === 'submitting') {
+    if (isDone) {
       formRef.current?.reset()
+      setIsReplying?.(false)
     }
-  }, [commentFetcher.state])
-
+  }, [isDone, setIsReplying])
   return (
     <div className='flex w-full flex-col gap-2'>
       {user && (

@@ -1,13 +1,8 @@
 import { Cross1Icon } from '@radix-ui/react-icons'
-import type { ActionArgs, LoaderArgs} from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import {
-  Form,
-  Outlet,
-  useActionData,
-  useLoaderData
-} from '@remix-run/react'
+import { Form, Outlet, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
@@ -46,8 +41,6 @@ export async function action({ request, params }: ActionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     setErrorMessage(session, 'You must be logged in to do that')
-     
-
   }
 
   const { formData, errors } = await validateAction({
@@ -101,46 +94,53 @@ export default function CategoriesRoute() {
   const actionData = useActionData<{ errors: Record<string, string> }>()
 
   return (
-    <div className='flex flex-col gap-4 items-center'>
-      <h1
-        className='text-center text-2xl font-bold dark:text-white'
-      >Categories</h1>
+    <div className='flex flex-col items-center gap-4'>
+      <h1 className='text-center text-2xl font-bold dark:text-white'>
+        Categories
+      </h1>
       <p className='text-center text-sm dark:text-white'>
-        These are the list of categories used by the blog posts.  If you are a user you can add and delete categories.
+        These are the list of categories used by the blog posts. If you are a
+        user you can add and delete categories.
       </p>
       <RowBox className='flex-wrap'>
         {data.categories.map((category) => (
-          <><div
-            key={category.id}
-            className='flex gap-2 rounded-md border-2 w-fit items-center p-1 text-xs dark:bg-slate-50 dark:text-black'
-          >
-            <p className='flex-1'>{category.label}</p>
-            {user && (
-              <Button
-                form='deleteCategory'
-                variant='icon_unfilled' size='small'
-                type='submit' name='action' value='delete'>
-                <Cross1Icon />
-              </Button>
-
-            )}
-
-          </div>
-          <Form
-            id='deleteCategory'
-            className='flex gap-2 items-center'
-            method='POST'>
+          <>
+            <div
+              key={category.id}
+              className='flex w-fit items-center gap-2 rounded-md border-2 p-1 text-xs dark:bg-slate-50 dark:text-black'
+            >
+              <p className='flex-1'>{category.label}</p>
+              {user && (
+                <Button
+                  form='deleteCategory'
+                  variant='icon_unfilled'
+                  size='small'
+                  type='submit'
+                  name='action'
+                  value='delete'
+                >
+                  <Cross1Icon />
+                </Button>
+              )}
+            </div>
+            <Form
+              id='deleteCategory'
+              className='flex items-center gap-2'
+              method='POST'
+            >
               <input type='hidden' name='categoryId' value={category.id} />
-
-            </Form></>
+            </Form>
+          </>
         ))}
       </RowBox>
       <ColBox>
-        <Form className='flex flex-col gap-2 items-center' method='POST'>
+        <Form className='flex flex-col items-center gap-2' method='POST'>
           <label htmlFor='categoryName'>Add A Category</label>
-          <input type='text'
-            className='rounded-md border-2 w-fit items-center  p-1 text-xs dark:bg-slate-50 dark:text-black'
-          name='categoryName' />
+          <input
+            type='text'
+            className='w-fit items-center rounded-md border-2  p-1 text-xs dark:bg-slate-50 dark:text-black'
+            name='categoryName'
+          />
           {actionData?.errors?.categoryName && (
             <div>{actionData.errors.categoryName}</div>
           )}
@@ -151,7 +151,7 @@ export default function CategoriesRoute() {
             name='action'
             value='create'
           >
-           Save
+            Save
           </Button>
         </Form>
       </ColBox>

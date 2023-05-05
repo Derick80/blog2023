@@ -1,6 +1,6 @@
-import type { LoaderArgs ,V2_MetaFunction} from '@remix-run/node'
+import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Link, Outlet,  useLoaderData } from '@remix-run/react'
+import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
@@ -9,13 +9,12 @@ import { useOptionalUser } from '~/utilities'
 export const meta: V2_MetaFunction = () => {
   return [
     {
-      title: `https://derickchoskinson.com Users`,
+      title: `https://derickchoskinson.com Users`
     },
     {
       name: 'description',
-      content: `https://derickchoskinson.com Users`,
+      content: `https://derickchoskinson.com Users`
     }
-
   ]
 }
 export async function loader({ request }: LoaderArgs) {
@@ -47,10 +46,8 @@ export default function UsersIndex() {
   }>()
 
   return (
-    <div className='mx-auto border-2 w-full flex flex-col md:flex-row items-center gap-2 md:gap-4'>
-      <ColBox
-        className=''
-      >
+    <div className='mx-auto flex w-full flex-col items-center gap-2 border-2 md:flex-row md:gap-4'>
+      <ColBox className=''>
         <h1 className='text-2xl font-bold md:text-3xl'>Users</h1>
         <ul className='flex w-full flex-col items-center gap-1 md:gap-2'>
           {data.users.map((user) => (

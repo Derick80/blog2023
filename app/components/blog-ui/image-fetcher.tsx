@@ -22,7 +22,7 @@ export default function ImageUploader({ setUrl }: any) {
         <label htmlFor='imageUrl' className='subtitle'></label>
         <input
           id='imageUrl'
-          className=' block w-full rounded-xl border-2 p-2 text-xs cursor-pointer '
+          className=' block w-full cursor-pointer rounded-xl border-2 p-2 text-xs '
           type='file'
           name='imageUrl'
           accept='image/*'

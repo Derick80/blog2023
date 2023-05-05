@@ -7,6 +7,7 @@ import {
   NavLink,
   isRouteErrorResponse,
   useLoaderData,
+  useNavigation,
   useRouteError
 } from '@remix-run/react'
 import dayjs from 'dayjs'
@@ -35,7 +36,7 @@ dayjs.extend(relativeTime)
 export const meta: V2_MetaFunction = () => {
   return [
     {
-      title: `Derick's Blog`,
+      title: `Derick's Blog`
     }
   ]
 }
@@ -74,11 +75,18 @@ export type BlogPreviewPropstwo = {
 }
 
 export function BlogPreview({ post }: { post: Post }) {
+  const navigate = useNavigation()
   const user = useOptionalUser()
   const currentUser = user?.id
   const [open, setOpen] = React.useState(false)
   return (
-    <div className='static flex w-full flex-col gap-2 rounded-md border-2'>
+    <div
+      className={
+        navigate.state === 'loading'
+          ? 'opacity-25 transition-opacity delay-200'
+          : 'static flex w-full flex-col gap-2 rounded-md border-2'
+      }
+    >
       {/* Card header */}
       <div className='gap- flex flex-row items-center'>
         <h1 className='text-xl font-semibold'>{post.title}</h1>
