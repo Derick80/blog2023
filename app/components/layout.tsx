@@ -13,11 +13,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [scroll, scrollTo] = useWindowScroll()
 
   return (
-    <div className=' '>
+    <div className='flex '>
       <NavigationBar />
 
       <div className='mt-20 flex h-full flex-grow flex-col p-2 md:mt-12 md:flex-row'>
-        <main className='flex-grsow relative mx-auto mt-5 flex w-full flex-col p-2 md:w-4/6 md:p-4'>
+        <main className='mx-auto mt-5 flex w-full flex-col p-2 md:w-4/6 md:p-4'>
           {children}
         </main>
         <div>

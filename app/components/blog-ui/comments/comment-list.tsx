@@ -6,8 +6,7 @@ import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
 import { RowBox } from '~/components/boxes'
 import { Image } from '@mantine/core'
-import {
-  ChevronDownIcon} from '@radix-ui/react-icons'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { CommentLike } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
@@ -71,7 +70,6 @@ function SiblingComments({ commentId }: { commentId: string }) {
           <>
             <Comment key={comment?.id} comments={comment} />
             <CommentReplyBox
-              
               commentId={comment.id}
               postId={comment.postId}
               userId={comment.userId}
@@ -141,7 +139,6 @@ function Comment({
             <p className='prose flex text-sm'>{comments?.message}</p>
           )}
           <div className='flex w-full items-center'>
-
             <UserCommentResponseBox
               commentId={comments.id}
               commentLength={comments?.likes?.length}
@@ -199,17 +196,14 @@ function Comment({
             className='flex flex-row items-center justify-between gap-1 text-xs'
             onClick={() => setOpen((open) => !open)}
           >
-        
             <p className='flex flex-row gap-2 text-xs text-black '>
               {getReplyCountText(comments.children?.length)}
               <ChevronDownIcon />
             </p>
           </Button>
-        ): (
-          <div className='flex flex-grow'/>
-        )
-      
-      }
+        ) : (
+          <div className='flex flex-grow' />
+        )}
         <div className='flex flex-col gap-1'></div>
       </RowBox>
       <RowBox className='mt- w-full'>
@@ -242,7 +236,7 @@ function Comment({
   )
 }
 
-// although underutilized this holds the like button.  
+// although underutilized this holds the like button.
 function UserCommentResponseBox({
   commentId,
   commentLength,
@@ -263,7 +257,6 @@ function UserCommentResponseBox({
   )
 }
 
-
 // This box is passed a commentId which is passed to the comment form so that a user can reply to a previous comment
 
 function CommentReplyBox({
@@ -278,8 +271,11 @@ function CommentReplyBox({
   userId: string
 }) {
   return (
-      <CommentBox postId={postId} parentId={commentId} userId={userId}
-        setIsReplying={setIsReplying}
-      />
+    <CommentBox
+      postId={postId}
+      parentId={commentId}
+      userId={userId}
+      setIsReplying={setIsReplying}
+    />
   )
 }

@@ -13,14 +13,14 @@ export default function CommentBox({
 }: {
   postId: Post['id']
   parentId?: string
-  userId?: string,
+  userId?: string
   setIsReplying?: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const user = useOptionalUser()
   const commentFetcher = useFetcher()
 
   const formRef = React.useRef<HTMLFormElement>(null)
-let isDone = commentFetcher.state=== 'idle' && commentFetcher.data != null
+  let isDone = commentFetcher.state === 'idle' && commentFetcher.data != null
   React.useEffect(() => {
     if (isDone) {
       formRef.current?.reset()

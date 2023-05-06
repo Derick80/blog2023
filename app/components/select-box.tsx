@@ -26,7 +26,7 @@ export default function SelectBox({ options, onChange }: MultiSelectProps) {
   }, [selected, onChange])
 
   return (
-    <div>
+    <div className='flex w-full flex-1 flex-col gap-2'>
       {options.map((option) => (
         <label key={option.id}>
           <input
