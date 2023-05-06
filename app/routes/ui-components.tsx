@@ -11,10 +11,25 @@ import {
 } from '@radix-ui/react-icons'
 import React from 'react'
 import MenuBox from '~/components/site-menus'
+import PickerVers from '~/components/picker-vers'
+const options = [
+  { id: '1', value: 'one', label: 'one' },
+  { id: '2', value: 'two', label: 'two' },
+  { id: '3', value: 'three', label: 'three' },
+  { id: '4', value: 'four', label: 'four' }
+]
+
+const picked = [
+  { id: '1', value: 'one', label: 'one' },
+  { id: '4', value: 'four', label: 'four' }
+]
+
+const singlePicked = [
+  { id: '1', value: 'one', label: 'one' }]
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
-    return redirect('/login')
+    return json({message: 'not authorized'}, {status: 401})
   }
   return json({ user })
 }
@@ -24,6 +39,7 @@ export default function ComponentsIndex() {
     <div className='flex flex-col justify-start gap-1'>
       <h1 className='text-2xl font-bold'>UI Components</h1>
       <RowBox className=''>
+        {/* first column */}
         <ColBox>
           <div className='flex flex-col items-start gap-2'>
             <ColBox className='items-start'>
@@ -262,9 +278,15 @@ export default function ComponentsIndex() {
             </ColBox>
           </div>
         </ColBox>
-        <ColBox className='justify-start'>
+        {/* second column */}
+        <ColBox className='justify-start w-full'>
           Second column here
+          <label htmlFor='MenuBox'>Menu Box</label>
           <MenuBox title='About'></MenuBox>
+          <label htmlFor='selection'>Single Selection</label>
+          <PickerVers options={options} picked={singlePicked} />
+          <label htmlFor='selection'>Multiple Selection</label>
+          <PickerVers options={options} picked={picked} multiple />
         </ColBox>
       </RowBox>
     </div>

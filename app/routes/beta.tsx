@@ -1,12 +1,9 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
-import React from 'react'
 import { Form } from '@remix-run/react'
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
-import { RowBox } from '~/components/boxes'
-import { Portal } from '~/components/portal'
 import Picker from '~/components/picker'
+import PickerVers from '~/components/picker-vers'
 const options = [
   { id: '1', value: 'one', label: 'one' },
   { id: '2', value: 'two', label: 'two' },
@@ -53,7 +50,8 @@ export default function BetaRoute() {
         </label>
         <Picker options={options} picked={picked} />
 
-     
+<label htmlFor='selection'>Single Selection</label>
+     <PickerVers options={options} picked={picked}  />
         <label htmlFor='title'>Title</label>
         <input type='text' name='title' id='title' />
 
