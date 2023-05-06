@@ -5,33 +5,36 @@ import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
 type Props = {
   options: { id: string; value: string; label: string }[]
   picked: { id: string; value: string; label: string }[]
-  multiple?: boolean
+  multiple?: boolean,
+  name?: string
 }
 export default function SelectBox({
   options,
   picked,
-  multiple = false
+  multiple = false,
+  name = 'selection'
 }: Props) {
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [selected, setSelected] = React.useState(picked)
   const [dropdown, setDropdown] = React.useState(false)
 
-  const handleSelect = (id: string) => {
-    const isSelected = selected.some((item) => item.id === id)
+  const handleSelect = (value: string
+    ) => {
+    const isSelected = selected.some((item) => item.value === value)
     if (multiple) {
       if (isSelected) {
-        setSelected(selected.filter((item) => item.id !== id))
+        setSelected(selected.filter((item) => item.value !== value))
       } else {
-        const item = options.find((item) => item.id === id)
+        const item = options.find((item) => item.value === value)
         if (item) {
           setSelected([...selected, item])
         }
       }
     } else {
       if (isSelected) {
-        setSelected(selected.filter((item) => item.id !== id))
+        setSelected(selected.filter((item) => item.value !== value))
       } else {
-        const item = options.find((item) => item.id === id)
+        const item = options.find((item) => item.value === value)
         if (item) {
           setSelected([item])
         }
@@ -65,12 +68,16 @@ export default function SelectBox({
             className='flex justify-start rounded-md border bg-gray-200 p-2 dark:bg-slate-800 dark:text-slate-50'
             key={item.id}
           >
-            <button onClick={() => handleSelect(item.id)}>{item.label}</button>
+            <button
+            type='button'
+            onClick={()=> handleSelect(item.value)}>{item.label}</button>
           </div>
         ))}
 
         <div className='flex flex-grow' />
-        <button onClick={() => setDropdown(!dropdown)}>
+        <button 
+        type='button'
+        onClick={() => setDropdown(!dropdown)}>
           {dropdown ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </button>
       </div>
@@ -80,9 +87,10 @@ export default function SelectBox({
             <div className='bottom-34 absolute left-[50%] z-30 mt-10 flex  h-fit flex-col  items-center gap-1 rounded-md border bg-white dark:bg-slate-800'>
               {options.map((item) => (
                 <button
+                type='button'
                   className='flex w-full justify-start rounded-md bg-gray-200 p-4 hover:border-slate-700 dark:bg-slate-800'
                   key={item.id}
-                  onClick={() => handleSelect(item.id)}
+                  onClick={(e) => handleSelect(item.value)}
                 >
                   {item.label}
                 </button>
@@ -93,8 +101,8 @@ export default function SelectBox({
       </div>
       <input
         type='hidden'
-        name='selection'
-        value={selected.map((item) => item.id)}
+        name={name}
+        value={selected.map((item) => item.value)}
       />
     </>
   )

@@ -27,14 +27,9 @@ export async function createPost(data: PostInput) {
         }
       },
       categories: {
-        connectOrCreate: data.categories.map((category) => ({
-          where: {
-            value: category.value
-          },
-          create: {
-            value: category.value,
-            label: category.value
-          }
+       connect: data.categories.map((category) => ({
+          value: category.value,
+
         }))
       }
     }
@@ -60,18 +55,14 @@ export async function updatePost(data: PostInput & { postId: string }) {
         }
       },
       categories: {
-        connectOrCreate: data.categories.map((category) => ({
-          where: {
-            value: category.value
-          },
-          create: {
-            value: category.value,
-            label: category.value
-          }
+      set: data.categories.map((category) => ({
+          value: category.value,
+          
         }))
       }
     }
   })
+
   return post
 }
 export async function getPosts() {

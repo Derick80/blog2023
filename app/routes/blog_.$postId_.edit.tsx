@@ -25,6 +25,7 @@ import TipTap from '~/components/tip-tap'
 import { MultiSelect, Switch } from '@mantine/core'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import Button from '~/components/button'
+import SelectBox from '~/components/select'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -127,14 +128,14 @@ export default function PostEdit() {
     return category.value
   })
 
-  const [selected, setSelected] = React.useState<string[]>(
-    data.post.categories.map((category) => category.value)
-  )
+  // const [selected, setSelected] = React.useState<string[]>(
+  //   data.post.categories.map((category) => category.value)
+  // )
 
   const [url, setUrl] = React.useState(data.post.imageUrl || '')
 
   return (
-    <div className=''>
+    <div className='mx-auto flex h-full w-fit flex-col p-1'>
       <Form id='post-edit' className='flex w-full flex-col' method='POST'>
         <label htmlFor='title'>Title</label>
         <input
@@ -179,16 +180,12 @@ export default function PostEdit() {
         )}
 
         <label htmlFor='categories'>Categories</label>
-        <div className='w-fit p-1'>
-          <MultiSelect
+        <div className='p-1'>
+          
+          <SelectBox
+            multiple
             name='categories'
-            shadow='xl'
-            data={categories}
-            value={selected.map((category) => {
-              return category.valueOf()
-            })}
-            onChange={setSelected}
-          />
+          options={parentData.categories} picked={data.post.categories} />
         </div>
 
         <div className='text-slate12 mb-5 mt-5 flex flex-row items-center justify-end gap-2'>

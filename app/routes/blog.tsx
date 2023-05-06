@@ -52,7 +52,7 @@ export default function BlogRoute() {
   const data = useLoaderData<typeof loader>()
 
   return (
-    <div className='h- flex w-full flex-col items-center gap-2'>
+    <div className='flex flex-col items-center gap-2'>
       <BlogMenu />
 
       {data &&
@@ -83,8 +83,8 @@ export function BlogPreview({ post }: { post: Post }) {
     <div
       className={
         navigate.state === 'loading'
-          ? 'opacity-25 transition-opacity delay-200'
-          : 'static flex w-full flex-col gap-2 rounded-md border-2'
+          ? 'opacity-25 transition-opacity delay-1000'
+          : ' flex w-full flex-col gap-10 rounded-md border-2'
       }
     >
       {/* Card header */}

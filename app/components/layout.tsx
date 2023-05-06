@@ -1,19 +1,17 @@
-import { ArrowUpIcon, ExitIcon } from '@radix-ui/react-icons'
+import { ExitIcon } from '@radix-ui/react-icons'
 import { Form, NavLink } from '@remix-run/react'
 import Button from './button'
 import { useOptionalUser } from '~/utilities'
-import { Affix, Transition, rem, Image } from '@mantine/core'
-import { useWindowScroll } from '@mantine/hooks'
 import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
 import HoverOverCard from './hovercard/hover-card'
-import HoverOCard from './hovercard/hover2'
+import ScrollToTop from './scroll-to-top'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [scroll, scrollTo] = useWindowScroll()
 
   return (
     <div className='flex '>
+      <ScrollToTop />
       <NavigationBar />
 
       <div className='mt-20 flex h-full flex-grow flex-col p-2 md:mt-12 md:flex-row'>
@@ -21,20 +19,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
         <div>
-          <Affix position={{ bottom: rem(20), right: rem(20) }}>
-            <Transition transition='slide-up' mounted={scroll.y > 0}>
-              {(transitionStyles) => (
-                <Button
-                  variant='primary_filled'
-                  style={transitionStyles}
-                  onClick={() => scrollTo({ y: 0 })}
-                >
-                  <ArrowUpIcon />
-                  Scroll to top
-                </Button>
-              )}
-            </Transition>
-          </Affix>
+          
+         
         </div>
       </div>
       {/* <footer className='flex flex-row items-center justify-center gap-2 p-2'>

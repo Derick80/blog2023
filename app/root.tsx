@@ -134,7 +134,7 @@ export default function App() {
   }, [toastMessage])
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    // <MantineProvider withGlobalStyles withNormalizeCSS>
       <html lang='en'>
         <head>
           <StylesPlaceholder />
@@ -144,7 +144,9 @@ export default function App() {
           <Meta />
           <Links />
         </head>
-        <body className='bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'>
+        <body
+            id='body'
+        className='bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'>
           <Layout>
             <Outlet />
             {/* <ChatWidget /> */}
@@ -170,7 +172,7 @@ export default function App() {
           </Layout>
         </body>
       </html>
-    </MantineProvider>
+    // </MantineProvider>
   )
 }
 

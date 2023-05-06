@@ -92,7 +92,9 @@ export default function BlogCard({ post, children }: Props) {
           <FavoriteContainer postId={post.id} favorites={post.favorites} />
           <ShareButton id={post.id} />
 
-          <div className='flex flex-grow' />
+          <div
+            id=''
+          className='flex flex-grow items-center' />
           <VerticalMenu>
             <Link to={`/blog/${post.id}`}>View</Link>
             <Link to={`/blog/${post.id}/edit`}>Edit</Link>
@@ -101,7 +103,16 @@ export default function BlogCard({ post, children }: Props) {
               method='POST'
               action={`/blog/${post.id}/delete`}
             >
-              <button form='delete-post' type='submit'>
+              <button
+                onClick={() => {
+                  if (confirm('Are you sure you want to delete this post?')) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
+                
+              form='delete-post' type='submit'>
                 Delete
               </button>
             </Form>

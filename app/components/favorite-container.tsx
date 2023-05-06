@@ -1,12 +1,11 @@
 import {
-  ActivityLogIcon,
   BookmarkFilledIcon,
   BookmarkIcon
 } from '@radix-ui/react-icons'
-import { FormMethod, NavLink } from '@remix-run/react'
+import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
-import { Favorite } from '~/server/schemas/schemas'
+import type { Favorite } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 import Button from './button'
 import { Tooltip } from '@mantine/core'

@@ -1,13 +1,12 @@
-import { Text, Tooltip } from '@mantine/core'
+import { Tooltip } from '@mantine/core'
 import {
-  ActivityLogIcon,
   HeartFilledIcon,
   HeartIcon
 } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
-import { NavLink, useFetcher } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
-import { Like } from '~/server/schemas/schemas'
+import type { Like } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 
 export type LikeContainerProps = {
