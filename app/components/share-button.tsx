@@ -21,7 +21,7 @@ const iconClassName =
 export const ShareButton = ({ id }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLInputElement | null>(null)
-  const postUrl = `https://derickhoskinson.com/blog/${id}`
+  const postUrl = `https://derickchoskinson.com/blog/${id}`
   const encodedPostUrl = encodeURIComponent(postUrl)
 
   const copyLink = () => {

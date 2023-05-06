@@ -20,6 +20,7 @@ export async function createPost(data: PostInput) {
       content: data.content,
       imageUrl: data.imageUrl,
       featured: data.featured,
+      published: true,
       user: {
         connect: {
           id: data.userId

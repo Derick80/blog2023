@@ -1,17 +1,11 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { json, redirect } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  PaperPlaneIcon,
-  PlusIcon
-} from '@radix-ui/react-icons'
-import React from 'react'
+import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import MenuBox from '~/components/site-menus'
-import PickerVers from '~/components/picker-vers'
+import SelectBox from '~/components/select'
 const options = [
   { id: '1', value: 'one', label: 'one' },
   { id: '2', value: 'two', label: 'two' },
@@ -24,12 +18,11 @@ const picked = [
   { id: '4', value: 'four', label: 'four' }
 ]
 
-const singlePicked = [
-  { id: '1', value: 'one', label: 'one' }]
+const singlePicked = [{ id: '1', value: 'one', label: 'one' }]
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
-    return json({message: 'not authorized'}, {status: 401})
+    return json({ message: 'not authorized' }, { status: 401 })
   }
   return json({ user })
 }
@@ -279,14 +272,29 @@ export default function ComponentsIndex() {
           </div>
         </ColBox>
         {/* second column */}
-        <ColBox className='justify-start w-full'>
-          Second column here
-          <label htmlFor='MenuBox'>Menu Box</label>
-          <MenuBox title='About'></MenuBox>
-          <label htmlFor='selection'>Single Selection</label>
-          <PickerVers options={options} picked={singlePicked} />
-          <label htmlFor='selection'>Multiple Selection</label>
-          <PickerVers options={options} picked={picked} multiple />
+        <ColBox className='w-full'>
+          <div className='flex flex-col items-start gap-2'>
+            <p className='text-base font-semibold'>Dropdown Menu</p>
+            <p className='text-sm font-bold'>
+              This is a dropdown menu box that I designed for my site. It
+              doesn't use a portal (yet) and I might improve it by making the
+              entire title and icon clickable
+            </p>
+
+            <MenuBox title='About'></MenuBox>
+          </div>
+          <div className='flex flex-col items-start gap-2'>
+            <p className='text-base font-semibold'>Single Select</p>
+            <p className='text-sm font-bold'>
+              Both components also contain a hidden input field making this
+              usable within a form. This behaves a little weird because there
+              are two instances of the select box where the portal targets the
+              same DOM property. So, it'll anchor to the first select box
+            </p>
+            <SelectBox options={options} picked={singlePicked} />
+            <p className='text-base font-semibold'>MultiSelect</p>
+            <SelectBox options={options} picked={picked} multiple />
+          </div>
         </ColBox>
       </RowBox>
     </div>
