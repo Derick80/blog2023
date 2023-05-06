@@ -27,8 +27,6 @@ export async function action({ request, params }: ActionArgs) {
   return json({ data })
 }
 
-
-
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -39,32 +37,26 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export default function BetaRoute() {
   return (
-    <div 
-   
-        className=''>
-      <Form method='post'
-       id='picker'
-        className='flex flex-col gap-2 w-full flex-1'
-      >
+    <div className=''>
+      <Form method='post' className='flex w-full flex-1 flex-col gap-2'>
         <h1 className='text-2xl'>Beta</h1>
         <p>
           This is a beta route. It's only accessible to logged in users. It
           demonstrates how to use the <code>loader</code> function to redirect
           users to the login page if they're not logged in.
         </p>
-        <label htmlFor='name'>Name</label>
-        <input type='text' name='name' id='name' />
+               <label
+          //  id='picker'
+          htmlFor='selection'
+        >
+          Selection
+        </label>
+        <Picker options={options} picked={picked} />
 
-          <label
-//  id='picker'
-    htmlFor='selection'>Selection</label>
-<Picker options={options} picked={picked}/>
-
-<label
-//  id='picker'
-    htmlFor='selection'>Selection</label>
- 
+     
+        <label htmlFor='title'>Title</label>
         <input type='text' name='title' id='title' />
+
         <button type='submit'>Submit</button>
       </Form>
     </div>

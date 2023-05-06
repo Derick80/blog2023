@@ -1,7 +1,7 @@
-import React from "react";
-import { RowBox } from "./boxes";
-import { Portal } from "./portal";
-import { ChevronUpIcon, ChevronDownIcon } from "@radix-ui/react-icons";
+import React from 'react'
+import { RowBox } from './boxes'
+import { Portal } from './portal'
+import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
 
 export default function Picker({
   options,
@@ -26,50 +26,48 @@ export default function Picker({
 
   const [dropdown, setDropdown] = React.useState(false)
   return (
-      
-        
-          <><div
-      //  id='picker'
-      className='flex w-full  flex-row gap-2 rounded-md border-2 border-gray-200 p-3 dark:bg-slate-800'>
-      {selected.map((item) => (
-        <div
-          //  id='picker'
-          className='flex justify-start rounded-md border bg-gray-200 p-2 dark:text-slate-50 dark:bg-slate-800'
-          key={item.id}
-        >
-          <button onClick={() => handleSelect(item.id)}>
-            {item.label}
-          </button>
-        </div>
-      ))}
+    <>
+      <div
+         id='picker'
+        className='flex w-full  flex-row gap-2 rounded-md border-2 border-gray-200 p-3 dark:bg-slate-800'
+      >
+        {selected.map((item) => (
+          <div
+            //  id='picker'
+            className='flex justify-start rounded-md border bg-gray-200 p-2 dark:bg-slate-800 dark:text-slate-50'
+            key={item.id}
+          >
+            <button onClick={() => handleSelect(item.id)}>{item.label}</button>
+          </div>
+        ))}
 
-      <div className='flex flex-grow' />
-      <button onClick={() => setDropdown(!dropdown)}>
-        {dropdown ? <ChevronUpIcon /> : <ChevronDownIcon />}
-      </button>
-
-    </div><div>
+        <div className='flex flex-grow' />
+        <button onClick={() => setDropdown(!dropdown)}>
+          {dropdown ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </button>
+      </div>
+      <div>
         <Portal wrapperId='picker'>
           {dropdown && (
-            <div className='relative flex flex-col mt-5  gap-1 bg-white  dark:bg-slate-800 h-fit z-30 rounded-md items-center border'>
+            <div className='absolute bottom-34 left-[50%] z-30 mt-10 flex  h-fit flex-col  items-center gap-1 rounded-md border bg-white dark:bg-slate-800'>
               {options.map((item) => (
-
                 <button
-                  className='flex w-full justify-start rounded-md bg-gray-200 dark:bg-slate-800 p-2 hover:border-slate-700'
+                  className='flex w-full justify-start rounded-md bg-gray-200 p-4 hover:border-slate-700 dark:bg-slate-800'
                   key={item.id}
-                  onClick={() => handleSelect(item.id)}>
+                  onClick={() => handleSelect(item.id)}
+                >
                   {item.label}
                 </button>
-
               ))}
             </div>
           )}
         </Portal>
-      </div><input
+      </div>
+      <input
         type='hidden'
         name='selection'
-        value={selected.map((item) => item.id)} /></>
-        
-    
+        value={selected.map((item) => item.id)}
+      />
+    </>
   )
 }
