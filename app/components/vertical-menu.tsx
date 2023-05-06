@@ -8,7 +8,7 @@ export default function VerticalMenu({
 }: {
   children: React.ReactNode
 }) {
-  const [open, setOpen] = React.useState(true)
+  const [open, setOpen] = React.useState(false)
 
   React.useEffect(() => {
     const handleKeyboardEvent = (event: KeyboardEvent) => {
