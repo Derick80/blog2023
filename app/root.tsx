@@ -13,6 +13,8 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   useLoaderData,
+  useLocation,
+  useOutlet,
   useRouteError
 } from '@remix-run/react'
 import { isAuthenticated } from './server/auth/auth.server'
@@ -25,6 +27,7 @@ import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/auth/prisma.server'
 import { StylesPlaceholder } from '@mantine/remix'
 import { MantineProvider } from '@mantine/core'
+import { AnimatePresence, motion } from "framer-motion";
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -112,6 +115,8 @@ export async function loader({ request }: LoaderArgs) {
   )
 }
 export default function App() {
+  const outlet = useOutlet();
+
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
 
@@ -148,7 +153,21 @@ export default function App() {
             id='body'
         className='bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'>
           <Layout>
+          <AnimatePresence mode='wait' initial={false}>
+          <motion.main
+            key={useLocation().pathname}
+            initial={{ x: "10%", opacity: 0 }}
+            animate={{ x: "0", opacity: 1 }}
+            transition={{ duration: 0.25,
+              type: "spring",
+              stiffness: 260,
+              damping: 20 
+            } }
+            exit={{ x: "-40%", opacity: 0 }}
+          >
             <Outlet />
+          </motion.main>
+        </AnimatePresence>
             {/* <ChatWidget /> */}
             <Toaster
               position='bottom-right'

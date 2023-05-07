@@ -8,7 +8,6 @@ import { useState } from 'react'
 import type { Favorite } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 import Button from './button'
-import { Tooltip } from '@mantine/core'
 
 export type FavoriteContainerProps = {
   postId: string
@@ -61,14 +60,8 @@ export default function FavoriteContainer({
           )}
         </Button>
       ) : (
-        <Tooltip
-          label='Login to favorite'
-          position='top'
-          withArrow
-          arrowSize={8}
-        >
+        
           <BookmarkIcon />
-        </Tooltip>
       )}
     </>
   )

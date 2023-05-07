@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
-import { Divider } from '@mantine/core'
-
+import * as Separator from '@radix-ui/react-separator'
 import {
   CopyIcon,
   DiscordLogoIcon,
@@ -8,8 +7,9 @@ import {
   Share1Icon,
   TwitterLogoIcon
 } from '@radix-ui/react-icons'
-import { Flex, Popover } from '@mantine/core'
+import { Flex } from '@mantine/core'
 import toast from 'react-hot-toast'
+import * as Popover from '@radix-ui/react-popover';
 
 type Props = {
   id: string
@@ -33,8 +33,8 @@ export const ShareButton = ({ id }: Props) => {
 
   return (
     <>
-      <Popover width={300} position='top' withArrow>
-        <Popover.Target>
+      <Popover.Root >
+        <Popover.Trigger asChild>
           <button
             className=''
             onClick={() => {
@@ -50,8 +50,11 @@ export const ShareButton = ({ id }: Props) => {
           >
             <Share1Icon />
           </button>
-        </Popover.Target>
-        <Popover.Dropdown>
+        </Popover.Trigger>
+        <Popover.Portal>
+        <Popover.Content
+          className='absolute z-10 flex w-fit p-2 flex-col items-center justify-between rounded-md bg-white dark:bg-slate-900'
+        >
           <Flex gap={3} justify='space-between'>
             <a
               className={iconClassName}
@@ -78,7 +81,13 @@ export const ShareButton = ({ id }: Props) => {
               <DiscordLogoIcon />
             </a>
           </Flex>
-          <Divider>Or share with link</Divider>
+          <Separator.Root
+          className='data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]'
+          >
+            <p className='text-xs text-slate-500 dark:text-slate-400'>
+            Or share with link
+            </p>
+          </Separator.Root>
           <div className='mt-2 flex w-full items-center gap-1'>
             <input
               id='share'
@@ -93,8 +102,9 @@ export const ShareButton = ({ id }: Props) => {
               <CopyIcon />
             </button>
           </div>
-        </Popover.Dropdown>
-      </Popover>
+        </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
     </>
   )
 }

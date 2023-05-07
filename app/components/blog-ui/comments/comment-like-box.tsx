@@ -1,4 +1,3 @@
-import { Tooltip } from '@mantine/core'
 import type { CommentLike } from '@prisma/client'
 import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { SerializeFrom } from '@remix-run/node'
@@ -80,14 +79,9 @@ export default function LikeComment({
         </button>
       ) : (
         <>
-          <Tooltip
-            label='You must be logged in to like this post'
-            position='top'
-            withArrow
-            arrowSize={8}
-          >
+          
             <HeartIcon />
-          </Tooltip>
+        
         </>
       )}
     </>

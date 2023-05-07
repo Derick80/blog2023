@@ -79,7 +79,7 @@ export default function Index() {
         userId: string
       }[]
     }
-  }>()
+  }[]>()
   console.log(data, 'data')
 
   const initialVotes = data.latestPoll?.votes?.length || 0

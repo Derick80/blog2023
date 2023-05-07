@@ -1,7 +1,6 @@
-import { Button } from '@mantine/core'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
-
+import Button from '~/components/button'
 // Use this form to edit a specific comment
 export default function EditCommentForm({
   commentId,

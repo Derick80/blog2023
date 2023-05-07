@@ -1,15 +1,14 @@
-import { Divider } from '@mantine/core'
 import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   Form,
   Link,
-  NavLink,
   isRouteErrorResponse,
   useLoaderData,
   useNavigation,
   useRouteError
 } from '@remix-run/react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import dayjs from 'dayjs'
 import React from 'react'
 import CommentBox from '~/components/blog-ui/comments/comment-box'
@@ -22,13 +21,12 @@ import { useOptionalUser } from '~/utilities'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {
   ChatBubbleIcon,
-  ChevronDownIcon,
-  ChevronUpIcon
+  HamburgerMenuIcon
 } from '@radix-ui/react-icons'
 import Button from '~/components/button'
 import { ShareButton } from '~/components/share-button'
 import CommentContainer from '~/components/blog-ui/comments/comment-list'
-import { ColBox, RowBox } from '~/components/boxes'
+import { ColBox } from '~/components/boxes'
 import VerticalMenu from '~/components/vertical-menu'
 import BlogCard from '~/components/blog-ui/blog-card'
 dayjs.extend(relativeTime)
@@ -52,8 +50,22 @@ export default function BlogRoute() {
   const data = useLoaderData<typeof loader>()
 
   return (
-    <div className='flex flex-col items-center gap-2'>
-      <BlogMenu />
+    <div className='h- flex w-full flex-col items-center gap-2'>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger className='inline-flex items-center justify-center w-10 h-10 text-gray-400 transition duration-150 ease-in-out rounded-full hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-slate-900 focus:text-gray-500'>
+          <span className='sr-only'>Open options</span>
+          <HamburgerMenuIcon  className='text-teal-400' />
+          </DropdownMenu.Trigger>
+        <DropdownMenu.Content className='py-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 dark:bg-slate-900'>
+          <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+            <Link to='/blog/new'>New</Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+            <Link to='/drafts'>Drafts</Link>
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+
+      </DropdownMenu.Root>
 
       {data &&
         data.posts.map((post) => (
@@ -83,8 +95,8 @@ export function BlogPreview({ post }: { post: Post }) {
     <div
       className={
         navigate.state === 'loading'
-          ? 'opacity-25 transition-opacity delay-1000'
-          : ' flex w-full flex-col gap-10 rounded-md border-2'
+          ? 'opacity-25 transition-opacity delay-200'
+          : 'static flex w-full flex-col gap-2 rounded-md border-2'
       }
     >
       {/* Card header */}
@@ -145,7 +157,6 @@ export function BlogPreview({ post }: { post: Post }) {
         <p>{dayjs(post.createdAt).fromNow()}</p>
       </div>
 
-      <Divider />
       <ColBox className='px-1'>
         <CommentBox postId={post.id} />
         {open && <CommentContainer postId={post.id} />}
@@ -179,55 +190,5 @@ export function ErrorBoundary() {
     </div>
   )
 }
-function BlogMenu() {
-  const [menu, setMenu] = React.useState(false)
 
-  return (
-    <div className='relative'>
-      <RowBox className='w-full items-center'>
-        <h1 className='text-2xl font-bold'>Blog</h1>
-        <button
-          onClick={() => {
-            setMenu(!menu)
-          }}
-        >
-          {menu ? (
-            <ChevronUpIcon className='text-teal-400' />
-          ) : (
-            <ChevronDownIcon className='text-teal-400' />
-          )}
-        </button>
-      </RowBox>
-      {menu && (
-        <div className='absolute left-0 right-0 z-10 items-center rounded-md bg-slate-50 p-2 dark:bg-slate-900'>
-          <MapMenuItems menuItems={BlogItems} />
-        </div>
-      )}
-    </div>
-  )
-}
-function MapMenuItems({ menuItems }: { menuItems: typeof BlogItems }) {
-  return (
-    <div className='flex flex-col items-center gap-2'>
-      {menuItems.map((item, index) => (
-        <NavLink key={index} to={item.path}>
-          {item.title}
-        </NavLink>
-      ))}
-    </div>
-  )
-}
-export const BlogItems = [
-  {
-    title: 'New Post',
-    path: '/blog/new'
-  },
-  {
-    title: 'All Posts',
-    path: '/blog'
-  },
-  {
-    title: 'Drafts',
-    path: '/drafts'
-  }
-]
+

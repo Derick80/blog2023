@@ -1,6 +1,7 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
+import VerticalMenu from '~/components/vertical-menu'
 
 
 export async function action({ request, params }: ActionArgs) {
@@ -21,8 +22,20 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export default function BetaRoute() {
   return (
-    <div className=''>
-     
+    <div
+    className=''>
+     <VerticalMenu >
+<div>1</div>
+<div>1</div>
+<div>1</div>
+<div>1</div>
+     </VerticalMenu>
+     <div className='statsic flex flex-col gap-2'>
+     <div>2</div>
+     <div>2</div>
+     <div>2</div>
+     <div>2</div>
+     </div>
     </div>
   )
 }

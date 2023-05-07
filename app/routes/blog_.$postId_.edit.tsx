@@ -16,13 +16,11 @@ import {
   Form,
   useActionData,
   useLoaderData,
-  useNavigate,
-  useNavigation
-} from '@remix-run/react'
+  useNavigate} from '@remix-run/react'
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
 import TipTap from '~/components/tip-tap'
-import { MultiSelect, Switch } from '@mantine/core'
+import { Switch } from '@mantine/core'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import Button from '~/components/button'
 import SelectBox from '~/components/select'
@@ -124,13 +122,7 @@ export default function PostEdit() {
     categories: Category[]
   }
 
-  const categories = parentData.categories.map((category) => {
-    return category.value
-  })
 
-  // const [selected, setSelected] = React.useState<string[]>(
-  //   data.post.categories.map((category) => category.value)
-  // )
 
   const [url, setUrl] = React.useState(data.post.imageUrl || '')
 

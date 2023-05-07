@@ -1,6 +1,7 @@
 import React from 'react'
 import { Portal } from './portal'
 import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
+import { motion } from 'framer-motion'
 
 type Props = {
   options: { id: string; value: string; label: string }[]
@@ -84,7 +85,13 @@ export default function SelectBox({
       <div>
         <Portal wrapperId='picker'>
           {dropdown && (
-            <div className='bottom-34 absolute left-[50%] z-30 mt-10 flex  h-fit flex-col  items-center gap-1 rounded-md border bg-white dark:bg-slate-800'>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ type: 'tween' }}
+              
+            className='bottom-34 absolute left-[50%] z-30 mt-10 flex  h-fit flex-col  items-center gap-1 rounded-md border bg-white dark:bg-slate-800'>
               {options.map((item) => (
                 <button
                 type='button'
@@ -95,7 +102,7 @@ export default function SelectBox({
                   {item.label}
                 </button>
               ))}
-            </div>
+            </motion.div>
           )}
         </Portal>
       </div>

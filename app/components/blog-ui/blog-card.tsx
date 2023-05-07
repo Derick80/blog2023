@@ -5,17 +5,18 @@ import {
   Group,
   TypographyStylesProvider
 } from '@mantine/core'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+
 import { Link, Form, NavLink } from '@remix-run/react'
 import dayjs from 'dayjs'
 import FavoriteContainer from '../favorite-container'
 import LikeContainer from '../like-container'
 import { ShareButton } from '../share-button'
 import Tags from '../tags'
-import VerticalMenu from '../vertical-menu'
 import type { Post } from '~/server/schemas/schemas'
 import Button from '../button'
 import React from 'react'
-import { ChatBubbleIcon } from '@radix-ui/react-icons'
+import { ChatBubbleIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import CommentContainer from './comments/comment-list'
 import { RowBox } from '../boxes'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -34,9 +35,10 @@ export type Props = {
 export default function BlogCard({ post, children }: Props) {
   const [open, setOpen] = React.useState(true)
   return (
-    <div className='w-full '>
-      <Card key={post.id} shadow='xl' padding='md' radius='md' withBorder>
-        <Card.Section className='books relative'>
+      <Card
+        
+      key={post.id} shadow='xl' padding='md' radius='md' withBorder>
+        <Card.Section className='books'>
           <Image
             fit='cover'
             src={post.imageUrl}
@@ -95,7 +97,7 @@ export default function BlogCard({ post, children }: Props) {
           <div
             id=''
           className='flex flex-grow items-center' />
-          <VerticalMenu>
+          {/* <VerticalMenu>
             <Link to={`/blog/${post.id}`}>View</Link>
             <Link to={`/blog/${post.id}/edit`}>Edit</Link>
             <Form
@@ -116,8 +118,53 @@ export default function BlogCard({ post, children }: Props) {
                 Delete
               </button>
             </Form>
-          </VerticalMenu>
+          </VerticalMenu> */}
+<DropdownMenu.Root>
+  <DropdownMenu.Trigger className='inline-flex items-center justify-center w-10 h-10 text-gray-400 transition duration-150 ease-in-out rounded-full hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500'>
+    <span className='sr-only'>Open options</span>
+    <DotsVerticalIcon className='w-5 h-5' aria-hidden='true' />
+  </DropdownMenu.Trigger>
 
+  <DropdownMenu.Content className='py-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10'>
+    <DropdownMenu.Item
+      className='block px-4 py-2 text-sm  hover:bg-gray-100'
+      >
+      <Link to={`/blog/${post.id}`}>View</Link>
+      
+      
+      </DropdownMenu.Item>
+    <DropdownMenu.Item
+      className='block px-4 py-2 text-sm  hover:bg-gray-100'
+      >
+      <Link to={`/blog/${post.id}/edit`}>Edit</Link>
+      </DropdownMenu.Item>
+    <DropdownMenu.Item
+      className='block px-4 py-2 text-sm  hover:bg-gray-100'
+      >
+        
+      <Form
+        id='delete-post'
+        method='POST'
+        action={`/blog/${post.id}/delete`}
+      >
+        <button
+          onClick={() => {
+            if (confirm('Are you sure you want to delete this post?')) {
+              return true
+            } else {
+              return false
+            }
+          }}
+          >
+          Delete
+
+          </button>
+      </Form>
+      </DropdownMenu.Item>
+  </DropdownMenu.Content>
+</DropdownMenu.Root>
+
+    
           {post.comments && (
             <>
               <RowBox>
@@ -136,8 +183,9 @@ export default function BlogCard({ post, children }: Props) {
           )}
         </RowBox>
         {children}
-        {open && <CommentContainer postId={post.id} />}
+        {open && 
+        
+        <CommentContainer postId={post.id} />}
       </Card>
-    </div>
   )
 }
