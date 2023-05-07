@@ -30,7 +30,7 @@ export default function EditCommentForm({
   return (
     <commentEditFetcher.Form
       ref={formRef}
-      className='flex w-full flex-col items-end gap-1'
+      className='flex w-full flex-row items-center gap-1'
       method='POST'
       action={`/comment/${commentId}`}
     >

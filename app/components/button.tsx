@@ -61,7 +61,7 @@ export default function Button({
     icon_text_filled:
       'rounded border-2 bg-slate-500 border-slate-500 text-slate-50 hover:bg-slate-600 hover:border-slate-600 capitalize flex flex-row items-center gap-2',
     icon_text_unfilled:
-      'font-semibold text-slate-500 hover:bg-slate-50 capitalize dark:text-slate-50 flex flex-row items-center gap-2'
+      'font-semibold text-slate-500 hover:bg-slate-900 capitalize dark:text-slate-50 flex flex-row items-center gap-2'
   }
   return (
     <button

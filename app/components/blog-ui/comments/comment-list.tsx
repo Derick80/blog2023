@@ -6,14 +6,14 @@ import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
 import { RowBox } from '~/components/boxes'
 import { Image } from '@mantine/core'
-import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { ChevronDownIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { CommentLike } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
 import VerticalMenu from '~/components/vertical-menu'
 import LikeComment from './comment-like-box'
 import EditCommentForm from './edit-comment-form'
-
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 function getReplyCountText(count: number) {
   if (count === 0 || !count) {
     return ''
@@ -146,6 +146,43 @@ function Comment({
             />
             {user?.id === comments.userId && (
               <>
+              {/* <DropdownMenu.Root>
+                <DropdownMenu.Trigger className='inline-flex items-center justify-center w-10 h-10 text-gray-400 transition duration-150 ease-in-out rounded-full hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-slate-900 focus:text-gray-500'>
+                  <span className='sr-only'>Open options</span>
+                 <DotsVerticalIcon className='text-teal-400' />
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content className='py-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 dark:bg-slate-900'>
+                  <DropdownMenu.Item
+                    className='block px-4 py-2 text-sm  hover:bg-gray-100 text-black'>
+                    <Button
+                      variant={editing ? 'danger_filled' : 'warning_filled'}
+                      size='small'
+                      className='flex flex-row justify-between gap-2 text-xs'
+                      onClick={() => setEditing((editing) => !editing)}
+                    >
+                      <p className='flex flex-row gap-2 text-xs text-black '>
+                        {editing ? 'Cancel' : 'Edit'}
+                      </p>
+                    </Button>
+
+                                     </DropdownMenu.Item>
+                  <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100 text-black'>
+                  <Button
+                      onClick={onClick}
+                      variant='danger_filled'
+                      size='tiny'
+                      type='submit'
+                      name='action'
+                      value='delete'
+                    >
+                      Delete
+                    </Button>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root> */}
+
+
+
                 <VerticalMenu>
                   <Button
                     variant={editing ? 'danger_filled' : 'warning_filled'}
@@ -191,12 +228,12 @@ function Comment({
 
         {comments.children?.length > 0 && !open ? (
           <Button
-            variant='icon_unfilled'
+            variant='icon_text_unfilled'
             size='small'
             className='flex flex-row items-center justify-between gap-1 text-xs'
             onClick={() => setOpen((open) => !open)}
           >
-            <p className='flex flex-row gap-2 text-xs text-black '>
+            <p className='flex flex-row gap-2 text-xs text-black dark:text-slate-50'>
               {getReplyCountText(comments.children?.length)}
               <ChevronDownIcon />
             </p>

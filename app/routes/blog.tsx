@@ -29,6 +29,7 @@ import CommentContainer from '~/components/blog-ui/comments/comment-list'
 import { ColBox } from '~/components/boxes'
 import VerticalMenu from '~/components/vertical-menu'
 import BlogCard from '~/components/blog-ui/blog-card'
+import BlogPost from '~/components/blog-ui/b-card'
 dayjs.extend(relativeTime)
 
 export const meta: V2_MetaFunction = () => {
@@ -69,22 +70,16 @@ export default function BlogRoute() {
 
       {data &&
         data.posts.map((post) => (
-          <BlogCard key={post.id} post={post}>
+          <BlogPost key={post.id} post={post}>
             <CommentBox postId={post.id} />
-          </BlogCard>
+          </BlogPost>
         ))}
     </div>
   )
 }
 
-export type BlogPreviewProps = {
-  post: Post
-  comments: CommentWithChildren[]
-}
 
-export type BlogPreviewPropstwo = {
-  post: Post
-}
+
 
 export function BlogPreview({ post }: { post: Post }) {
   const navigate = useNavigation()

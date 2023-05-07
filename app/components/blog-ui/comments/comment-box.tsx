@@ -59,8 +59,8 @@ export default function CommentBox({
             />
             {user ? (
               <Button
-                className='absolute right-0 top-8'
-                variant='ghost'
+                className=' right-0 top-8'
+                variant='primary_filled'
                 size='tiny'
                 type='submit'
               >

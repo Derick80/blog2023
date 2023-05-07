@@ -1,46 +1,25 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
-import { isAuthenticated } from '~/server/auth/auth.server'
-import { json, redirect } from '@remix-run/node'
-import { getPosts } from '~/server/post.server'
-import { Form, Link, useLoaderData } from '@remix-run/react'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { DotsVerticalIcon, ChatBubbleIcon } from '@radix-ui/react-icons'
-import { RowBox } from '~/components/boxes'
-import FavoriteContainer from '~/components/favorite-container'
-import LikeContainer from '~/components/like-container'
-import { ShareButton } from '~/components/share-button'
-import CommentContainer from '~/components/blog-ui/comments/comment-list'
-import React from 'react'
-import Button from '~/components/button'
-import CommentBox from '~/components/blog-ui/comments/comment-box'
+import React from "react"
+import type { Post } from "~/server/schemas/schemas"
+import Button from "../button"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { DotsVerticalIcon, ChatBubbleIcon } from "@radix-ui/react-icons"
+import { Link, Form } from "@remix-run/react"
+import { RowBox } from "../boxes"
+import FavoriteContainer from "../favorite-container"
+import LikeContainer from "../like-container"
+import { ShareButton } from "../share-button"
+import CommentContainer from "./comments/comment-list"
 
-
-export async function action({ request, params }: ActionArgs) {
-  const formData = await request.formData()
-  const data = Object.fromEntries(formData.entries())
-
-  return json({ data })
+type Props = {
+    post: Post,
+    children?: React.ReactNode
 }
+export default function BlogPost({post,children}: Props){
+    const [open, setOpen] = React.useState(false)
 
-export async function loader({ request, params }: LoaderArgs) {
 
-  const user = await isAuthenticated(request)
-  if (!user) {
-    return redirect('/login')
-  }
-
-  const posts = await getPosts()
-  return json({ posts })
-}
-
-export default function BetaRoute() {
-  const [open, setOpen] = React.useState(true)
-  const data = useLoaderData<typeof loader>()
-  return (
-    <div className='flex flex-col items-center justify-center'>
-{
-  data.posts.map((post) => (
-    <div
+    return (
+        <div
     className='border border-gray-200 p-4 rounded-md shadow-md'
     key={post.id}>
      <Link to={`/blog/${post.id}`}>
@@ -117,31 +96,30 @@ export default function BetaRoute() {
     
           {post.comments && (
             <>
-              <RowBox>
+              <div
+              className="flex flex-row items-center gap-1"
+              >
                 <p className='sub'>{post?.comments?.length}</p>
                 <Button
                   variant='icon_unfilled'
-                  size='tiny'
+                  size='small'
                   onClick={() => {
                     setOpen(!open)
+                    
                   }}
                 >
                   <ChatBubbleIcon />
                 </Button>
-              </RowBox>
+              </div>
             </>
           )}
         </RowBox>
-        <CommentBox postId={post.id} />
-       
+        {children}
+        {open && 
         
         <CommentContainer postId={post.id} />
+        
+        }
     </div>
-    
-  )
-  )
-}
-
-      </div>
-  )
+    )
 }

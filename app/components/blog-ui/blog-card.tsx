@@ -20,13 +20,9 @@ import { ChatBubbleIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import CommentContainer from './comments/comment-list'
 import { RowBox } from '../boxes'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import applicationStyleSheet from '~/components/blog-ui/blog-card.css'
-import type { LinksFunction } from '@remix-run/node'
 dayjs.extend(relativeTime)
 
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: applicationStyleSheet }]
-}
+
 
 export type Props = {
   post: Post
@@ -37,13 +33,16 @@ export default function BlogCard({ post, children }: Props) {
   return (
       <Card
         
-      key={post.id} shadow='xl' padding='md' radius='md' withBorder>
+      key={post.id} shadow='xl' padding='md' radius='md' withBorder
+
+      >
         <Card.Section className='books'>
           <Image
             fit='cover'
             src={post.imageUrl}
             alt={post.title}
             height={160}
+
           />
         </Card.Section>
 
@@ -97,28 +96,7 @@ export default function BlogCard({ post, children }: Props) {
           <div
             id=''
           className='flex flex-grow items-center' />
-          {/* <VerticalMenu>
-            <Link to={`/blog/${post.id}`}>View</Link>
-            <Link to={`/blog/${post.id}/edit`}>Edit</Link>
-            <Form
-              id='delete-post'
-              method='POST'
-              action={`/blog/${post.id}/delete`}
-            >
-              <button
-                onClick={() => {
-                  if (confirm('Are you sure you want to delete this post?')) {
-                    return true
-                  } else {
-                    return false
-                  }
-                }}
-                
-              form='delete-post' type='submit'>
-                Delete
-              </button>
-            </Form>
-          </VerticalMenu> */}
+         
 <DropdownMenu.Root>
   <DropdownMenu.Trigger className='inline-flex items-center justify-center w-10 h-10 text-gray-400 transition duration-150 ease-in-out rounded-full hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500'>
     <span className='sr-only'>Open options</span>
@@ -183,9 +161,7 @@ export default function BlogCard({ post, children }: Props) {
           )}
         </RowBox>
         {children}
-        {open && 
-        
-        <CommentContainer postId={post.id} />}
+<CommentContainer postId={post.id} />
       </Card>
   )
 }
