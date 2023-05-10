@@ -6,6 +6,7 @@ import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
 import HoverOverCard from './hovercard/hover-card'
 import ScrollToTop from './scroll-to-top'
+import { SignedIn, UserButton, SignedOut, RedirectToSignIn } from '@clerk/remix'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 
@@ -13,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className='flex '>
       <ScrollToTop />
       <NavigationBar />
-
+      
       <div className='mt-20 flex h-full flex-grow flex-col p-2 md:mt-12 md:flex-row'>
         <main className='mx-auto mt-5 flex w-full flex-col p-2 md:w-4/6 md:p-4'>
           {children}
@@ -87,7 +88,12 @@ function NavigationBar() {
       <MenuBox title='Links' />
 
       {/* <Switch size="md" onLabel={<SunIcon />} offLabel={<MoonIcon />} /> */}
-
+      <SignedIn>
+                <UserButton />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
       {user ? (
         <div className='flex flex-row items-center gap-2 p-2'>
           <HoverOverCard />

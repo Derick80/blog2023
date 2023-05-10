@@ -1,4 +1,5 @@
 import type {
+  DataFunctionArgs,
   LinksFunction,
   LoaderArgs,
   V2_MetaFunction
@@ -17,6 +18,12 @@ import {
   useOutlet,
   useRouteError
 } from '@remix-run/react'
+import { ClerkApp } from "@clerk/remix";
+
+import {
+  RemixRootDefaultCatchBoundary,
+  RemixRootDefaultErrorBoundary,
+} from "@remix-run/react/dist/errorBoundaries";
 import { isAuthenticated } from './server/auth/auth.server'
 import Layout from './components/layout'
 import stylesheet from '~/tailwind.css'
@@ -28,7 +35,14 @@ import { prisma } from './server/auth/prisma.server'
 import { StylesPlaceholder } from '@mantine/remix'
 import { MantineProvider } from '@mantine/core'
 import { AnimatePresence, motion } from "framer-motion";
-
+import { rootAuthLoader } from "@clerk/remix/ssr.server";
+import { ClerkCatchBoundary } from '@clerk/remix'
+import {
+  SignedIn,
+  SignedOut,
+  RedirectToSignIn,
+  UserButton,
+} from "@clerk/remix";
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
 ]
@@ -90,59 +104,81 @@ export const meta: V2_MetaFunction = () => {
   ]
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
-export async function loader({ request }: LoaderArgs) {
-  const user = await isAuthenticated(request)
-  const categories = await prisma.category.findMany()
-  const session = await getSession(request.headers.get('Cookie'))
+// export const loader = (args: LoaderArgs) => {
+//   return rootAuthLoader(args, async ({request}) => {
+//     const {sessionId, userId, getToken} = await request.auth;
 
-  const toastMessage = (await session.get('toastMessage')) as ToastMessage
+//   const user = await isAuthenticated(args.request)
+//   const categories = await prisma.category.findMany()
+//   const session = await getSession(args.request.headers.get('Cookie'))
 
-  if (!toastMessage) {
-    return json({ toastMessage: null, user, categories })
-  }
+//   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
-  if (!toastMessage.type) {
-    throw new Error('Message should have a type')
-  }
+//   if (!toastMessage) {
+//     return json({ toastMessage: null, user, categories,sessionId, userId, getToken })
+//   }
 
-  return json(
-    { toastMessage, user, categories },
-    {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    }
-  )
-}
-export default function App() {
+//   if (!toastMessage.type) {
+//     throw new Error('Message should have a type')
+//   }
+
+//   return json(
+//     { toastMessage, user, categories, sessionId, userId, getToken },
+//     {
+//       headers: {
+//         'Set-Cookie': await commitSession(session)
+//       }
+//     },
+   
+
+//   ) 
+
+// },
+// {
+//   loadUser: true,
+// }
+//   )
+// }
+
+export const loader = (args: DataFunctionArgs) => {
+  return rootAuthLoader(
+    args,
+    ({ request }) => {
+      const { userId, sessionId, getToken } = request.auth;
+      console.log("Root loader auth:", { userId, sessionId, getToken });
+      return { message: `Hello from the root loader :)` };
+    },
+    { loadUser: true }
+  );
+};
+function App() {
   const outlet = useOutlet();
 
-  const data = useLoaderData<typeof loader>()
-  const { toastMessage } = data
+  const { message } = useLoaderData<typeof loader>();
+  // const { toastMessage } = data
 
-  React.useEffect(() => {
-    if (!toastMessage) {
-      return
-    }
-    const { message, type } = toastMessage
+  // React.useEffect(() => {
+  //   if (!toastMessage) {
+  //     return
+  //   }
+  //   const { message, type } = toastMessage
 
-    switch (type) {
-      case 'success':
-        toast.success(message)
-        break
-      case 'error':
-        toast.error(message)
-        break
-      default:
-        throw new Error(`${type} is not handled`)
-    }
-  }, [toastMessage])
+  //   switch (type) {
+  //     case 'success':
+  //       toast.success(message)
+  //       break
+  //     case 'error':
+  //       toast.error(message)
+  //       break
+  //     default:
+  //       throw new Error(`${type} is not handled`)
+  //   }
+  // }, [toastMessage])
 
   return (
     // <MantineProvider withGlobalStyles withNormalizeCSS>
       <html lang='en'>
         <head>
-          <StylesPlaceholder />
 
           <meta charSet='utf-8' />
           <meta name='viewport' content='width=device-width,initial-scale=1' />
@@ -152,7 +188,10 @@ export default function App() {
         <body
             id='body'
         className='bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'>
+        
+          
           <Layout>
+              
           <AnimatePresence mode='wait' initial={false}>
           <motion.main
             key={useLocation().pathname}
@@ -188,37 +227,38 @@ export default function App() {
             <ScrollRestoration />
             <Scripts />
             <LiveReload />
+           
           </Layout>
+          
         </body>
       </html>
     // </MantineProvider>
   )
 }
 
-export function ErrorBoundary() {
-  const error = useRouteError()
+  export default ClerkApp(
+    App,
+  );
+
+  export const CatchBoundary = ClerkCatchBoundary();
+export const ErrorBoundary = () => {
+  const error = useRouteError();
   if (isRouteErrorResponse(error)) {
-    return (
-      <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-        <h1 className='text-2xl font-bold text-red-500'>Uh Oh!...</h1>
-        <h1 className='text-2xl font-bold text-red-500'>
-          Status:{error.status}
-        </h1>
-        <p className='text-xl'>{error.data.message}</p>
-      </div>
-    )
+    const { __clerk_ssr_interstitial_html } = error?.data?.clerkState?.__internal_clerk_state || {};
+    if (__clerk_ssr_interstitial_html) {
+      return <html dangerouslySetInnerHTML={{ __html: __clerk_ssr_interstitial_html }} />;
+    }
+    //  Current CatchBoundary Component
+    return <RemixRootDefaultCatchBoundary />;
+  } else if (error instanceof Error) {
+    return <RemixRootDefaultErrorBoundary error={error} />;
+  } else {
+    let errorString =
+      error == null
+        ? "Unknown Error"
+        : typeof error === "object" && "toString" in error
+        ? error.toString()
+        : JSON.stringify(error);
+    return <RemixRootDefaultErrorBoundary error={new Error(errorString)} />;
   }
-  let errorMessage = 'unknown error'
-  if (error instanceof Error) {
-    errorMessage = error.message
-  } else if (typeof error === 'string') {
-    errorMessage = error
-  }
-  return (
-    <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-      <h1 className='text-2xl font-bold'>uh Oh..</h1>
-      <p className='text-xl'>something went wrong</p>
-      <pre>{errorMessage}</pre>
-    </div>
-  )
-}
+};
