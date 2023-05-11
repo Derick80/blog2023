@@ -27,9 +27,8 @@ export async function createPost(data: PostInput) {
         }
       },
       categories: {
-       connect: data.categories.map((category) => ({
-          value: category.value,
-
+        connect: data.categories.map((category) => ({
+          value: category.value
         }))
       }
     }
@@ -55,9 +54,8 @@ export async function updatePost(data: PostInput & { postId: string }) {
         }
       },
       categories: {
-      set: data.categories.map((category) => ({
-          value: category.value,
-          
+        set: data.categories.map((category) => ({
+          value: category.value
         }))
       }
     }

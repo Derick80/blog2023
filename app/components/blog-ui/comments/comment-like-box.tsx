@@ -79,9 +79,7 @@ export default function LikeComment({
         </button>
       ) : (
         <>
-          
-            <HeartIcon />
-        
+          <HeartIcon />
         </>
       )}
     </>

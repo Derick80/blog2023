@@ -22,33 +22,29 @@ export default function VerticalMenu({
   }, [])
 
   return (
-   
-    <div 
-    className='relative'
+    <div
+      className='relative'
 
       // className='relative'
-   >
+    >
       <Button
-          className=''
-      onClick={() => setOpen(!open)} variant='ghost' size='tiny'>
+        className=''
+        onClick={() => setOpen(!open)}
+        variant='ghost'
+        size='tiny'
+      >
         {!open ? (
           <DotsVerticalIcon className='h-6 w-6' />
         ) : (
           <DotsHorizontalIcon className='h-6 w-6' />
         )}
       </Button>
-      
 
-{open && (
-   
-      <div
-      className='z-10 fixed flex flex-col w-fit gap-2 bg-white dark:bg-slate-900 shadow-lg rounded-lg p-2'
-  >
-    {children}
-  </div>
- 
-)}
+      {open && (
+        <div className='fixed z-10 flex w-fit flex-col gap-2 rounded-lg bg-white p-2 shadow-lg dark:bg-slate-900'>
+          {children}
+        </div>
+      )}
     </div>
-
   )
 }

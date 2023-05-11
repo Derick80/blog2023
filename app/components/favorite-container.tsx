@@ -1,7 +1,4 @@
-import {
-  BookmarkFilledIcon,
-  BookmarkIcon
-} from '@radix-ui/react-icons'
+import { BookmarkFilledIcon, BookmarkIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
@@ -60,8 +57,7 @@ export default function FavoriteContainer({
           )}
         </Button>
       ) : (
-        
-          <BookmarkIcon />
+        <BookmarkIcon />
       )}
     </>
   )

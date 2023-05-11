@@ -1,8 +1,5 @@
 import { Tooltip } from '@mantine/core'
-import {
-  HeartFilledIcon,
-  HeartIcon
-} from '@radix-ui/react-icons'
+import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'

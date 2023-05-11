@@ -1,16 +1,11 @@
-import { V2_MetaFunction, useLoaderData, useNavigation } from '@remix-run/react'
+import type { V2_MetaFunction} from '@remix-run/react';
+import { useLoaderData, useNavigation } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import type { LoaderArgs } from '@remix-run/node'
-import { isAuthenticated } from '~/server/auth/auth.server'
-import { json, redirect } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { prisma } from '~/server/auth/prisma.server'
 import VotingMachine from '~/components/voting-machine'
-import { ColBox, RowBox } from '~/components/boxes'
-import {
-  commitSession,
-  getSession,
-  setErrorMessage
-} from '~/server/auth/session.server'
+import { ColBox } from '~/components/boxes'
 export const meta: V2_MetaFunction = () => {
   return [
     { title: 'New Remix App' },
@@ -19,70 +14,46 @@ export const meta: V2_MetaFunction = () => {
   ]
 }
 
-export async function loader({ request, params }: LoaderArgs) {
-  const session = await getSession(request.headers.get('Cookie'))
-  const latestPoll = await prisma.poll.findFirst({
+export async function loader({ request }: LoaderArgs) {
+const data = await prisma.poll.findFirst({
     include: {
+      votes: true,
+      _count: {
+        select: { votes: true,
+        options: true }
+      },
+
       options: {
         include: {
-          votes: true
+          votes: true,
+          _count: {
+            select: { votes: true }
+          }
         }
       },
-      votes: {
-        include: {
-          option: true
-        }
-      }
-    }
+      
+    },
+    orderBy: { createdAt: 'desc' }
   })
-  if (!latestPoll) {
-    setErrorMessage(session, 'No polls found')
-    return {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    }
-  } else {
-    return json({ latestPoll })
+
+  if (!data) {
+   throw new Error('No data found')
   }
+
+  return json({ data })
 }
 
 export default function Index() {
-  const data = useLoaderData<{
-    latestPoll: {
-      id: string
-      completed: boolean
-      description: string
-      createdAt: string
-      title: string
-      updatedAt: string
-      options: {
-        id: string
-        createdAt: string
-        updatedAt: string
-        pollId: string
+  const data = useLoaderData<typeof loader>()
+  console.log(data, 'data');
 
-        value: string
-        votes: {
-          id: string
-          createdAt: string
-          updatedAt: string
-          optionId: string
-          userId: string
-        }
-      }
-      votes: {
-        id: string
-        createdAt: string
-        updatedAt: string
-        optionId: string
-        userId: string
-      }[]
-    }
-  }[]>()
-  console.log(data, 'data')
+  const votes = data.data._count
+  console.log(votes, 'votes');
+  
+  const initialVotes = votes.votes
+  console.log(initialVotes, 'initialVotes');
+  
 
-  const initialVotes = data.latestPoll?.votes?.length || 0
   const navigate = useNavigation()
   const user = useOptionalUser()
   return (
@@ -96,7 +67,12 @@ export default function Index() {
       <h1>Welcome to My Social Media App</h1>
       <ColBox>
         <h3 className='text-center'>Latest Poll</h3>
-        <VotingMachine poll={data?.latestPoll} initVoteTotal={initialVotes} />
+      <VotingMachine initVoteTotal={initialVotes || 0}
+        pollId={data.data.id}
+      options={data.data.options}
+        title={data.data.title}
+        description={data.data?.description}
+      votes={data.data.votes}/>
       </ColBox>
       <ul>
         {user && (

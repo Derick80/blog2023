@@ -8,7 +8,6 @@ import HoverOverCard from './hovercard/hover-card'
 import ScrollToTop from './scroll-to-top'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-
   return (
     <div className='flex '>
       <ScrollToTop />
@@ -18,10 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className='mx-auto mt-5 flex w-full flex-col p-2 md:w-4/6 md:p-4'>
           {children}
         </main>
-        <div>
-          
-         
-        </div>
+        <div></div>
       </div>
       {/* <footer className='flex flex-row items-center justify-center gap-2 p-2'>
         <Link
@@ -85,8 +81,6 @@ function NavigationBar() {
         <p className='text-sm font-semibold dark:text-slate-50'>Projects</p>
       </NavLink>
       <MenuBox title='Links' />
-
-      {/* <Switch size="md" onLabel={<SunIcon />} offLabel={<MoonIcon />} /> */}
 
       {user ? (
         <div className='flex flex-row items-center gap-2 p-2'>

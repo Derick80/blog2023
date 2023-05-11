@@ -16,7 +16,8 @@ import {
   Form,
   useActionData,
   useLoaderData,
-  useNavigate} from '@remix-run/react'
+  useNavigate
+} from '@remix-run/react'
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
 import TipTap from '~/components/tip-tap'
@@ -122,8 +123,6 @@ export default function PostEdit() {
     categories: Category[]
   }
 
-
-
   const [url, setUrl] = React.useState(data.post.imageUrl || '')
 
   return (
@@ -173,11 +172,12 @@ export default function PostEdit() {
 
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>
-          
           <SelectBox
             multiple
             name='categories'
-          options={parentData.categories} picked={data.post.categories} />
+            options={parentData.categories}
+            picked={data.post.categories}
+          />
         </div>
 
         <div className='text-slate12 mb-5 mt-5 flex flex-row items-center justify-end gap-2'>

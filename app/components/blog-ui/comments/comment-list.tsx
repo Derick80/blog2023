@@ -146,7 +146,7 @@ function Comment({
             />
             {user?.id === comments.userId && (
               <>
-              {/* <DropdownMenu.Root>
+                {/* <DropdownMenu.Root>
                 <DropdownMenu.Trigger className='inline-flex items-center justify-center w-10 h-10 text-gray-400 transition duration-150 ease-in-out rounded-full hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-slate-900 focus:text-gray-500'>
                   <span className='sr-only'>Open options</span>
                  <DotsVerticalIcon className='text-teal-400' />
@@ -180,8 +180,6 @@ function Comment({
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root> */}
-
-
 
                 <VerticalMenu>
                   <Button
