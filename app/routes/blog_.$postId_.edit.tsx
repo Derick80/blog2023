@@ -172,6 +172,7 @@ export default function PostEdit() {
 
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>
+          
           <SelectBox
             multiple
             name='categories'

@@ -1,4 +1,3 @@
-import { Input, MultiSelect } from '@mantine/core'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -27,6 +26,7 @@ import { createPost } from '~/server/post.server'
 import type { Category } from '~/server/schemas/schemas'
 import { validateAction } from '~/utilities'
 import * as Switch from '@radix-ui/react-switch'
+import SelectBox from '~/components/select'
 export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -193,13 +193,13 @@ export default function NewPostRoute() {
 
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>
-          <MultiSelect
-            shadow='xl'
-            data={categories}
-            onChange={(e) => {
-              setSelected(e.join(','))
-            }}
-          />{' '}
+        
+          <SelectBox
+            multiple
+            name='categories'
+            options={categories}
+            picked={[]}
+          />
           {actionData?.errors?.categories && (
             <p id='categories-error' role='alert' className='text-red-500'>
               {actionData?.errors?.categories}
@@ -219,7 +219,6 @@ export default function NewPostRoute() {
                     </Switch.Root>
 
         </div>
-        <input type='hidden' name='categories' value={selected} />
         <div className='flex justify-center'>
           <Button variant='primary' type='submit'>
             {text}
