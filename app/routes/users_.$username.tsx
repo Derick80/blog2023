@@ -61,13 +61,15 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 const schema = z.object({
-  action: z.enum(['create-chat'])
+  action: z.enum(['create-chat', 'block-user'])
 })
 
 type ActionInput = z.infer<typeof schema>
 
 export async function action({ request, params }: ActionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
+  const username = params.username
+  console.log(username, 'username')
 
   const user = await isAuthenticated(request)
   if (!user) {
@@ -84,6 +86,7 @@ export async function action({ request, params }: ActionArgs) {
     setErrorMessage(session, `Invalid action: ${errors}`)
     return redirect(`/users/${params.username}`)
   }
+  console.log(params.username, 'params.username')
 
   const { action } = formData
 
@@ -124,6 +127,19 @@ export async function action({ request, params }: ActionArgs) {
       })
       return redirect(`/chats/${createdChat.id}`)
     }
+    case 'block-user': {
+      await prisma.block.update({
+        where: {
+          username: params.username
+        },
+        data: {
+          blocked: true
+        }
+      })
+
+      return redirect(`/users/${params.username}`)
+    }
+
     default: {
       throw new Error(`Unsupported action: ${action}`)
     }
@@ -174,7 +190,18 @@ export default function UserRoute() {
           </RowBox>
           <p>{data.user.email}</p>
           <RowBox>
-            <Link to={`/users/${data.user.username}`}>View User</Link>
+            <Link to={`/users/${data.user.id}`}>View User</Link>
+            <Form method='POST'>
+              <Button
+                variant='primary_filled'
+                size='base'
+                type='submit'
+                name='action'
+                value='block-user'
+              >
+                Block User
+              </Button>
+            </Form>
           </RowBox>
         </li>
       </ul>

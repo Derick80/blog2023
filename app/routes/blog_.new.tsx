@@ -1,4 +1,4 @@
-import { Input, MultiSelect, Switch } from '@mantine/core'
+import { Input, MultiSelect } from '@mantine/core'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -26,6 +26,7 @@ import {
 import { createPost } from '~/server/post.server'
 import type { Category } from '~/server/schemas/schemas'
 import { validateAction } from '~/utilities'
+import * as Switch from '@radix-ui/react-switch'
 export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -149,7 +150,7 @@ export default function NewPostRoute() {
           value={url}
         />
         <label htmlFor='title'>Title</label>
-        <Input
+        <input
           className='text-slate12 rounded-md border text-sm'
           id='title'
           name='title'
@@ -168,7 +169,7 @@ export default function NewPostRoute() {
           </p>
         )}
         <label htmlFor='description'>Description</label>
-        <Input
+        <input
           type='text'
           className='text-slate12 rounded-md border text-sm'
           placeholder='Description...'
@@ -205,11 +206,18 @@ export default function NewPostRoute() {
             </p>
           )}
           <label htmlFor='featured'>Featured</label>
-          <Switch
-            name='featured'
-            onChange={(e) => console.log(e.target.value)}
-            defaultChecked={false}
-          />
+            <Switch.Root
+                    className="w-[42px] h-[25px] bg-blackA9 rounded-full relative shadow-[0_2px_10px] shadow-blackA7 focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black outline-none cursor-default"
+                    id='featured'
+                    name='featured'
+                    style={{ '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)' }}
+
+                    >
+                             <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+
+
+                    </Switch.Root>
+
         </div>
         <input type='hidden' name='categories' value={selected} />
         <div className='flex justify-center'>

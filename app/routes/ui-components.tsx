@@ -6,11 +6,18 @@ import Button from '~/components/button'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import MenuBox from '~/components/site-menus'
 import SelectBox from '~/components/select'
+import Dropdown from '~/components/dropdown-menu'
 const options = [
   { id: '1', value: 'one', label: 'one' },
   { id: '2', value: 'two', label: 'two' },
   { id: '3', value: 'three', label: 'three' },
-  { id: '4', value: 'four', label: 'four' }
+  { id: '4', value: 'four', label: 'four' },
+  { id: '5', value: 'five', label: 'five' },
+  { id: '6', value: 'six', label: 'six' },
+  { id: '7', value: 'seven', label: 'seven' },
+  { id: '8', value: 'eight', label: 'eight' },
+  { id: '9', value: 'nine', label: 'nine' },
+  
 ]
 
 const picked = [
@@ -274,6 +281,11 @@ export default function ComponentsIndex() {
         {/* second column */}
         <ColBox className='w-full'>
           <div className='flex flex-col items-start gap-2'>
+            <div className='flex flex-col items-start gap-2'>
+              <div>
+                <Dropdown options={options} />
+              </div>
+            </div>
             <p className='text-base font-semibold'>Dropdown Menu</p>
             <p className='text-sm font-bold'>
               This is a dropdown menu box that I designed for my site. It

@@ -1,4 +1,3 @@
-import { Tooltip } from '@mantine/core'
 import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
@@ -64,14 +63,8 @@ export default function LikeContainer({
         </button>
       ) : (
         <>
-          <Tooltip
-            label='You must be logged in to like this post'
-            position='top'
-            withArrow
-            arrowSize={8}
-          >
+         
             <HeartIcon />
-          </Tooltip>
         </>
       )}
     </>

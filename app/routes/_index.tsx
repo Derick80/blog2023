@@ -1,4 +1,4 @@
-import type { V2_MetaFunction} from '@remix-run/react';
+import type { V2_MetaFunction } from '@remix-run/react'
 import { useLoaderData, useNavigation } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import type { LoaderArgs } from '@remix-run/node'
@@ -15,12 +15,11 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderArgs) {
-const data = await prisma.poll.findFirst({
+  const data = await prisma.poll.findFirst({
     include: {
       votes: true,
       _count: {
-        select: { votes: true,
-        options: true }
+        select: { votes: true, options: true }
       },
 
       options: {
@@ -30,14 +29,13 @@ const data = await prisma.poll.findFirst({
             select: { votes: true }
           }
         }
-      },
-      
+      }
     },
     orderBy: { createdAt: 'desc' }
   })
 
   if (!data) {
-   throw new Error('No data found')
+    throw new Error('No data found')
   }
 
   return json({ data })
@@ -45,14 +43,13 @@ const data = await prisma.poll.findFirst({
 
 export default function Index() {
   const data = useLoaderData<typeof loader>()
-  console.log(data, 'data');
+  console.log(data, 'data')
 
   const votes = data.data._count
-  console.log(votes, 'votes');
-  
+  console.log(votes, 'votes')
+
   const initialVotes = votes.votes
-  console.log(initialVotes, 'initialVotes');
-  
+  console.log(initialVotes, 'initialVotes')
 
   const navigate = useNavigation()
   const user = useOptionalUser()
@@ -61,18 +58,20 @@ export default function Index() {
       className={
         navigate.state === 'loading'
           ? 'opacity-25 transition-opacity delay-200'
-          : 'flex flex-col'
+          : 'flex flex-col mx-auto items-center'
       }
     >
       <h1>Welcome to My Social Media App</h1>
       <ColBox>
         <h3 className='text-center'>Latest Poll</h3>
-      <VotingMachine initVoteTotal={initialVotes || 0}
-        pollId={data.data.id}
-      options={data.data.options}
-        title={data.data.title}
-        description={data.data?.description}
-      votes={data.data.votes}/>
+        <VotingMachine
+          initVoteTotal={initialVotes || 0}
+          pollId={data.data.id}
+          options={data.data.options}
+          title={data.data.title}
+          description={data.data?.description}
+          votes={data.data.votes}
+        />
       </ColBox>
       <ul>
         {user && (

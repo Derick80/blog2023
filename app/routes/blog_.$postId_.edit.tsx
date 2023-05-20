@@ -21,10 +21,10 @@ import {
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
 import TipTap from '~/components/tip-tap'
-import { Switch } from '@mantine/core'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import Button from '~/components/button'
 import SelectBox from '~/components/select'
+import * as Switch from '@radix-ui/react-switch'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -182,12 +182,17 @@ export default function PostEdit() {
 
         <div className='text-slate12 mb-5 mt-5 flex flex-row items-center justify-end gap-2'>
           <label htmlFor='featured'>Featured</label>
-          <Switch
-            name='featured'
-            id='featured'
-            color='blue'
-            defaultChecked={data.post.featured}
-          />
+          <Switch.Root
+                    className="w-[42px] h-[25px] bg-blackA9 rounded-full relative shadow-[0_2px_10px] shadow-blackA7 focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black outline-none cursor-default"
+                    id='featured'
+                    name='featured'
+                    style={{ '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)' }}
+
+                    >
+                             <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+
+
+                    </Switch.Root>
         </div>
         <input
           type='text'

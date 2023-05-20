@@ -29,7 +29,7 @@ export type Props = {
 export default function BlogCard({ post, children }: Props) {
   const [open, setOpen] = React.useState(true)
   return (
-    <Card key={post.id} shadow='xl' padding='md' radius='md' withBorder>
+    <div key={post.id} >
       <Card.Section className='books'>
         <Image fit='cover' src={post.imageUrl} alt={post.title} height={160} />
       </Card.Section>
@@ -137,6 +137,6 @@ export default function BlogCard({ post, children }: Props) {
       </RowBox>
       {children}
       <CommentContainer postId={post.id} />
-    </Card>
+    </div>
   )
 }

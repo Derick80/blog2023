@@ -9,34 +9,15 @@ import ScrollToTop from './scroll-to-top'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className='flex '>
+    <main className='flex p-2 w-full'>
       <ScrollToTop />
       <NavigationBar />
 
-      <div className='mt-20 flex h-full flex-grow flex-col p-2 md:mt-12 md:flex-row'>
-        <main className='mx-auto mt-5 flex w-full flex-col p-2 md:w-4/6 md:p-4'>
+        <div className='mt-20 flex w-full flex-col p-2 md:p-4'>
           {children}
-        </main>
-        <div></div>
-      </div>
-      {/* <footer className='flex flex-row items-center justify-center gap-2 p-2'>
-        <Link
-          to='https://www.linkedin.com/in/dhoskinson/'
-          referrerPolicy='no-referrer'
-          target='_blank'
-        >
-          <LinkedInLogoIcon />
-        </Link>
-        <p className='p'>Copyrite {new Date().getFullYear()}</p>
-        <Link
-          referrerPolicy='no-referrer'
-          target='_blank'
-          to='https://www.github.com/Derick80'
-        >
-          <GitHubLogoIcon />
-        </Link>
-      </footer> */}
-    </div>
+        </div>
+     
+    </main>
   )
 }
 
@@ -44,7 +25,7 @@ function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='md:w-4/s6 fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
+    <div className='fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
       <BrandIcon />
 
       <NavLink

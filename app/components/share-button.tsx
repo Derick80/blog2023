@@ -7,7 +7,6 @@ import {
   Share1Icon,
   TwitterLogoIcon
 } from '@radix-ui/react-icons'
-import { Flex } from '@mantine/core'
 import toast from 'react-hot-toast'
 import * as Popover from '@radix-ui/react-popover'
 
@@ -53,7 +52,7 @@ export const ShareButton = ({ id }: Props) => {
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content className='absolute z-10 flex w-fit flex-col items-center justify-between rounded-md bg-white p-2 dark:bg-slate-900'>
-            <Flex gap={3} justify='space-between'>
+            <div className='flex flex-row items-center justify-between w-full'>
               <a
                 className={iconClassName}
                 href={`https://www.instagram.com/sharer/sharer.php?u=${encodedPostUrl}`}
@@ -78,7 +77,7 @@ export const ShareButton = ({ id }: Props) => {
               >
                 <DiscordLogoIcon />
               </a>
-            </Flex>
+            </div>
             <Separator.Root className='my-[15px] data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px'>
               <p className='text-xs text-slate-500 dark:text-slate-400'>
                 Or share with link

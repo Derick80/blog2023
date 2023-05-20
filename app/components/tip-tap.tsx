@@ -1,57 +1,94 @@
-import { RichTextEditor } from '@mantine/tiptap'
-import Link from '@tiptap/extension-link'
-import { useEditor } from '@tiptap/react'
-import Underline from '@tiptap/extension-underline'
-import Superscript from '@tiptap/extension-superscript'
-import SubScript from '@tiptap/extension-subscript'
+import { Editor, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useCallback } from 'react'
-import Image from '@tiptap/extension-image'
-import { ImageIcon } from '@radix-ui/react-icons'
-import Highlight from '@tiptap/extension-highlight'
-import TextAlign from '@tiptap/extension-text-align'
-import Button from './button'
+import { CodeIcon, FontBoldIcon } from '@radix-ui/react-icons'
+
+const MenuBar= ({editor}: {editor: Editor}) => {
+  if (!editor) {
+    return null
+  }
+
+  return (
+    <div 
+    className='flex flex-row justify-between items-center w-full p-2 bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700'
+    >
+      <button 
+      type='button'
+      className={editor.isActive('bold') ? 'is-active' : ''}
+
+      onClick={() => editor.chain().focus().toggleBold().run()}>
+        <FontBoldIcon />
+      </button>
+      <button 
+      type='button'
+      onClick={() => editor.chain().focus().toggleItalic().run()}>
+        Italic
+      </button>
+      <button  
+      type='button'
+      onClick={() => editor.chain().focus().toggleStrike().run()}>
+        Strike
+      </button>
+      <button  
+      type='button'
+      onClick={() => editor.chain().focus().toggleCode().run()}>
+        <CodeIcon />
+      </button>
+      <button  
+      type='button'
+      onClick={() => editor.chain().focus().toggleUnderline().run()}>
+        Underline
+      </button>
+      <button 
+      type='button'
+      onClick={() => editor.chain().focus().toggleSuperscript().run()}>
+        Superscript
+      </button>
+      <button  
+      type='button'
+      onClick={() => editor.chain().focus().toggleSubscript().run()}>
+        Subscript
+      </button>
+      <button  
+      type='button'
+      onClick={() => editor.chain().focus().toggleHighlight().run()}>
+        Highlight
+      </button>
+      <button  
+      type='button'
+      onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
+        H1
+      </button>
+
+    </div>
+  )
+}
+
 
 const TipTap = ({ content }: { content?: string }) => {
   const editor = useEditor({
-    content,
     extensions: [
-      Image,
-      Underline,
-      Superscript,
-      SubScript,
-      Highlight,
-      TextAlign,
-      Link.configure({
-        openOnClick: false
-      }),
-      StarterKit.configure({
-        history: false
-      })
+      StarterKit,
     ],
+    content: content,
 
     editorProps: {
       attributes: {
-        class:
-          'flex-1 p-4 h-[250px] mx-auto h-auto text-slate12 w-full text-sm m-5 focus:outline-none rounded-xl mt-0'
+        class: 'flex-1 p-4 h-[250px] mx-auto border text-black w-full text-sm m-5 focus:outline-non rounded-xl mt-0'
       }
     }
+
   })
-  const addImage = useCallback(() => {
-    const url = window.prompt('URL')
 
-    if (url) {
-      editor?.chain().focus().setImage({ src: url }).run()
-    }
-  }, [editor])
 
+  const schema = editor?.schema
+  
   if (!editor) {
     return null
   }
 
   return (
     <>
-      <RichTextEditor editor={editor}>
+      {/* <RichTextEditor editor={editor}>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Bold />
@@ -107,8 +144,12 @@ const TipTap = ({ content }: { content?: string }) => {
         </RichTextEditor.Toolbar>
 
         <RichTextEditor.Content />
-      </RichTextEditor>
+      </RichTextEditor> */}
+      <MenuBar editor={editor} />
+<EditorContent
+  className='flex-1 p-4 h-[250px] mx-auto border text-black w-full text-sm m-5 focus:outline-non rounded-xl mt-0'
 
+editor={editor} />
       <input type='hidden' name='content' value={editor?.getHTML()} />
     </>
   )

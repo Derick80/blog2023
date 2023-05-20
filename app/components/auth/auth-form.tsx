@@ -1,6 +1,5 @@
 import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import Button from '../button'
-import { PasswordInput, TextInput } from '@mantine/core'
 
 type Props = {
   authType: 'register' | 'login' | 'request' | 'confirm'
@@ -41,30 +40,28 @@ export const AuthForm = ({ authType }: Props) => {
       {authType !== 'confirm' && (
         <>
           <label className=''>Email</label>
-          <TextInput
+          <input
             placeholder='Email'
             name='email'
-            description='Email must be valid'
-            withAsterisk
+            type='email'
+            required
           />
         </>
       )}
       {authType !== 'request' && (
         <>
           <label className=''>Username</label>
-          <TextInput
+          <input
             placeholder='Username'
             name='username'
-            description='Username must be at least 3 characters long'
-            withAsterisk
+            
           />
 
           <label>Password</label>
-          <PasswordInput
+          <input
+            type='password'
             name='password'
             placeholder='Password'
-            description='Password must contain at least 8 characters'
-            withAsterisk
             required
           />
         </>

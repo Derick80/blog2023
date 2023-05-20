@@ -30,10 +30,16 @@ model User {
   projects Project[]
   commentsLiked CommentLike[]
   votes Vote[]
+  blocked Block[]
 
 }
 
-
+model Block {
+  id String @id @default(cuid())
+  blocked Boolean @default(false)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
 model Note {
   id String @id @default(cuid())
   title String

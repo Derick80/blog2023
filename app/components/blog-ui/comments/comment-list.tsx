@@ -5,7 +5,6 @@ import CommentBox from './comment-box'
 import Button from '~/components/button'
 import { useMatchesData, useOptionalUser } from '~/utilities'
 import { RowBox } from '~/components/boxes'
-import { Image } from '@mantine/core'
 import { ChevronDownIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { CommentLike } from '@prisma/client'
@@ -118,10 +117,9 @@ function Comment({
       <RowBox className='relative w-full p-1'>
         <div className='relative w-full rounded-md  p-1'>
           <RowBox>
-            <Image
-              src={comments?.user?.avatarUrl}
+            <img
+              src={comments?.user?.avatarUrl || '/avatar.png'}
               alt={comments?.user?.username}
-              radius='xl'
               width={24}
               height={24}
             />

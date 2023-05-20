@@ -1,5 +1,66 @@
 export const projects = [
   {
+    id: 'b1b6e4fd-b20f-43cf-9fc1-3b81df6efdfb',
+    title: 'ACMG Variant Classification',
+    description: 'A web app for ACMG Variant Classification',
+    projectImage:
+      'https://res.cloudinary.com/dch-photo/image/upload/v1684398538/myr4wowmklv2pwyyumsj.webp',
+    projectUrl: `https://main--jovial-platypus-2a8460.netlify.app/`,
+    githubUrl: `https://github.com/Derick80/genes_23`,
+    createdAt: '2023-05-18T21:52:08.779Z',
+    userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    implementations: [
+      { id: '1', task: 'Variant Classification' },
+      { id: '2', task: 'Variant Search' },
+      { id: '3', task: 'Criterion Definitions' },
+      { id: '4', task: 'Interactive Classification System' }
+    ],
+    categories: [
+      {
+        id: '1d3410c7-9494-4d73-b143-c7bb805817d8',
+        label: 'Remix-run',
+        value: 'Remix-run'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f061',
+        label: 'HTML Forms',
+        value: 'HTML Forms'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
+        label: 'TailwindCSS',
+        value: 'TailwindCSS'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
+        label: 'React',
+        value: 'React'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f064',
+        label: 'Prisma',
+        value: 'Prisma'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f065',
+        label: 'Postgres',
+        value: 'Postgres'
+      },
+      {
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f066',
+        label: 'TypeScript',
+        value: 'TypeScript'
+      }
+    ],
+    user: {
+      id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+      userName: 'Derick',
+      avatarUrl:
+        'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
+      email: 'iderick@gmail.com'
+    }
+  },
+  {
     id: 'be56d035-9164-4ad0-b929-8b7802e1e00e',
     title: 'A Cellular Wind',
     description:

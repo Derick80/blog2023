@@ -25,7 +25,6 @@ import { ShareButton } from '~/components/share-button'
 import CommentContainer from '~/components/blog-ui/comments/comment-list'
 import { ColBox } from '~/components/boxes'
 import VerticalMenu from '~/components/vertical-menu'
-import BlogCard from '~/components/blog-ui/blog-card'
 import BlogPost from '~/components/blog-ui/b-card'
 dayjs.extend(relativeTime)
 
@@ -48,7 +47,7 @@ export default function BlogRoute() {
   const data = useLoaderData<typeof loader>()
 
   return (
-    <div className='h- flex w-full flex-col items-center gap-2'>
+    <div className='flex w-full flex-col items-center gap-2'>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger className='inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-slate-900 focus:text-gray-500 focus:outline-none'>
           <span className='sr-only'>Open options</span>

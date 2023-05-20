@@ -156,12 +156,11 @@ export default function App() {
           <AnimatePresence mode='wait' initial={false}>
             <motion.main
               key={useLocation().pathname}
-              initial={{ x: '10%', opacity: 0 }}
               animate={{ x: '90', opacity: 1 }}
               transition={{
                 duration: 0.25,
                 type: 'spring',
-                stiffness: 260,
+                stiffness: 150,
                 damping: 20
               }}
               exit={{ x: '-40%', opacity: 0 }}

@@ -57,57 +57,48 @@ export default function SelectBox({
   }, [])
 
   return (
-    <>
-      <div
-        ref={containerRef}
-        id='picker'
-        className='flex w-full  flex-row gap-2 rounded-md border-2 border-gray-200 p-3 dark:bg-slate-800'
-      >
-        {selected.map((item) => (
-          <div
-            className='flex justify-start rounded-md border bg-gray-200 p-2 dark:bg-slate-800 dark:text-slate-50'
-            key={item.id}
-          >
-            <button type='button' onClick={() => handleSelect(item.value)}>
-              {item.label}
-            </button>
-          </div>
-        ))}
+    <div className='relative inline-block w-48 ' ref={containerRef}>
+      <div className='blck'>
+        <button
+          type='button'
+          className='flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+          onClick={() => setDropdown(!dropdown)}
+        >
+          {selected.length > 0
+            ? selected.map((item) => item.label).join(', ')
+            : 'Select an option'}
 
-        <div className='flex flex-grow' />
-        <button type='button' onClick={() => setDropdown(!dropdown)}>
-          {dropdown ? <ChevronUpIcon /> : <ChevronDownIcon />}
-        </button>
-      </div>
-      <div>
-        <Portal wrapperId='picker'>
-          {dropdown && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ type: 'tween' }}
-              className='bottom-34 absolute left-[50%] z-30 mt-10 flex  h-fit flex-col  items-center gap-1 rounded-md border bg-white dark:bg-slate-800'
-            >
-              {options.map((item) => (
-                <button
-                  type='button'
-                  className='flex w-full justify-start rounded-md bg-gray-200 p-4 hover:border-slate-700 dark:bg-slate-800'
-                  key={item.id}
-                  onClick={(e) => handleSelect(item.value)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </motion.div>
+          {dropdown ? (
+            <ChevronUpIcon className='h-5 w-5 text-gray-500' />
+          ) : (
+            <ChevronDownIcon className='h-5 w-5 text-gray-500' />
           )}
-        </Portal>
+        </button>
+        {dropdown && (
+          <div className='absolute left-0 right-0  mt-2 rounded-md border border-gray-300 bg-white shadow-lg'>
+            <div className='absolute -top-3 right-[45%] h-6 w-6 rotate-45 border-l border-t border-gray-300 bg-white' />
+
+            <ul className='py-1'>
+              {options.map((option, index) => (
+                <>
+                  <li
+                    key={option.id}
+                    onClick={() => handleSelect(option.value)}
+                    className='px-4 py-2 text-black hover:bg-gray-100'
+                  >
+                    {option.label}
+                  </li>
+                </>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <input
         type='hidden'
         name={name}
-        value={selected.map((item) => item.value)}
+        value={selected.map((item) => item.value).join(',')}
       />
-    </>
+    </div>
   )
 }
