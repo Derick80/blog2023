@@ -10,10 +10,20 @@ import FavoriteContainer from '~/components/favorite-container'
 import LikeContainer from '~/components/like-container'
 import { ShareButton } from '~/components/share-button'
 import CommentContainer from '~/components/blog-ui/comments/comment-list'
-import React from 'react'
+import React, { FC } from 'react'
 import Button from '~/components/button'
 import CommentBox from '~/components/blog-ui/comments/comment-box'
 
+
+const options = [
+  { id: '1', value: '1', label: '1' },
+  { id: '2', value: '2', label: '2' },
+  { id: '3', value: '3', label: '3' },
+  { id: '4', value: '4', label: '4' },
+  { id: '5', value: '5', label: '5' },
+  { id: '6', value: '6', label: '6' },
+  { id: '7', value: '7', label: '7' },
+]
 export async function action({ request, params }: ActionArgs) {
   const formData = await request.formData()
   const data = Object.fromEntries(formData.entries())
@@ -32,95 +42,65 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export default function BetaRoute() {
-  const [open, setOpen] = React.useState(true)
-  const data = useLoaderData<typeof loader>()
-  return (
-    <div className='flex flex-col items-center justify-center'>
-      {data.posts.map((post) => (
-        <div
-          className='rounded-md border border-gray-200 p-4 shadow-md'
-          key={post.id}
-        >
-          <Link to={`/blog/${post.id}`}>
-            <h1 className='text-2xl font-bold'>{post.title}</h1>
-          </Link>
-          <img src={post.imageUrl} alt={post.title} className='w-1/2s h-1/2s' />
+  const [selected, setSelected] = React.useState('')
+function handleSelectChange(value: string) {
+    setSelected(value);
 
-          <div
-            className='prose mt-4 dark:prose-invert'
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          ></div>
-          <RowBox>
-            <LikeContainer
-              postId={post.id}
-              likes={post?.likes}
-              likeCounts={post?.likes?.length}
-            />
+  }
 
-            <FavoriteContainer postId={post.id} favorites={post.favorites} />
-            <ShareButton id={post.id} />
+  return(
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-6xl font-bold">
+        Hi
+      </h1>
+      <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
 
-            <div id='' className='flex flex-grow items-center' />
+<Select options={options} selectedValue={selected} onChange={
+  handleSelectChange
+} />
 
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger className='inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none'>
-                <span className='sr-only'>Open options</span>
-                <DotsVerticalIcon className='h-5 w-5' aria-hidden='true' />
-              </DropdownMenu.Trigger>
-
-              <DropdownMenu.Content className='z-10 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5'>
-                <DropdownMenu.Item className='block px-4 py-2 text-sm text-black  hover:bg-gray-100'>
-                  <Link to={`/blog/${post.id}`}>View</Link>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item className='block px-4 py-2 text-sm text-black  hover:bg-gray-100'>
-                  <Link to={`/blog/${post.id}/edit`}>Edit</Link>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item className='block px-4 py-2 text-sm text-black  hover:bg-gray-100'>
-                  <Form
-                    id='delete-post'
-                    method='POST'
-                    action={`/blog/${post.id}/delete`}
-                  >
-                    <button
-                      onClick={() => {
-                        if (
-                          confirm('Are you sure you want to delete this post?')
-                        ) {
-                          return true
-                        } else {
-                          return false
-                        }
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </Form>
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-
-            {post.comments && (
-              <>
-                <RowBox>
-                  <p className='sub'>{post?.comments?.length}</p>
-                  <Button
-                    variant='icon_unfilled'
-                    size='tiny'
-                    onClick={() => {
-                      setOpen(!open)
-                    }}
-                  >
-                    <ChatBubbleIcon />
-                  </Button>
-                </RowBox>
-              </>
-            )}
-          </RowBox>
-          <CommentBox postId={post.id} />
-
-          <CommentContainer postId={post.id} />
         </div>
-      ))}
+        <input type='hidden' name='selected' value={selected} />
     </div>
+
   )
+  
 }
+
+interface SelectProps {
+  options: Array<{ id:string,value: string; label: string }>;
+  selectedValue: string;
+  onChange: (value: string) => void;
+}
+
+const Select: FC<SelectProps> = ({ options, selectedValue, onChange }) => {
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange(e.target.value);
+  };
+
+  return (
+    <div className="inline-block relative w-64">
+      <select
+        value={selectedValue}
+        onChange={handleSelectChange}
+        className="block appearance-none w-full bg-white border border-gray-200 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-black"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path d="M0 6l10 5 10-5-10-5-10 5z" />
+        </svg>
+      </div>
+    </div>
+  );
+};
+

@@ -77,26 +77,22 @@ export default function BlogCard({ post, children }: Props) {
           </DropdownMenu.Trigger>
 
           <DropdownMenu.Content className='z-10 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5'>
-            <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+            <DropdownMenu.Item className='block px-4 py-2 text-sm text-black  hover:bg-gray-100'>
               <Link to={`/blog/${post.id}`}>View</Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+            <DropdownMenu.Item className='block px-4 py-2 text-sm text-black  hover:bg-gray-100'>
               <Link to={`/blog/${post.id}/edit`}>Edit</Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+            <DropdownMenu.Item className='block px-4 py-2 text-sm text-black  hover:bg-gray-100'>
               <Form
                 id='delete-post'
                 method='POST'
                 action={`/blog/${post.id}/delete`}
               >
                 <button
-                  onClick={() => {
-                    if (confirm('Are you sure you want to delete this post?')) {
-                      return true
-                    } else {
-                      return false
-                    }
-                  }}
+                  type='submit'
+                  form='delete-post'
+                  
                 >
                   Delete
                 </button>
@@ -104,12 +100,12 @@ export default function BlogCard({ post, children }: Props) {
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
-
         {post.comments && (
           <>
             <RowBox>
               <p className='sub'>{post?.comments?.length}</p>
               <Button
+              type='button'
                 variant='ghost'
                 size='tiny'
                 onClick={() => {
