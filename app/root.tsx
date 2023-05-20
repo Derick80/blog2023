@@ -25,7 +25,6 @@ import { commitSession, getSession } from './server/auth/session.server'
 import React from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/auth/prisma.server'
-import { StylesPlaceholder } from '@mantine/remix'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export const links: LinksFunction = () => [
@@ -138,10 +137,8 @@ export default function App() {
   }, [toastMessage])
 
   return (
-    // <MantineProvider withGlobalStyles withNormalizeCSS>
     <html lang='en'>
       <head>
-        <StylesPlaceholder />
 
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width,initial-scale=1' />
@@ -191,7 +188,6 @@ export default function App() {
         </Layout>
       </body>
     </html>
-    // </MantineProvider>
   )
 }
 

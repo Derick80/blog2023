@@ -7,6 +7,7 @@ import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import MenuBox from '~/components/site-menus'
 import SelectBox from '~/components/select'
 import Dropdown from '~/components/dropdown-menu'
+import Accordion from '~/components/accordian'
 const options = [
   { id: '1', value: 'one', label: 'one' },
   { id: '2', value: 'two', label: 'two' },
@@ -307,6 +308,28 @@ export default function ComponentsIndex() {
             <p className='text-base font-semibold'>MultiSelect</p>
             <SelectBox options={options} picked={picked} multiple />
           </div>
+          <div className='flex flex-col items-start gap-2'>
+            <p className='text-base font-semibold'>Accordion</p>
+            <p className='text-sm font-bold'>
+              This is an accordion component that I designed for my site. It uses a portal to render the content.
+              </p>
+            <Accordion title='Accordion'>
+              <div className='flex flex-col items-start gap-2'>
+                <p className='text-base font-semibold'>Accordion</p>
+                <p className='text-sm font-bold'>
+                  This is an accordion component that I designed for my site.
+                  It's a little weird because it uses a portal to render the
+                  content. I might improve it by making the entire title
+                  clickable
+                </p>
+              </div>
+            </Accordion>
+          </div>
+          <div className='flex flex-col items-start gap-2' 
+          id='portal-root'>
+            </div>
+           
+          
         </ColBox>
       </RowBox>
     </div>

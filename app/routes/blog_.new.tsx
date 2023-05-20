@@ -139,19 +139,19 @@ export default function NewPostRoute() {
   }, [categoryFetcher])
 
   return (
-    <div className='mx-auto flex h-full w-fit flex-col p-1'>
+    <div className='mx-auto flex h-full w-full md:w-fit flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
 
       <Form className='flex w-full flex-col' method='post'>
         <input
           type='hidden'
-          className='text-slate12 rounded-xl'
+          className='text-black rounded-xl'
           name='imageUrl'
           value={url}
         />
         <label htmlFor='title'>Title</label>
         <input
-          className='text-slate12 rounded-md border text-sm'
+          className='text-black rounded-md border text-sm'
           id='title'
           name='title'
           type='text'
@@ -171,7 +171,7 @@ export default function NewPostRoute() {
         <label htmlFor='description'>Description</label>
         <input
           type='text'
-          className='text-slate12 rounded-md border text-sm'
+          className='text-black rounded-md border text-sm'
           placeholder='Description...'
           name='description'
           defaultValue={actionData?.errors?.description}
@@ -192,7 +192,7 @@ export default function NewPostRoute() {
         <TipTap />
 
         <label htmlFor='categories'>Categories</label>
-        <div className='p-1'>
+        <div className='p-1 flex flex-col gap-2'>
         
           <SelectBox
             multiple

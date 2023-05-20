@@ -1,10 +1,4 @@
-import {
-  Card,
-  Text,
-  Image,
-  Group,
-  TypographyStylesProvider
-} from '@mantine/core'
+
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import { Link, Form, NavLink } from '@remix-run/react'
@@ -30,47 +24,40 @@ export default function BlogCard({ post, children }: Props) {
   const [open, setOpen] = React.useState(true)
   return (
     <div key={post.id} >
-      <Card.Section className='books'>
-        <Image fit='cover' src={post.imageUrl} alt={post.title} height={160} />
-      </Card.Section>
+     <div className='flex flex-col'>
+        <img src={post.imageUrl} alt={post.title} height={160} />
+      </div>
 
-      <Group position='apart' mt='md' mb='xs'>
-        <TypographyStylesProvider>
+      <div className='flex flex-col'>
           <NavLink to={`/blog/${post.id}`}>
-            <Text size='lg' weight={700}>
+            <p >
               {post.title}
-            </Text>
+            </p>
           </NavLink>
-        </TypographyStylesProvider>
         <Tags categories={post.categories} />
-      </Group>
-      <TypographyStylesProvider>
-        <Text
+      </div>
+        <p
           color='dimmed'
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-      </TypographyStylesProvider>
 
-      <Group position='apart' mt='md' mb='xs'>
-        <Text size='sm' color='dimmed'>
+        <p>
           {post.likes.length > 0 && <>Liked by {post?.likes?.length} </>}
-        </Text>
+        </p>
         <RowBox>
-          <Text size='sm' color='dimmed'>
+          <p >
             {dayjs(post.createdAt).fromNow()} by
-          </Text>
+          </p>
           <div className='flex items-center'>
-            <Image
-              src={post.user.avatarUrl}
+            <img
+              src={post.user.avatarUrl || '/avatar.png'}
               alt={post.title}
               width={24}
               height={24}
-              radius='xl'
               className='mr-2'
             />
           </div>
         </RowBox>
-      </Group>
       <RowBox>
         <LikeContainer
           postId={post.id}
