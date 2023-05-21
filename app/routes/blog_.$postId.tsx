@@ -7,8 +7,8 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import BlogCard from '~/components/blog-ui/blog-card'
 import CommentBox from '~/components/blog-ui/comments/comment-box'
+import BlogCard from '~/components/gpt-blogcard'
 import { prisma } from '~/server/auth/prisma.server'
 import type { Post } from '~/server/schemas/schemas'
 
@@ -20,9 +20,33 @@ export async function loader({ params }: LoaderArgs) {
       user: true,
       likes: true,
       favorites: true,
-      categories: true
+      categories: true,
+      comments: {
+        include: {
+          _count: true,
+          likes: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              avatarUrl: true
+            },
+          },
+          children: {
+            include: {
+              user:true,
+              likes: true,
+              children:true
+            }
+          }
+        },  
+      }
     }
   })
+
+
+
   if (!post) {
     return json({ message: 'Post not found' }, { status: 404 })
   }
@@ -33,14 +57,14 @@ export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
   }>()
+console.log(data,'data');
 
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       <h1>Blog</h1>
       <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data?.post}>
-          <CommentBox postId={data.post.id} />
-        </BlogCard>
+        <BlogCard post={data.post}  />
+
       </div>
     </div>
   )

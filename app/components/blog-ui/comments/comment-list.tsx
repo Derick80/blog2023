@@ -1,18 +1,21 @@
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useLoaderData, useRouteLoaderData } from '@remix-run/react'
 import React from 'react'
-import type { CommentWithChildren } from '~/server/schemas/schemas'
+import type { CommentWithChildren, Post } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
 import Button from '~/components/button'
-import { useMatchesData, useOptionalUser } from '~/utilities'
+import { useOptionalUser } from '~/utilities'
 import { RowBox } from '~/components/boxes'
-import { ChevronDownIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
+import { ChevronDownIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { CommentLike } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
 import VerticalMenu from '~/components/vertical-menu'
 import LikeComment from './comment-like-box'
 import EditCommentForm from './edit-comment-form'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+  const dropdownVariants = {
+    open: { opacity: 1, height: "auto", transition: { duration: 1 } },
+    closed: { opacity: 0, height: 0, transition: { duration: .5 } }
+  };
 function getReplyCountText(count: number) {
   if (count === 0 || !count) {
     return ''
@@ -25,12 +28,23 @@ function getReplyCountText(count: number) {
   return `${count} replies`
 }
 // COmment Container is the parent component that holds all the main comment data. Since I retrieve all the comments in the blog loader I first filter here by postId and THEN since I call the comment component recursively I filter again by parentId.
-export default function CommentContainer({ postId }: { postId: string }) {
-  const matches = useMatchesData('routes/blog')
-  const comments = matches?.comments as CommentWithChildren[]
+export default function CommentContainer({ postId,open }: { postId: string,open?:boolean }) {
+// retrieve the data from the loader
+
+const data = useLoaderData()
+  
+
+  
+
+  const comments = data.post.comments.filter((comment: CommentWithChildren) => comment.postId === postId)
+console.log(comments,'comments');
+
+  if(!comments) return null
+
 
   // This function filters the comments by postId and then filters out the comments that have a parentId.
   function filterComments(comments: CommentWithChildren[], postId: string) {
+
     return comments
       ?.filter((comment: { postId: string }) => comment.postId === postId)
       .filter((comment) => !comment.parentId)
@@ -40,13 +54,27 @@ export default function CommentContainer({ postId }: { postId: string }) {
   if (!filteredComments) return null
   return (
     <div className='flex flex-col rounded-md'>
-      {filteredComments.map((comment: CommentWithChildren) => (
-        <Comment
+
+
+{filteredComments?.map((comment: CommentWithChildren) => (
+     open &&     <AnimatePresence
+        key={comment?.id}
+     >
+      <motion.div
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={dropdownVariants}
+          >
+            <Comment
           key={comment?.id}
           comments={comment}
           children={comment?.children}
         />
-      ))}
+    
+      </motion.div>
+      </AnimatePresence>
+    ))}
     </div>
   )
 }
@@ -122,6 +150,7 @@ function Comment({
               alt={comments?.user?.username}
               width={24}
               height={24}
+              className='rounded-full'
             />
             <p className='text-xs text-slate-900'>
               {comments?.user?.username} replied ...
@@ -136,7 +165,7 @@ function Comment({
           ) : (
             <p className='prose flex text-sm'>{comments?.message}</p>
           )}
-          <div className='flex w-full items-center'>
+          <div className='flex w-full items-center text-black'>
             <UserCommentResponseBox
               commentId={comments.id}
               commentLength={comments?.likes?.length}
@@ -144,42 +173,8 @@ function Comment({
             />
             {user?.id === comments.userId && (
               <>
-                {/* <DropdownMenu.Root>
-                <DropdownMenu.Trigger className='inline-flex items-center justify-center w-10 h-10 text-gray-400 transition duration-150 ease-in-out rounded-full hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-slate-900 focus:text-gray-500'>
-                  <span className='sr-only'>Open options</span>
-                 <DotsVerticalIcon className='text-teal-400' />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content className='py-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 dark:bg-slate-900'>
-                  <DropdownMenu.Item
-                    className='block px-4 py-2 text-sm  hover:bg-gray-100 text-black'>
-                    <Button
-                      variant={editing ? 'danger_filled' : 'warning_filled'}
-                      size='small'
-                      className='flex flex-row justify-between gap-2 text-xs'
-                      onClick={() => setEditing((editing) => !editing)}
-                    >
-                      <p className='flex flex-row gap-2 text-xs text-black '>
-                        {editing ? 'Cancel' : 'Edit'}
-                      </p>
-                    </Button>
-
-                                     </DropdownMenu.Item>
-                  <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100 text-black'>
-                  <Button
-                      onClick={onClick}
-                      variant='danger_filled'
-                      size='tiny'
-                      type='submit'
-                      name='action'
-                      value='delete'
-                    >
-                      Delete
-                    </Button>
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root> */}
-
-                <VerticalMenu>
+              
+                {/* <VerticalMenu>
                   <Button
                     variant={editing ? 'danger_filled' : 'warning_filled'}
                     size='small'
@@ -201,19 +196,41 @@ function Comment({
                   >
                     Delete
                   </Button>
-                </VerticalMenu>
+                </VerticalMenu> */}
               </>
             )}
 
             {user ? (
-              <Button
-                className=''
-                variant={isReplying ? 'warning_filled' : 'primary_filled'}
+              <><div className='flex flex-grow' /><Button
+
+                variant='icon_unfilled'
                 size='small'
-                onClick={() => setIsReplying(!isReplying)}
+                onClick={() => setEditing((editing) => !editing)}
               >
-                {isReplying ? 'Cancel' : 'Reply'}
+                <Pencil1Icon 
+                  className='text-black'
+                />
               </Button>
+              <Button
+                    onClick={onClick}
+                    variant='icon_unfilled'
+                    size='tiny'
+                    type='submit'
+                    name='action'
+                    value='delete'
+                  >
+                    <TrashIcon
+                      className='text-black'
+                    />
+                  </Button>
+              <Button
+                  className=''
+                  variant={isReplying ? 'warning_filled' : 'primary_filled'}
+                  size='small'
+                  onClick={() => setIsReplying(!isReplying)}
+                >
+                  {isReplying ? 'Cancel' : 'Reply'}
+                </Button></>
             ) : (
               <p>
                 <a href='/login'>Login</a> to reply

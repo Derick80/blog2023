@@ -154,7 +154,7 @@ export default function PostEdit() {
           aria-errormessage={
             actionData?.errors?.description ? 'description-error' : undefined
           }
-          onChange={(e) => console.log(e.target.value)}
+          onChange={void 0}
         />
         {actionData?.errors?.description && (
           <p id='description-error' role='alert' className='text-red-500'>

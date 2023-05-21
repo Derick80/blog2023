@@ -114,6 +114,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 export default function App() {
   const outlet = useOutlet()
+const location = useLocation()
 
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data

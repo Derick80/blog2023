@@ -1,9 +1,10 @@
 import React from 'react'
 import type { User } from '~/server/schemas/schemas'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import { Link, useFetcher } from '@remix-run/react'
+import { Form, Link, useFetcher } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import Button from '../button'
+import { ExitIcon } from '@radix-ui/react-icons'
 export type HoverCardProps = {
   user: User
 }
@@ -52,11 +53,19 @@ export default function HoverOverCard() {
 
                 <p className='text-xs text-gray-500'>{loggedInUser.email}</p>
                 {currentUserId === loggedInUser.id && (
-                  <Button size='small' variant='primary_filled'>
+                  <><Button size='small' variant='primary_filled'>
                     <Link to={`/users/${userFetcher.data.user.username}/edit`}>
                       Edit Profile
                     </Link>
-                  </Button>
+                  </Button><Form
+                    className='m-0 flex items-center justify-center p-1'
+                    method='POST'
+                    action='/logout'
+                  >
+                      <Button variant='icon_unfilled' size='small'>
+                        <ExitIcon />
+                      </Button>
+                    </Form></>
                 )}
               </div>
             </div>

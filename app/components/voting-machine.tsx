@@ -35,13 +35,11 @@ export default function VotingMachine({
   const actionData = useActionData()
   const [hasVoted, setHasVoted] = React.useState(false)
   const votedUsers = votes.map((vote) => vote.userId)
-  console.log(votedUsers, 'votedUsers')
   const currentUser = useOptionalUser()
 
   const currentUserId = currentUser?.id
 
   const userVoted = votedUsers.includes(currentUserId as string)
-  console.log(userVoted, 'hasVoted')
 
   const [voteTotal, setVoteTotal] = React.useState<number>(initVoteTotal)
 
@@ -51,7 +49,6 @@ export default function VotingMachine({
     setVoteTotal(initVoteTotal)
   }, [initVoteTotal])
 
-  console.log(voteTotal, 'voteTotal')
 
   const [voting, setVoting] = React.useState(false)
   return (

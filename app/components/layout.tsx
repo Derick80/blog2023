@@ -6,6 +6,7 @@ import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
 import HoverOverCard from './hovercard/hover-card'
 import ScrollToTop from './scroll-to-top'
+import SearchBar from './search-bar'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,7 +28,6 @@ function NavigationBar() {
   return (
     <div className='fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
       <BrandIcon />
-
       <NavLink
         className={({ isActive, isPending }) => {
           return isActive ? 'underline' : ''
@@ -67,21 +67,14 @@ function NavigationBar() {
         <div className='flex flex-row items-center gap-2 p-2'>
           <HoverOverCard />
 
-          <Form
-            className='m-0 flex items-center justify-center p-1'
-            method='POST'
-            action='/logout'
-          >
-            <Button variant='icon_unfilled' size='small'>
-              <ExitIcon />
-            </Button>
-          </Form>
+          
         </div>
       ) : (
         <NavLink to='/login'>
           <p className='text-sm font-semibold dark:text-slate-50'>Login</p>
         </NavLink>
       )}
+
     </div>
   )
 }

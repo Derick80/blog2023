@@ -53,7 +53,9 @@ export default function FavoriteContainer({
           {isFavorite ? (
             <BookmarkFilledIcon style={{ color: 'red', fill: 'red' }} />
           ) : (
-            <BookmarkIcon />
+            <BookmarkIcon
+            className='text-black'
+            />
           )}
         </Button>
       ) : (

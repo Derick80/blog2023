@@ -43,13 +43,11 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function Index() {
   const data = useLoaderData<typeof loader>()
-  console.log(data, 'data')
 
   const votes = data.data._count
-  console.log(votes, 'votes')
 
   const initialVotes = votes.votes
-  console.log(initialVotes, 'initialVotes')
+  
 
   const navigate = useNavigation()
   const user = useOptionalUser()
