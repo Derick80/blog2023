@@ -32,7 +32,7 @@ export default function SearchBar() {
         />
       </div>
       <button
-        className='z-10 ml-2 rounded-full bg-white p-2 lg:hidden text-black'
+        className='z-10 ml-2 rounded-full bg-white p-2 text-black lg:hidden'
         onClick={isOpen ? handleClose : handleOpen}
       >
         <MagnifyingGlassIcon />

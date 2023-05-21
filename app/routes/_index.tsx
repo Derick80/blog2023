@@ -47,7 +47,6 @@ export default function Index() {
   const votes = data.data._count
 
   const initialVotes = votes.votes
-  
 
   const navigate = useNavigation()
   const user = useOptionalUser()
@@ -56,7 +55,7 @@ export default function Index() {
       className={
         navigate.state === 'loading'
           ? 'opacity-25 transition-opacity delay-200'
-          : 'flex flex-col mx-auto items-center'
+          : 'mx-auto flex flex-col items-center'
       }
     >
       <h1>Welcome to My Social Media App</h1>

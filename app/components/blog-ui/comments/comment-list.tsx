@@ -12,10 +12,10 @@ import type { SerializeFrom } from '@remix-run/node'
 import VerticalMenu from '~/components/vertical-menu'
 import LikeComment from './comment-like-box'
 import EditCommentForm from './edit-comment-form'
-  const dropdownVariants = {
-    open: { opacity: 1, height: "auto", transition: { duration: 1 } },
-    closed: { opacity: 0, height: 0, transition: { duration: .5 } }
-  };
+const dropdownVariants = {
+  open: { opacity: 1, height: 'auto', transition: { duration: 1 } },
+  closed: { opacity: 0, height: 0, transition: { duration: 0.5 } }
+}
 function getReplyCountText(count: number) {
   if (count === 0 || !count) {
     return ''
@@ -28,23 +28,43 @@ function getReplyCountText(count: number) {
   return `${count} replies`
 }
 // COmment Container is the parent component that holds all the main comment data. Since I retrieve all the comments in the blog loader I first filter here by postId and THEN since I call the comment component recursively I filter again by parentId.
-export default function CommentContainer({ postId,open }: { postId: string,open?:boolean }) {
-// retrieve the data from the loader
+export default function CommentContainer({
+  postId,
+  open
+}: {
+  postId: string
+  open?: boolean
+}) {
+  // retrieve the data from the loader
 
-const data = useLoaderData()
-  
+  const commentFetcher = useFetcher()
+  console.log(postId, 'postid from comment container')
 
-  
+  React.useEffect(() => {
+    if (commentFetcher.state === 'idle') {
+      commentFetcher.load(`/blog`)
+    }
+  }, [])
 
-  const comments = data.post.comments.filter((comment: CommentWithChildren) => comment.postId === postId)
-console.log(comments,'comments');
+  const data = commentFetcher?.data as {
+    comments: CommentWithChildren[]
+  }
+  console.log(data, 'data from comment container')
 
-  if(!comments) return null
+  const comments = data?.comments?.filter(
+    (comment: CommentWithChildren) => comment.postId === postId
+  )
+  console.log(comments, 'comments')
 
+  if (!comments)
+    return (
+      <div className='flex flex-col rounded-md'>
+        <p>No comments yet</p>
+      </div>
+    )
 
   // This function filters the comments by postId and then filters out the comments that have a parentId.
   function filterComments(comments: CommentWithChildren[], postId: string) {
-
     return comments
       ?.filter((comment: { postId: string }) => comment.postId === postId)
       .filter((comment) => !comment.parentId)
@@ -54,27 +74,25 @@ console.log(comments,'comments');
   if (!filteredComments) return null
   return (
     <div className='flex flex-col rounded-md'>
-
-
-{filteredComments?.map((comment: CommentWithChildren) => (
-     open &&     <AnimatePresence
-        key={comment?.id}
-     >
-      <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={dropdownVariants}
-          >
-            <Comment
-          key={comment?.id}
-          comments={comment}
-          children={comment?.children}
-        />
-    
-      </motion.div>
-      </AnimatePresence>
-    ))}
+      {filteredComments?.map(
+        (comment: CommentWithChildren) =>
+          open && (
+            <AnimatePresence key={comment?.id}>
+              <motion.div
+                initial='closed'
+                animate='open'
+                exit='closed'
+                variants={dropdownVariants}
+              >
+                <Comment
+                  key={comment?.id}
+                  comments={comment}
+                  children={comment?.children}
+                />
+              </motion.div>
+            </AnimatePresence>
+          )
+      )}
     </div>
   )
 }
@@ -173,7 +191,6 @@ function Comment({
             />
             {user?.id === comments.userId && (
               <>
-              
                 {/* <VerticalMenu>
                   <Button
                     variant={editing ? 'danger_filled' : 'warning_filled'}
@@ -201,36 +218,34 @@ function Comment({
             )}
 
             {user ? (
-              <><div className='flex flex-grow' /><Button
-
-                variant='icon_unfilled'
-                size='small'
-                onClick={() => setEditing((editing) => !editing)}
-              >
-                <Pencil1Icon 
-                  className='text-black'
-                />
-              </Button>
-              <Button
-                    onClick={onClick}
-                    variant='icon_unfilled'
-                    size='tiny'
-                    type='submit'
-                    name='action'
-                    value='delete'
-                  >
-                    <TrashIcon
-                      className='text-black'
-                    />
-                  </Button>
-              <Button
+              <>
+                <div className='flex flex-grow' />
+                <Button
+                  variant='icon_unfilled'
+                  size='small'
+                  onClick={() => setEditing((editing) => !editing)}
+                >
+                  <Pencil1Icon className='text-black' />
+                </Button>
+                <Button
+                  onClick={onClick}
+                  variant='icon_unfilled'
+                  size='tiny'
+                  type='submit'
+                  name='action'
+                  value='delete'
+                >
+                  <TrashIcon className='text-black' />
+                </Button>
+                <Button
                   className=''
                   variant={isReplying ? 'warning_filled' : 'primary_filled'}
                   size='small'
                   onClick={() => setIsReplying(!isReplying)}
                 >
                   {isReplying ? 'Cancel' : 'Reply'}
-                </Button></>
+                </Button>
+              </>
             ) : (
               <p>
                 <a href='/login'>Login</a> to reply

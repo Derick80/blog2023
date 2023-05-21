@@ -53,19 +53,24 @@ export default function HoverOverCard() {
 
                 <p className='text-xs text-gray-500'>{loggedInUser.email}</p>
                 {currentUserId === loggedInUser.id && (
-                  <><Button size='small' variant='primary_filled'>
-                    <Link to={`/users/${userFetcher.data.user.username}/edit`}>
-                      Edit Profile
-                    </Link>
-                  </Button><Form
-                    className='m-0 flex items-center justify-center p-1'
-                    method='POST'
-                    action='/logout'
-                  >
+                  <>
+                    <Button size='small' variant='primary_filled'>
+                      <Link
+                        to={`/users/${userFetcher.data.user.username}/edit`}
+                      >
+                        Edit Profile
+                      </Link>
+                    </Button>
+                    <Form
+                      className='m-0 flex items-center justify-center p-1'
+                      method='POST'
+                      action='/logout'
+                    >
                       <Button variant='icon_unfilled' size='small'>
                         <ExitIcon />
                       </Button>
-                    </Form></>
+                    </Form>
+                  </>
                 )}
               </div>
             </div>

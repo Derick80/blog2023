@@ -31,21 +31,19 @@ export async function loader({ params }: LoaderArgs) {
               username: true,
               email: true,
               avatarUrl: true
-            },
+            }
           },
           children: {
             include: {
-              user:true,
+              user: true,
               likes: true,
-              children:true
+              children: true
             }
           }
-        },  
+        }
       }
     }
   })
-
-
 
   if (!post) {
     return json({ message: 'Post not found' }, { status: 404 })
@@ -57,14 +55,13 @@ export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
   }>()
-console.log(data,'data');
+  console.log(data, 'data')
 
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       <h1>Blog</h1>
       <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data.post}  />
-
+        <BlogCard post={data.post} />
       </div>
     </div>
   )

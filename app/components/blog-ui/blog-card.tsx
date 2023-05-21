@@ -1,4 +1,3 @@
-
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import { Link, Form, NavLink } from '@remix-run/react'
@@ -23,41 +22,32 @@ export type Props = {
 export default function BlogCard({ post, children }: Props) {
   const [open, setOpen] = React.useState(true)
   return (
-    <div key={post.id} >
-     <div className='flex flex-col'>
+    <div key={post.id}>
+      <div className='flex flex-col'>
         <img src={post.imageUrl} alt={post.title} height={160} />
       </div>
 
       <div className='flex flex-col'>
-          <NavLink to={`/blog/${post.id}`}>
-            <p >
-              {post.title}
-            </p>
-          </NavLink>
+        <NavLink to={`/blog/${post.id}`}>
+          <p>{post.title}</p>
+        </NavLink>
         <Tags categories={post.categories} />
       </div>
-        <p
-          color='dimmed'
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+      <p color='dimmed' dangerouslySetInnerHTML={{ __html: post.content }} />
 
-        <p>
-          {post.likes.length > 0 && <>Liked by {post?.likes?.length} </>}
-        </p>
-        <RowBox>
-          <p >
-            {dayjs(post.createdAt).fromNow()} by
-          </p>
-          <div className='flex items-center'>
-            <img
-              src={post.user.avatarUrl || '/avatar.png'}
-              alt={post.title}
-              width={24}
-              height={24}
-              className='mr-2'
-            />
-          </div>
-        </RowBox>
+      <p>{post.likes.length > 0 && <>Liked by {post?.likes?.length} </>}</p>
+      <RowBox>
+        <p>{dayjs(post.createdAt).fromNow()} by</p>
+        <div className='flex items-center'>
+          <img
+            src={post.user.avatarUrl || '/avatar.png'}
+            alt={post.title}
+            width={24}
+            height={24}
+            className='mr-2'
+          />
+        </div>
+      </RowBox>
       <RowBox>
         <LikeContainer
           postId={post.id}
@@ -89,11 +79,7 @@ export default function BlogCard({ post, children }: Props) {
                 method='POST'
                 action={`/blog/${post.id}/delete`}
               >
-                <button
-                  type='submit'
-                  form='delete-post'
-                  
-                >
+                <button type='submit' form='delete-post'>
                   Delete
                 </button>
               </Form>
@@ -105,7 +91,7 @@ export default function BlogCard({ post, children }: Props) {
             <RowBox>
               <p className='sub'>{post?.comments?.length}</p>
               <Button
-              type='button'
+                type='button'
                 variant='ghost'
                 size='tiny'
                 onClick={() => {

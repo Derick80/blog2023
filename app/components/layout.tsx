@@ -10,14 +10,11 @@ import SearchBar from './search-bar'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className='flex p-2 w-full'>
+    <main className='flex w-full p-2'>
       <ScrollToTop />
       <NavigationBar />
 
-        <div className='mt-20 flex w-full flex-col p-2 md:p-4'>
-          {children}
-        </div>
-     
+      <div className='mt-20 flex w-full flex-col p-2 md:p-4'>{children}</div>
     </main>
   )
 }
@@ -66,15 +63,12 @@ function NavigationBar() {
       {user ? (
         <div className='flex flex-row items-center gap-2 p-2'>
           <HoverOverCard />
-
-          
         </div>
       ) : (
         <NavLink to='/login'>
           <p className='text-sm font-semibold dark:text-slate-50'>Login</p>
         </NavLink>
       )}
-
     </div>
   )
 }

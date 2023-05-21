@@ -114,7 +114,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 export default function App() {
   const outlet = useOutlet()
-const location = useLocation()
+  const location = useLocation()
 
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
@@ -140,7 +140,6 @@ const location = useLocation()
   return (
     <html lang='en'>
       <head>
-
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />

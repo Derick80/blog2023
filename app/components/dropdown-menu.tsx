@@ -14,7 +14,7 @@ type Props = {
 const Dropdown = ({ options, name = 'selection', width = 'w-48' }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState('')
-  const timeoutRef = React.useRef<NodeJS.Timeout>();
+  const timeoutRef = React.useRef<NodeJS.Timeout>()
   const handleToggle = () => {
     setIsOpen(!isOpen)
   }
@@ -27,15 +27,14 @@ const Dropdown = ({ options, name = 'selection', width = 'w-48' }: Props) => {
   const handleTextClear = (event: React.MouseEvent<HTMLSpanElement>) => {
     setSelectedOption('')
     setIsOpen(false)
-    }
-    //   Allow user to close dropdown by pressing the escape key
+  }
+  //   Allow user to close dropdown by pressing the escape key
 
-
-    const handleDelayedClose = () => {
-      timeoutRef.current = setTimeout(() => {
-        setIsOpen(false);
-      }, 2000); // Adjust the delay time (in milliseconds) as needed
-    };
+  const handleDelayedClose = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false)
+    }, 2000) // Adjust the delay time (in milliseconds) as needed
+  }
   React.useEffect(() => {
     const handleKeyboardEvent = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -62,40 +61,39 @@ const Dropdown = ({ options, name = 'selection', width = 'w-48' }: Props) => {
         >
           <div className='flex w-full items-center justify-between'>
             {selectedOption ? (
-                <>
-              <span
-                className='flex items-center'
-                onClick={() => setSelectedOption('')}
-              >
-                {selectedOption}
-              </span>
-              <button onClick={handleIconClear}>
-              <Cross2Icon className='h-[15px] w-[15px]' />
-            </button>
-            </>
+              <>
+                <span
+                  className='flex items-center'
+                  onClick={() => setSelectedOption('')}
+                >
+                  {selectedOption}
+                </span>
+                <button onClick={handleIconClear}>
+                  <Cross2Icon className='h-[15px] w-[15px]' />
+                </button>
+              </>
             ) : (
               <span className='flex items-center'>
                 <span className='mr-3'>Select an option</span>
               </span>
             )}
           </div>
-        
+
           {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </button>
 
         {isOpen && (
           <div
-          onMouseEnter={() => clearTimeout(timeoutRef.current)}
-          onMouseLeave={handleDelayedClose}
-          className='absolute left-0 right-0  mt-2 rounded-md border border-gray-300 bg-white shadow-lg'>
+            onMouseEnter={() => clearTimeout(timeoutRef.current)}
+            onMouseLeave={handleDelayedClose}
+            className='absolute left-0 right-0  mt-2 rounded-md border border-gray-300 bg-white shadow-lg'
+          >
             <div className='absolute -top-3 right-[45%] h-6 w-6 rotate-45 border-l border-t border-gray-300 bg-white' />
 
             <ul className='py-1'>
               <li
                 className='px-4 py-2 text-black hover:bg-gray-100'
-                onClick={
-                        handleTextClear
-                }
+                onClick={handleTextClear}
               >
                 Clear
               </li>
@@ -113,11 +111,13 @@ const Dropdown = ({ options, name = 'selection', width = 'w-48' }: Props) => {
           </div>
         )}
       </div>
-     
-        <input type='hidden' name={name} value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
-        />
-  
+
+      <input
+        type='hidden'
+        name={name}
+        value={selectedOption}
+        onChange={(e) => setSelectedOption(e.target.value)}
+      />
     </div>
   )
 }

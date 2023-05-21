@@ -139,19 +139,19 @@ export default function NewPostRoute() {
   }, [categoryFetcher])
 
   return (
-    <div className='mx-auto flex h-full w-full md:w-fit flex-col p-1'>
+    <div className='mx-auto flex h-full w-full flex-col p-1 md:w-fit'>
       <ImageUploader setUrl={setUrl} />
 
       <Form className='flex w-full flex-col' method='post'>
         <input
           type='hidden'
-          className='text-black rounded-xl'
+          className='rounded-xl text-black'
           name='imageUrl'
           value={url}
         />
         <label htmlFor='title'>Title</label>
         <input
-          className='text-black rounded-md border text-sm'
+          className='rounded-md border text-sm text-black'
           id='title'
           name='title'
           type='text'
@@ -171,7 +171,7 @@ export default function NewPostRoute() {
         <label htmlFor='description'>Description</label>
         <input
           type='text'
-          className='text-black rounded-md border text-sm'
+          className='rounded-md border text-sm text-black'
           placeholder='Description...'
           name='description'
           defaultValue={actionData?.errors?.description}
@@ -192,8 +192,7 @@ export default function NewPostRoute() {
         <TipTap />
 
         <label htmlFor='categories'>Categories</label>
-        <div className='p-1 flex flex-col gap-2'>
-        
+        <div className='flex flex-col gap-2 p-1'>
           <SelectBox
             multiple
             name='categories'
@@ -206,18 +205,14 @@ export default function NewPostRoute() {
             </p>
           )}
           <label htmlFor='featured'>Featured</label>
-            <Switch.Root
-                    className="w-[42px] h-[25px] bg-blackA9 rounded-full relative shadow-[0_2px_10px] shadow-blackA7 focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black outline-none cursor-default"
-                    id='featured'
-                    name='featured'
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-
-                    >
-                             <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
-
-
-                    </Switch.Root>
-
+          <Switch.Root
+            className='bg-blackA9 shadow-blackA7 relative h-[25px] w-[42px] cursor-default rounded-full shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black'
+            id='featured'
+            name='featured'
+            style={{ WebkitTapHighlightColor: 'transparent' }}
+          >
+            <Switch.Thumb className='shadow-blackA7 block h-[21px] w-[21px] translate-x-0.5 rounded-full bg-white shadow-[0_2px_2px] transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]' />
+          </Switch.Root>
         </div>
         <div className='flex justify-center'>
           <Button variant='primary' type='submit'>

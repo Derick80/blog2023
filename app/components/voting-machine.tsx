@@ -49,7 +49,6 @@ export default function VotingMachine({
     setVoteTotal(initVoteTotal)
   }, [initVoteTotal])
 
-
   const [voting, setVoting] = React.useState(false)
   return (
     <>

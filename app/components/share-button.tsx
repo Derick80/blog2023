@@ -32,9 +32,7 @@ export const ShareButton = ({ id }: Props) => {
 
   return (
     <>
-      <Popover.Root
-      
-      >
+      <Popover.Root>
         <Popover.Trigger asChild>
           <button
             className='text-black'
@@ -54,7 +52,7 @@ export const ShareButton = ({ id }: Props) => {
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content className='absolute z-10 flex w-fit flex-col items-center justify-between rounded-md bg-white p-2 dark:bg-slate-900'>
-            <div className='flex flex-row items-center justify-between w-full'>
+            <div className='flex w-full flex-row items-center justify-between'>
               <a
                 className={iconClassName}
                 href={`https://www.instagram.com/sharer/sharer.php?u=${encodedPostUrl}`}

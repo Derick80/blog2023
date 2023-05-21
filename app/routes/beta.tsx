@@ -8,7 +8,6 @@ import BlogCard from '~/components/gpt-blogcard'
 import CommentBox from '~/components/blog-ui/comments/comment-box'
 import React from 'react'
 
-
 const options = [
   { id: '1', value: '1', label: '1' },
   { id: '2', value: '2', label: '2' },
@@ -16,11 +15,10 @@ const options = [
   { id: '4', value: '4', label: '4' },
   { id: '5', value: '5', label: '5' },
   { id: '6', value: '6', label: '6' },
-  { id: '7', value: '7', label: '7' },
+  { id: '7', value: '7', label: '7' }
 ]
 // export async function action({ request, params }: ActionArgs) {
 //   const formData = await request.formData()
-  
 
 //   return json({ message: 'success' })
 // }
@@ -39,19 +37,14 @@ export default function BetaRoute() {
   const [open, setOpen] = React.useState(false)
   const data = useLoaderData<typeof loader>()
   // const test = data.posts.map((item)=>
-  // item.comments)  
+  // item.comments)
   // console.log(test, 'test')
 
-
-  return(
- <>
-    
-{data.posts.map((post) => (
-  <BlogCard key={post.id} post={post}/>
-))}
+  return (
+    <>
+      {data.posts.map((post) => (
+        <BlogCard key={post.id} post={post} />
+      ))}
     </>
   )
-  
 }
-
-

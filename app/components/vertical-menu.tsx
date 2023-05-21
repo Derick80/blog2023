@@ -24,9 +24,7 @@ export default function VerticalMenu({
   }, [])
 
   return (
-    <div
-      className='relative'
-    >
+    <div className='relative'>
       <Button
         className=''
         onClick={() => setOpen(!open)}
@@ -34,20 +32,13 @@ export default function VerticalMenu({
         size='tiny'
       >
         {!open ? (
-          <DotsVerticalIcon
-           
-          className='h-6 w-6' />
+          <DotsVerticalIcon className='h-6 w-6' />
         ) : (
           <DotsHorizontalIcon className='h-6 w-6' />
         )}
       </Button>
 
-      {open && (
-        
-        <Portal wrapperId='menu'>
-          {children}
-        </Portal>
-      )}
+      {open && <Portal wrapperId='menu'>{children}</Portal>}
     </div>
   )
 }

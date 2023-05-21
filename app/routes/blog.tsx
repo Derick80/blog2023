@@ -25,7 +25,7 @@ import { ShareButton } from '~/components/share-button'
 import CommentContainer from '~/components/blog-ui/comments/comment-list'
 import { ColBox } from '~/components/boxes'
 import VerticalMenu from '~/components/vertical-menu'
-import BlogPost from '~/components/blog-ui/b-card'
+import BlogCard from '~/components/gpt-blogcard'
 dayjs.extend(relativeTime)
 
 export const meta: V2_MetaFunction = () => {
@@ -45,6 +45,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function BlogRoute() {
   const data = useLoaderData<typeof loader>()
+  console.log(data, 'data from blog route')
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
@@ -63,12 +64,7 @@ export default function BlogRoute() {
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      {data &&
-        data.posts.map((post) => (
-          <BlogPost key={post.id} post={post}>
-            <CommentBox postId={post.id} />
-          </BlogPost>
-        ))}
+      {data && data.posts.map((post) => <BlogCard key={post.id} post={post} />)}
     </div>
   )
 }

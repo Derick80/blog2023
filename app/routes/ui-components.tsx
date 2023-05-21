@@ -17,8 +17,7 @@ const options = [
   { id: '6', value: 'six', label: 'six' },
   { id: '7', value: 'seven', label: 'seven' },
   { id: '8', value: 'eight', label: 'eight' },
-  { id: '9', value: 'nine', label: 'nine' },
-  
+  { id: '9', value: 'nine', label: 'nine' }
 ]
 
 const picked = [
@@ -311,8 +310,9 @@ export default function ComponentsIndex() {
           <div className='flex flex-col items-start gap-2'>
             <p className='text-base font-semibold'>Accordion</p>
             <p className='text-sm font-bold'>
-              This is an accordion component that I designed for my site. It uses a portal to render the content.
-              </p>
+              This is an accordion component that I designed for my site. It
+              uses a portal to render the content.
+            </p>
             <Accordion title='Accordion'>
               <div className='flex flex-col items-start gap-2'>
                 <p className='text-base font-semibold'>Accordion</p>
@@ -325,11 +325,10 @@ export default function ComponentsIndex() {
               </div>
             </Accordion>
           </div>
-          <div className='flex flex-col items-start gap-2' 
-          id='portal-root'>
-            </div>
-           
-          
+          <div
+            className='flex flex-col items-start gap-2'
+            id='portal-root'
+          ></div>
         </ColBox>
       </RowBox>
     </div>

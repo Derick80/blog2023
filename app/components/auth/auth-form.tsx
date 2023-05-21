@@ -40,22 +40,13 @@ export const AuthForm = ({ authType }: Props) => {
       {authType !== 'confirm' && (
         <>
           <label className=''>Email</label>
-          <input
-            placeholder='Email'
-            name='email'
-            type='email'
-            required
-          />
+          <input placeholder='Email' name='email' type='email' required />
         </>
       )}
       {authType !== 'request' && (
         <>
           <label className=''>Username</label>
-          <input
-            placeholder='Username'
-            name='username'
-            
-          />
+          <input placeholder='Username' name='username' />
 
           <label>Password</label>
           <input
