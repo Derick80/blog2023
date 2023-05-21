@@ -7,7 +7,6 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import CommentBox from '~/components/blog-ui/comments/comment-box'
 import BlogCard from '~/components/gpt-blogcard'
 import { prisma } from '~/server/auth/prisma.server'
 import type { Post } from '~/server/schemas/schemas'

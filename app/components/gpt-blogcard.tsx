@@ -1,15 +1,14 @@
 // BlogCard.tsx
-import { ChatBubbleIcon, Pencil1Icon } from '@radix-ui/react-icons'
+import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import React from 'react'
 
 import CommentContainer from './blog-ui/comments/comment-list'
-import type { CommentWithChildren, Post } from '~/server/schemas/schemas'
+import type { Post } from '~/server/schemas/schemas'
 import { Link, NavLink } from '@remix-run/react'
 import LikeContainer from './like-container'
 import FavoriteContainer from './favorite-container'
 import { ShareButton } from './share-button'
 import Button from './button'
-import { AnimatePresence, motion } from 'framer-motion'
 import CommentBox from './blog-ui/comments/comment-box'
 const dropdownVariants = {
   open: { opacity: 1, height: 'auto', transition: { duration: 1 } },

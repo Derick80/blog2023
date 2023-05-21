@@ -1,7 +1,6 @@
 import type { Post } from '@prisma/client'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
-import { RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { useOptionalUser } from '~/utilities'
 

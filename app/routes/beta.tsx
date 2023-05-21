@@ -1,11 +1,9 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { getPosts } from '~/server/post.server'
-import { useActionData, useFetcher, useLoaderData } from '@remix-run/react'
-import CommentContainer from '~/components/blog-ui/comments/comment-list'
+import { useLoaderData } from '@remix-run/react'
 import BlogCard from '~/components/gpt-blogcard'
-import CommentBox from '~/components/blog-ui/comments/comment-box'
 import React from 'react'
 
 const options = [
