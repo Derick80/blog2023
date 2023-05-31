@@ -5,12 +5,20 @@ description: 'About Derick hoskinson'
 meta: [{ name: 'description', content: 'About Me dch', title: 'About Me' }]
 ---
 
-![me](https://blogphotosbucket.s3.us-east-2.amazonaws.com/profileimages/DerickFace.jpg)
+<div className='flex flex-col gap-2'>
+ 
+<div className='flex flex-row gap-2'>
+ 
+  <img src='https://blogphotosbucket.s3.us-east-2.amazonaws.com/profileimages/DerickFace.jpg' alt='me' className='w-1/2 object-cover ' />
+  <div className='flex flex-col gap-2'>
+    <h1 className='text-3xl'>Derick Hoskinson</h1>
+    <h2 className='text-2xl'>Senior Clinical Scientist</h2>
+    <h2 className='text-2xl'>Chicago, IL</h2>
+    </div>
+</div>
 
 <h3
-  style={{
-    font: 'bold 1.5em/1.5em "Helvetica Neue", Helvetica, Arial, sans-serif'
-  }}
+  className='text-xl underline'
 >
   About me
 </h3>
@@ -61,3 +69,4 @@ I'm really excited about the future in genetics and web development. I hope to f
 
 <h3 className='text-xl underline'>Contact</h3>
 Contact me at [derickchoskinson@gmail.com](https://gmail.com)
+</div>

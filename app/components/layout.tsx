@@ -1,12 +1,9 @@
-import { ExitIcon } from '@radix-ui/react-icons'
-import { Form, NavLink } from '@remix-run/react'
-import Button from './button'
+import { NavLink } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import { BrandIcon } from '~/resources/brand-icon'
 import MenuBox from './site-menus'
 import HoverOverCard from './hovercard/hover-card'
 import ScrollToTop from './scroll-to-top'
-import SearchBar from './search-bar'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

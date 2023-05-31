@@ -8,7 +8,7 @@ import VotingMachine from '~/components/voting-machine'
 import { ColBox } from '~/components/boxes'
 export const meta: V2_MetaFunction = () => {
   return [
-    { title: 'New Remix App' },
+    { title: `Derick's Blog` },
     { name: 'description', content: 'A new Remix app' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ]
