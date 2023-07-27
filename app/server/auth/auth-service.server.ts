@@ -1,7 +1,7 @@
 import { addHours, addDays, isBefore } from 'date-fns'
 import type { Prisma, TokenType } from '@prisma/client'
 import { randomBytes } from 'crypto'
-import bcrypt, { compare } from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import { prisma } from './prisma.server'
 
 export const createPasswordHash = async (password: string) => {

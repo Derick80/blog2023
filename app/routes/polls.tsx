@@ -1,4 +1,4 @@
-import { Link, Outlet, useActionData, useLoaderData } from '@remix-run/react'
+import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
@@ -113,7 +113,6 @@ export async function action({ request, params }: ActionArgs) {
 }
 export default function () {
   const data = useLoaderData<typeof loader>()
-  const actionData = useActionData<typeof action>()
   // need these ? because data is undefined before a first poll is created.
   React.useEffect(() => {
     setVoteTotal(Number(data?.polls[0]?.votes?.length) || 0)
@@ -138,9 +137,6 @@ export default function () {
       ))}
 
       <Outlet />
-      {/* <pre>
-  {JSON.stringify(data, null, 2)}
-</pre> */}
     </div>
   )
 }

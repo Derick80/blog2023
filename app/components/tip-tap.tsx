@@ -1,4 +1,4 @@
-import { Editor } from '@tiptap/react'
+import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import {
@@ -13,7 +13,6 @@ import {
   LinkBreak1Icon,
   ListBulletIcon,
   Pencil1Icon,
-  PersonIcon,
   StrikethroughIcon,
   TextIcon,
   UnderlineIcon
@@ -229,8 +228,6 @@ const TipTap = ({ content }: { content?: string }) => {
       }
     }
   })
-
-  const schema = editor?.schema
 
   if (!editor) {
     return null

@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs} from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'

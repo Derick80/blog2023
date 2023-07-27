@@ -1,7 +1,5 @@
 import React from 'react'
-import { Portal } from './portal'
 import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
-import { motion } from 'framer-motion'
 
 type Props = {
   options: { id: string; value: string; label: string }[]

@@ -10,15 +10,6 @@ import FavoriteContainer from './favorite-container'
 import { ShareButton } from './share-button'
 import Button from './button'
 import CommentBox from './blog-ui/comments/comment-box'
-const dropdownVariants = {
-  open: { opacity: 1, height: 'auto', transition: { duration: 1 } },
-  closed: { opacity: 0, height: 0 }
-}
-interface Category {
-  id: string
-  value: string
-  label: string
-}
 
 interface BlogCardProps {
   post: Post

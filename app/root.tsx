@@ -14,7 +14,6 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useLocation,
-  useOutlet,
   useRouteError
 } from '@remix-run/react'
 import { isAuthenticated } from './server/auth/auth.server'
