@@ -14,7 +14,6 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useLocation,
-  useOutlet,
   useRouteError
 } from '@remix-run/react'
 import { isAuthenticated } from './server/auth/auth.server'
@@ -89,6 +88,10 @@ export const meta: V2_MetaFunction = () => {
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
 export async function loader({ request }: LoaderArgs) {
+  const ENV = {
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ?? '',
+    CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET ?? ''
+  }
   const user = await isAuthenticated(request)
   const categories = await prisma.category.findMany()
   const session = await getSession(request.headers.get('Cookie'))
@@ -104,7 +107,7 @@ export async function loader({ request }: LoaderArgs) {
   }
 
   return json(
-    { toastMessage, user, categories },
+    { toastMessage, user, categories, ENV },
     {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -113,9 +116,6 @@ export async function loader({ request }: LoaderArgs) {
   )
 }
 export default function App() {
-  const outlet = useOutlet()
-  const location = useLocation()
-
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
 
@@ -149,6 +149,11 @@ export default function App() {
         id='body'
         className='h-screen bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'
       >
+        <script
+          src='https://widget.cloudinary.com/v2.0/global/all.js'
+          type='text/javascript'
+        />
+
         <Layout>
           <AnimatePresence mode='wait' initial={false}>
             <motion.main

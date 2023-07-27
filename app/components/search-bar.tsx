@@ -1,14 +1,9 @@
 // SearchBar.tsx
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-const variants = {
-  open: { width: '250px', transition: { duration: 0.5 } },
-  closed: { width: '0px', transition: { duration: 0.5 } }
-}
+import React from 'react'
 
 export default function SearchBar() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   const handleOpen = () => {
     setIsOpen(true)

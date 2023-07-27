@@ -15,24 +15,21 @@ type Optional = {
 }
 
 export type VotingMachineProps = {
-  initVoteTotal: number
-  options: Optional[]
+  poll: {
+    initVoteTotal: number
+    options: Optional[]
 
-  votes: SerializeFrom<Vote[]>
-  title: string
-  description: string
-  pollId: string
+    votes: SerializeFrom<Vote[]>
+    title: string
+    description: string
+    pollId: string
+  }
 }
 
 export default function VotingMachine({
-  initVoteTotal,
-  options,
-  votes,
-  title,
-  description,
-  pollId
+  poll: { initVoteTotal, options, votes, title, description, pollId }
 }: VotingMachineProps) {
-  const actionData = useActionData()
+  const actionData = useActionData<{ errors: { option: string } }>()
   const [hasVoted, setHasVoted] = React.useState(false)
   const votedUsers = votes.map((vote) => vote.userId)
   const currentUser = useOptionalUser()
@@ -42,8 +39,6 @@ export default function VotingMachine({
   const userVoted = votedUsers.includes(currentUserId as string)
 
   const [voteTotal, setVoteTotal] = React.useState<number>(initVoteTotal)
-
-  const [opts, setOptions] = React.useState(options)
 
   React.useEffect(() => {
     setVoteTotal(initVoteTotal)

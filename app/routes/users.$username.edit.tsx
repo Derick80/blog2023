@@ -1,10 +1,8 @@
-import type { ActionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { json } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 
-import type { LoaderArgs } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
+import type { LoaderArgs, ActionArgs } from '@remix-run/node'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import type { User } from '~/server/schemas/schemas'
 import React from 'react'

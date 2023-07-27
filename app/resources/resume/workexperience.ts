@@ -6,39 +6,39 @@ export const work_experience = [
     title: 'Senior Clinical Scientist',
     duties: [
       {
-        id: '1a',
+        id: 1,
         duty: 'Created a tailored bed file to optimize genomic data analysis and facilitate the identification, classification, and clinical reporting of genetic variants on a large gene panel, resulting in improved accuracy and efficiency of downstream analysis.'
       },
       {
-        id: '1b',
+        id: 2,
         duty: 'Contributed to the development and submission of the xT CDx assay to the FDA by curating and analyzing gene data to rank evidence per gene, ensuring accurate and effective clinical use'
       },
       {
-        id: 1,
+        id: 3,
         duty: 'Played a vital role in the development and application of a new hereditary genetic testing panel, Tempus, xGv3 to identify germline variants in genes associated with hereditary cancer syndromes and incidental findings'
       },
       {
-        id: 2,
+        id: 4,
         duty: 'Identified gaps and deficiencies in current workflows and executed new workflows and SOPs to harmonize variant classification across multiple institutions'
       },
       {
-        id: 3,
+        id: 5,
         duty: 'Spearheaded the development and implementation of a reportable bed file solution for the Tempus xF assay, allowing for targeted reporting of specific genomic regions and improving the overall quality of data analysis.'
       },
       {
-        id: 4,
+        id: 6,
         duty: 'Used R programming language to design and implement a regions of interest bed file for reporting insertions and deletions for Tempus xF assay'
       },
       {
-        id: 5,
+        id: 7,
         duty: 'Used R programming language to create, update, and modify curated data to justify the inclusion or exclusion of genomic regions for xT-oncology FDA application'
       },
       {
-        id: 6,
+        id: 8,
         duty: 'Acted as the scientific lead in the development of the Tempus xF liquid biopsy panel to sequence and report SNVs and indels in clinically relevant regions of 105 genes plus CNVs and DNA rearrangements in a subset of these genes'
       },
       {
-        id: 7,
+        id: 9,
         duty: 'Used R programming language to programmatically access data, wrangle data, analyze data and present data to implement changes in workflow or other internal processes'
       }
     ]

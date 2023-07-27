@@ -7,11 +7,12 @@ const secret = process.env.SESSION_SECRET
 if (!secret) {
   throw new Error('SESSION_SECRET is not set')
 }
+// 7.26.23 changed lax as 'lax' to lax as const
 // revisit secure before production
 const cookieOptions = {
   name: '__message',
   httpOnly: true,
-  sameSite: 'lax' as 'lax',
+  sameSite: 'lax' as const,
   path: '/',
   secrets: [secret],
   secure: false

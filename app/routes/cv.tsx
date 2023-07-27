@@ -1,5 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
-import { Link, V2_MetaFunction } from '@remix-run/react'
+import type { V2_MetaFunction } from '@remix-run/react'
+import { Link } from '@remix-run/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback } from 'react'
 import { ColBox, RowBox } from '~/components/boxes'
@@ -18,7 +19,6 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export default function Cv() {
-  const [open, setOpen] = React.useState(false)
   return (
     <>
       <div className='items-censter flex flex-col justify-center gap-1 font-Montserrat'>
@@ -128,6 +128,11 @@ export default function Cv() {
     </>
   )
 }
+
+type Duty = {
+  id: number
+  duty: string
+}
 type Props = {
   children: React.ReactNode
   job: {
@@ -135,10 +140,7 @@ type Props = {
     institution: string
     title: string
     period: string
-    duties: {
-      id: number
-      duty: string
-    }[]
+    duties: Duty[]
   }
 }
 type PubProps = {

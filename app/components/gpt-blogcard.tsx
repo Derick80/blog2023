@@ -10,15 +10,6 @@ import FavoriteContainer from './favorite-container'
 import { ShareButton } from './share-button'
 import Button from './button'
 import CommentBox from './blog-ui/comments/comment-box'
-const dropdownVariants = {
-  open: { opacity: 1, height: 'auto', transition: { duration: 1 } },
-  closed: { opacity: 0, height: 0 }
-}
-interface Category {
-  id: string
-  value: string
-  label: string
-}
 
 interface BlogCardProps {
   post: Post
@@ -30,7 +21,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
 
   const [open, setOpen] = React.useState(false)
   return (
-    <div className='m-3 mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-lg'>
+    <div className='m-3 mx-auto w-full overflow-hidden rounded-xl bg-white shadow-md '>
       <div className='md:flex'>
         <div className='md:flex-shrink-0'>
           <img

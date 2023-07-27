@@ -10,7 +10,6 @@ import {
   useRouteLoaderData
 } from '@remix-run/react'
 import React from 'react'
-import { useEffect } from 'react'
 import { z } from 'zod'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import Button from '~/components/button'
@@ -77,13 +76,6 @@ export async function action({ request }: ActionArgs) {
     formData as ActionInput
 
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-  const cats = categories?.split(', ')
-  const category = cats.map((cat) => {
-    return {
-      value: cat
-    }
-  })
-  console.log(categories, 'category')
 
   const post = await createPost({
     title,
@@ -117,8 +109,6 @@ export default function NewPostRoute() {
   const actionData = useActionData<{ errors: ActionInput }>()
   const [url, setUrl] = React.useState('')
 
-  const [selected, setSelected] = React.useState<string>('')
-
   const navigation = useNavigation()
   const text =
     navigation.state === 'submitting'
@@ -132,14 +122,14 @@ export default function NewPostRoute() {
   }
   // fetch categories from the server
   const categoryFetcher = useFetcher()
-  useEffect(() => {
+  React.useEffect(() => {
     if (categoryFetcher.state === 'idle' && categoryFetcher.data == null) {
       categoryFetcher.load('/categories')
     }
   }, [categoryFetcher])
 
   return (
-    <div className='mx-auto flex h-full w-full flex-col p-1 md:w-fit'>
+    <div className='md:w-fsit mx-auto flex h-full w-full flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
 
       <Form className='flex w-full flex-col' method='post'>

@@ -1,4 +1,4 @@
-import { Form, useActionData, useSearchParams } from '@remix-run/react'
+import { Form, useSearchParams } from '@remix-run/react'
 import Button from '../button'
 
 type Props = {
@@ -25,7 +25,6 @@ const actionMap: Record<Props['authType'], { button: string; url: string }> = {
 }
 
 export const AuthForm = ({ authType }: Props) => {
-  const action = useActionData()
   const [searchParams] = useSearchParams()
   const { button, url } = actionMap[authType]
 
@@ -33,26 +32,26 @@ export const AuthForm = ({ authType }: Props) => {
   const redirectTo = searchParams.get('redirectTo')
 
   return (
-    <Form className='form-base rounded-xl' method='post' action={url}>
+    <Form className='flex flex-col gap-2' method='post' action={url}>
       <input type='hidden' name='redirectTo' value={redirectTo || '/'} />
       <input type='hidden' name='token' value={token || ''} />
 
       {authType !== 'confirm' && (
         <>
           <label className=''>Email</label>
-          <input placeholder='Email' name='email' type='email' required />
+          <input placeholder='enter email' name='email' type='email' required />
         </>
       )}
       {authType !== 'request' && (
         <>
           <label className=''>Username</label>
-          <input placeholder='Username' name='username' />
+          <input type='text' placeholder='enter username' name='username' />
 
           <label>Password</label>
           <input
             type='password'
             name='password'
-            placeholder='Password'
+            placeholder='enter password'
             required
           />
         </>

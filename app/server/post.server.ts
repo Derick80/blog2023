@@ -69,7 +69,15 @@ export async function getPosts() {
       published: true
     },
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          avatarUrl: true,
+          password: false
+        }
+      },
       likes: true,
       favorites: true,
       categories: true,
@@ -82,7 +90,8 @@ export async function getPosts() {
               id: true,
               username: true,
               email: true,
-              avatarUrl: true
+              avatarUrl: true,
+              password: false
             }
           },
           children: {

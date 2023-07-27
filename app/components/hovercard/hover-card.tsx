@@ -22,7 +22,6 @@ export default function HoverOverCard() {
 
   const loggedInUser = userFetcher.data?.user as User
 
-  const [hover, setHover] = React.useState(false)
   return (
     <div className=''>
       {loggedInUser && (

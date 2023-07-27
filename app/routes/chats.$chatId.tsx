@@ -1,26 +1,24 @@
-import { ActionArgs, LoaderArgs, redirect } from '@remix-run/node'
-import { json } from '@remix-run/node'
+import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import { redirect, json } from '@remix-run/node'
 import {
   useActionData,
   useFetcher,
   useLoaderData,
-  useNavigation,
   useParams,
   useRevalidator
 } from '@remix-run/react'
-import { useEffect, useRef, useTransition } from 'react'
+import { useEffect, useRef } from 'react'
 import { useEventSource } from 'remix-utils'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { EVENTS, chatEmitter } from '~/server/auth/chat.server'
+import { chatEmitter } from '~/server/auth/chat.server'
 import { prisma } from '~/server/auth/prisma.server'
 import {
   commitSession,
   getSession,
-  setErrorMessage,
-  setSuccessMessage
+  setErrorMessage
 } from '~/server/auth/session.server'
 import { useOptionalUser, validateAction } from '~/utilities'
 

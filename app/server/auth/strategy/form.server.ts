@@ -4,6 +4,8 @@ import invariant from 'tiny-invariant'
 import bcrypt from 'bcryptjs'
 import { getUser, createUser, getUserPasswordHash } from '../user.server'
 import type { AuthInput } from '../auth-schema'
+import { z } from 'zod'
+import { zfd } from 'zod-form-data'
 
 export const registerStrategy = new FormStrategy(async ({ form }) => {
   const email = form.get('email')
@@ -20,12 +22,18 @@ export const registerStrategy = new FormStrategy(async ({ form }) => {
   return user.id
 })
 
-export const loginStrategy = new FormStrategy(async ({ form }) => {
-  const email = form.get('email')
-  const password = form.get('password')
+const schema = zfd.formData(
+  z.object({ email: z.string(), password: z.string() })
+)
 
-  invariant(typeof email === 'string', 'Email is not a string')
-  invariant(typeof password === 'string', 'Password is not a string')
+export const loginStrategy = new FormStrategy(async ({ form }) => {
+  const { email, password } = schema.parse(form)
+
+  // const email = form.get('email')
+  // const password = form.get('password')
+
+  // invariant(typeof email === 'string', 'Email is not a string')
+  // invariant(typeof password === 'string', 'Password is not a string')
   const { user, passwordHash } = await getUserPasswordHash({ email })
   if (
     !user ||

@@ -37,7 +37,6 @@ export default function CommentContainer({
   // retrieve the data from the loader
 
   const commentFetcher = useFetcher()
-  console.log(postId, 'postid from comment container')
 
   React.useEffect(() => {
     if (commentFetcher.state === 'idle') {

@@ -38,7 +38,7 @@ export const meta: V2_MetaFunction = () => {
 
 export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
-  const comments = await posts.map((post) => post.comments).flat()
+  const comments = posts.map((post: { comments: any }) => post.comments).flat()
 
   return json({ posts, comments })
 }
