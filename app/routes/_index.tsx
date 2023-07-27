@@ -61,14 +61,14 @@ export default function Index() {
       <h1>Welcome to My Social Media App</h1>
       <ColBox>
         <h3 className='text-center'>Latest Poll</h3>
-        <VotingMachine
+        {/* <VotingMachine
           initVoteTotal={initialVotes || 0}
           pollId={data.data.id}
           options={data.data.options}
           title={data.data.title}
           description={data.data?.description}
           votes={data.data.votes}
-        />
+        /> */}
       </ColBox>
       <ul>
         {user && (

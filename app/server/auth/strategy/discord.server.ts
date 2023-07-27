@@ -5,7 +5,6 @@ import { DiscordStrategy } from 'remix-auth-discord'
 import { sessionStorage } from '../session.server'
 import { getAccount } from './accountService.server'
 import { createUser } from '../user.server'
-import { faker } from '@faker-js/faker'
 
 export interface DiscordUser {
   id: DiscordProfile['id']
@@ -45,9 +44,7 @@ export const discordStrategy = new DiscordStrategy(
     const user = await createUser({
       email: profile.emails ? profile.emails[0].value : '',
       username: profile.displayName,
-      avatarUrl: profile.photos
-        ? profile.photos[0].value
-        : faker.internet.avatar(),
+      avatarUrl: profile.photos ? profile.photos[0].value : '',
       account: {
         provider: profile.provider,
         providerAccountId: profile.id,
