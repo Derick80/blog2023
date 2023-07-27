@@ -16,7 +16,7 @@ import FavoriteContainer from '~/components/favorite-container'
 import LikeContainer from '~/components/like-container'
 import Tags from '~/components/tags'
 import { getPosts } from '~/server/post.server'
-import type { Post } from '~/server/schemas/schemas'
+import type { CommentWithChildren, Post } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChatBubbleIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
@@ -38,7 +38,7 @@ export const meta: V2_MetaFunction = () => {
 
 export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
-  const comments = await posts.map((post) => post.comments).flat()
+  const comments = posts.map((post: { comments: any }) => post.comments).flat()
 
   return json({ posts, comments })
 }

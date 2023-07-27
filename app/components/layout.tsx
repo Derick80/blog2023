@@ -20,7 +20,7 @@ function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 dark:bg-slate-800 md:p-2'>
+    <div className='fixed left-0 right-0 top-0 z-50 mx-auto flex h-16 w-full flex-row items-center justify-around bg-slate-50 p-1 font-robo dark:bg-slate-800 md:p-2'>
       <BrandIcon />
       <NavLink
         className={({ isActive, isPending }) => {

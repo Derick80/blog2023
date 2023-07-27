@@ -30,7 +30,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
 
   const [open, setOpen] = React.useState(false)
   return (
-    <div className='m-3 mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-lg'>
+    <div className='m-3 mx-auto w-full overflow-hidden rounded-xl bg-white shadow-md '>
       <div className='md:flex'>
         <div className='md:flex-shrink-0'>
           <img

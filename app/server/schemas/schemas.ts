@@ -1,12 +1,14 @@
-import type { CommentLike, Post as PrismaPost } from '@prisma/client'
+import type {
+  CommentLike,
+  Post as PrismaPost,
+  User as PrismaUser,
+  Like as PrismaLike,
+  Favorite as PrismaFavorite,
+  Category as PrismaCategory,
+  Comment as PrismaComment
+} from '@prisma/client'
 
-import type { User as PrismaUser } from '@prisma/client'
-
-import type { Like as PrismaLike } from '@prisma/client'
-import type { Favorite as PrismaFavorite } from '@prisma/client'
-import type { Comment as PrismaComment } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
-import type { Category as PrismaCategory } from '@prisma/client'
 
 export type User = Omit<PrismaUser, 'password' | 'createdAt' | 'updatedAt'>
 

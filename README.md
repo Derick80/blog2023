@@ -9,7 +9,25 @@
 ## Component References
 
 - Accordian - <https://github.com/AllanSimoyi/PersonalWebsite/blob/main/app/core/components/AccordionItem.tsx>
--
+- Post Editor - [TipTap](https://tiptap.dev/)
+- 
+
+## Database Setup
+
+I use [Render](https://render.com/) for hosting a postgress database using Prisma ORM.
+Create a new database and then add the following environment variables to your `.env` file.
+
+```sh
+DATABASE_URL=''
+```
+
+## Image Upload Setup
+Create a [Cloudinary](https://cloudinary.com/) account and add the following environment variables to your `.env` file.
+
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+CLOUDINARY_CLOUD_NAME=
+
 
 ## Fly Setup
 
