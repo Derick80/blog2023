@@ -7,6 +7,7 @@ export async function getUsers() {
       username: true,
       email: true,
       avatarUrl: true,
+      role: false,
       _count: {
         select: {
           posts: true,

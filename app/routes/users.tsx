@@ -46,13 +46,13 @@ export default function UsersIndex() {
   }>()
 
   return (
-    <div className='mx-auto flex w-full flex-col items-center gap-2 border-2 md:flex-row md:gap-4'>
-      <ColBox className=''>
-        <h1 className='text-2xl font-bold md:text-3xl'>Users</h1>
+    <div className='flex w-full flex-col items-center gap-2 md:flex-row md:gap-4'>
+      <ColBox className='items-center'>
+        <h2>Users</h2>
         <ul className='flex w-full flex-col items-center gap-1 md:gap-2'>
           {data.users.map((user) => (
             <li
-              className='flex w-full flex-col justify-between gap-1 rounded-lg border-2 p-1 md:gap-2 md:p-2'
+              className='flex w-fit flex-col justify-between gap-1 rounded-lg border-2 p-1 md:gap-2 md:p-2'
               key={user.id}
             >
               <RowBox>

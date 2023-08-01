@@ -36,11 +36,11 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export default function ComponentsIndex() {
   return (
-    <div className='flex flex-col justify-start gap-1'>
+    <div className='flex flex-col items-center justify-start gap-1'>
       <h1 className='text-2xl font-bold'>UI Components</h1>
-      <RowBox className=''>
+      <div className='flex flex-col items-center md:flex-row'>
         {/* first column */}
-        <ColBox>
+        <ColBox className='w-full items-center'>
           <div className='flex flex-col items-start gap-2'>
             <ColBox className='items-start'>
               <h6 className='text-sm font-bold'>Primary</h6>
@@ -293,7 +293,7 @@ export default function ComponentsIndex() {
               entire title and icon clickable
             </p>
 
-            <MenuBox title='About'></MenuBox>
+            <MenuBox title='Menu'></MenuBox>
           </div>
           <div className='flex flex-col items-start gap-2'>
             <p className='text-base font-semibold'>Single Select</p>
@@ -330,7 +330,7 @@ export default function ComponentsIndex() {
             id='portal-root'
           ></div>
         </ColBox>
-      </RowBox>
+      </div>
     </div>
   )
 }

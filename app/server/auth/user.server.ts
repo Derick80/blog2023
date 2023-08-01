@@ -22,6 +22,7 @@ const defaultUserSelect = {
   email: true,
   username: true,
   avatarUrl: true,
+  role: true,
   _count: true
 }
 
@@ -35,13 +36,6 @@ const defaultPersonalSelect = {
   _count: true
 }
 
-export async function getUserById(userId: string) {
-  return await prisma.user.findUnique({
-    where: {
-      id: userId
-    }
-  })
-}
 
 export async function getUserByUsername(username: string) {
   return await prisma.user.findUnique({

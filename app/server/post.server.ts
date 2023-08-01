@@ -75,7 +75,8 @@ export async function getPosts() {
           username: true,
           email: true,
           avatarUrl: true,
-          password: false
+          password: false,
+          role: false
         }
       },
       likes: true,
@@ -91,12 +92,22 @@ export async function getPosts() {
               username: true,
               email: true,
               avatarUrl: true,
-              password: false
+              password: false,
+              role: false
             }
           },
           children: {
             include: {
-              user: true,
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  email: true,
+                  avatarUrl: true,
+                  password: false,
+                  role: false
+                }
+              },
               children: true,
               likes: true
             }

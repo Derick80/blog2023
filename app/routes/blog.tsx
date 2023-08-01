@@ -55,10 +55,10 @@ export default function BlogRoute() {
           <HamburgerMenuIcon className='text-teal-400' />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className='z-10 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-slate-900'>
-          <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+          <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-slate-700'>
             <Link to='/blog/new'>New</Link>
           </DropdownMenu.Item>
-          <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-gray-100'>
+          <DropdownMenu.Item className='block px-4 py-2 text-sm  hover:bg-slate-700'>
             <Link to='/drafts'>Drafts</Link>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
@@ -104,11 +104,7 @@ export function BlogPreview({ post }: { post: Post }) {
       <div className='flex flex-row items-center gap-2 border-2 border-green-500 p-1'>
         {post.likes && post.favorites && (
           <div className='flex flex-row items-center gap-2'>
-            <LikeContainer
-              postId={post.id}
-              likeCounts={post.likes.length}
-              likes={post.likes}
-            />
+            <LikeContainer postId={post.id} likes={post.likes} />
             <FavoriteContainer favorites={post.favorites} postId={post.id} />
           </div>
         )}

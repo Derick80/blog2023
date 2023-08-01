@@ -17,6 +17,7 @@ model User {
   username String @unique
   avatarUrl String?
   password String?
+  role String @default("USER")
   profile Profile?
   posts Post[]
   comments Comment[]
@@ -255,3 +256,25 @@ model Vote {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
+
+model SectionDocumentation {
+  id String @id @default(cuid())
+  section String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks Task[]
+}
+
+model Task {
+  id String @id @default(cuid())
+  title String
+  description String
+  section SectionDocumentation @relation(fields: [sectionId], references: [section], onDelete: Cascade, onUpdate: Cascade)
+  sectionId String
+  status String  @default("ToDo")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+ 
+}
+
