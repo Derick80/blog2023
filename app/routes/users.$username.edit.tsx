@@ -17,6 +17,7 @@ import { z } from 'zod'
 import { zx } from 'zodix'
 import { validateAction } from '~/utilities'
 import Button from '~/components/button'
+import { ArrowRightIcon } from '@radix-ui/react-icons'
 export async function loader({ request, params }: LoaderArgs) {
   const { username } = params
   const user = await isAuthenticated(request)
@@ -97,13 +98,23 @@ export default function UserEdit() {
   const data = useLoaderData<{
     currentUser: User
   }>()
-  const [url, setUrl] = React.useState(data.currentUser.avatarUrl || '')
+  const [url, setUrl] = React.useState('')
 
   return (
     <div className='flex h-full flex-col items-center gap-2 rounded-md border-2 p-2'>
       <ImageUploader setUrl={setUrl} />
-      <div className='mx-auto flex h-12 w-12 flex-col'>
-        <img src={url} alt='avatar' />
+      <div className='flex items-center gap-1 md:gap-2'>
+        <div className='h-12 w-12 p-1'>
+          <img src={data.currentUser.avatarUrl || ''} alt='avatar' />
+        </div>
+        {url ? (
+          <>
+            <ArrowRightIcon />
+            <div className='h-12 w-12 p-1'>
+              <img src={url} alt='avatar' />
+            </div>
+          </>
+        ) : null}
       </div>
       <Form
         id='updateUser'
@@ -118,14 +129,30 @@ export default function UserEdit() {
         />
         {actionData?.errors?.imageUrl && <p>{actionData?.errors?.imageUrl}</p>}
       </Form>
-      <Button
-        form='updateUser'
-        variant='primary_filled'
-        size='base'
-        type='submit'
-      >
-        Update
-      </Button>
+
+      {/* create a button to cancel the change and reload the page */}
+      {url ? (
+        <>
+          {' '}
+          <Button
+            form='updateUser'
+            variant='primary_filled'
+            size='base'
+            type='submit'
+          >
+            Update
+          </Button>
+          <Button
+            variant='warning_filled'
+            size='base'
+            onClick={() => {
+              window.location.reload()
+            }}
+          >
+            Cancel
+          </Button>
+        </>
+      ) : null}
     </div>
   )
 }

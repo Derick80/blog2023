@@ -113,9 +113,12 @@ export default function Cv() {
           <div className='flex flex-col justify-between gap-2 text-xs'>
             <h1 className='text-2xl font-bold'>Skills</h1>
 
-            <ul className='flex flex-row flex-wrap gap-2'>
+            <ul className='flex list-none flex-row flex-wrap gap-2'>
               {skills.map((skill, index) => (
-                <li className='rounded-md border-2 p-1 text-xs ' key={index}>
+                <li
+                  className='t-rounded-md list-none border-2 p-1 text-xs '
+                  key={index}
+                >
                   <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
                     {skill.skill}
                   </span>

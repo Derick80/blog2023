@@ -36,3 +36,56 @@
   margin-top: -25px;
   background: #ffffff;
 }
+
+li {
+  margin-bottom: 10px;
+  list-style: disc;
+}
+
+code {
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: 'Roboto', sans-serif;
+}
+ul {
+  margin-left: 20px;
+}
+
+ol {
+  margin-left: 20px;
+}
+ol li{
+  
+  list-style-type: upper-roman;
+}
+details {
+  margin-bottom:2rem;
+  padding:.5rem 1rem;
+  width: max-content;
+}
+summary > *{
+  font-weight: bold;
+  cursor: pointer;
+  display: inline;
+  
+}
+/* create custom classes for headings to use in tiptap editor */
+h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+}
+h2 {
+    @apply scroll-m-16 text-3xl font-extrabold tracking-tight lg:text-4xl;
+}
+h3 {
+    @apply scroll-m-12 text-2xl font-bold tracking-tight lg:text-3xl;
+}
+h4 {
+    @apply scroll-m-10 text-xl font-bold tracking-tight lg:text-2xl;
+}
+h5 {
+    @apply scroll-m-8 text-lg font-bold tracking-tight lg:text-xl;
+}
+h6 {
+    @apply scroll-m-6 text-base font-bold tracking-tight lg:text-lg;
+}

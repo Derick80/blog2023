@@ -1,5 +1,6 @@
 import React from 'react'
 import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
+import { set } from 'date-fns'
 
 type Props = {
   options: { id: string; value: string; label: string }[]
@@ -17,28 +18,39 @@ export default function SelectBox({
   const [selected, setSelected] = React.useState(picked)
   const [dropdown, setDropdown] = React.useState(false)
 
-  const handleSelect = (value: string) => {
-    const isSelected = selected.some((item) => item.value === value)
-    if (multiple) {
-      if (isSelected) {
-        setSelected(selected.filter((item) => item.value !== value))
+  const handleSelect = React.useCallback(
+    (value: string) => {
+      const isSelected = selected.some((item) => item.value === value)
+      if (multiple) {
+        if (isSelected) {
+          setSelected((prevSelected) =>
+            prevSelected.filter((item) => item.value !== value)
+          )
+          setDropdown(false)
+        } else {
+          const item = options.find((item) => item.value === value)
+          if (item) {
+            setSelected((prevSelected) => [...prevSelected, item])
+            setDropdown(false)
+          }
+        }
       } else {
-        const item = options.find((item) => item.value === value)
-        if (item) {
-          setSelected([...selected, item])
+        if (isSelected) {
+          setSelected((prevSelected) =>
+            prevSelected.filter((item) => item.value !== value)
+          )
+          setDropdown(false)
+        } else {
+          const item = options.find((item) => item.value === value)
+          if (item) {
+            setSelected([item])
+            setDropdown(false)
+          }
         }
       }
-    } else {
-      if (isSelected) {
-        setSelected(selected.filter((item) => item.value !== value))
-      } else {
-        const item = options.find((item) => item.value === value)
-        if (item) {
-          setSelected([item])
-        }
-      }
-    }
-  }
+    },
+    [selected, multiple, options]
+  )
 
   //   Allow user to close dropdown by pressing the escape key
   //  I was guided by this article https://github.com/WebDevSimplified/react-select

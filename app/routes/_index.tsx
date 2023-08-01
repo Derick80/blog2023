@@ -1,11 +1,11 @@
 import type { V2_MetaFunction } from '@remix-run/react'
 import { useLoaderData, useNavigation } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
+
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { prisma } from '~/server/auth/prisma.server'
-import VotingMachine from '~/components/voting-machine'
-import { ColBox } from '~/components/boxes'
+import { fetchSecureUrls } from '~/server/auth/cloudinary.server'
 export const meta: V2_MetaFunction = () => {
   return [
     { title: `Derick's Blog` },
@@ -15,6 +15,8 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderArgs) {
+  // const testdata = await fetchSecureUrls()
+  // console.log(testdata, 'test data')
   const data = await prisma.poll.findFirst({
     include: {
       votes: true,
@@ -44,10 +46,6 @@ export async function loader({ request }: LoaderArgs) {
 export default function Index() {
   const data = useLoaderData<typeof loader>()
 
-  const votes = data.data._count
-
-  const initialVotes = votes.votes
-
   const navigate = useNavigation()
   const user = useOptionalUser()
   return (
@@ -59,17 +57,7 @@ export default function Index() {
       }
     >
       <h1>Welcome to My Social Media App</h1>
-      <ColBox>
-        <h3 className='text-center'>Latest Poll</h3>
-        {/* <VotingMachine
-          initVoteTotal={initialVotes || 0}
-          pollId={data.data.id}
-          options={data.data.options}
-          title={data.data.title}
-          description={data.data?.description}
-          votes={data.data.votes}
-        /> */}
-      </ColBox>
+
       <ul>
         {user && (
           <li>
