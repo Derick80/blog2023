@@ -257,24 +257,25 @@ model Vote {
     updatedAt DateTime @updatedAt
 }
 
-model SectionDocumentation {
-  id String @id @default(cuid())
-  section String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tasks Task[]
-}
+
 
 model Task {
   id String @id @default(cuid())
   title String
   description String
-  section SectionDocumentation @relation(fields: [sectionId], references: [section], onDelete: Cascade, onUpdate: Cascade)
-  sectionId String
-  status String  @default("ToDo")
+  section String
+  status String  @default("To Do")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+  categories TaskCategory[]
  
 }
 
+model TaskCategory {
+  id String @id @default(cuid())
+  label String
+  value String @unique
+  tasks Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

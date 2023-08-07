@@ -17,8 +17,6 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post, children }: BlogCardProps) {
-  console.log(post, 'post from blogcard')
-
   const [open, setOpen] = React.useState(false)
   return (
     <div className='m-3 mx-auto w-full overflow-hidden rounded-xl bg-white shadow-md '>
@@ -61,11 +59,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
         ))}
       </div>
       <div className='mt-4 flex flex-row items-center gap-1'>
-        <LikeContainer
-          likes={post.likes}
-          postId={post.id}
-          likeCounts={post._count?.likes || 0}
-        />
+        <LikeContainer likes={post.likes} postId={post.id} />
         <FavoriteContainer favorites={post.favorites} postId={post.id} />
         <ShareButton id={post.id} />
         <div className='flex flex-grow' />
@@ -84,7 +78,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
         </div>
       </div>
       {/* Comment Section */}
-      <div className='bg-gray-100 px-4 py-3'>
+      <div className='px-4 py-3'>
         <CommentBox postId={post.id} />
         <CommentContainer open={open} postId={post.id} />
       </div>

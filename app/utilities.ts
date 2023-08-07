@@ -1,7 +1,7 @@
 import { useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
-import type { UserType } from './server/schemas/schemas'
+import type { Category, UserType } from './server/schemas/schemas'
 
 const DEFAULT_REDIRECT = '/'
 
@@ -64,6 +64,17 @@ export function useUser(): UserType {
     )
   }
   return maybeUser
+}
+
+// Try this sometime
+export function useCategories() {
+  const data = useMatchesData('root')
+  if (!data || !data.categories) {
+    throw new Error(
+      'No categories found in root loader, but categories are required by useCategories.'
+    )
+  }
+  return data.categories as Category
 }
 type ActionErrors<T> = Partial<Record<keyof T, string>>
 

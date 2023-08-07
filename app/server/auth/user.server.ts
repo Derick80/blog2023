@@ -36,7 +36,6 @@ const defaultPersonalSelect = {
   _count: true
 }
 
-
 export async function getUserByUsername(username: string) {
   return await prisma.user.findUnique({
     where: {

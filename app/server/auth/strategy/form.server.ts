@@ -7,12 +7,16 @@ import type { AuthInput } from '../auth-schema'
 import { z } from 'zod'
 import { zfd } from 'zod-form-data'
 
+const registerSchema = zfd.formData(
+  z.object({
+    email: z.string(),
+    username: z.string(),
+    password: z.string()
+  })
+)
+
 export const registerStrategy = new FormStrategy(async ({ form }) => {
-  const email = form.get('email')
-  const username = form.get('username')
-  const password = form.get('password')
-  invariant(typeof email === 'string', 'Email is not a string')
-  invariant(typeof username === 'string', 'username is not a string')
+  const { email, password, username } = registerSchema.parse(form)
 
   const existingUser = await getUser({ email })
   if (existingUser) {
@@ -29,11 +33,6 @@ const schema = zfd.formData(
 export const loginStrategy = new FormStrategy(async ({ form }) => {
   const { email, password } = schema.parse(form)
 
-  // const email = form.get('email')
-  // const password = form.get('password')
-
-  // invariant(typeof email === 'string', 'Email is not a string')
-  // invariant(typeof password === 'string', 'Password is not a string')
   const { user, passwordHash } = await getUserPasswordHash({ email })
   if (
     !user ||
