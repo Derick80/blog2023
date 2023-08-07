@@ -1,87 +1,83 @@
 import type { LoaderArgs } from '@remix-run/node'
-import { json } from '@remix-run/node'
+import { json, SerializeFrom } from '@remix-run/node'
 import React from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-
 import { Form, Outlet, useLoaderData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
-import DocumentationCard from '~/components/doc-component'
-import { getDocumentation } from '~/server/auth/documentation.server'
+import DocumentationCard from '~/components/documentation/doc-component'
+import { getTaskCategories, getTasks } from '~/server/task.server'
+import SearchBar from '~/components/search-bar'
+import { Prisma } from '@prisma/client'
+import { prisma } from '~/server/auth/prisma.server'
+import CustonSelect from '~/components/customselect'
 export async function loader({ request, params }: LoaderArgs) {
-  // const sectionDocumentationDatas = sectionDocumentationData
+  const url = new URL(request.url)
 
-  // const groupedData: { [key: string]: SectionDocumentation } =
-  //   sectionDocumentationData.reduce(
-  //     (acc, sectionDoc) => {
-  //       if (acc[sectionDoc.section]) {
-  //         acc[sectionDoc.section].tasks.push(...sectionDoc.tasks)
-  //       } else {
-  //         acc[sectionDoc.section] = {
-  //           ...sectionDoc,
-  //           tasks: [...sectionDoc.tasks]
-  //         }
-  //       }
-  //       return acc
-  //     },
-  //     {} as {
-  //       [key: string]: SectionDocumentation
-  //     }
-  //   )
+  const filter = url.searchParams.get('filter')
+  console.log('filter', filter)
+  let textFilter: Prisma.TaskWhereInput = {}
+  if (filter) {
+    textFilter = {
+      OR: [
+        { title: { contains: filter, mode: 'insensitive' } },
+        { description: { contains: filter, mode: 'insensitive' } },
+        { section: { contains: filter, mode: 'insensitive' } },
+        { status: { contains: filter, mode: 'insensitive' } }
+      ]
+    }
+  }
+  const categories = await getTaskCategories()
+  const tasks = await prisma.task.findMany({
+    where: textFilter,
+    include: {
+      categories: true
+    }
+  })
 
-  // const groupedSections: SectionDocumentation[] = Object.entries(
-  //   groupedData
-  // ).map(([_, value]) => value)
-  // console.log(groupedSections.length, 'groupedSections')
+  // get unique sections from tasks array
+  const sections = tasks ? [...new Set(tasks.map((task) => task.section))] : []
 
-  const sectionDocumentationData = await getDocumentation()
-  const sectionDocumentationDatas = Object.entries(
-    sectionDocumentationData
-  ).map(([_, value]) => value)
+  const statusSelectOptions = tasks
+    ? [...new Set(tasks.map((task) => task.status))]
+    : []
 
-  return json({ sectionDocumentationDatas })
+  const SelectOptions = statusSelectOptions.map((option) => {
+    return { value: option, label: option }
+  })
+
+  return json({ tasks, categories, sections, SelectOptions })
 }
 
 export default function DocumentationIndex() {
   const data = useLoaderData<typeof loader>()
-  console.log(data, 'data')
 
   const user = useOptionalUser()
-  console.log(user, 'user')
 
   const isAdmin = user?.role === 'ADMIN'
-
-  const wait = () => new Promise((resolve) => setTimeout(resolve, 1000))
-
-  const [open, setOpen] = React.useState(false)
 
   return (
     <div className='flex flex-col items-center justify-center'>
       {isAdmin && (
-        <div className='flex h-16 w-full items-center justify-center border-2'>
-          <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger>New Section</Dialog.Trigger>
-            <Dialog.Overlay />
-            <Dialog.Content>
-              <Form
-                onSubmit={(event) => {
-                  wait().then(() => setOpen(false))
-                  event.preventDefault()
-                }}
-              >
-                <label>
-                  <span>title</span>
-                  <input type='text' name='title' />
-                </label>
-                <button type='submit'>Submit</button>
-              </Form>
-            </Dialog.Content>
-          </Dialog.Root>
-        </div>
+        <div className='mb-5 flex h-16 w-full items-center justify-center border-2'></div>
       )}
-      {data.sectionDocumentationDatas.map((section) => (
-        <DocumentationCard section={section.section} key={section.id} />
+      <div className='flex h-full w-1/2 items-center justify-center border-2'></div>
+      <div className='flex h-full w-1/2 items-center justify-center border-2'>
+        <SearchBar appRoute='/documentation' />
+      </div>
+
+      {data.sections.map((section) => (
+        <div
+          className='flex w-full flex-col items-center justify-center border-2'
+          key={section}
+        >
+          <h3 className='text-2xl font-bold tracking-tight lg:text-2xl'>
+            {section}
+          </h3>
+          <DocumentationCard section={section} />
+        </div>
       ))}
-      {/* <Outlet /> */}
+
+      <Outlet />
     </div>
   )
 }

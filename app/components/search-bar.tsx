@@ -1,42 +1,54 @@
 // SearchBar.tsx
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
+import { Cross1Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons'
+import { Form, useNavigate, useSearchParams } from '@remix-run/react'
 import React from 'react'
 
-export default function SearchBar() {
-  const [isOpen, setIsOpen] = React.useState(false)
+// Search bar component. Can target any route in the app to search for a query
 
-  const handleOpen = () => {
-    setIsOpen(true)
-  }
+export default function SearchBar({ appRoute }: { appRoute: string }) {
+  const [searchParams] = useSearchParams()
 
-  const handleClose = () => {
-    setIsOpen(false)
+  const navigate = useNavigate()
+  const formRef = React.useRef<HTMLFormElement>(null)
+
+  const [search, setSearch] = React.useState('')
+  function handleReset(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    event.preventDefault()
+    searchParams.delete('filter')
+    navigate(formRef.current?.action || appRoute)
+    setSearch('')
   }
 
   return (
-    <div className='relative flex items-center'>
+    <Form className='relative flex items-center'>
       <div
-        className={`absolute right-0 top-0 transition-all duration-200 ease-in-out ${
-          isOpen ? 'w-64' : 'w-0'
-        } h-8 overflow-hidden rounded-full bg-white lg:static lg:w-64`}
+        className={`'w-64' : 'w-0' } absolute right-0 top-0 h-8 overflow-hidden
+        rounded-full bg-white transition-all duration-200 ease-in-out lg:static lg:w-64`}
       >
         <input
           type='text'
           className='h-full w-full border-none px-4 text-sm placeholder-gray-400'
           placeholder='Search...'
+          name='filter'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <button
-        className='z-10 ml-2 rounded-full bg-white p-2 text-black lg:hidden'
-        onClick={isOpen ? handleClose : handleOpen}
-      >
-        <MagnifyingGlassIcon />
-      </button>
+
       <div className='hidden lg:block'>
         <button className='ml-2 rounded-full bg-white p-2'>
           <MagnifyingGlassIcon />
         </button>
+        {search && (
+          <button
+            className='ml-2 rounded-full bg-white p-2'
+            onClick={handleReset}
+            type='submit'
+          >
+            <Cross1Icon />
+          </button>
+        )}
       </div>
-    </div>
+    </Form>
   )
 }

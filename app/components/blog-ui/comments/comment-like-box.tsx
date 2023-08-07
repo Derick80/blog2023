@@ -54,10 +54,7 @@ export default function LikeComment({
   return (
     <>
       {user ? (
-        <button
-          // className='absolute bottom-1 left-2 z-10'
-          onClick={toggleLike}
-        >
+        <button onClick={toggleLike}>
           {liked ? (
             <div className='flex flex-row items-center gap-1'>
               <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />

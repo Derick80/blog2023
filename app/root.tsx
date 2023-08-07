@@ -156,7 +156,7 @@ export default function App() {
 
         <Layout>
           <AnimatePresence mode='wait' initial={false}>
-            <motion.main
+            <motion.div
               key={useLocation().pathname}
               animate={{ x: '90', opacity: 1 }}
               transition={{
@@ -168,7 +168,7 @@ export default function App() {
               exit={{ x: '-40%', opacity: 0 }}
             >
               <Outlet />
-            </motion.main>
+            </motion.div>
           </AnimatePresence>
           {/* <ChatWidget /> */}
           <Toaster

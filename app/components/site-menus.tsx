@@ -54,6 +54,10 @@ export const MenuItems = [
   {
     title: 'Beta',
     path: '/beta'
+  },
+  {
+    title: 'Documentation',
+    path: '/documentation'
   }
 ]
 
