@@ -1,10 +1,10 @@
 import type { User } from '@prisma/client'
 import { Authenticator, AuthorizationError } from 'remix-auth'
-import { getSession, sessionStorage } from './session.server'
+import { getSession, sessionStorage } from '../session.server'
 import { loginStrategy, registerStrategy } from './strategy/form.server'
 import type { Session } from '@remix-run/node'
 import { discordStrategy } from './strategy/discord.server'
-import { getUser } from './user.server'
+import { getUser } from '../user.server'
 
 export const authenticator = new Authenticator<User['id']>(sessionStorage, {
   throwOnError: true

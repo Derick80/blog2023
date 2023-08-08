@@ -77,7 +77,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <Toolbar.Root
-      className='shadow-blackA7 flex w-full min-w-max rounded-md bg-white p-[10px] shadow-[0_2px_10px]'
+      className='shadow-blackA7 flex w-full min-w-max rounded-md bg-white p-[10px] text-black shadow-[0_2px_10px]'
       aria-label='Formatting options'
     >
       <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
@@ -96,13 +96,18 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
             </button>
           </MyTooltip>
         </Toolbar.ToggleItem>
-
-        <button
-          type='button'
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+        <Toolbar.ToggleItem
+          className='text-mauve11 hover:bg-violet3 hover:text-violet11 focus:shadow-violet7 data-[state=on]:bg-violet5 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 focus:relative focus:shadow-[0_0_0_2px] data-[state=on]:text-red-500'
+          value='italic'
+          aria-label='Italic'
         >
-          <FontItalicIcon />
-        </button>
+          <button
+            type='button'
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+          >
+            <FontItalicIcon />
+          </button>
+        </Toolbar.ToggleItem>
         <button
           type='button'
           onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -132,7 +137,6 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <DoubleArrowDownIcon />
         </button>
       </Toolbar.ToggleGroup>
-      <div className='flex flex-row items-center gap-1'></div>
 
       <div className='flex flex-row items-center gap-1'>
         <button
@@ -219,6 +223,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <p className='text-[15px]'>3</p>
         </button>
       </div>
+
       <div className='flex flex-row items-center gap-1'>
         <button
           type='button'
@@ -331,7 +336,11 @@ const TipTap = ({ content }: { content?: string }) => {
       CharacterCount.configure({
         limit
       }),
-      Image,
+      Image.configure({
+        HTMLAttributes: {
+          class: 'w-24 h-24 rounded-md'
+        }
+      }),
       Typography
     ],
     content: content,

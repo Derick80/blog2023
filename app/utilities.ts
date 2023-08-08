@@ -106,3 +106,17 @@ export async function validateAction<ActionInput>({
     }
   }
 }
+// format date function to return data as X hours/days ago
+export function formatDateAgo(date: string) {
+  const newDate = new Date(date)
+  const time = newDate.getTime()
+  const now = Date.now()
+  const diff = now - time
+  const hours = Math.floor(diff / 1000 / 60 / 60)
+  if (hours < 24) {
+    return `${hours} hours ago`
+  } else {
+    const days = Math.floor(hours / 24)
+    return `${days} days ago`
+  }
+}

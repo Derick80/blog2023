@@ -27,7 +27,7 @@ export default function SearchBar({ appRoute }: { appRoute: string }) {
       >
         <input
           type='text'
-          className='h-full w-full border-none px-4 text-sm placeholder-gray-400'
+          className='h-full w-full border-none px-4 text-sm placeholder-gray-500'
           placeholder='Search...'
           name='filter'
           value={search}
@@ -36,12 +36,12 @@ export default function SearchBar({ appRoute }: { appRoute: string }) {
       </div>
 
       <div className='hidden lg:block'>
-        <button className='ml-2 rounded-full bg-white p-2'>
+        <button className='ml-2 rounded-full bg-slate-50  p-2 dark:bg-slate-900'>
           <MagnifyingGlassIcon />
         </button>
         {search && (
           <button
-            className='ml-2 rounded-full bg-white p-2'
+            className='ml-2 rounded-full bg-slate-50  p-2 dark:bg-slate-900'
             onClick={handleReset}
             type='submit'
           >

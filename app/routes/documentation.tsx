@@ -1,15 +1,13 @@
 import type { LoaderArgs } from '@remix-run/node'
-import { json, SerializeFrom } from '@remix-run/node'
-import React from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
-import { Form, Outlet, useLoaderData } from '@remix-run/react'
+import { json } from '@remix-run/node'
+import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import DocumentationCard from '~/components/documentation/doc-component'
-import { getTaskCategories, getTasks } from '~/server/task.server'
+import { getTaskCategories } from '~/server/task.server'
 import SearchBar from '~/components/search-bar'
 import { Prisma } from '@prisma/client'
-import { prisma } from '~/server/auth/prisma.server'
-import CustonSelect from '~/components/customselect'
+import { prisma } from '~/server/prisma.server'
+
 export async function loader({ request, params }: LoaderArgs) {
   const url = new URL(request.url)
 
@@ -60,10 +58,13 @@ export default function DocumentationIndex() {
       {isAdmin && (
         <div className='mb-5 flex h-16 w-full items-center justify-center border-2'></div>
       )}
-      <div className='flex h-full w-1/2 items-center justify-center border-2'></div>
       <div className='flex h-full w-1/2 items-center justify-center border-2'>
         <SearchBar appRoute='/documentation' />
+        <NavLink to='/documentation/task/new' className='ml-5'>
+          Create New Task
+        </NavLink>
       </div>
+      <Outlet />
 
       {data.sections.map((section) => (
         <div
@@ -76,8 +77,6 @@ export default function DocumentationIndex() {
           <DocumentationCard section={section} />
         </div>
       ))}
-
-      <Outlet />
     </div>
   )
 }

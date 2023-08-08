@@ -2,12 +2,12 @@ import type { LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Outlet, Link } from '@remix-run/react'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 
 export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'))

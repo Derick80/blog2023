@@ -19,11 +19,11 @@ import {
 import { isAuthenticated } from './server/auth/auth.server'
 import Layout from './components/layout'
 import stylesheet from '~/tailwind.css'
-import type { ToastMessage } from './server/auth/session.server'
-import { commitSession, getSession } from './server/auth/session.server'
+import type { ToastMessage } from './server/session.server'
+import { commitSession, getSession } from './server/session.server'
 import React from 'react'
 import { Toaster, toast } from 'react-hot-toast'
-import { prisma } from './server/auth/prisma.server'
+import { prisma } from './server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export const links: LinksFunction = () => [

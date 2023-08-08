@@ -8,13 +8,13 @@ import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { useOptionalUser, validateAction } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {

@@ -5,10 +5,10 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { z } from 'zod'
 import { validateAction } from '~/utilities'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import { Form, useNavigation } from '@remix-run/react'
 import React from 'react'
 

@@ -4,8 +4,8 @@ import { eventStream } from 'remix-utils'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { chatEmitter, EVENTS } from '~/server/auth/chat.server'
-import { prisma } from '~/server/auth/prisma.server'
+import { chatEmitter, EVENTS } from '~/server/chat.server'
+import { prisma } from '~/server/prisma.server'
 
 export async function loader({ request, params }: LoaderArgs) {
   const currentUser = await isAuthenticated(request)

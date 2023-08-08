@@ -7,8 +7,8 @@ import { z } from 'zod'
 import { RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { prisma } from '~/server/auth/prisma.server'
-import { getSession, setErrorMessage } from '~/server/auth/session.server'
+import { prisma } from '~/server/prisma.server'
+import { getSession, setErrorMessage } from '~/server/session.server'
 import type { User } from '~/server/schemas/schemas'
 import { useOptionalUser, validateAction } from '~/utilities'
 
@@ -156,8 +156,6 @@ export default function UserRoute() {
   }>()
 
   const loggedInUser = useOptionalUser()
-  console.log(loggedInUser?.id, 'loggedInUser')
-  console.log(data?.user?.id, 'data?.user?.id')
 
   const isOwnProfile = loggedInUser?.id === data?.user?.id
 
@@ -180,14 +178,14 @@ export default function UserRoute() {
       <Outlet />
       <ul className='flex w-full flex-col items-center gap-1 md:gap-2'>
         <li className='flex w-full flex-row justify-between gap-1 rounded-lg border-2 p-1 md:gap-2 md:p-2'>
-          <RowBox>
+          <div className='flex flex-row items-center gap-1 md:gap-2'>
             <img
               className='h-10 w-10 rounded-full'
               src={data.user.avatarUrl || ''}
               alt='avatar'
             />
             <h3 className='text-xl font-bold'>{data.user.username}</h3>
-          </RowBox>
+          </div>
           <p>{data.user.email}</p>
           <RowBox>
             <Link to={`/users/${data.user.id}`}>View User</Link>

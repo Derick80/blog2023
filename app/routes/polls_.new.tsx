@@ -2,13 +2,13 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import type { ActionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form } from '@remix-run/react'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import Button from '~/components/button'
 export async function action({ request, params }: ActionArgs) {
   const session = await getSession(request.headers.get('Cookie'))

@@ -4,8 +4,8 @@ import { useOptionalUser } from '~/utilities'
 
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { prisma } from '~/server/auth/prisma.server'
-import { fetchSecureUrls } from '~/server/auth/cloudinary.server'
+import { prisma } from '~/server/prisma.server'
+import { isAuthenticated } from '~/server/auth/auth.server'
 export const meta: V2_MetaFunction = () => {
   return [
     { title: `Derick's Blog` },
@@ -15,58 +15,26 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  // const testdata = await fetchSecureUrls()
-  // console.log(testdata, 'test data')
-  const data = await prisma.poll.findFirst({
-    include: {
-      votes: true,
-      _count: {
-        select: { votes: true, options: true }
-      },
+  const user = await isAuthenticated(request)
+  const userId = user?.id
 
-      options: {
-        include: {
-          votes: true,
-          _count: {
-            select: { votes: true }
-          }
-        }
-      }
-    },
-    orderBy: { createdAt: 'desc' }
-  })
+  if (!userId) return json({ user: null })
 
-  if (!data) {
-    throw new Error('No data found')
-  }
-
-  return json({ data })
+  return json({ user: await prisma.user.findUnique({ where: { id: userId } }) })
 }
 
 export default function Index() {
   const data = useLoaderData<typeof loader>()
 
-  const navigate = useNavigation()
-  const user = useOptionalUser()
   return (
-    <div
-      className={
-        navigate.state === 'loading'
-          ? 'opacity-25 transition-opacity delay-200'
-          : 'mx-auto flex flex-col items-center'
-      }
-    >
+    <div className=''>
       <h1>Welcome to My Social Media App</h1>
-
-      <ul>
-        {user && (
-          <li>
-            <div className='flex flex-row'>
-              <p>{user.email}</p>
-            </div>
-          </li>
-        )}
-      </ul>
+      {data && data.user && (
+        <ul>
+          <li>{data.user.email} </li>
+          <li>{data.user.role} </li>
+        </ul>
+      )}
     </div>
   )
 }

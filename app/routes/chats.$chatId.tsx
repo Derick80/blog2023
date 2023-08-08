@@ -13,13 +13,13 @@ import { z } from 'zod'
 import { zx } from 'zodix'
 import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { chatEmitter } from '~/server/auth/chat.server'
-import { prisma } from '~/server/auth/prisma.server'
+import { chatEmitter } from '~/server/chat.server'
+import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { useOptionalUser, validateAction } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {

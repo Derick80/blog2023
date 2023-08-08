@@ -2,7 +2,7 @@ import { addHours, addDays, isBefore } from 'date-fns'
 import type { Prisma, TokenType } from '@prisma/client'
 import { randomBytes } from 'crypto'
 import bcrypt from 'bcryptjs'
-import { prisma } from './prisma.server'
+import { prisma } from '../prisma.server'
 
 export const createPasswordHash = async (password: string) => {
   const hashedPassword = await bcrypt.hash(password, 10)

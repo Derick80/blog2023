@@ -2,9 +2,9 @@
 import { Authenticator } from 'remix-auth'
 import type { DiscordProfile } from 'remix-auth-discord'
 import { DiscordStrategy } from 'remix-auth-discord'
-import { sessionStorage } from '../session.server'
+import { sessionStorage } from '../../session.server'
 import { getAccount } from './accountService.server'
-import { createUser } from '../user.server'
+import { createUser } from '../../user.server'
 
 export interface DiscordUser {
   id: DiscordProfile['id']

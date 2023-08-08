@@ -3,6 +3,7 @@ import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
 import { set } from 'date-fns'
 
 type Props = {
+  testOptions?: string[]
   options: { id: string; value: string; label: string }[]
   picked: { id: string; value: string; label: string }[]
   multiple?: boolean
@@ -12,8 +13,18 @@ export default function SelectBox({
   options,
   picked,
   multiple = false,
-  name = 'selection'
+  name = 'selection',
+  testOptions
 }: Props) {
+  // convert testOptions to options
+  if (testOptions) {
+    options = testOptions.map((item) => ({
+      id: item,
+      value: item,
+      label: item
+    }))
+  }
+
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [selected, setSelected] = React.useState(picked)
   const [dropdown, setDropdown] = React.useState(false)

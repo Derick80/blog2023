@@ -3,13 +3,13 @@ import { redirect } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 
 export async function action({ request, params }: ActionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })

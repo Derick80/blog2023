@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import BlogCard from '~/components/blog-ui/blog-card'
 import CommentBox from '~/components/blog-ui/comments/comment-box'
 import { useMatchesData } from '~/utilities'

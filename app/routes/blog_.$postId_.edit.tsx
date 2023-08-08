@@ -7,10 +7,10 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { z } from 'zod'
 import { useMatchesData, validateAction } from '~/utilities'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import { updatePost } from '~/server/post.server'
 import {
   Form,
@@ -117,6 +117,7 @@ export default function PostEdit() {
   // use Navigate to go back to the previous page
   const navigate = useNavigate()
   const data = useLoaderData<typeof loader>()
+
   const actionData = useActionData<{ errors: Record<string, string> }>()
 
   const parentData = useMatchesData('root') as {
@@ -127,6 +128,9 @@ export default function PostEdit() {
 
   return (
     <div className='mx-auto flex h-full w-fit flex-col p-1'>
+      <div className='flex items-center justify-between'>
+        {data.post.content}
+      </div>
       <Form id='post-edit' className='flex w-full flex-col' method='POST'>
         <label htmlFor='title'>Title</label>
         <input

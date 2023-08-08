@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 
 // or cloudflare/deno
 

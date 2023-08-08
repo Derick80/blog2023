@@ -6,13 +6,13 @@ import type { LoaderArgs, ActionArgs } from '@remix-run/node'
 import ImageUploader from '~/components/blog-ui/image-fetcher'
 import type { User } from '~/server/schemas/schemas'
 import React from 'react'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { validateAction } from '~/utilities'
