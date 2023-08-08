@@ -1,7 +1,7 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import { z } from 'zod'
 import { validateAction } from '~/utilities'
 import {
@@ -9,7 +9,7 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { commentId } = zx.parseParams(params, { commentId: z.string() })

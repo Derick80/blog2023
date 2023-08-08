@@ -7,7 +7,7 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { validateAction } from '~/utilities'
 import { updateTaskStatus } from '~/server/task.server'
 

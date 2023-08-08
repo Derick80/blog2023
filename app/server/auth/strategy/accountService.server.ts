@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client'
-import { prisma } from '../prisma.server'
+import { prisma } from '../../prisma.server'
 
 export const getAccount = async ({
   provider,

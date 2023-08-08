@@ -20,7 +20,7 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { createPost } from '~/server/post.server'
 import type { Category } from '~/server/schemas/schemas'
 import { validateAction } from '~/utilities'

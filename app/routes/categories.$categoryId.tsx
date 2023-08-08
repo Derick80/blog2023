@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { zfd } from 'zod-form-data'
 import { zx } from 'zodix'
 import { z } from 'zod'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import {
   useRouteError,
   isRouteErrorResponse,

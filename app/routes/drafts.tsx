@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
 import { BlogPreview } from './blog'

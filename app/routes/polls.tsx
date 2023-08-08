@@ -2,7 +2,7 @@ import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import React from 'react'
 import VotingMachine from '~/components/voting-machine'
 import {
@@ -10,7 +10,7 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 import { z } from 'zod'
 import { validateAction } from '~/utilities'
 export async function loader({ request, params }: LoaderArgs) {

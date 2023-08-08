@@ -47,12 +47,10 @@ export default function CommentContainer({
   const data = commentFetcher?.data as {
     comments: CommentWithChildren[]
   }
-  console.log(data, 'data from comment container')
 
   const comments = data?.comments?.filter(
     (comment: CommentWithChildren) => comment.postId === postId
   )
-  console.log(comments, 'comments')
 
   if (!comments)
     return (

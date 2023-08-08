@@ -5,7 +5,8 @@ import type {
   Like as PrismaLike,
   Favorite as PrismaFavorite,
   Category as PrismaCategory,
-  Comment as PrismaComment
+  Comment as PrismaComment,
+  TaskCategory as TaskCategoryImport
 } from '@prisma/client'
 
 import type { SerializeFrom } from '@remix-run/node'
@@ -58,3 +59,15 @@ export type Post = SerializeFrom<PrismaPost> & {
 export type CategoryForm = {
   value: string
 }[]
+
+export type TaskCategory = SerializeFrom<TaskCategoryImport>
+export type GetPostsVersionTwoType = {
+  posts: Post & {
+    _count: {
+      comments: number
+      likes: number
+    }
+    user: User
+    categories: Category[]
+  }
+}

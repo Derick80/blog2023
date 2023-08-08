@@ -24,9 +24,7 @@ export default function CustonSelect({
 
   function handleSelect(event: React.MouseEvent<HTMLButtonElement>) {
     const updatedSelection = event.currentTarget.textContent
-    console.log(updatedSelection, 'selected from handleSelect')
     setPicked(updatedSelection || '')
-    console.log(picked, 'picked')
 
     setStatus(updatedSelection || '')
     setOpen(false)

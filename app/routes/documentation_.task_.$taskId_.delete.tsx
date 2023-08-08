@@ -9,7 +9,7 @@ import {
   getSession,
   setErrorMessage,
   setSuccessMessage
-} from '~/server/auth/session.server'
+} from '~/server/session.server'
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)

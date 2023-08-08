@@ -8,7 +8,7 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogCard from '~/components/gpt-blogcard'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 import type { Post } from '~/server/schemas/schemas'
 
 export async function loader({ params }: LoaderArgs) {

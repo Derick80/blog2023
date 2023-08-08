@@ -153,7 +153,24 @@ model Profile {
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String  @unique
   email          String
+  socials        Socials?
+
 }
+
+model Socials {
+  id        String   @id @unique @default(uuid())
+  twitter   String?
+  linkedin  String?
+  instagram String?
+  github    String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String   @unique
+}
+
+
 model Project {
   id          String     @id @unique @default(uuid())
   title       String

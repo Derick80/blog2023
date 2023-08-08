@@ -1,4 +1,5 @@
-import { prisma } from './auth/prisma.server'
+import { prisma } from './prisma.server'
+import { Prisma } from '@prisma/client'
 import type {
   Task as TaskImport,
   TaskCategory as TaskCategoryImport
@@ -9,7 +10,9 @@ export type Task = TaskImport & {
   categories: TaskCategory[]
 }
 export async function getTaskCategories() {
-  return await prisma.taskCategory.findMany()
+  return await prisma.taskCategory.findMany({
+    distinct: ['value']
+  })
 }
 
 export async function getTasks({ filter }: { filter?: string }) {
@@ -67,5 +70,11 @@ export async function updateTaskStatus(taskId: string, status: string) {
     data: {
       status: status
     }
+  })
+}
+
+export async function createTask(input: Prisma.TaskCreateInput) {
+  return await prisma.task.create({
+    data: input
   })
 }

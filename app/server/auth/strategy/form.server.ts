@@ -2,7 +2,7 @@ import { FormStrategy } from 'remix-auth-form'
 import invariant from 'tiny-invariant'
 
 import bcrypt from 'bcryptjs'
-import { getUser, createUser, getUserPasswordHash } from '../user.server'
+import { getUser, createUser, getUserPasswordHash } from '../../user.server'
 import type { AuthInput } from '../auth-schema'
 import { z } from 'zod'
 import { zfd } from 'zod-form-data'

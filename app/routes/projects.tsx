@@ -89,7 +89,6 @@ function ProjectShortList({ projects }: { projects: any[] }) {
   )
 }
 
-
 // {
 //   projects.map((project) => (
 //     <div

@@ -7,10 +7,12 @@ import ScrollToTop from './scroll-to-top'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className='flex w-full flex-col'>
+    <main className='flex w-full flex-col items-center'>
       <NavigationBar />
-
-      <div className=' flex w-full flex-col p-2 md:p-4'>{children}</div>
+      {/* remove border  */}
+      <div className='flex max-w-screen-lg  flex-col p-2 md:p-4'>
+        {children}
+      </div>
       <ScrollToTop />
     </main>
   )

@@ -3,7 +3,7 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
 import { z } from 'zod'
-import { prisma } from '~/server/auth/prisma.server'
+import { prisma } from '~/server/prisma.server'
 export async function action({ request, params }: ActionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
