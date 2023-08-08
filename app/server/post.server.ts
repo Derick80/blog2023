@@ -99,8 +99,6 @@ export async function getInitialPosts() {
   })
 }
 
-
-
 export async function getPostsVersionTwo() {
   return await prisma.post.findMany({
     where: {

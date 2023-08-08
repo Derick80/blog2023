@@ -6,10 +6,7 @@ import {
   Cross1Icon,
   PlusCircledIcon
 } from '@radix-ui/react-icons'
-import TaskCategoryForm from './documentation/task-category-form'
 import { useFetcher } from '@remix-run/react'
-import { set } from 'date-fns'
-import { action } from '~/routes/_auth.logout'
 
 type Props = {
   options: string[]

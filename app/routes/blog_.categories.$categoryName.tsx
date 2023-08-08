@@ -2,8 +2,6 @@ import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/server/prisma.server'
-import BlogCard from '~/components/blog-ui/blog-card'
-import CommentBox from '~/components/blog-ui/comments/comment-box'
 import { useMatchesData } from '~/utilities'
 
 export async function loader({ request, params }: LoaderArgs) {
@@ -49,12 +47,6 @@ export default function BlogRoute() {
   console.log(parentData, 'parentData')
 
   return (
-    <div className='flex h-screen w-full flex-col items-center gap-4'>
-      {posts.map((post) => (
-        <BlogCard key={post.id} post={post}>
-          <CommentBox postId={post.id} />
-        </BlogCard>
-      ))}
-    </div>
+    <div className='flex h-screen w-full flex-col items-center gap-4'></div>
   )
 }

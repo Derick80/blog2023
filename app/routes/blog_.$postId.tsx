@@ -7,7 +7,6 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import BlogCard from '~/components/gpt-blogcard'
 import { prisma } from '~/server/prisma.server'
 import type { Post } from '~/server/schemas/schemas'
 
@@ -59,9 +58,7 @@ export default function BlogPostRoute() {
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       <h1>Blog</h1>
-      <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data.post} />
-      </div>
+      <div className='flex flex-col items-center gap-4'></div>
     </div>
   )
 }
