@@ -4,8 +4,6 @@ import { json, redirect } from '@remix-run/node'
 import { prisma } from '~/server/prisma.server'
 import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
-import { BlogPreview } from './blog'
-import BlogCard from '~/components/blog-ui/blog-card'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
@@ -37,16 +35,5 @@ export default function DraftsRoute() {
   const { drafts } = useLoaderData<{
     drafts: Post[]
   }>()
-  return (
-    <div className='flex flex-col gap-2'>
-      {drafts.map((draft: Post) => (
-        <>
-          <BlogPreview key={draft.id} post={draft} />
-          <BlogCard post={draft}>
-            {/* <CommentBox postId={draft.id} /> */}
-          </BlogCard>
-        </>
-      ))}
-    </div>
-  )
+  return <div className='flex flex-col gap-2'></div>
 }
