@@ -1,17 +1,16 @@
 import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
-  Link,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import dayjs from 'dayjs'
 import { getPosts } from '~/server/post.server'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { HamburgerMenuIcon } from '@radix-ui/react-icons'
-import { Post } from '~/server/schemas/schemas'
+import { Comment, Post } from '~/server/schemas/schemas'
+import BlogPreviewCard from '~/components/v3-components/blog-ui/blog-post/blog-preview'
+import { typedjson, useTypedLoaderData } from 'remix-typedjson'
 dayjs.extend(relativeTime)
 
 export const meta: V2_MetaFunction = () => {
@@ -27,20 +26,20 @@ export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts()
   // isolate all comments from posts and flatten them into one array for use with useMatchesData
 
-  const comments = posts.map((post: { comments: any }) => post.comments).flat()
+  const comments = posts.map((post) => post.comments).flat()
 
-  return json({ posts, comments })
+  return typedjson({ posts, comments })
 }
 
 export default function BlogRoute() {
-  const data = useLoaderData<typeof loader>()
+  const data = useTypedLoaderData<typeof loader>()
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
-      <h1 className='text-2xl font-bold'>Blog</h1>
+      <h1>Blog</h1>
       <div className='flex w-full flex-col items-center gap-2'>
-        {data.posts.map((post: Post) => (
-          <div key={post.id} className='flex w-full flex-col gap-2'></div>
+        {data.posts.map((post) => (
+          <BlogPreviewCard key={post.id} posts={post} />
         ))}
       </div>
     </div>

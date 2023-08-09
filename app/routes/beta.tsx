@@ -1,11 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
-import {
-  getInitialPosts,
-  getPosts,
-  getPostsVersionTwo
-} from '~/server/post.server'
+import { getPostsVersionTwo } from '~/server/post.server'
 import { useLoaderData } from '@remix-run/react'
 import { GetPostsVersionTwoType } from '~/server/schemas/schemas'
 

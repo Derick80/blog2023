@@ -1,11 +1,12 @@
 import { prisma } from './prisma.server'
-import { Prisma } from '@prisma/client'
 import type {
   Task as TaskImport,
-  TaskCategory as TaskCategoryImport
+  TaskCategory as TaskCategoryImport,
+  Prisma
 } from '@prisma/client'
+import type { SerializeFrom } from '@remix-run/node'
 
-export type TaskCategory = TaskCategoryImport
+export type TaskCategory = SerializeFrom<TaskCategoryImport>
 export type Task = TaskImport & {
   categories: TaskCategory[]
 }
@@ -41,6 +42,28 @@ export async function getTask(id: string) {
     },
     include: {
       categories: true
+    }
+  })
+}
+
+export type TaskUpdateInput = Prisma.TaskUpdateInput
+
+export async function updateTask(
+  id: string,
+  input: TaskUpdateInput & { categories?: { value: string }[] }
+) {
+  const categories = input.categories?.map((category) => ({
+    value: category.value
+  }))
+  return await prisma.task.update({
+    where: {
+      id
+    },
+    data: {
+      ...input,
+      categories: {
+        set: categories
+      }
     }
   })
 }

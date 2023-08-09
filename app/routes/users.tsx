@@ -1,7 +1,7 @@
 import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
-import Button from '~/components/button'
+import Button from '~/components/v3-components/button'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import type { UserType } from '~/server/schemas/schemas'
 import { getUsers } from '~/server/user.server'

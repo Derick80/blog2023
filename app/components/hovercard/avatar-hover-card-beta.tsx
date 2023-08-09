@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFetcher } from '@remix-run/react'
 
-export default function HoverOCard() {
+export default function AvatarHoverCard() {
   const userFetcher = useFetcher()
 
   React.useEffect(() => {

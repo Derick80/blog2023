@@ -4,7 +4,6 @@ import { Link, NavLink } from '@remix-run/react'
 import Tags from '~/components/tags'
 import type { Category, User } from '~/server/schemas/schemas'
 import { formatDateAgo } from '~/utilities'
-import BlogLikeContainer from './blog-like'
 
 type BlogPreviewCardProps = SerializeFrom<
   Post & {
@@ -25,12 +24,12 @@ export default function BlogPreviewCard({
   const { id, title, description, createdAt, user, categories, _count } = posts
 
   return (
-    <div className='flex w-full flex-col'>
+    <div className='flex w-full flex-col rounded-md bg-slate-800 p-1 md:p-2 lg:p-3'>
       <Link to={`/blog/${id}`}>
         <h4>{title}</h4>
       </Link>
       <NavLink to={`/blog/users/${user.username}`}>
-        <p>
+        <p className='text-sm text-gray-400'>
           Posted by {user.username} {formatDateAgo(createdAt)}
         </p>
       </NavLink>

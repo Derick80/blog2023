@@ -36,6 +36,7 @@ export default function CustomSelectBox({
           setSelected((prevSelected) =>
             prevSelected.filter((item) => item !== value)
           )
+
           setDropdown(false)
         } else {
           const item = options.find((item) => item === value)
@@ -49,11 +50,13 @@ export default function CustomSelectBox({
           setSelected((prevSelected) =>
             prevSelected.filter((item) => item !== value)
           )
+
           setDropdown(false)
         } else {
           const item = options.find((item) => item === value)
           if (item) {
             setSelected([item])
+
             setDropdown(false)
           }
         }

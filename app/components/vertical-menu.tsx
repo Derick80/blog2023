@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import React from 'react'
-import Button from './button'
+import Button from './v3-components/button'
 import { Portal } from './portal'
 
 export default function VerticalMenu({

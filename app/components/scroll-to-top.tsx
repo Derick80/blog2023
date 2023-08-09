@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from './button'
+import Button from './v3-components/button'
 import { ArrowUpIcon } from '@radix-ui/react-icons'
 
 // Used this resource to help build this component and replace the mantine component
