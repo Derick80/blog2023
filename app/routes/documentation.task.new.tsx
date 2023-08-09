@@ -10,10 +10,9 @@ import {
 import { z } from 'zod'
 import { validateAction } from '~/utilities'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
-import Button from '~/components/button'
+import Button from '~/components/v3-components/button'
 import { createTask, getTaskCategories } from '~/server/task.server'
-import CustomSelectBox from '~/components/custom-select'
-import { tr } from 'date-fns/locale'
+import CustomSelectBox from '~/components/v3-components/custom-select'
 
 export async function loader({ request, params }: LoaderArgs) {
   const categories = await getTaskCategories()

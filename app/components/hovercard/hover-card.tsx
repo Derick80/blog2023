@@ -3,7 +3,7 @@ import type { User } from '~/server/schemas/schemas'
 import * as HoverCard from '@radix-ui/react-hover-card'
 import { Form, Link, useFetcher } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
-import Button from '../button'
+import Button from '../v3-components/button'
 import { ExitIcon } from '@radix-ui/react-icons'
 export type HoverCardProps = {
   user: User

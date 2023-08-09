@@ -40,7 +40,7 @@ import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import CodeBlock from '@tiptap/extension-code-block'
 import * as Toolbar from '@radix-ui/react-toolbar'
-import { MyTooltip } from './radix-tooltip'
+import { MyTooltip } from '../radix-tooltip'
 
 // implimeent redo/undo and blockquote
 const MenuBar = ({ editor }: { editor: Editor }) => {

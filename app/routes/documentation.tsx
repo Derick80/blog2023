@@ -2,10 +2,10 @@ import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
-import DocumentationCard from '~/components/documentation/doc-component'
+import DocumentationCard from '~/components/v3-components/documentation/doc-component'
 import { getTaskCategories } from '~/server/task.server'
 import SearchBar from '~/components/search-bar'
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '~/server/prisma.server'
 
 export async function loader({ request, params }: LoaderArgs) {

@@ -3,7 +3,7 @@ import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 
 import type { LoaderArgs, ActionArgs } from '@remix-run/node'
-import ImageUploader from '~/components/blog-ui/image-fetcher'
+import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
 import type { User } from '~/server/schemas/schemas'
 import React from 'react'
 import { prisma } from '~/server/prisma.server'
@@ -16,7 +16,7 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { validateAction } from '~/utilities'
-import Button from '~/components/button'
+import Button from '~/components/v3-components/button'
 import { ArrowRightIcon } from '@radix-ui/react-icons'
 export async function loader({ request, params }: LoaderArgs) {
   const { username } = params

@@ -12,14 +12,13 @@ import { validateAction } from '~/utilities'
 import { updateTaskStatus } from '~/server/task.server'
 
 const schema = z.object({
-  status: z.string(),
-  id: z.string()
+  status: z.string()
 })
 
 type ActionInput = z.infer<typeof schema>
 export async function action({ request, params }: ActionArgs) {
-  // const { taskId } = zx.parseParams(params, { taskId: z.string() })
-  // console.log(taskId, 'taskId')
+  const { taskId } = zx.parseParams(params, { taskId: z.string() })
+  console.log(taskId, 'taskId')
   const session = await getSession(request.headers.get('Cookie'))
 
   const user = await isAuthenticated(request)
@@ -36,15 +35,15 @@ export async function action({ request, params }: ActionArgs) {
     return json({ errors })
   }
 
-  const { status, id } = formData as ActionInput
-  console.log(status, id, 'status input')
+  const { status } = formData as ActionInput
+  console.log(status, taskId, 'status input')
 
-  const updated = await updateTaskStatus(id, status)
+  const updated = await updateTaskStatus(taskId, status)
   if (updated) {
-    setSuccessMessage(session, `Task ${id} updated`)
+    setSuccessMessage(session, `Task ${taskId} updated`)
   } else {
-    setErrorMessage(session, `Task ${id} not updated`)
+    setErrorMessage(session, `Task ${taskId} not updated`)
   }
 
-  return json({ updated })
+  return json({ status: updated.status })
 }

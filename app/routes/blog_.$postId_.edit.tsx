@@ -20,9 +20,9 @@ import {
 } from '@remix-run/react'
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
-import TipTap from '~/components/tip-tap'
-import ImageUploader from '~/components/blog-ui/image-fetcher'
-import Button from '~/components/button'
+import TipTap from '~/components/v3-components/tip-tap'
+import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
+import Button from '~/components/v3-components/button'
 import SelectBox from '~/components/select'
 import * as Switch from '@radix-ui/react-switch'
 export async function loader({ request, params }: LoaderArgs) {

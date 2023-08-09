@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from './button'
+import Button from './v3-components/button'
 import { Form } from '@remix-run/react'
 
 export default function ChatWidget() {

@@ -1,10 +1,10 @@
 import { ChevronDownIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { SerializeFrom } from '@remix-run/node'
+import type { SerializeFrom } from '@remix-run/node'
 import { Form, NavLink, useFetcher, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import type { Task, TaskCategory } from '~/server/task.server'
-import { Select, SelectItem } from './doc-select'
-import CustonSelect from '../customselect'
+import CustomSelectBox from '../custom-select'
+import Button from '../button'
 type Props = {
   section: string
 }
@@ -33,36 +33,21 @@ type TaskListTypes = {
   title: string
   description: string
   status: string
-  categories: TaskToType[]
+  categories: TaskCategory[]
 }
 function TaskList({ task }: { task: TaskListTypes }) {
-  const statusSelectOptions = [
-    {
-      value: `📆 To Do`
-    },
-    {
-      value: `⏩ In Progress`
-    },
-    {
-      value: `✅ Completed`
-    },
-    {
-      value: `💡 Idea`
-    }
-  ]
+  const statusFetcher = useFetcher()
 
-  const categories = task.categories
-  const runningStatus = task.status
-  const [status, setStatus] = React.useState<string>(runningStatus)
+  const [status, setStatus] = React.useState([task.status])
 
   return (
-    <li className='flex w-full flex-col items-start rounded-md border-2 p-1 '>
+    <li className='flex w-full flex-col items-start rounded-md p-1 md:p-2 lg:p-3 '>
       <div className='flex w-full scroll-m-10 justify-between gap-1 border-2 text-xl font-bold tracking-tight lg:text-2xl'>
         <p className='text-2xl font-bold tracking-tight lg:text-2xl'>
           {task.title}
         </p>
         <p className='text-2xl font-bold tracking-tight lg:text-2xl'>
-          {status}
+          {task.status}
         </p>
       </div>
 
@@ -75,6 +60,11 @@ function TaskList({ task }: { task: TaskListTypes }) {
       <div className='items-censter flex w-full justify-between border-2'>
         <DescriptionFormatter description={task.description} />
         <div className='flex items-center gap-1'>
+          <NavLink to={`/documentation/task/${task.id}/edit`}>
+            <Button variant='primary_filled' size='tiny'>
+              <Pencil1Icon />
+            </Button>
+          </NavLink>
           <DeleteTaskForm id={task.id} />
         </div>
       </div>
@@ -94,10 +84,6 @@ function DescriptionFormatter({ description }: { description: string }) {
   }
 
   const needsLineClamp = initialLineClamp(description)
-
-  function handleShowMore() {
-    setShowMore(!showMore)
-  }
 
   return (
     <>
@@ -134,3 +120,5 @@ function DeleteTaskForm({ id }: { id: string }) {
     </Form>
   )
 }
+
+// create a Navlink that can be used to edit a task

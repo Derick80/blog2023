@@ -4,7 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import type { Favorite } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
-import Button from './button'
+import Button from './v3-components/button'
 import * as Tooltip from '@radix-ui/react-tooltip'
 
 export type FavoriteContainerProps = {

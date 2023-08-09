@@ -5,7 +5,7 @@ import { json } from '@remix-run/node'
 import { Form, Outlet, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { ColBox, RowBox } from '~/components/boxes'
-import Button from '~/components/button'
+import Button from '~/components/v3-components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 
 import { prisma } from '~/server/prisma.server'

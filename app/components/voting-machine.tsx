@@ -2,7 +2,7 @@ import React from 'react'
 import { RowBox } from './boxes'
 import { Form, useActionData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
-import Button from './button'
+import Button from './v3-components/button'
 import type { Vote } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
 
