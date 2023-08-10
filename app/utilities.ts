@@ -2,6 +2,8 @@ import { useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
 import type { Category, UserType } from './server/schemas/schemas'
+import React from 'react'
+import { Link, type LinkProps } from '@remix-run/react'
 
 const DEFAULT_REDIRECT = '/'
 
@@ -120,3 +122,4 @@ export function formatDateAgo(date: string) {
     return `${days} days ago`
   }
 }
+

@@ -23,7 +23,7 @@ function NavigationBar() {
   // fix w-4/s6 if I want to change the latout
   return (
     <div className='sticky top-0 z-50 flex w-full flex-row items-center justify-around bg-slate-50 font-robo dark:bg-slate-800'>
-      <NavLink to='/'>
+      <NavLink className='' to='/'>
         <BrandIcon />
       </NavLink>
       <NavLink
