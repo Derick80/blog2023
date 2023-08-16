@@ -7,6 +7,7 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
+import BlogCard from '~/components/v3-components/blog-ui/blog-post/blog-post-v2'
 import { prisma } from '~/server/prisma.server'
 import type { Post } from '~/server/schemas/schemas'
 
@@ -15,7 +16,15 @@ export async function loader({ params }: LoaderArgs) {
   const post = await prisma.post.findUnique({
     where: { id: postId },
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          avatarUrl: true,
+          role: true
+        }
+      },
       likes: true,
       favorites: true,
       categories: true,
@@ -53,12 +62,14 @@ export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
   }>()
-  console.log(data, 'data')
+  console.log(data, 'data from blog post id route')
 
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       <h1>Blog</h1>
-      <div className='flex flex-col items-center gap-4'></div>
+      <div className='flex flex-col items-center gap-4'>
+        <BlogCard post={data.post} />
+      </div>
     </div>
   )
 }

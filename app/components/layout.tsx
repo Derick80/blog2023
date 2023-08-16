@@ -7,10 +7,10 @@ import ScrollToTop from './scroll-to-top'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className='flex w-full flex-col items-center'>
+    <main className='flex h-screen w-full flex-col items-center'>
       <NavigationBar />
       {/* remove border  */}
-      <div className='flex max-w-screen-lg  flex-col p-2 md:p-4'>
+      <div className='flex h-full w-full max-w-screen-lg flex-col p-2 md:p-4'>
         {children}
       </div>
       <ScrollToTop />
@@ -23,7 +23,7 @@ function NavigationBar() {
   // fix w-4/s6 if I want to change the latout
   return (
     <div className='sticky top-0 z-50 flex w-full flex-row items-center justify-around bg-slate-50 font-robo dark:bg-slate-800'>
-      <NavLink className='' to='/'>
+      <NavLink className='h-10 w-10' to='/'>
         <BrandIcon />
       </NavLink>
       <NavLink

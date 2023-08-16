@@ -1,5 +1,5 @@
 import { prisma } from './prisma.server'
-import type { Category, CategoryForm, Post, User } from './schemas/schemas'
+import type { CategoryForm } from './schemas/schemas'
 
 export type PostInput = {
   title: string
@@ -152,6 +152,13 @@ export async function getPosts() {
       likes: true,
       favorites: true,
       categories: true,
+      _count: {
+        select: {
+          comments: true,
+          likes: true,
+          favorites: true
+        }
+      },
       comments: {
         include: {
           _count: true,
@@ -251,6 +258,70 @@ export async function getUserPosts(username: string) {
 
     orderBy: {
       createdAt: 'desc'
+    }
+  })
+}
+
+export const DefaultUserSelect = {
+  id: true,
+  username: true,
+  email: true,
+  avatarUrl: true,
+  password: false,
+  role: true
+}
+
+export const DefaultCommentSelect = {
+  id: true,
+  message: true,
+  createdAt: true,
+  updatedAt: true,
+  user: {
+    select: DefaultUserSelect
+  }
+}
+
+export const DefaultLikeSelect = {
+  userId: true,
+  postId: true
+}
+
+export const DefaultFavoriteSelect = {
+  userId: true,
+  postId: true
+}
+
+export const DefaultAllPostSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  description: true,
+  content: true,
+  imageUrl: true,
+  featured: true,
+  published: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+  user: {
+    select: DefaultUserSelect
+  },
+  categories: true,
+  _count: {
+    select: {
+      comments: true,
+      likes: true,
+      favorites: true
+    }
+  },
+  likes: false,
+  favorites: false
+}
+
+export async function getAllPostsV1() {
+  return await prisma.post.findMany({
+    select: {
+      ...DefaultAllPostSelect
     }
   })
 }

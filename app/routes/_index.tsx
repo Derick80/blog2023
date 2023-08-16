@@ -31,7 +31,7 @@ export default function Index() {
       <h1>Welcome to My Social Media App</h1>
       {data && data.user && (
         <ul>
-          <li>{data.user.email} </li>
+          <li>{data.user.username} </li>
           <li>{data.user.role} </li>
         </ul>
       )}
