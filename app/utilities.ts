@@ -122,4 +122,3 @@ export function formatDateAgo(date: string) {
     return `${days} days ago`
   }
 }
-

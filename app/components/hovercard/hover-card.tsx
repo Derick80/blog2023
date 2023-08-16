@@ -26,7 +26,7 @@ export default function HoverOverCard() {
     <div className=''>
       {loggedInUser && (
         <HoverCard.Root openDelay={200} closeDelay={200}>
-          <HoverCard.Trigger className='flex flex-col items-center'>
+          <HoverCard.Trigger>
             <img
               src={loggedInUser.avatarUrl || ''}
               alt={loggedInUser.username}

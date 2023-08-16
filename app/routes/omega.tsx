@@ -1,18 +1,23 @@
-import * as Portal from '@radix-ui/react-portal'
-export default function OmegaRout() {
+import type { LoaderArgs } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
+import { NavLink, useLoaderData } from '@remix-run/react'
+import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
+import { getAllPostsV1 } from '~/server/post.server'
+import { FullPost } from '~/server/schemas/schemas_v2'
+export async function loader({ request, params }: LoaderArgs) {
+  const posts = await getAllPostsV1()
+  if (!posts) throw new Error('No posts found')
+  return json({ posts })
+}
+
+export default function OmegaIndex() {
+  const { posts } = useLoaderData<typeof loader>()
+
   return (
-    <main className='flex flex-col items-center justify-center'>
-      <Portal.Root
-        container={document.body}
-        className='fixed inset-0 flex flex-col items-center justify-center'
-      >
-        <form>
-          <h1 className='text-2xl font-bold'>Omega</h1>
-          <h1 className='text-2xl font-bold'>Omega</h1>
-          <h1 className='text-2xl font-bold'>Omega</h1>
-          <h1 className='text-2xl font-bold'>Omega</h1>
-        </form>
-      </Portal.Root>
-    </main>
+    <div className='flex flex-col gap-2'>
+      {posts.map((post) => (
+        <BlogPreviewV2 key={post.id} post={post} />
+      ))}
+    </div>
   )
 }

@@ -129,7 +129,7 @@ export default function NewPostRoute() {
   }, [categoryFetcher])
 
   return (
-    <div className='md:w-fsit mx-auto flex h-full w-full flex-col p-1'>
+    <div className=' mx-auto flex h-full w-full flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
 
       <Form className='flex w-full flex-col' method='post'>

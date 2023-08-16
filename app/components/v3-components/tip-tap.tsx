@@ -77,7 +77,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <Toolbar.Root
-      className='shadow-blackA7 flex w-full min-w-max rounded-md bg-white p-[10px] text-black shadow-[0_2px_10px]'
+      className='flex w-full min-w-max rounded-md bg-white p-[10px] text-black shadow-[0_2px_10px] shadow-black'
       aria-label='Formatting options'
     >
       <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
@@ -289,11 +289,6 @@ const TipTap = ({ content }: { content?: string }) => {
   const limit = 10000
   const editor = useEditor({
     extensions: [
-      // StarterKit.configure({
-      //   heading: {
-      //     levels: [1, 2, 3, 4, 5, 6]
-      //   }
-      // }),
       Document,
       Text,
       Bold,
@@ -358,7 +353,7 @@ const TipTap = ({ content }: { content?: string }) => {
   }
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex h-full flex-col gap-2'>
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
       <input type='hidden' name='content' value={editor?.getHTML()} />

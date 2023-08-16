@@ -69,8 +69,6 @@ summary > * {
   display: inline;
 }
 
-
-
 /* create custom classes for headings to use in tiptap editor */
 h1 {
   @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;

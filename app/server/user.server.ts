@@ -1,7 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import { prisma } from './prisma.server'
 import { createPasswordHash } from './auth/auth-service.server'
-import { tr } from 'date-fns/locale'
 
 export type UserProps = {
   id: string
