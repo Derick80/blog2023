@@ -1,15 +1,12 @@
 import { json, type LoaderArgs, type V2_MetaFunction } from '@remix-run/node'
 import {
   isRouteErrorResponse,
-  NavLink,
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
 import dayjs from 'dayjs'
 import { getAllPostsV1, getPosts } from '~/server/post.server'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import BlogPreviewCard from '~/components/v3-components/blog-ui/blog-post/blog-preview'
-import { Post } from '~/server/schemas/schemas'
 import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
 dayjs.extend(relativeTime)
 

@@ -8,7 +8,7 @@ import CommentContainer from '~/components/comments/comment-list'
 import FavoriteContainer from '~/components/favorite-container'
 import LikeContainer from '~/components/like-container'
 import { ShareButton } from '~/components/share-button'
-import { Post } from '~/server/schemas/schemas'
+import type { Post } from '~/server/schemas/schemas'
 import Button from '../../button'
 
 interface BlogCardProps {
