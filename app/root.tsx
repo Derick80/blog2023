@@ -17,7 +17,7 @@ import {
   useRouteError
 } from '@remix-run/react'
 import { isAuthenticated } from './server/auth/auth.server'
-import Layout from './components/layout'
+import Layout from './components/layout/layout'
 import stylesheet from '~/tailwind.css'
 import type { ToastMessage } from './server/session.server'
 import { commitSession, getSession } from './server/session.server'
