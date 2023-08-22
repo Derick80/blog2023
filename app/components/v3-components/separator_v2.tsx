@@ -6,18 +6,16 @@ import clsx from 'clsx'
 
 export default function SeparatorV2({
   orientation,
-  color,
   className
 }: {
   orientation: 'horizontal' | 'vertical'
-  color: string
   className?: string
 }) {
   return (
     <Separator.Root
       className={clsx(
         `mt-[15px] data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px`,
-        `bg-${color}`,
+        `bg-violet8 dark:bg-violet11j_dark`,
         `${className}`
       )}
     />
