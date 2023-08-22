@@ -1,9 +1,8 @@
-import { useMatches } from '@remix-run/react'
-import { useMemo } from 'react'
+import { useMatches, useRouteLoaderData } from '@remix-run/react'
+import React, { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
 import type { Category, UserType } from './server/schemas/schemas'
-import React from 'react'
-import { Link, type LinkProps } from '@remix-run/react'
+import { Category_v2 } from './server/schemas/schemas_v2'
 
 const DEFAULT_REDIRECT = '/'
 
@@ -68,16 +67,6 @@ export function useUser(): UserType {
   return maybeUser
 }
 
-// Try this sometime
-export function useCategories() {
-  const data = useMatchesData('root')
-  if (!data || !data.categories) {
-    throw new Error(
-      'No categories found in root loader, but categories are required by useCategories.'
-    )
-  }
-  return data.categories as Category
-}
 type ActionErrors<T> = Partial<Record<keyof T, string>>
 
 export async function validateAction<ActionInput>({
@@ -121,4 +110,13 @@ export function formatDateAgo(date: string) {
     const days = Math.floor(hours / 24)
     return `${days} days ago`
   }
+}
+
+export function useCategories() {
+  const { categories } = useRouteLoaderData('root') as {
+    categories: Category_v2[]
+  }
+  // fetch categories from the server
+
+  return categories as Category_v2[]
 }

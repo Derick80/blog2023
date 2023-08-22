@@ -1,6 +1,8 @@
+import { ChevronLeftIcon } from '@radix-ui/react-icons'
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
+  NavLink,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError
@@ -66,7 +68,11 @@ export default function BlogPostRoute() {
 
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
-      <h1>Blog</h1>
+      {/* create a back button */}
+      <NavLink className='flex flex-row items-center gap-1' to='/blog'>
+        <ChevronLeftIcon />
+        Back
+      </NavLink>
       <div className='flex flex-col items-center gap-4'>
         <BlogCard post={data.post} />
       </div>

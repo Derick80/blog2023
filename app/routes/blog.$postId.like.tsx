@@ -38,31 +38,27 @@ export const action: ActionFunction = async ({ request, params }) => {
     )
   }
 
+  console.log(request.method, 'request method')
+
   try {
     if (request.method === 'POST') {
-      return await prisma.post.update({
-        where: {
-          id: postId
-        },
+      return await prisma.like.create({
         data: {
-          likes: {
-            create: {
-              userId
-            }
-          }
+          postId,
+          userId
         }
       })
     }
 
     if (request.method === 'DELETE') {
       return await prisma.like.delete({
-       where: {
-         postId_userId: {
-           postId,
-           userId
-         }
-       }
-     })
+        where: {
+          postId_userId: {
+            postId,
+            userId
+          }
+        }
+      })
     }
 
     return json({ message: 'like created or deleted successfully' })

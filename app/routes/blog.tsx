@@ -1,6 +1,7 @@
 import { json, type LoaderArgs, type V2_MetaFunction } from '@remix-run/node'
 import {
   isRouteErrorResponse,
+  Outlet,
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
@@ -17,8 +18,6 @@ export const meta: V2_MetaFunction = () => {
     }
   ]
 }
-
-
 
 export async function loader({ request }: LoaderArgs) {
   // get all posts and comments
@@ -40,6 +39,7 @@ export default function BlogRoute() {
       <h1>Blog</h1>
 
       <div className='flex w-full flex-col items-center gap-2'>
+        <Outlet />
         {data.posts.map((post) => (
           <BlogPreviewV2 key={post.id} post={post} />
         ))}

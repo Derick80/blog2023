@@ -1,35 +1,21 @@
 import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
-import { useFetcher, useMatches } from '@remix-run/react'
-import React, { useState } from 'react'
-import type { Like } from '~/server/schemas/schemas'
+import { useFetcher } from '@remix-run/react'
+import { useState } from 'react'
+import type { Like_v2 } from '~/server/schemas/schemas_v2'
 import { useOptionalUser } from '~/utilities'
 export type LikeContainerProps = {
   postId: string
+  likes: Like_v2[]
 }
 
-export default function LikeContainer({ postId }: LikeContainerProps) {
+export default function LikeContainer({ postId, likes }: LikeContainerProps) {
   const user = useOptionalUser()
   const currentUser = user?.id || ''
-
   const fetcher = useFetcher()
-  // get the matches from the route loader data
-  const matches = useMatches()
 
-  const postLikes = matches
-    .find(({ data }) => {
-      return data.posts
-    })
-    ?.data.posts.filter(({ id }: { id: string }) => {
-      return id === postId
-    })
-    .map(({ likes }: { likes: Like[] }) => {
-      return likes
-    })
-    .flat() as Like[] | undefined
-
-  const postLikesCount = postLikes?.length || 0
-  const userLikedPost = postLikes?.find(({ userId }) => {
+  const postLikesCount = likes?.length
+  const userLikedPost = likes?.find(({ userId }: { userId: string }) => {
     return userId === currentUser
   })
     ? true
@@ -37,7 +23,6 @@ export default function LikeContainer({ postId }: LikeContainerProps) {
 
   const [likeCount, setLikeCount] = useState(postLikesCount)
   const [isLiked, setIsLiked] = useState(userLikedPost)
-
   const toggleLike = async () => {
     let method: FormMethod = 'delete'
     if (userLikedPost) {

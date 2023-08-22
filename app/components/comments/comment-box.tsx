@@ -1,4 +1,5 @@
 import type { Post } from '@prisma/client'
+import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
 import Button from '~/components/v3-components/button'
@@ -14,6 +15,7 @@ export default function CommentBox({
   userId?: string
   setIsReplying?: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+  const [reply, setReply] = React.useState(false)
   const user = useOptionalUser()
   const commentFetcher = useFetcher()
 
@@ -26,8 +28,36 @@ export default function CommentBox({
     }
   }, [isDone, setIsReplying])
   return (
-    <div className='flex flex-col gap-2 rounded-lg bg-white px-2 py-2 shadow'>
-      {user && (
+    <div className='flex flex-col gap-4'>
+      {user ? (
+        <Button
+          className='ml-auto'
+          variant='icon_text_unfilled'
+          size='tiny'
+          type='submit'
+          onClick={() => {
+            setReply(!reply)
+            setIsReplying?.(true)
+          }}
+        >
+          {parentId ? (
+            <>
+              <ChatBubbleIcon />
+              <span className='mr-2'>{reply ? 'Cancel' : 'Reply'}</span>
+            </>
+          ) : (
+            <>
+              <ChatBubbleIcon />
+              <span className='mr-2'>Comment</span>
+            </>
+          )}
+        </Button>
+      ) : (
+        <p className='ml-auto text-sm text-gray-600'>
+          You must be logged in to comment.
+        </p>
+      )}
+      {reply && (
         <commentFetcher.Form
           ref={formRef}
           className='flex items-center gap-4'
@@ -43,21 +73,14 @@ export default function CommentBox({
             placeholder='Enter your comment here...'
             className='w-full rounded-md border-2 border-gray-300 p-2 text-sm text-black'
           />
-
-          {user ? (
-            <Button
-              className='ml-auto'
-              variant='primary_filled'
-              size='tiny'
-              type='submit'
-            >
-              {parentId ? 'Post reply' : 'Comment'}
-            </Button>
-          ) : (
-            <p className='ml-auto text-sm text-gray-600'>
-              You must be logged in to comment.
-            </p>
-          )}
+          <Button
+            variant='icon_text_filled'
+            size='tiny'
+            type='submit'
+            disabled={commentFetcher.state === 'loading'}
+          >
+            <span className='mr-2'>Post</span>
+          </Button>
         </commentFetcher.Form>
       )}
     </div>

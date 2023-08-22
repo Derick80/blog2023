@@ -48,7 +48,7 @@ export type Post = SerializeFrom<PrismaPost> & {
   favorites: Like[]
   categories: Category[]
   comments: CommentWithChildren[]
-  _count?: {
+  _count: {
     likes: number
     favorites: number
     comments: number
