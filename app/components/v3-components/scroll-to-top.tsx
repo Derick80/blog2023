@@ -1,6 +1,7 @@
 import React from 'react'
-import Button from './v3-components/button'
+import Button from './button'
 import { ArrowUpIcon } from '@radix-ui/react-icons'
+import ToolTip from './tooltip-v2'
 
 // Used this resource to help build this component and replace the mantine component
 // https://stackabuse.com/how-to-scroll-to-top-in-react-with-a-button-component/
@@ -10,7 +11,7 @@ export default function ScrollToTop() {
 
   React.useEffect(() => {
     window.addEventListener('scroll', () => {
-      if (window.pageYOffset > 300) {
+      if (window.scrollY > 300) {
         setShowTopButton(true)
       } else {
         setShowTopButton(false)
@@ -26,13 +27,14 @@ export default function ScrollToTop() {
     <div className='relative'>
       {showTopButton && (
         <Button
-          className='fixed bottom-5 right-5'
-          variant='icon_text_filled'
+          className='fixed  bottom-20 right-0 flex flex-col'
+          variant='icon_filled'
           size='base'
           onClick={goToTop}
         >
-          <ArrowUpIcon />
-          Scroll to top
+          <ToolTip tip='Scroll to top'>
+            <ArrowUpIcon className='text-violet11' />
+          </ToolTip>
         </Button>
       )}
     </div>
