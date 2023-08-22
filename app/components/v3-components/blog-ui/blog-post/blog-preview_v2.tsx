@@ -24,13 +24,9 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
         content={post.content}
         categories={post.categories}
       />
-      <SeparatorV2 orientation='horizontal' color='violet9' />
+      <SeparatorV2 orientation='horizontal' />
       <CategoryContainer categories={post.categories} />
-      <SeparatorV2
-        orientation='horizontal'
-        color='violet9'
-        className='mt-[0px]'
-      />
+      <SeparatorV2 orientation='horizontal' className='mt-[0px]' />
       <CardFooter postId={post.id} counts={post._count} likes={post.likes} />
     </article>
   )
