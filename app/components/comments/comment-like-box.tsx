@@ -58,19 +58,13 @@ export default function LikeComment({
           {liked ? (
             <div className='flex flex-row items-center gap-1'>
               <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
-              <p className='text-[10px]'>{likeCount}</p>
+              <div className='text-[15px]'>{likeCount}</div>
             </div>
           ) : (
             <div className='flex flex-row items-center gap-1'>
               <HeartIcon />
 
-              {likeCount > 0 ? (
-                <p className='absolute left-0 right-0 text-[10px]'>
-                  {likeCount}
-                </p>
-              ) : (
-                <div className='flex flex-grow' />
-              )}
+              <div className='text-[15px]'>{likeCount}</div>
             </div>
           )}
         </button>

@@ -1,6 +1,10 @@
 import { ChatBubbleIcon, OpenInNewWindowIcon } from '@radix-ui/react-icons'
 import { NavLink } from '@remix-run/react'
-import type { Category_v2, FullPost } from '~/server/schemas/schemas_v2'
+import type {
+  Category_v2,
+  FullPost,
+  Like_v2
+} from '~/server/schemas/schemas_v2'
 import LikeContainer from '../like-container-v2'
 import CategoryContainer from '../category_v2'
 
@@ -21,7 +25,7 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
       />
       <CategoryContainer categories={post.categories} />
 
-      <CardFooter postId={post.id} counts={post._count} />
+      <CardFooter postId={post.id} counts={post._count} likes={post.likes} />
     </article>
   )
 }
@@ -94,9 +98,11 @@ function CardUpperBody({
 
 function CardFooter({
   postId,
-  counts
+  counts,
+  likes
 }: {
   postId: string
+  likes: Like_v2[]
   counts: {
     comments: number
     likes: number
@@ -104,7 +110,7 @@ function CardFooter({
 }) {
   return (
     <div className='flex  flex-row justify-end gap-2 '>
-      <LikeContainer postId={postId} />
+      <LikeContainer postId={postId} likes={likes} />
       <NavLink
         className='flex flex-row items-center gap-1'
         to={`/blog/${postId}`}

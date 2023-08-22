@@ -3,12 +3,9 @@ import React from 'react'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
 import Button from '~/components/v3-components/button'
-import { useOptionalUser } from '~/utilities'
-import { RowBox } from '~/components/boxes'
-import { ChevronDownIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
+import { formatDateAgo, useOptionalUser } from '~/utilities'
+import { Cross2Icon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { CommentLike } from '@prisma/client'
-import type { SerializeFrom } from '@remix-run/node'
 import LikeComment from './comment-like-box'
 import EditCommentForm from './edit-comment-form'
 const dropdownVariants = {
@@ -69,7 +66,7 @@ export default function CommentContainer({
 
   if (!filteredComments) return null
   return (
-    <div className='flex flex-col rounded-md'>
+    <div className='flex flex-col gap-1 rounded-md pl-2'>
       {filteredComments?.map(
         (comment: CommentWithChildren) =>
           open && (
@@ -106,7 +103,7 @@ function SiblingComments({ commentId }: { commentId: string }) {
 
   return (
     <>
-      <div className='ml-5 rounded-md shadow-lg'>
+      <div className='border-1 ml-5 rounded-md shadow-lg'>
         {sibFetcher?.data?.comments?.map((comment: CommentWithChildren) => (
           <>
             <Comment key={comment?.id} comments={comment} />
@@ -131,189 +128,117 @@ function Comment({
   }
   children?: CommentWithChildren[]
 }) {
-  const user = useOptionalUser()
   const [open, setOpen] = React.useState(false)
   const [editing, setEditing] = React.useState(false)
-  const [isReplying, setIsReplying] = React.useState(false)
-  const deleteFetcher = useFetcher()
 
+  return (
+    <div className='flex w-full flex-col gap-1 rounded-md border-2 border-l-red-500'>
+      <CommentCardUserOptions
+        userAvatarUrl={comments?.user?.avatarUrl || ''}
+        username={comments?.user?.username || ''}
+        createdAt={comments?.createdAt || ''}
+        userId={comments?.userId || ''}
+        setEditing={setEditing}
+        setOpen={setOpen}
+        commentId={comments?.id || ''}
+        message={comments?.message || ''}
+        editing={editing}
+      >
+        {editing ? (
+          <EditCommentForm
+            setEditing={setEditing}
+            commentId={comments?.id}
+            message={comments?.message}
+          />
+        ) : (
+          <div className='prose w-full flex-col justify-start text-sm dark:prose-invert'>
+            <div className='prose flex items-center justify-between dark:prose-invert'>
+              <div className='text-base leading-4'>{comments?.message}</div>
+              <LikeComment
+                commentId={comments?.id}
+                commentLikesNumber={comments?.likes?.length}
+                likes={comments?.likes}
+              />
+            </div>
+            <SiblingComments commentId={comments?.id} />
+          </div>
+        )}
+      </CommentCardUserOptions>
+    </div>
+  )
+}
+
+function CommentCardUserOptions({
+  userAvatarUrl,
+  username,
+  createdAt,
+  userId,
+  setEditing,
+  setOpen,
+  commentId,
+  message,
+  editing,
+  children
+}: {
+  userAvatarUrl: string
+  username: string
+  createdAt: string
+  userId: string
+  setEditing: React.Dispatch<React.SetStateAction<boolean>>
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  commentId: string
+  message: string
+  editing?: boolean
+  children?: React.ReactNode
+}) {
+  const user = useOptionalUser()
+  const deleteFetcher = useFetcher()
   // using the deleteFetcher to delete the comment with onClick solves the weird riddle of fetcher.form and items-center
   const onClick = () => {
     deleteFetcher.submit(
       {
-        commentId: comments.id,
+        commentId,
         action: 'delete'
       },
       {
         method: 'post',
-        action: `/comment/${comments.id}`
+        action: `/comment/${commentId}`
       }
     )
   }
 
   return (
-    <div
-      className='flex w-full flex-col gap-1 rounded-md
-      shadow-md drop-shadow-md'
-    >
-      <RowBox className='relative w-full p-1'>
-        <div className='relative w-full rounded-md  p-1'>
-          <RowBox>
-            <img
-              src={comments?.user?.avatarUrl || '/avatar.png'}
-              alt={comments?.user?.username}
-              width={24}
-              height={24}
-              className='rounded-full'
-            />
-            <p className='text-xs text-slate-900'>
-              {comments?.user?.username} replied ...
-            </p>
-          </RowBox>
-          {editing ? (
-            <EditCommentForm
-              setEditing={setEditing}
-              commentId={comments.id}
-              message={comments.message}
-            />
-          ) : (
-            <p className='prose flex text-sm'>{comments?.message}</p>
-          )}
-          <div className='flex w-full items-center text-black'>
-            <UserCommentResponseBox
-              commentId={comments.id}
-              commentLength={comments?.likes?.length}
-              likes={comments.likes}
-            />
-            {user?.id === comments.userId && (
-              <>
-                {/* <VerticalMenu>
-                  <Button
-                    variant={editing ? 'danger_filled' : 'warning_filled'}
-                    size='small'
-                    className='flex flex-row justify-between gap-2 text-xs'
-                    onClick={() => setEditing((editing) => !editing)}
-                  >
-                    <p className='flex flex-row gap-2 text-xs text-black '>
-                      {editing ? 'Cancel' : 'Edit'}
-                    </p>
-                  </Button>
-
-                  <Button
-                    onClick={onClick}
-                    variant='danger_filled'
-                    size='tiny'
-                    type='submit'
-                    name='action'
-                    value='delete'
-                  >
-                    Delete
-                  </Button>
-                </VerticalMenu> */}
-              </>
-            )}
-
-            {user ? (
-              <>
-                <div className='flex flex-grow' />
-                <Button
-                  variant='icon_unfilled'
-                  size='small'
-                  onClick={() => setEditing((editing) => !editing)}
-                >
-                  <Pencil1Icon className='text-black' />
-                </Button>
-                <Button
-                  onClick={onClick}
-                  variant='icon_unfilled'
-                  size='tiny'
-                  type='submit'
-                  name='action'
-                  value='delete'
-                >
-                  <TrashIcon className='text-black' />
-                </Button>
-                <Button
-                  className=''
-                  variant={isReplying ? 'warning_filled' : 'primary_filled'}
-                  size='small'
-                  onClick={() => setIsReplying(!isReplying)}
-                >
-                  {isReplying ? 'Cancel' : 'Reply'}
-                </Button>
-              </>
-            ) : (
-              <p>
-                <a href='/login'>Login</a> to reply
-              </p>
-            )}
+    <div className='flex flex-col gap-2'>
+      <div className='flex h-10 w-full flex-row items-center justify-between gap-1'>
+        <div className='flex items-center'>
+          <img
+            src={userAvatarUrl || ''}
+            alt='user avatar'
+            className='h-6 w-6 rounded-full'
+          />
+          <div className='text-xs font-semibold'>
+            {username || ''} | {formatDateAgo(createdAt)}
           </div>
         </div>
-
-        {comments.children?.length > 0 && !open ? (
-          <Button
-            variant='icon_text_unfilled'
-            size='small'
-            className='flex flex-row items-center justify-between gap-1 text-xs'
-            onClick={() => setOpen((open) => !open)}
-          >
-            <p className='flex flex-row gap-2 text-xs text-black dark:text-slate-50'>
-              {getReplyCountText(comments.children?.length)}
-              <ChevronDownIcon />
-            </p>
-          </Button>
-        ) : (
-          <div className='flex flex-grow' />
+        {user?.id === userId && (
+          <div className='flex flex-row gap-1'>
+            <Button
+              variant='icon_unfilled'
+              size='tiny'
+              onClick={() => {
+                setEditing(!editing)
+                setOpen(false)
+              }}
+            >
+              {editing ? <Cross2Icon /> : <Pencil1Icon />}
+            </Button>
+            <Button variant='icon_unfilled' size='tiny' onClick={onClick}>
+              <TrashIcon />
+            </Button>
+          </div>
         )}
-        <div className='flex flex-col gap-1'></div>
-      </RowBox>
-      <RowBox className='mt- w-full'>
-        {
-          <AnimatePresence>
-            {isReplying && (
-              <motion.div
-                className='relative ml-5 w-full'
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <CommentBox
-                  postId={comments.postId}
-                  parentId={comments.id}
-                  userId={comments.userId}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        }
-        <div className='flex flex-grow' />
-      </RowBox>
-      {
-        <AnimatePresence>
-          {open && <SiblingComments commentId={comments.id} />}
-        </AnimatePresence>
-      }
-    </div>
-  )
-}
-
-// although underutilized this holds the like button.
-function UserCommentResponseBox({
-  commentId,
-  commentLength,
-  likes
-}: {
-  commentId: string
-  commentLength: number
-  likes: SerializeFrom<CommentLike[]>
-}) {
-  return (
-    <div className='flex w-full  flex-row items-center justify-between gap-2'>
-      <LikeComment
-        commentId={commentId}
-        commentLikesNumber={commentLength}
-        likes={likes}
-      />
+      </div>
+      {children}
     </div>
   )
 }

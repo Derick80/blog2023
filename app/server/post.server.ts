@@ -314,7 +314,9 @@ export const DefaultAllPostSelect = {
       favorites: true
     }
   },
-  likes: false,
+  likes: {
+    select: DefaultLikeSelect
+  },
   favorites: false
 }
 
