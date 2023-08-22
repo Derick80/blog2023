@@ -327,3 +327,39 @@ export async function getAllPostsV1() {
     }
   })
 }
+
+export async function getAllPostsV1WithFilter(filter: string) {
+  return await prisma.post.findMany({
+    select: {
+      ...DefaultAllPostSelect
+    },
+    where: {
+      OR: [
+        {
+          title: {
+            contains: filter
+          }
+        },
+        {
+          description: {
+            contains: filter
+          }
+        },
+        {
+          content: {
+            contains: filter
+          }
+        },
+        {
+          categories: {
+            some: {
+              value: {
+                contains: filter
+              }
+            }
+          }
+        }
+      ]
+    }
+  })
+}

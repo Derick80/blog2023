@@ -9,6 +9,8 @@ import LikeContainer from '../like-container-v2'
 import CategoryContainer from '../category_v2'
 
 export default function BlogPreviewV2({ post }: { post: FullPost }) {
+  console.log(post.categories, 'post categories')
+
   return (
     <article
       className='w-full max-w-prose transform overflow-hidden rounded-md border shadow-xl transition duration-500 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-2xl  '
@@ -106,6 +108,7 @@ function CardFooter({
   counts: {
     comments: number
     likes: number
+    favorites: number
   }
 }) {
   return (

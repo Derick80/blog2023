@@ -64,7 +64,6 @@ export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
   }>()
-  console.log(data, 'data from blog post id route')
 
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>

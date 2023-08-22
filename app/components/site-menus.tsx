@@ -25,7 +25,7 @@ export default function MenuBox({ title }: MenuBoxProps) {
           onMouseLeave={() => setMenu(!menu)}
         >
           <div className='absolute z-10 flex w-fit flex-col items-center justify-between rounded-md bg-white dark:bg-slate-900'>
-            <MapMenuItems menuItems={MenuItems} />
+            <MapMenuItems menuItems={MenuItems} setMenu={setMenu} />
           </div>
         </div>
       )}
@@ -61,7 +61,13 @@ export const MenuItems = [
   }
 ]
 
-export function MapMenuItems({ menuItems }: { menuItems: typeof MenuItems }) {
+export function MapMenuItems({
+  menuItems,
+  setMenu
+}: {
+  menuItems: typeof MenuItems
+  setMenu: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   return (
     <>
       {menuItems.map((item, index) => (
@@ -69,6 +75,7 @@ export function MapMenuItems({ menuItems }: { menuItems: typeof MenuItems }) {
           className='p-1 text-sm text-slate-900 dark:text-slate-50'
           key={index}
           to={item.path}
+          onClick={() => setMenu(false)}
         >
           {item.title}
         </NavLink>
