@@ -1,6 +1,8 @@
 import type { ActionFunction, LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import invariant from 'tiny-invariant'
+import { z } from 'zod'
+import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/prisma.server'
 
@@ -22,8 +24,11 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const user = await isAuthenticated(request)
-  invariant(user, 'need  user')
-  const postId = params.postId
+  if (!user) {
+    throw new Error('You need to be authenticated to like a post')
+  }
+  const { postId } = zx.parseParams(params, { postId: z.string() })
+
   const userId = user.id
 
   if (!userId || !postId) {
@@ -32,18 +37,17 @@ export const action: ActionFunction = async ({ request, params }) => {
       { status: 400 }
     )
   }
+
   try {
     if (request.method === 'POST') {
-      await prisma.like.create({
+      return await prisma.post.update({
+        where: {
+          id: postId
+        },
         data: {
-          user: {
-            connect: {
-              id: userId
-            }
-          },
-          post: {
-            connect: {
-              id: postId
+          likes: {
+            create: {
+              userId
             }
           }
         }
@@ -51,17 +55,17 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
 
     if (request.method === 'DELETE') {
-      await prisma.like.delete({
-        where: {
-          postId_userId: {
-            postId,
-            userId
-          }
-        }
-      })
+      return await prisma.like.delete({
+       where: {
+         postId_userId: {
+           postId,
+           userId
+         }
+       }
+     })
     }
 
-    return json({ success: true })
+    return json({ message: 'like created or deleted successfully' })
   } catch (error) {
     return json({ error: 'invalid form data like' }, { status: 400 })
   }

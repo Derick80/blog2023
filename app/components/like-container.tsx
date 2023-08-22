@@ -1,4 +1,8 @@
-import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
+import {
+  ChatBubbleIcon,
+  HeartFilledIcon,
+  HeartIcon
+} from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
@@ -56,7 +60,7 @@ export default function LikeContainer({
             </div>
           ) : (
             <div className='flex flex-row items-center gap-1'>
-              <HeartIcon />
+              <ChatBubbleIcon />
               <p className='text-[15px]'>{likeCount}</p>
             </div>
           )}

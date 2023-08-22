@@ -10,6 +10,7 @@ import {
   getSession,
   setErrorMessage
 } from '~/server/session.server'
+import { DefaultUserSelect } from '~/server/post.server'
 
 export async function loader({ request, params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
@@ -19,7 +20,9 @@ export async function loader({ request, params }: LoaderArgs) {
       postId
     },
     include: {
-      user: true
+      user: {
+        select: DefaultUserSelect
+      }
     }
   })
 

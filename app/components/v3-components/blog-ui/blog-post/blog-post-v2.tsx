@@ -19,7 +19,7 @@ interface BlogCardProps {
 export default function BlogCard({ post, children }: BlogCardProps) {
   const [open, setOpen] = React.useState(false)
   return (
-    <div className='m-3 mx-auto w-full overflow-hidden rounded-xl bg-white shadow-md '>
+    <article className='w-full max-w-prose transform overflow-hidden rounded-md border shadow-xl transition duration-500 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-2xl'>
       <div className='md:flex'>
         <div className='md:flex-shrink-0'>
           <img
@@ -34,7 +34,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
           </div>
           <NavLink
             to={`/blog/${post.id}`}
-            className='mt-1 block text-lg font-medium leading-tight text-black hover:underline'
+            className='mt-1 block text-xl font-medium leading-tight text-black hover:underline'
           >
             {post.title}
           </NavLink>
@@ -82,6 +82,6 @@ export default function BlogCard({ post, children }: BlogCardProps) {
         <CommentBox postId={post.id} />
         <CommentContainer open={open} postId={post.id} />
       </div>
-    </div>
+    </article>
   )
 }
