@@ -320,12 +320,27 @@ export const DefaultAllPostSelect = {
   favorites: false
 }
 
-export async function getAllPostsV1() {
-  return await prisma.post.findMany({
-    select: {
-      ...DefaultAllPostSelect
-    }
-  })
+export async function getAllPostsV1(take?: number) {
+  if (take) {
+    return await prisma.post.findMany({
+      select: {
+        ...DefaultAllPostSelect
+      },
+      take,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+  } else {
+    return await prisma.post.findMany({
+      select: {
+        ...DefaultAllPostSelect
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+  }
 }
 
 export async function getAllPostsV1WithFilter(filter: string) {
