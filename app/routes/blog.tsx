@@ -38,7 +38,7 @@ export default function BlogRoute() {
     <div className='flex w-full flex-col items-center gap-2'>
       <h1>Blog</h1>
 
-      <div className='flex w-full flex-col items-center gap-2'>
+      <div className='bg-violet flex w-full flex-col items-center gap-2'>
         <Outlet />
         {data.posts.map((post) => (
           <BlogPreviewV2 key={post.id} post={post} />

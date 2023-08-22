@@ -7,7 +7,7 @@ export default function CategoryContainer({
   categories: Category_v2[]
 }) {
   return (
-    <div className='flex flex-row items-center gap-2 border-b-2 border-t-2 p-1'>
+    <div className='flex flex-row items-center gap-2  p-1'>
       {categories.map((category) => {
         return (
           <NavLink

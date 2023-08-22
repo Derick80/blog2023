@@ -82,7 +82,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     >
       <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
         <Toolbar.ToggleItem
-          className='text-mauve11 hover:bg-violet3 hover:text-violet11 focus:shadow-violet7 data-[state=on]:bg-violet5 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 focus:relative focus:shadow-[0_0_0_2px] data-[state=on]:text-red-500'
+          className='text-mauve11 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 hover:bg-violet3 hover:text-violet11 focus:relative focus:shadow-[0_0_0_2px] focus:shadow-violet7 data-[state=on]:bg-violet5 data-[state=on]:text-red-500'
           value='bold'
           aria-label='Bold'
         >
@@ -97,7 +97,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           </MyTooltip>
         </Toolbar.ToggleItem>
         <Toolbar.ToggleItem
-          className='text-mauve11 hover:bg-violet3 hover:text-violet11 focus:shadow-violet7 data-[state=on]:bg-violet5 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 focus:relative focus:shadow-[0_0_0_2px] data-[state=on]:text-red-500'
+          className='text-mauve11 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 hover:bg-violet3 hover:text-violet11 focus:relative focus:shadow-[0_0_0_2px] focus:shadow-violet7 data-[state=on]:bg-violet5 data-[state=on]:text-red-500'
           value='italic'
           aria-label='Italic'
         >

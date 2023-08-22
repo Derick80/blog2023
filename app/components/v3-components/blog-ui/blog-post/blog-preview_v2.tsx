@@ -7,10 +7,9 @@ import type {
 } from '~/server/schemas/schemas_v2'
 import LikeContainer from '../like-container-v2'
 import CategoryContainer from '../category_v2'
+import SeparatorV2 from '../../separator_v2'
 
 export default function BlogPreviewV2({ post }: { post: FullPost }) {
-  console.log(post.categories, 'post categories')
-
   return (
     <article
       className='w-full max-w-prose transform overflow-hidden rounded-md border shadow-xl transition duration-500 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-2xl  '
@@ -25,8 +24,13 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
         content={post.content}
         categories={post.categories}
       />
+      <SeparatorV2 orientation='horizontal' color='violet9' />
       <CategoryContainer categories={post.categories} />
-
+      <SeparatorV2
+        orientation='horizontal'
+        color='violet9'
+        className='mt-[0px]'
+      />
       <CardFooter postId={post.id} counts={post._count} likes={post.likes} />
     </article>
   )
