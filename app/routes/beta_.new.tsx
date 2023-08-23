@@ -70,11 +70,11 @@ export default function NewNote() {
         navigate.state === 'loading' ? 'pointer-events-none opacity-50' : ''
       }
     >
-      <h1 className='text-center text-3xl font-bold text-slate-900 dark:text-slate-50'>
+      <h1 className='text-center text-3xl font-bold text-slate-900 dark:text-violet3'>
         New Note
       </h1>
       <Form ref={formRef} method='post' action='/beta/new'>
-        <div className='flex h-fit flex-col justify-around rounded-md border-2 shadow-md drop-shadow-md dark:bg-slate-900  dark:text-slate-50'>
+        <div className='flex h-fit flex-col justify-around rounded-md border-2 shadow-md drop-shadow-md dark:bg-slate-900  dark:text-violet3'>
           <div>
             <label htmlFor='title'>Title</label>
             <input

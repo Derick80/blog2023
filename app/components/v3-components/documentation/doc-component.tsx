@@ -4,7 +4,7 @@ import { Form, NavLink, useFetcher, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import type { Task, TaskCategory } from '~/server/task.server'
 import CustomSelectBox from '../custom-select'
-import Button from '../button'
+import Button from '../../button'
 type Props = {
   section: string
 }

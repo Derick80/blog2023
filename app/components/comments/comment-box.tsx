@@ -2,7 +2,7 @@ import type { Post } from '@prisma/client'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
-import Button from '~/components/v3-components/button'
+import Button from '~/components/button'
 import { useOptionalUser } from '~/utilities'
 
 export default function CommentBox({

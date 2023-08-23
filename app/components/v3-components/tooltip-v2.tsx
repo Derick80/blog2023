@@ -15,7 +15,7 @@ export default function ToolTip({
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content
-            className='rounded-md bg-slate-300 p-1 text-xs text-black dark:text-slate-50'
+            className='rounded-md bg-slate-300 p-1 text-xs text-black dark:text-violet3'
             sideOffset={5}
           >
             {tip}

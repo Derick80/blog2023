@@ -10,49 +10,12 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogCard from '~/components/v3-components/blog-ui/blog-post/blog-post-v2'
-import { prisma } from '~/server/prisma.server'
+import { getSinglePostById } from '~/server/post.server'
 import type { Post } from '~/server/schemas/schemas'
 
 export async function loader({ params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatarUrl: true,
-          role: true
-        }
-      },
-      likes: true,
-      favorites: true,
-      categories: true,
-      comments: {
-        include: {
-          _count: true,
-          likes: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-              avatarUrl: true
-            }
-          },
-          children: {
-            include: {
-              user: true,
-              likes: true,
-              children: true
-            }
-          }
-        }
-      }
-    }
-  })
+  const post = await getSinglePostById(postId)
 
   if (!post) {
     return json({ message: 'Post not found' }, { status: 404 })

@@ -106,6 +106,9 @@ export function formatDateAgo(date: string) {
   const hours = Math.floor(diff / 1000 / 60 / 60)
   if (hours < 24) {
     return `${hours} hours ago`
+  }
+  if (hours > 24 && hours < 48) {
+    return `~1 day ago`
   } else {
     const days = Math.floor(hours / 24)
     return `${days} days ago`

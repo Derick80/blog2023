@@ -7,6 +7,13 @@
 
 @tailwind utilities;
 
+/* styles.css */
+.AccordionChevron {
+  transition: transform 300ms;
+}
+.AccordionTrigger[data-state='open'] > .AccordionChevron {
+  transform: rotate(180deg);
+}
 .container {
   align-items: center;
   position: relative;
@@ -92,4 +99,18 @@ h6 {
 
 p {
   @apply scroll-m-6 text-base tracking-tight;
+}
+
+.scrolling-text {
+  white-space: nowrap;
+  animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }

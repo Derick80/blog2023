@@ -5,6 +5,7 @@ import { Link } from '@remix-run/react'
 import { badRequest, serverError } from 'remix-utils'
 import { AuthForm } from '~/components/auth/auth-form'
 import { SocialLoginForm } from '~/components/auth/social-login-form'
+import Button from '~/components/button'
 import { authenticator, isAuthenticated } from '~/server/auth/auth.server'
 
 export async function loader(args: LoaderArgs) {
@@ -25,22 +26,22 @@ export const action: ActionFunction = async ({ request }) => {
 }
 export default function Login() {
   return (
-    <div className='flex w-full flex-col'>
+    <div className='flex w-full flex-col text-violet12 dark:text-violet12_dark'>
       <AuthForm authType='login' />
       <div className='mb-2 mt-2 flex h-full flex-col items-center justify-center md:mb-5 md:mt-5'>
-        <h3 className='text-sm italic'>OR</h3>
+        <h6>OR</h6>
         <p className='text-sm italic'>Login with your social account</p>
       </div>
       <div className='flex items-center justify-center'>
         <SocialLoginForm provider='discord'>
-          <button className='flex flex-col items-center gap-2'>
-            <DiscordLogoIcon className='h-5 w-5' />
-          </button>
+          <Button variant='icon_unfilled' size='small'>
+            <DiscordLogoIcon />
+          </Button>
         </SocialLoginForm>
       </div>
 
       <div className='mb-2 mt-2 flex flex-col items-center justify-center md:mb-5 md:mt-5'>
-        <h3 className='text-sm italic'>OR</h3>
+        <h6>OR</h6>
 
         <Link to='/register'>
           <p className='text-sm italic'>Register a new account</p>

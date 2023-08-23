@@ -317,7 +317,9 @@ export const DefaultAllPostSelect = {
   likes: {
     select: DefaultLikeSelect
   },
-  favorites: false
+  favorites: {
+    select: DefaultFavoriteSelect
+  }
 }
 
 export async function getAllPostsV1(take?: number) {
@@ -375,6 +377,17 @@ export async function getAllPostsV1WithFilter(filter: string) {
           }
         }
       ]
+    }
+  })
+}
+
+export async function getSinglePostById(id: string) {
+  return await prisma.post.findUnique({
+    where: {
+      id
+    },
+    select: {
+      ...DefaultAllPostSelect
     }
   })
 }

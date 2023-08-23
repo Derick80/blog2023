@@ -343,7 +343,7 @@ const TipTap = ({ content }: { content?: string }) => {
     editorProps: {
       attributes: {
         class:
-          'flex-1 p-4 mx-auto border border-t-0 text-black dark:text-slate-50 w-full h-fit text-sm m-5 focus:outline-non rounded-b-md mt-0 '
+          'flex-1 p-4 mx-auto border border-t-0 text-black dark:text-violet3 w-full h-fit text-sm m-5 focus:outline-non rounded-b-md mt-0 '
       }
     }
   })

@@ -9,6 +9,10 @@ import LikeContainer from '../like-container-v2'
 import CommentBox from '~/components/comments/comment-box'
 import CommentContainer from '~/components/comments/comment-list'
 import { Separator } from '@radix-ui/react-separator'
+import VerticalMenu from '~/components/vertical-menu'
+import Actions from '../blog-actions_v2'
+import { ShareButton } from '../../share-button_v2'
+import FavoriteContainer from '~/components/favorite-container_v2'
 
 interface BlogCardProps {
   post: Post
@@ -16,9 +20,12 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post, children }: BlogCardProps) {
-  const [open, setOpen] = React.useState(true)
+  const [open] = React.useState(true)
   return (
-    <article className='prose relative flex w-full max-w-prose  flex-col  rounded-md  shadow-xl dark:prose-invert '>
+    <article
+      id='blog-card'
+      className='hover:violet4 prose relative flex w-full  max-w-prose  border-collapse flex-col rounded-md bg-violet3 shadow-xl dark:prose-invert hover:border-2 hover:border-violet8 dark:bg-violet3_dark hover:dark:border-violet8_dark dark:hover:bg-violet4_dark'
+    >
       <CardHeader title={post.title} postId={post.id} />
       <CardUpperBody
         postId={post.id}
@@ -27,7 +34,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
         content={post.content}
       />
       {/* create a section divider */}
-      <Separator orientation='horizontal' decorative className='bg-teal-500' />
+      <Separator orientation='horizontal' decorative />
       <div className='flex flex-wrap justify-start'>
         {post.categories.map((category) => (
           <Link to={`/blog/categories/${category.value}`} key={category.id}>
@@ -40,6 +47,10 @@ export default function BlogCard({ post, children }: BlogCardProps) {
           </Link>
         ))}
       </div>
+      <FavoriteContainer postId={post.id} favorites={post.favorites} />
+      <VerticalMenu>
+        <Actions postId={post.id} />
+      </VerticalMenu>
       <div id='comments' className=''>
         <CommentBox postId={post.id} />
         <CommentContainer postId={post.id} open={open} />
@@ -77,7 +88,7 @@ function CardUpperBody({
 }) {
   return (
     <div className='flex-grow'>
-      <div className='flex flex-col items-center justify-between gap-2 md:flex-row'>
+      <div className='aspect-h-4 aspect-w-3 md:aspect-h-2 md:aspect-w-3'>
         <img src={imageUrl} alt={description} className='h-96 w-96' />
       </div>
       <div
@@ -103,8 +114,10 @@ function CardSideMenu({
   likes: Like_v2[]
 }) {
   return (
-    <div className='absolute -right-7 flex flex-col items-center gap-2 border-2 bg-gray-400 '>
+    <div className='absolute -right-7 flex flex-col items-center justify-between gap-2 border-2 bg-violet3 dark:bg-violet3_dark '>
       <LikeContainer postId={postId} likes={likes} />
+      <ShareButton id={postId} />
+
       <NavLink
         className='flex flex-row items-center gap-1'
         to={`/blog/${postId}`}

@@ -5,7 +5,7 @@ import { json } from '@remix-run/node'
 import { Form, Outlet, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { ColBox, RowBox } from '~/components/boxes'
-import Button from '~/components/v3-components/button'
+import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 
 import { prisma } from '~/server/prisma.server'
@@ -95,10 +95,10 @@ export default function CategoriesRoute() {
 
   return (
     <div className='flex flex-col items-center gap-4'>
-      <h1 className='text-center text-2xl font-bold dark:text-white'>
+      <h1 className='text-center text-2xl font-bold dark:text-violet3'>
         Categories
       </h1>
-      <p className='text-center text-sm dark:text-white'>
+      <p className='text-center text-sm dark:text-violet3'>
         These are the list of categories used by the blog posts. If you are a
         user you can add and delete categories.
       </p>

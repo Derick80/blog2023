@@ -35,7 +35,7 @@ export const ShareButton = ({ id }: Props) => {
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
-            className='text-black'
+            className='text-violet-900 dark:text-violet12_dark'
             onClick={() => {
               if (navigator.share) {
                 navigator.share({
@@ -79,7 +79,7 @@ export const ShareButton = ({ id }: Props) => {
               </a>
             </div>
             <Separator.Root className='my-[15px] data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px'>
-              <p className='text-xs text-slate-500 dark:text-slate-400'>
+              <p className='text-violet30 text-xs dark:text-slate-400'>
                 Or share with link
               </p>
             </Separator.Root>

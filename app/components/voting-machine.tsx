@@ -2,7 +2,7 @@ import React from 'react'
 import { RowBox } from './boxes'
 import { Form, useActionData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
-import Button from './v3-components/button'
+import Button from './button'
 import type { Vote } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
 
@@ -55,7 +55,7 @@ export default function VotingMachine({
             <div className='relative flex w-full p-1 ' key={option.id}>
               <div className='flex w-full flex-col '>
                 <div className='relative flex h-full  w-full items-center justify-between bg-blue-500'>
-                  <p className='z-20 inline-block w-full text-xs text-white'>
+                  <p className='z-20 inline-block w-full text-xs text-violet3'>
                     {option.value}
                   </p>
                   <div
@@ -70,18 +70,18 @@ export default function VotingMachine({
                   <RowBox>
                     {option.votes.length > 0 ? (
                       <>
-                        <p className='z-30 text-xs text-white'>
+                        <p className='z-30 text-xs text-violet3'>
                           {((option.votes.length / voteTotal) * 100).toFixed(0)}
                           %
                         </p>
-                        <p className='z-30 text-xs text-white'>
+                        <p className='z-30 text-xs text-violet3'>
                           ({option.votes.length})
                         </p>
                       </>
                     ) : (
                       <>
-                        <p className='z-30 text-xs text-white'>0%</p>
-                        <p className='z-30 text-xs text-white'>(0)</p>
+                        <p className='z-30 text-xs text-violet3'>0%</p>
+                        <p className='z-30 text-xs text-violet3'>(0)</p>
                       </>
                     )}
                   </RowBox>
