@@ -23,66 +23,40 @@ export async function action({ request, params }: ActionArgs) {
     throw new Error('You need to be authenticated to favorite a post')
   }
   // get the session from the request for toast messages
-  const session = await getSession(request.headers.get('Cookie'))
 
   const userId = user.id
   const { postId } = zx.parseParams(params, { postId: z.string() })
 
   if (!userId || !postId) {
-    setErrorMessage(session, 'Unauthorized')
-    return redirect('/login', {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    })
+    return json(
+      { error: 'invalid form data bad userId or PostId favorite' },
+      { status: 400 }
+    )
   }
 
-  if (request.method === 'POST') {
-    const liked = await prisma.favorite.create({
-      data: {
-        user: {
-          connect: {
-            id: userId
-          }
-        },
-        post: {
-          connect: {
-            id: postId
-          }
-        }
-      }
-    })
+  console.log(request.method, 'request method')
 
-    if (!liked) {
-      setErrorMessage(session, `You can't favorite this post`)
-    } else {
-      setSuccessMessage(session, `You favorited this post`)
-    }
-  }
-
-  if (request.method === 'DELETE') {
-    const favorite = await prisma.favorite.delete({
-      where: {
-        postId_userId: {
+  try {
+    if (request.method === 'POST') {
+      return await prisma.favorite.create({
+        data: {
           postId,
           userId
         }
-      }
-    })
-
-    if (!favorite) {
-      setErrorMessage(session, `You can't unfavorite this post`)
-    } else {
-      setSuccessMessage(session, `You unfavorited this post`)
+      })
     }
+    if (request.method === 'DELETE') {
+      return await prisma.favorite.delete({
+        where: {
+          postId_userId: {
+            postId,
+            userId
+          }
+        }
+      })
+    }
+    return json({ message: 'success' })
+  } catch (error) {
+    return json({ error: 'invalid data' }, { status: 400 })
   }
-
-  return json(
-    { message: 'ok' },
-    {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    }
-  )
 }

@@ -1,5 +1,5 @@
 import { Form, useSearchParams } from '@remix-run/react'
-import Button from '../v3-components/button'
+import Button from '../button'
 
 type Props = {
   authType: 'register' | 'login' | 'request' | 'confirm'

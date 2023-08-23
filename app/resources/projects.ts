@@ -1,3 +1,23 @@
+import { User } from '~/server/schemas/schemas'
+import { Category_v2 } from '~/server/schemas/schemas_v2'
+
+export type Implementation = {
+  id: string
+  task: string
+}
+export type Project = {
+  id: string
+  title: string
+  description: string
+  projectImage: string
+  projectUrl: string
+  githubUrl: string
+  createdAt: string
+  userId: string
+  implementations?: Implementation[]
+  categories: Category_v2[]
+  user: Omit<User, 'role'>
+}
 export const projects = [
   {
     id: 'b1b6e4fd-b20f-43cf-9fc1-3b81df6efdfb',
@@ -54,7 +74,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -103,7 +123,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -180,7 +200,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -221,7 +241,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -295,7 +315,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -366,7 +386,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -440,7 +460,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -548,7 +568,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -635,7 +655,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'
@@ -665,7 +685,7 @@ export const projects = [
     ],
     user: {
       id: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
-      userName: 'Derick',
+      username: 'Derick',
       avatarUrl:
         'https://remix-bucket.s3.us-east-2.amazonaws.com/blog-prototype-images/DerickFace.jpg',
       email: 'iderick@gmail.com'

@@ -16,7 +16,7 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { validateAction } from '~/utilities'
-import Button from '~/components/v3-components/button'
+import Button from '~/components/button'
 import { ArrowRightIcon } from '@radix-ui/react-icons'
 export async function loader({ request, params }: LoaderArgs) {
   const { username } = params

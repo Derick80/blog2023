@@ -37,50 +37,7 @@ export const meta: V2_MetaFunction = () => {
       name: 'viewport',
       content: 'width=device-width, initial-scale=1'
     },
-    {
-      property: 'og:title',
-      content: "Derick's Remix Blog"
-    },
-    {
-      property: 'og:description',
-      content: 'A blog about web development Genetics and other things'
-    },
-    {
-      property: 'og:image',
-      content: `https://res.cloudinary.com/dch-photo/image/upload/v1683172202/ixhymfdz3ivktm3j0kul.webp`
-    },
-    {
-      property: 'og:url',
-      content: 'https://derickchoskinson.com'
-    },
-    {
-      property: 'og:type',
-      content: 'website'
-    },
-    {
-      name: 'twitter:card',
-      content: 'summary_large_image'
-    },
-    {
-      name: 'twitter:creator',
-      content: '@GeneticsStar'
-    },
-    {
-      name: 'twitter:title',
-      content: "Derick's Remix Blog"
-    },
-    {
-      name: 'twitter:description',
-      content: 'A blog about web development Genetics and other things'
-    },
-    {
-      name: 'twitter:image',
-      content: `https://res.cloudinary.com/dch-photo/image/upload/v1683130418/ibtrqmrqbchxm9pqfta0.jpg`
-    },
-    {
-      name: 'twitter:site',
-      content: '@GeneticsStar'
-    },
+
     {
       title: `Derick's Remix Blog`
     }
@@ -147,7 +104,7 @@ export default function App() {
       </head>
       <body
         id='body'
-        className='h-screen bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50'
+        className='h-screen bg-violet1 text-slate-900 dark:bg-slate-900 dark:text-violet3'
       >
         <script
           src='https://widget.cloudinary.com/v2.0/global/all.js'
@@ -200,13 +157,23 @@ export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
-      <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-        <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
-        <h1 className='text-2xl font-bold text-red-500'>
-          Status:{error.status}
-        </h1>
-        <p className='text-xl'>{error.data.message}</p>
-      </div>
+      <html>
+        <head>
+          <title>Oh no!</title>
+          <Meta />
+          <Links />
+        </head>
+        <body>
+          <div className='flex h-full w-full flex-col items-center justify-center text-center'>
+            <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
+            <h1 className='text-2xl font-bold text-red-500'>
+              Status:{error.status}
+            </h1>
+            <p className='text-xl'>{error.data.message}</p>
+          </div>
+          <Scripts />
+        </body>
+      </html>
     )
   }
   let errorMessage = 'unknown error'
@@ -216,10 +183,20 @@ export function ErrorBoundary() {
     errorMessage = error
   }
   return (
-    <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-      <h1 className='text-2xl font-bold'>uh Oh..</h1>
-      <p className='text-xl'>something went wrong</p>
-      <pre>{errorMessage}</pre>
-    </div>
+    <html>
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <div className='flex h-full w-full flex-col items-center justify-center text-center'>
+          <h1 className='text-2xl font-bold'>uh Oh..</h1>
+          <p className='text-xl'>something went wrong</p>
+          <pre>{errorMessage}</pre>
+        </div>{' '}
+        <Scripts />
+      </body>
+    </html>
   )
 }

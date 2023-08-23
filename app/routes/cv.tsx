@@ -44,7 +44,7 @@ export default function Cv() {
                   {job.duties.map((duty) => (
                     <li className='list-disc text-teal-400' key={duty.id}>
                       <div className='flex flex-row items-center'>
-                        <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                        <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                           {duty.duty}
                         </span>
                       </div>
@@ -70,18 +70,18 @@ export default function Cv() {
                     <div className='flex flex-row items-center'>
                       {pub.authors.map((author, index) => (
                         <ColBox key={index}>
-                          <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                          <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                             {author}
                           </span>
-                          <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                          <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                             {pub.edition}
                             {pub.type}
                           </span>
-                          <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                          <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                             <Link to={pub.url}>{pub.journal}</Link>
                           </span>
                           <RowBox>
-                            <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'></span>
+                            <span className='text-xs leading-5 text-slate-900 dark:text-violet3'></span>
                           </RowBox>
                         </ColBox>
                       ))}
@@ -119,7 +119,7 @@ export default function Cv() {
                   className='t-rounded-md list-none border-2 p-1 text-xs '
                   key={index}
                 >
-                  <span className='text-xs leading-5 text-slate-900 dark:text-slate-50'>
+                  <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                     {skill.skill}
                   </span>
                 </li>
@@ -175,7 +175,7 @@ function AccordianTriggers(props: Props) {
         <p className='italic'>{job.title}</p>
         <div className='grow' />
 
-        <div className='flex text-black/50 dark:text-white/50'>
+        <div className='flex text-black/50 dark:text-violet3/50'>
           {job.period}
         </div>
         <div className='flex flex-col items-center justify-center pl-4'>
@@ -220,7 +220,9 @@ function AccordianTriggerPub(props: PubProps) {
         <p className='italic'>{pub.journal}</p>
         <div className='grow' />
 
-        <div className='flex text-black/50 dark:text-white/50'>{pub.year}</div>
+        <div className='flex text-black/50 dark:text-violet3/50'>
+          {pub.year}
+        </div>
         <div className='flex flex-col items-center justify-center pl-4'>
           <button
             type='button'

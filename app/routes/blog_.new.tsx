@@ -12,7 +12,7 @@ import {
 import React from 'react'
 import { z } from 'zod'
 import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
-import Button from '~/components/v3-components/button'
+import Button from '~/components/button'
 import TipTap from '~/components/v3-components/tip-tap'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import {

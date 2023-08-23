@@ -9,7 +9,7 @@ import {
   setErrorMessage,
   setSuccessMessage
 } from '~/server/session.server'
-import Button from '~/components/v3-components/button'
+import Button from '~/components/button'
 export async function action({ request, params }: ActionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const formData = await request.formData()

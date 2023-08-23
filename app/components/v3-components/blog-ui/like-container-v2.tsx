@@ -4,6 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import type { Like_v2 } from '~/server/schemas/schemas_v2'
 import { useOptionalUser } from '~/utilities'
+import Button from '../button_v2'
 export type LikeContainerProps = {
   postId: string
   likes: Like_v2[]
@@ -42,16 +43,21 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
 
   return (
     <>
-      <button disabled={!user} className='text-black' onClick={toggleLike}>
+      <Button
+        variant='icon_text_unfilled'
+        size='small'
+        disabled={!user}
+        onClick={toggleLike}
+      >
         <div className='flex flex-row items-center gap-1'>
           {isLiked ? (
             <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
           ) : (
-            <HeartIcon className='text-black dark:text-slate-50' />
+            <HeartIcon className='text-black dark:text-violet3' />
           )}
-          <p className='text-[15px] dark:text-slate-50'>{likeCount}</p>
+          <p className='text-[15px] dark:text-violet3'>{likeCount}</p>
         </div>
-      </button>
+      </Button>
     </>
   )
 }

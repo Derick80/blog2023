@@ -72,7 +72,7 @@ export function MapMenuItems({
     <>
       {menuItems.map((item, index) => (
         <NavLink
-          className='p-1 text-sm text-slate-900 dark:text-slate-50'
+          className='p-1 text-sm text-slate-900 dark:text-violet3'
           key={index}
           to={item.path}
           onClick={() => setMenu(false)}

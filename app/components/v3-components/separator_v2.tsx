@@ -15,7 +15,7 @@ export default function SeparatorV2({
     <Separator.Root
       className={clsx(
         `mt-[15px] data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px`,
-        `bg-violet8 dark:bg-violet11j_dark`,
+        `bg-violet8 dark:bg-violet11_dark`,
         `${className}`
       )}
     />

@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import React from 'react'
-import Button from './v3-components/button'
+import Button from './button'
 import { Portal } from './portal'
 
 export default function VerticalMenu({
@@ -24,12 +24,7 @@ export default function VerticalMenu({
 
   return (
     <div className='relative'>
-      <Button
-        className=''
-        onClick={() => setOpen(!open)}
-        variant='ghost'
-        size='tiny'
-      >
+      <Button onClick={() => setOpen(!open)} variant='ghost' size='tiny'>
         {!open ? (
           <DotsVerticalIcon className='h-6 w-6' />
         ) : (
@@ -37,7 +32,7 @@ export default function VerticalMenu({
         )}
       </Button>
 
-      {open && <Portal wrapperId='menu'>{children}</Portal>}
+      {open && <div className='absolute right-0 top-0'>{children}</div>}
     </div>
   )
 }

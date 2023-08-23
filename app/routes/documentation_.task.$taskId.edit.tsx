@@ -12,7 +12,7 @@ import {
 import type { Task } from '~/server/task.server'
 import { getTask, getTaskCategories, updateTask } from '~/server/task.server'
 import { Form, useActionData } from '@remix-run/react'
-import Button from '~/components/v3-components/button'
+import Button from '~/components/button'
 import { FilePlusIcon } from '@radix-ui/react-icons'
 import { validateAction } from '~/utilities'
 import CustomSelectBox from '~/components/v3-components/custom-select'
