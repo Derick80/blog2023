@@ -1,10 +1,12 @@
-import { User } from '~/server/schemas/schemas'
-import { Category_v2 } from '~/server/schemas/schemas_v2'
+import type { User } from '~/server/schemas/schemas'
+import type { Category_v2 } from '~/server/schemas/schemas_v2'
 
 export type Implementation = {
   id: string
   task: string
 }
+
+export type ProjectStatus = 'Active' | 'Completed' | 'Abandoned'
 export type Project = {
   id: string
   title: string
@@ -14,6 +16,7 @@ export type Project = {
   githubUrl: string
   createdAt: string
   userId: string
+  status: ProjectStatus | string
   implementations?: Implementation[]
   categories: Category_v2[]
   user: Omit<User, 'role'>
@@ -29,6 +32,7 @@ export const projects = [
     githubUrl: `https://github.com/Derick80/genes_23`,
     createdAt: '2023-05-18T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Active',
     implementations: [
       { id: '1', task: 'Variant Classification' },
       { id: '2', task: 'Variant Search' },
@@ -57,7 +61,7 @@ export const projects = [
         value: 'React'
       },
       {
-        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f064',
+        id: 'ce122a29-a5ba-4442-a83a-e81bc162b231',
         label: 'Prisma',
         value: 'Prisma'
       },
@@ -91,6 +95,7 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/astro-blog',
     createdAt: '2023-04-18T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Active',
     implementations: [
       {
         id: '1',
@@ -139,6 +144,7 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/todos',
     createdAt: '2023-04-17T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Completed',
     implementations: [
       {
         id: '1',
@@ -174,21 +180,21 @@ export const projects = [
       },
       {
         id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
-        label: 'Remix',
-        value: 'Remix'
+        label: 'Remix-run',
+        value: 'Remix-run'
       },
       {
-        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
         label: 'TailwindCSS',
         value: 'TailwindCSS'
       },
       {
-        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f064',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       },
       {
-        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f065',
+        id: 'ce122a29-a5ba-4442-a83a-e81bc162b231',
         label: 'Prisma',
         value: 'Prisma'
       },
@@ -217,6 +223,8 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/dna',
     createdAt: '2023-04-17T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Completed',
+
     categories: [
       {
         id: 'ba447bb8-abe6-4a99-ba9a-bb436dca1626',
@@ -224,7 +232,7 @@ export const projects = [
         value: 'Genetics'
       },
       {
-        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f061',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       },
@@ -258,6 +266,8 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/trpc-blog',
     createdAt: '2023-04-16T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Completed',
+
     implementations: [
       {
         id: '1',
@@ -283,17 +293,17 @@ export const projects = [
         value: 'CockroachDB'
       },
       {
-        id: 'c46e0554-c284-4580-89ce-83c4323c86a7',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       },
       {
-        id: 'c46e0554-c284-4580-89ce-83c4323c86a8',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
         label: 'TailwindCSS',
         value: 'TailwindCSS'
       },
       {
-        id: 'c46e0554-c284-4580-89ce-83c4323c86a9',
+        id: 'ce122a29-a5ba-4442-a83a-e81bc162b231',
         label: 'Prisma',
         value: 'Prisma'
       },
@@ -332,6 +342,8 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/photogallery',
     createdAt: '2023-04-15T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Completed',
+
     implementations: [
       {
         id: '1',
@@ -359,7 +371,7 @@ export const projects = [
         value: 'S3'
       },
       {
-        id: 'bae95457-43eb-4c46-8090-729e11f5f618',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
         label: 'Tailwindcss',
         value: 'Tailwindcss'
       },
@@ -374,12 +386,12 @@ export const projects = [
         value: 'Prisma'
       },
       {
-        id: 'e40afd67-4811-45b4-ba03-af98747a6109',
+        id: '1d3410c7-9494-4d73-b143-c7bb805817d8',
         label: 'Remix-run',
         value: 'Remix-run'
       },
       {
-        id: 'fe3d6970-46a0-4762-a779-50ec33e53b84',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       }
@@ -403,6 +415,7 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/bank23',
     createdAt: '2023-04-10T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Abandoned',
     implementations: [
       {
         id: '1',
@@ -438,7 +451,7 @@ export const projects = [
         value: 'Typescript'
       },
       {
-        id: 'bae95457-43eb-4c46-8090-729e11f5f618',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
         label: 'Tailwindcss',
         value: 'Tailwindcss'
       },
@@ -448,12 +461,12 @@ export const projects = [
         value: 'Prisma'
       },
       {
-        id: 'e40afd67-4811-45b4-ba03-af98747a6109',
+        id: '1d3410c7-9494-4d73-b143-c7bb805817d8',
         label: 'Remix-run',
         value: 'Remix-run'
       },
       {
-        id: 'fe3d6970-46a0-4762-a779-50ec33e53b84',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       }
@@ -477,6 +490,7 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/blog',
     createdAt: '2023-04-09T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Abandoned',
     implementations: [
       {
         id: '1',
@@ -541,7 +555,7 @@ export const projects = [
         value: 'S3'
       },
       {
-        id: 'bae95457-43eb-4c46-8090-729e11f5f618',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
         label: 'Tailwindcss',
         value: 'Tailwindcss'
       },
@@ -556,12 +570,12 @@ export const projects = [
         value: 'Prisma'
       },
       {
-        id: 'e40afd67-4811-45b4-ba03-af98747a6109',
+        id: '1d3410c7-9494-4d73-b143-c7bb805817d8',
         label: 'Remix-run',
         value: 'Remix-run'
       },
       {
-        id: 'fe3d6970-46a0-4762-a779-50ec33e53b84',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       }
@@ -585,6 +599,8 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/blog_social_media',
     createdAt: '2023-04-08T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Abandoned',
+
     implementations: [
       {
         id: '1',
@@ -628,7 +644,7 @@ export const projects = [
         value: 'S3'
       },
       {
-        id: 'bae95457-43eb-4c46-8090-729e11f5f618',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f062',
         label: 'Tailwindcss',
         value: 'Tailwindcss'
       },
@@ -643,12 +659,12 @@ export const projects = [
         value: 'Prisma'
       },
       {
-        id: 'e40afd67-4811-45b4-ba03-af98747a6109',
+        id: 'e1d3410c7-9494-4d73-b143-c7bb805817d8',
         label: 'Remix-run',
         value: 'Remix-run'
       },
       {
-        id: 'fe3d6970-46a0-4762-a779-50ec33e53b84',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       }
@@ -671,6 +687,8 @@ export const projects = [
     githubUrl: 'https://github.com/Derick80/mindgame',
     createdAt: '2023-03-18T21:52:08.779Z',
     userId: '6d11174e-9d65-4bef-949f-8e1ea3496ad3',
+    status: 'Completed',
+
     categories: [
       {
         id: '93b090c8-f7a1-43a7-b188-bb15462537b8',
@@ -678,7 +696,7 @@ export const projects = [
         value: 'Typescript'
       },
       {
-        id: 'fe3d6970-46a0-4762-a779-50ec33e53b84',
+        id: '8f206d44-4fcc-4f90-a9e2-80c175b9f063',
         label: 'React',
         value: 'React'
       }

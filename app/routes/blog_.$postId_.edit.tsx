@@ -20,7 +20,7 @@ import {
 } from '@remix-run/react'
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
-import TipTap from '~/components/v3-components/tip-tap'
+import TipTap from '~/components/v3-components/tiptap/tip-tap'
 import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
 import Button from '~/components/button'
 import SelectBox from '~/components/select'
@@ -131,7 +131,11 @@ export default function PostEdit() {
       <div className='flex items-center justify-between'>
         {data.post.content}
       </div>
-      <Form id='post-edit' className='flex w-full flex-col' method='POST'>
+      <Form
+        id='post-edit'
+        className='flex h-full w-full flex-col'
+        method='POST'
+      >
         <label htmlFor='title'>Title</label>
         <input
           type='text'

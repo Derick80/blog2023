@@ -2,9 +2,9 @@ import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
+import Button from '~/components/button'
 import type { Like_v2 } from '~/server/schemas/schemas_v2'
 import { useOptionalUser } from '~/utilities'
-import Button from '../button_v2'
 export type LikeContainerProps = {
   postId: string
   likes: Like_v2[]

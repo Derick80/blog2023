@@ -1,5 +1,4 @@
 import React from 'react'
-import { RowBox } from './boxes'
 import { Form, useActionData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import Button from './button'
@@ -67,7 +66,7 @@ export default function VotingMachine({
                       ).toFixed(0)}%`
                     }}
                   ></div>
-                  <RowBox>
+                  <div className='flex flex-row'>
                     {option.votes.length > 0 ? (
                       <>
                         <p className='z-30 text-xs text-violet3'>
@@ -84,7 +83,7 @@ export default function VotingMachine({
                         <p className='z-30 text-xs text-violet3'>(0)</p>
                       </>
                     )}
-                  </RowBox>
+                  </div>
                 </div>
               </div>
             </div>

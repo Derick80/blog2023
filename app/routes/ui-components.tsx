@@ -1,13 +1,11 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
-import { ColBox, RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import MenuBox from '~/components/site-menus'
 import SelectBox from '~/components/select'
 import Dropdown from '~/components/dropdown-menu'
-import Accordian from '~/components/accordian_v2'
 const options = [
   { id: '1', value: 'one', label: 'one' },
   { id: '2', value: 'two', label: 'two' },
@@ -40,11 +38,11 @@ export default function ComponentsIndex() {
       <h1 className='text-2xl font-bold'>UI Components</h1>
       <div className='flex flex-col items-center md:flex-row'>
         {/* first column */}
-        <ColBox className='w-full items-center'>
+        <div className='w-full items-center'>
           <div className='flex flex-col items-start gap-2'>
-            <ColBox className='items-start'>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Primary</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='small' variant='primary'>
                   large
                 </Button>
@@ -57,11 +55,11 @@ export default function ComponentsIndex() {
                 <Button size='small' variant='primary'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Primary Filled</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='primary_filled'>
                   large
                 </Button>
@@ -74,11 +72,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='primary_filled'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Ghost</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='ghost'>
                   large
                 </Button>
@@ -91,11 +89,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='ghost'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Success</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='success'>
                   large
                 </Button>
@@ -108,11 +106,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='success'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Success Filled</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='success_filled'>
                   large
                 </Button>
@@ -125,11 +123,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='success_filled'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Danger</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='danger'>
                   large
                 </Button>
@@ -142,11 +140,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='danger'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Danger Filled</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='danger_filled'>
                   large
                 </Button>
@@ -160,12 +158,12 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='danger_filled'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
+              </div>
+            </div>
 
-            <ColBox className='items-start'>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Warning</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='warning'>
                   large
                 </Button>
@@ -178,11 +176,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='warning'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Warning Filled</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='warning_filled'>
                   large
                 </Button>
@@ -196,11 +194,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='warning_filled'>
                   tiny
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Icon Unfilled</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='icon_unfilled'>
                   <PaperPlaneIcon />
                 </Button>
@@ -213,11 +211,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='icon_unfilled'>
                   <PaperPlaneIcon />
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Icon Filled</h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='icon_filled'>
                   <PaperPlaneIcon />
                 </Button>
@@ -231,11 +229,11 @@ export default function ComponentsIndex() {
                 <Button size='tiny' variant='icon_filled'>
                   <PaperPlaneIcon />
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Icon Text Unfilled </h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='icon_text_unfilled'>
                   <span className=''>large</span>
 
@@ -253,11 +251,11 @@ export default function ComponentsIndex() {
                   tiny
                   <PaperPlaneIcon />
                 </Button>
-              </RowBox>
-            </ColBox>
-            <ColBox className='items-start'>
+              </div>
+            </div>
+            <div className='flex flex-col items-center'>
               <h6 className='text-sm font-bold'>Icon Text Filled </h6>
-              <RowBox>
+              <div className='flex flex-row items-center gap-1'>
                 <Button size='large' variant='icon_text_filled'>
                   <span className=''>large</span>
                   <PaperPlaneIcon />
@@ -274,12 +272,12 @@ export default function ComponentsIndex() {
                   tiny
                   <PaperPlaneIcon />
                 </Button>
-              </RowBox>
-            </ColBox>
+              </div>
+            </div>
           </div>
-        </ColBox>
+        </div>
         {/* second column */}
-        <ColBox className='w-full'>
+        <div className='flex flex-col'>
           <div className='flex flex-col items-start gap-2'>
             <div className='flex flex-col items-start gap-2'>
               <div>
@@ -318,7 +316,7 @@ export default function ComponentsIndex() {
             className='flex flex-col items-start gap-2'
             id='portal-root'
           ></div>
-        </ColBox>
+        </div>
       </div>
     </div>
   )

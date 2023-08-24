@@ -4,16 +4,14 @@ import {
   Form,
   isRouteErrorResponse,
   useActionData,
-  useFetcher,
   useNavigation,
-  useRouteError,
-  useRouteLoaderData
+  useRouteError
 } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
 import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
 import Button from '~/components/button'
-import TipTap from '~/components/v3-components/tip-tap'
+import TipTap from '~/components/v3-components/tiptap/tip-tap'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import {
   commitSession,
@@ -22,8 +20,7 @@ import {
   setSuccessMessage
 } from '~/server/session.server'
 import { createPost } from '~/server/post.server'
-import type { Category } from '~/server/schemas/schemas'
-import { validateAction } from '~/utilities'
+import { useCategories, validateAction } from '~/utilities'
 import * as Switch from '@radix-ui/react-switch'
 import SelectBox from '~/components/select'
 export async function loader({ request }: LoaderArgs) {
@@ -118,22 +115,13 @@ export default function NewPostRoute() {
       ? 'Saved!'
       : 'Save'
 
-  const { categories } = useRouteLoaderData('root') as {
-    categories: Category[]
-  }
-  // fetch categories from the server
-  const categoryFetcher = useFetcher()
-  React.useEffect(() => {
-    if (categoryFetcher.state === 'idle' && categoryFetcher.data == null) {
-      categoryFetcher.load('/categories')
-    }
-  }, [categoryFetcher])
+  const categories = useCategories()
 
   return (
     <div className=' mx-auto flex h-full w-full flex-col p-1'>
       <ImageUploader setUrl={setUrl} />
 
-      <Form className='flex w-full flex-col' method='post'>
+      <Form className='flex w-full  flex-col ' method='post'>
         <input
           type='hidden'
           className='rounded-xl text-black'
@@ -183,28 +171,26 @@ export default function NewPostRoute() {
         <TipTap />
 
         <label htmlFor='categories'>Categories</label>
-        <div className='flex flex-col gap-2 p-1'>
-          <SelectBox
-            multiple
-            name='categories'
-            options={categories}
-            picked={[]}
-          />
-          {actionData?.errors?.categories && (
-            <p id='categories-error' role='alert' className='text-red-500'>
-              {actionData?.errors?.categories}
-            </p>
-          )}
-          <label htmlFor='featured'>Featured</label>
-          <Switch.Root
-            className='bg-blackA9 shadow-blackA7 relative h-[25px] w-[42px] cursor-default rounded-full shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black'
-            id='featured'
-            name='featured'
-            style={{ WebkitTapHighlightColor: 'transparent' }}
-          >
-            <Switch.Thumb className='shadow-blackA7 block h-[21px] w-[21px] translate-x-0.5 rounded-full bg-white shadow-[0_2px_2px] transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]' />
-          </Switch.Root>
-        </div>
+        <SelectBox
+          multiple
+          name='categories'
+          options={categories}
+          picked={[]}
+        />
+        {actionData?.errors?.categories && (
+          <p id='categories-error' role='alert' className='text-red-500'>
+            {actionData?.errors?.categories}
+          </p>
+        )}
+        <label htmlFor='featured'>Featured</label>
+        <Switch.Root
+          className='bg-blackA9 shadow-blackA7 relative h-[25px] w-[42px] cursor-default rounded-full shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black'
+          id='featured'
+          name='featured'
+          style={{ WebkitTapHighlightColor: 'transparent' }}
+        >
+          <Switch.Thumb className='shadow-blackA7 block h-[21px] w-[21px] translate-x-0.5 rounded-full bg-white shadow-[0_2px_2px] transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]' />
+        </Switch.Root>
         <div className='flex justify-center'>
           <Button variant='primary' type='submit'>
             {text}

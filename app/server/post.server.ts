@@ -344,7 +344,20 @@ export async function getAllPostsV1(take?: number) {
     })
   }
 }
-
+export async function getAllUserDraftsV1(userId: string) {
+  return await prisma.post.findMany({
+    where: {
+      published: false,
+      userId
+    },
+    select: {
+      ...DefaultAllPostSelect
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
+}
 export async function getAllPostsV1WithFilter(filter: string) {
   return await prisma.post.findMany({
     select: {

@@ -10,7 +10,7 @@
 
 - Accordian - <https://github.com/AllanSimoyi/PersonalWebsite/blob/main/app/core/components/AccordionItem.tsx>
 - Post Editor - [TipTap](https://tiptap.dev/)
--
+- Resizeable  image component [reference](https://github.com/Habib-Shahzad/tiptap-resizable-image/tree/main/src/components)
 
 ## Database Setup
 
@@ -54,6 +54,10 @@ npm run dev
 ```
 
 This starts your app in development mode, rebuilding assets on file changes.
+
+## Maintaining package versions
+
+npm-check -u
 
 ## Deployment
 

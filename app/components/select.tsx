@@ -1,6 +1,5 @@
 import React from 'react'
 import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
-import { set } from 'date-fns'
 
 type Props = {
   testOptions?: string[]
@@ -99,13 +98,13 @@ export default function SelectBox({
           <div className='absolute left-0 right-0  mt-2 rounded-md border border-gray-300 bg-white shadow-lg'>
             <div className='absolute -top-3 right-[45%] h-6 w-6 rotate-45 border-l border-t border-gray-300 bg-white' />
 
-            <ul className='py-1'>
+            <ul className=''>
               {options.map((option, index) => (
                 <>
                   <li
                     key={option.id}
                     onClick={() => handleSelect(option.value)}
-                    className='px-4 py-2 text-black hover:bg-gray-100'
+                    className='list-none px-4 py-2 text-black hover:bg-gray-100'
                   >
                     {option.label}
                   </li>

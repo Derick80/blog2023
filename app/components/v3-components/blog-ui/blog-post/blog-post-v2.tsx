@@ -10,10 +10,9 @@ import CommentBox from '~/components/comments/comment-box'
 import CommentContainer from '~/components/comments/comment-list'
 import { Separator } from '@radix-ui/react-separator'
 import VerticalMenu from '~/components/vertical-menu'
-import Actions from '../blog-actions_v2'
+import Actions from '../blog-post-owner-action-container'
 import { ShareButton } from '../../share-button_v2'
-import FavoriteContainer from '~/components/favorite-container_v2'
-
+import FavoriteContainer from '../../favorite-container_v2'
 interface BlogCardProps {
   post: Post
   children?: React.ReactNode

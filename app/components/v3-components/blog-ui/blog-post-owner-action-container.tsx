@@ -1,26 +1,32 @@
-import type { Post } from '~/server/schemas/schemas'
 import Button from '../../button'
 import { Form, Link } from '@remix-run/react'
+import { Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
 
-export default function Actions({ postId }: { postId: Post['id'] }) {
+export type BlogPostOwnerActionProps = {
+  postId: string
+}
+
+export default function BlogPostOwnerAction({
+  postId
+}: BlogPostOwnerActionProps) {
   return (
     <div className='flex flex-row gap-2'>
-      <Button variant='primary_filled' size='tiny'>
+      <Button variant='icon_unfilled' size='tiny'>
         <Link
           title='If you are logged in and own this post, you can edit it'
           to={`/blog/${postId}/edit`}
         >
-          Edit
+          <Pencil2Icon />
         </Link>
       </Button>
       <Form method='POST' action={`/${postId}/delete`}>
         <Button
           name='action'
           value='delete'
-          variant='danger_filled'
+          variant='icon_unfilled'
           size='tiny'
         >
-          Delete
+          <TrashIcon />
         </Button>
       </Form>
     </div>

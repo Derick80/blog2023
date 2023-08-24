@@ -65,7 +65,7 @@ model Post {
   comments Comment[]
   likes Like[]
   favorites Favorite[]
-  categories Category[]
+  categories Category[] 
 }
 
 model Comment {
@@ -88,9 +88,9 @@ model Category {
   id       String    @id @unique @default(uuid())
   label    String
   value    String    @unique
-  posts    Post[]
-  projects Project[]
-
+  posts    Post[] 
+  projects Project[] 
+ 
 }
 
 
