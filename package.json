@@ -7,12 +7,15 @@
     "dev": "remix dev",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "format": "prettier \"app/**/*.ts\" \"app/**/*.tsx\" --write . "
+    "format": "prettier \"app/**/*.ts\" \"app/**/*.tsx\" --write . ",
+    "postinstall": "metronome patch @remix-run/serve"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
+    "@metronome-sh/express": "^6.0.1",
+    "@metronome-sh/react": "^6.0.1",
     "@prisma/client": "^5.2.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.4",
