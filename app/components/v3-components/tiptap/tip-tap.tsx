@@ -40,7 +40,12 @@ import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import CodeBlock from '@tiptap/extension-code-block'
 import * as Toolbar from '@radix-ui/react-toolbar'
-import { MyTooltip } from '../radix-tooltip'
+import { MyTooltip } from '../../radix-tooltip'
+import SubscriptIcon from './icons/subscript'
+import SuperScriptIcon from './icons/superscript'
+import { ResizableImage } from './tiptap-image'
+import Dropcursor from '@tiptap/extension-dropcursor'
+import HorizontalRule from '@tiptap/extension-horizontal-rule'
 
 // implimeent redo/undo and blockquote
 const MenuBar = ({ editor }: { editor: Editor }) => {
@@ -48,7 +53,11 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     const url = window.prompt('URL')
 
     if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
+      editor
+        .chain()
+        .focus()
+        .setImage({ src: url, alt: `A image replacement for ${url}` })
+        .run()
     }
   }, [editor])
   const setLink = React.useCallback(() => {
@@ -77,7 +86,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <Toolbar.Root
-      className='flex w-full min-w-max rounded-md bg-white p-[10px] text-black shadow-[0_2px_10px] shadow-black'
+      className='flex  flex-wrap rounded-md bg-white p-[10px] text-black  shadow-black'
       aria-label='Formatting options'
     >
       <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
@@ -89,7 +98,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <MyTooltip content='Bold'>
             <button
               type='button'
-              // className={editor.isActive('bold') ? 'is-active' : ''}
+              className={editor.isActive('bold') ? 'border-2' : ''}
               onClick={() => editor.chain().focus().toggleBold().run()}
             >
               <FontBoldIcon />
@@ -125,111 +134,113 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           className='flex flex-row items-center gap-1'
           onClick={() => editor.chain().focus().toggleSuperscript().run()}
         >
-          <TextIcon />
-          <DoubleArrowUpIcon />
+          <SuperScriptIcon />
         </button>
         <button
           type='button'
-          className='flex flex-row items-center gap-1'
           onClick={() => editor.chain().focus().toggleSubscript().run()}
         >
-          <TextIcon />
-          <DoubleArrowDownIcon />
+          <SubscriptIcon />
         </button>
       </Toolbar.ToggleGroup>
-
-      <div className='flex flex-row items-center gap-1'>
-        <button
-          type='button'
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          className={
-            editor.isActive('heading', { level: 1 })
-              ? 'is-active flex items-center'
-              : 'flex items-center'
-          }
-        >
-          <HeadingIcon />
-          <p className='text-[15px]'>1</p>
-        </button>
-        <button
-          type='button'
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={
-            editor.isActive('heading', { level: 2 })
-              ? 'is-active flex items-center font-bold outline-dashed'
-              : 'flex items-center'
-          }
-        >
-          <p className='text-[15px]'>H2</p>
-        </button>
-        <button
-          type='button'
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run()
-          }
-          className={
-            editor.isActive('heading', { level: 3 })
-              ? 'is-active flex items-center'
-              : 'flex items-center'
-          }
-        >
-          <HeadingIcon />
-          <p className='text-[15px]'>3</p>
-        </button>
-        <button
-          type='button'
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 4 }).run()
-          }
-          className={
-            editor.isActive('heading', { level: 4 })
-              ? 'is-active flex items-center'
-              : 'flex items-center'
-          }
-        >
-          <HeadingIcon />
-          <p className='text-[15px]'>4</p>
-        </button>
-        <button
-          type='button'
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 5 }).run()
-          }
-          className={
-            editor.isActive('heading', { level: 5 })
-              ? 'is-active flex items-center'
-              : 'flex items-center'
-          }
-        >
-          <HeadingIcon />
-          <p className='text-[15px]'>5</p>
-        </button>
-        <button
-          type='button'
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 6 }).run()
-          }
-          className={
-            editor.isActive('heading', { level: 6 })
-              ? 'is-active flex items-center'
-              : 'flex items-center'
-          }
-        >
-          <HeadingIcon />
-          <p className='text-[15px]'>3</p>
-        </button>
-      </div>
-
-      <div className='flex flex-row items-center gap-1'>
+      <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
+        <div className='flex flex-row items-center gap-1'>
+          <button
+            type='button'
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 1 })
+                ? 'is-active flex items-center'
+                : 'flex items-center'
+            }
+          >
+            <HeadingIcon />
+            <p className='text-[15px]'>1</p>
+          </button>
+          <button
+            type='button'
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 2 })
+                ? 'is-active flex items-center font-bold outline-dashed'
+                : 'flex items-center'
+            }
+          >
+            <p className='text-[15px]'>H2</p>
+          </button>
+          <button
+            type='button'
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 3 })
+                ? 'is-active flex items-center'
+                : 'flex items-center'
+            }
+          >
+            <HeadingIcon />
+            <p className='text-[15px]'>3</p>
+          </button>
+          <button
+            type='button'
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 4 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 4 })
+                ? 'is-active flex items-center'
+                : 'flex items-center'
+            }
+          >
+            <HeadingIcon />
+            <p className='text-[15px]'>4</p>
+          </button>
+          <button
+            type='button'
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 5 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 5 })
+                ? 'is-active flex items-center'
+                : 'flex items-center'
+            }
+          >
+            <HeadingIcon />
+            <p className='text-[15px]'>5</p>
+          </button>
+          <button
+            type='button'
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 6 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 6 })
+                ? 'is-active flex items-center'
+                : 'flex items-center'
+            }
+          >
+            <HeadingIcon />
+            <p className='text-[15px]'>3</p>
+          </button>
+        </div>
+      </Toolbar.ToggleGroup>
+      <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
         <button
           type='button'
           onClick={() => editor.chain().focus().toggleHighlight().run()}
         >
           <Pencil1Icon />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          setHorizontalRule
         </button>
         <button
           type='button'
@@ -280,10 +291,18 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         >
           <ListBulletIcon />
         </button>
-      </div>
+      </Toolbar.ToggleGroup>
     </Toolbar.Root>
   )
 }
+
+const CustomSubscript = SubScript.extend({
+  excludes: 'superscript'
+})
+
+const CustomSuperscript = Superscript.extend({
+  excludes: 'subscript'
+})
 
 const TipTap = ({ content }: { content?: string }) => {
   const limit = 10000
@@ -295,17 +314,25 @@ const TipTap = ({ content }: { content?: string }) => {
       Italic,
       Strike,
       Code,
-      Underline,
+      HorizontalRule,
+      ResizableImage.configure({
+        HTMLAttributes: {
+          class: 'tip-tap-image'
+        }
+      }),
+      Dropcursor.configure({
+        color: '#ff0000'
+      }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6]
       }),
-      Superscript,
+      CustomSuperscript,
+      CustomSubscript,
       CodeBlock.configure({
         HTMLAttributes: {
           class: 'text-sm text-gray-600 bg-gray-100 p-2 rounded-md'
         }
       }),
-      SubScript,
       Underline,
       Highlight,
       BulletList.configure({
@@ -333,7 +360,7 @@ const TipTap = ({ content }: { content?: string }) => {
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'w-24 h-24 rounded-md'
+          class: ''
         }
       }),
       Typography
@@ -343,17 +370,19 @@ const TipTap = ({ content }: { content?: string }) => {
     editorProps: {
       attributes: {
         class:
-          'flex-1 p-4 mx-auto border border-t-0 text-black dark:text-violet3 w-full h-fit text-sm m-5 focus:outline-non rounded-b-md mt-0 '
+          'p-4 mx-auto border border-t-0 prose dark:prose-invert prose-sm sm:prose lg:prose-lg xl:prose-2xl w-full  text-sm m-5 focus:outline-non rounded-b-md mt-0 ',
+        spellcheck: 'true'
       }
     }
   })
+  //       class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
 
   if (!editor) {
     return null
   }
 
   return (
-    <div className='flex h-full flex-col gap-2'>
+    <>
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
       <input type='hidden' name='content' value={editor?.getHTML()} />
@@ -365,7 +394,7 @@ const TipTap = ({ content }: { content?: string }) => {
           {editor.storage.characterCount.words()} words
         </p>
       </div>
-    </div>
+    </>
   )
 }
 

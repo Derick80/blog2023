@@ -12,16 +12,19 @@ import type {
 } from '~/server/schemas/schemas_v2'
 import LikeContainer from '../like-container-v2'
 import * as HoverCard from '@radix-ui/react-hover-card'
-import Button from '../../button_v2'
 import clsx from 'clsx'
-import { formatDateAgo } from '~/utilities'
-import FavoriteContainer from '~/components/favorite-container_v2'
+import { formatDateAgo, useOptionalUser } from '~/utilities'
 import { ShareButton } from '../../share-button_v2'
 import type { User } from '~/server/schemas/schemas'
+import BlogPostOwnerAction from '../blog-post-owner-action-container'
+import FavoriteContainer from '../../favorite-container_v2'
+import Button from '~/components/button'
 
 export default function BlogPreviewV2({ post }: { post: FullPost }) {
   // I used w-[65ch] rather than max-w-prose because I wanted to have a uniform width for all cards
+  const currentUser = useOptionalUser()
 
+  const isPostOwner = currentUser?.id === post.userId
   return (
     <article
       className='prose flex w-[65ch] transform  flex-col  rounded-md border  bg-violet3 shadow-xl transition  duration-500 ease-in-out dark:prose-invert hover:-translate-y-1 hover:scale-110 hover:shadow-2xl dark:bg-violet3_dark hover:dark:border-violet8_dark dark:hover:bg-violet8_dark  '
@@ -38,6 +41,7 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
       />
 
       <CardFooter
+        isPostOwner={isPostOwner}
         postId={post.id}
         counts={post._count}
         likes={post.likes}
@@ -164,7 +168,8 @@ function CardFooter({
   counts,
   likes,
   user,
-  favorites
+  favorites,
+  isPostOwner
 }: {
   postId: string
   likes: Like_v2[]
@@ -176,6 +181,7 @@ function CardFooter({
   updatedAt: string
   user: User
   favorites: Favorite_v2[]
+  isPostOwner: boolean
 }) {
   return (
     <div className='flex  flex-row justify-between gap-2 '>
@@ -185,6 +191,8 @@ function CardFooter({
         <p className='text-[15px]'> {formatDateAgo(updatedAt)}</p>
       </div>
       <div className='flex flex-row items-center gap-1'>
+        {isPostOwner && <BlogPostOwnerAction postId={postId} />}
+
         <ShareButton id={postId} />
         <FavoriteContainer postId={postId} favorites={favorites} />
       </div>

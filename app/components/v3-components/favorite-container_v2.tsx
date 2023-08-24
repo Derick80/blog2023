@@ -2,11 +2,9 @@ import { BookmarkFilledIcon, BookmarkIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
-import type { Favorite } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
-import Button from './button'
-import * as Tooltip from '@radix-ui/react-tooltip'
-import { Favorite_v2 } from '~/server/schemas/schemas_v2'
+import type { Favorite_v2 } from '~/server/schemas/schemas_v2'
+import Button from '../button'
 
 export type FavoriteContainerProps = {
   postId: string

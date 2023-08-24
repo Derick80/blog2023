@@ -28,7 +28,7 @@ export default function ScrollToTop() {
       {showTopButton && (
         <Button
           className='fixed  bottom-20 right-0 flex flex-col'
-          variant='icon_filled'
+          variant='icon_unfilled'
           size='base'
           onClick={goToTop}
         >

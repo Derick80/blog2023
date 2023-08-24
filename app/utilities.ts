@@ -1,8 +1,8 @@
 import { useMatches, useRouteLoaderData } from '@remix-run/react'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
-import type { Category, UserType } from './server/schemas/schemas'
-import { Category_v2 } from './server/schemas/schemas_v2'
+import type { UserType } from './server/schemas/schemas'
+import type { Category_v2 } from './server/schemas/schemas_v2'
 
 const DEFAULT_REDIRECT = '/'
 
@@ -122,4 +122,27 @@ export function useCategories() {
   // fetch categories from the server
 
   return categories as Category_v2[]
+}
+
+type CatInput = {
+  categories: Category_v2[]
+}
+export function getUniqueCategories({ categories }: CatInput): Category_v2[] {
+  let uniqueCategories = Object.values(
+    categories.reduce(
+      (acc, curr) => {
+        if (!acc[curr.value]) {
+          acc[curr.value] = curr
+        }
+        return acc
+      },
+      {} as Record<string, Category_v2>
+    )
+  )
+
+  return uniqueCategories
+}
+
+export function capitalizeFirstLetter(string: string) {
+  return string.replace(/\b\w/g, (char) => char.toUpperCase())
 }

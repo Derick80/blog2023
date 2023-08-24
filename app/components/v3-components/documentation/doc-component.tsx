@@ -21,9 +21,7 @@ export default function DocumentationCard({ section }: Props) {
 
   return (
     <ul className='m-0 flex w-full flex-col items-start'>
-      {sectionData?.map((task) => (
-        <TaskList task={task} key={task.id} />
-      ))}
+      {sectionData?.map((task) => <TaskList task={task} key={task.id} />)}
     </ul>
   )
 }

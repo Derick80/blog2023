@@ -8,8 +8,10 @@ import {
 import clsx from 'clsx'
 import React from 'react'
 import type { Implementation, Project } from '~/resources/projects'
-import CategoryContainer from './v3-components/blog-ui/category_v2'
 import { Link } from '@remix-run/react'
+import ToolTip from '../tooltip-v2'
+import TechnologiesContainer from './project-tech-container'
+import { getUniqueCategories } from '~/utilities'
 
 // create props for the accordion that can take either a single array of titles for each section or an array of objects with a title and content
 
@@ -95,7 +97,7 @@ const AccordionContent = React.forwardRef<
 >(({ children, className, ...props }, forwardedRef) => (
   <Accordion.Content
     className={clsx(
-      'data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden bg-violet1 text-[15px] text-black dark:bg-violet8_dark dark:text-violet3',
+      'data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden bg-violet1 text-[15px] text-black dark:bg-violet3_dark  dark:text-violet3',
       className
     )}
     {...props}
@@ -123,20 +125,35 @@ function ProjectDetails({ project }: { project: Project }) {
         ))}
       </ul>
       <h3 className='text-base'>Technologies</h3>
+      <TechnologiesContainer categories={project.categories} />
 
-      <CategoryContainer categories={project.categories} />
       <h3 className='text-base'>Project code and Github</h3>
       <div className='flex flex-row items-center gap-2'>
-        <Link
-          title='Link to my github repo for this project'
-          to={project.githubUrl}
-        >
-          <GitHubLogoIcon />
-        </Link>
+        <ToolTip tip='Link to the Github repo'>
+          <Link
+            title='Link to my github repo for this project'
+            to={project.githubUrl}
+            referrerPolicy='no-referrer'
+            target='_blank'
+          >
+            <GitHubLogoIcon />
+          </Link>
+        </ToolTip>
         <div className='flex-1' />
-        <Link title='Link to the live project site' to={project.projectUrl}>
-          <OpenInNewWindowIcon />
-        </Link>
+        {project.status !== 'Abandoned' && (
+          <>
+            <ToolTip tip='Link to the live project'>
+              <Link
+                title='Link to the live project'
+                to={project.projectUrl}
+                referrerPolicy='no-referrer'
+                target='_blank'
+              >
+                <OpenInNewWindowIcon />
+              </Link>
+            </ToolTip>
+          </>
+        )}
       </div>
     </div>
   )
