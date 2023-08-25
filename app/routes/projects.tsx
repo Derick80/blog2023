@@ -1,7 +1,6 @@
 import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
-import type { Project } from '~/resources/projects'
 import { projects } from '~/resources/projects'
 import SeparatorV2 from '~/components/v3-components/separator_v2'
 import ProjectAccordian from '~/components/v3-components/project/project-accordian_v2'
@@ -28,8 +27,6 @@ export default function ProjectIndex() {
   // this was way too complicated  when it really shouldn't have been
   // When I first finished i realized that these categories are specific to projects and not blog posts. So I had to make a new component for the categories
   const categories = projects.map((project) => project.categories).flat()
-  console.log(categories, 'categories from projects')
-  console.log(Array.isArray(categories), 'is array')
 
   const reducedCategories = getUniqueCategories({ categories })
   console.log(reducedCategories, 'reduced categories')
@@ -47,7 +44,7 @@ export default function ProjectIndex() {
         </div>
       </div>
       <TechnologiesContainer categories={reducedCategories} />
-      <div className='w-full columns-1 md:columns-2'>
+      <div className='w-full columns-1 md:columns-2 gap-5'>
         {projects.map((project) => (
           <ProjectAccordian key={project.id} projects={project} />
         ))}
