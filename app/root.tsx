@@ -21,7 +21,7 @@ import Layout from './components/layout/layout'
 import stylesheet from '~/tailwind.css'
 import type { ToastMessage } from './server/session.server'
 import { commitSession, getSession } from './server/session.server'
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -73,6 +73,12 @@ export async function loader({ request }: LoaderArgs) {
     }
   )
 }
+
+const RemixDevTools =
+  process.env.NODE_ENV === 'development'
+    ? lazy(() => import('remix-development-tools'))
+    : null
+
 export default function App() {
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
@@ -149,6 +155,11 @@ export default function App() {
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
+          {RemixDevTools ? (
+            <Suspense>
+              <RemixDevTools />
+            </Suspense>
+          ) : null}
         </Layout>
       </body>
     </html>
