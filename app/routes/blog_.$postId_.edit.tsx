@@ -133,7 +133,7 @@ export default function PostEdit() {
       </div>
       <Form
         id='post-edit'
-        className='flex h-full w-full flex-col'
+        className='flex h-full w-full flex-col bg-violet4 dark:bg-violet4_dark'
         method='POST'
       >
         <label htmlFor='title'>Title</label>

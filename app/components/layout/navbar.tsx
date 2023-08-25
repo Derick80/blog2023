@@ -8,7 +8,7 @@ export default function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='sticky top-0 z-10 flex items-center justify-between gap-1 bg-violet3 dark:bg-violet2_dark md:h-full md:flex-col lg:flex-row'>
+    <div className='sticky top-0 z-10 flex items-center justify-between gap-1 bg-violet3 dark:bg-violet2_dark  md:flex-col lg:flex-row'>
       <div className='flex flex-row items-center gap-2 p-2'>
         <NavLink
           title='Click on the Brand Icon to go to the home page'
@@ -18,7 +18,7 @@ export default function NavigationBar() {
           <BrandIcon />
         </NavLink>
       </div>
-      <div className='flex w-full  flex-row items-center justify-between gap-2 p-2 sm:flex-row md:flex-col lg:flex-row'>
+      <div className='flex w-full md:h-full  flex-row items-center justify-between gap-2 p-2 sm:flex-row md:flex-col lg:flex-row'>
         <NavLink
           title='Go to the home page'
           className={({ isActive, isPending }) => {

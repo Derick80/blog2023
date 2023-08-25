@@ -63,9 +63,12 @@ export default function BlogRoute() {
           <h6 className='text-left'>Browse all the </h6>
           <h1>Blog Posts</h1>
         </div>
-        {data.posts_v2.map((post) => (
-          <BlogPreviewV2 key={post.id} post={post} />
-        ))}
+
+        <div className='flex flex-col gap-5'>
+          {data.posts_v2.map((post) => (
+            <BlogPreviewV2 key={post.id} post={post} />
+          ))}
+        </div>
       </div>
     </div>
   )

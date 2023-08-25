@@ -1,6 +1,6 @@
 export default function ScrollingBanner() {
   return (
-    <div className='aboslute bottom-0 left-0 flex w-full items-center justify-center overflow-hidden bg-yellow-200 p-2'>
+    <div className='aboslute bottom-0 left-0 flex w-3/4 items-center justify-center overflow-hidden bg-yellow-200 p-2'>
       <img
         src='/WARNING.png' // Replace with your warning icon or image path
         alt='An Icon of a warning sign to indicate that the site is under construction'
