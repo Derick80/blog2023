@@ -27,7 +27,7 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
   const isPostOwner = currentUser?.id === post.userId
   return (
     <article
-      className='prose flex w-[65ch] transform  flex-col  rounded-md border  bg-violet3 shadow-xl transition  duration-500 ease-in-out dark:prose-invert hover:-translate-y-1 hover:scale-110 hover:shadow-2xl dark:bg-violet3_dark hover:dark:border-violet8_dark dark:hover:bg-violet8_dark  '
+      className=' flex flex-col shadow-[0_3px_10px_rgb(0,0,0,0.2)] gap-1 md:gap-2 lg:gap-3 bg-violet4 dark:bg-violet4_dark rounded-md  w-full max-w-prose '
       key={post.slug}
     >
       <CardHeader title={post.title} postId={post.id} />
@@ -57,13 +57,13 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
 
 function CardHeader({ title, postId }: { title: string; postId: string }) {
   return (
-    <div className='flex flex-row items-center justify-between gap-2'>
-      <NavLink
+    <div className='flex flex-row items-center justify-between w-full gap-2 pl-1'>
+      <Link
+        title={`Click here to view the full post of ${title}`}
         to={`/blog/${postId}`}
-        className='p-1 pl-0 text-xl font-semibold leading-4 hover:underline'
       >
-        {title}
-      </NavLink>
+        <h3>{title}</h3>
+      </Link>
     </div>
   )
 }
@@ -84,14 +84,14 @@ function CardUpperBody({
   categories: Category_v2[]
 }) {
   return (
-    <div className='flex max-h-96 w-full'>
+    <div className='flex prose dark:prose-invert max-w-prose'>
       <div className='w-1/3 flex-shrink-0'>
         <div
           className='h-full w-full bg-cover bg-center'
           style={{ backgroundImage: `url('${imageUrl}')` }}
         ></div>
       </div>
-      <div className='flex w-2/3 flex-wrap p-4'>
+      <div className='flex flex-col w-2/3 justify-start p-4'>
         <NavLink
           className='mb-2 flex items-center gap-1 text-lg font-bold italic leading-4 hover:underline'
           to={`/blog/${postId}`}
@@ -99,7 +99,7 @@ function CardUpperBody({
           {description} <OpenInNewWindowIcon />
         </NavLink>
         <div
-          className='prose line-clamp-2 max-w-prose text-base leading-7 dark:prose-invert'
+          className=' line-clamp-2  leading-7 '
           dangerouslySetInnerHTML={{ __html: content }}
         />
 
@@ -184,11 +184,11 @@ function CardFooter({
   isPostOwner: boolean
 }) {
   return (
-    <div className='flex  flex-row justify-between gap-2 '>
+    <div className='flex p-1  flex-row justify-between gap-2 '>
       <div className='flex flex-row items-center gap-1'>
-        <p className='text-[15px]'>posted by</p>
+        <p>Posted by</p>
         <UserInfoHoverCard user={user} />
-        <p className='text-[15px]'> {formatDateAgo(updatedAt)}</p>
+        <p> {formatDateAgo(updatedAt)}</p>
       </div>
       <div className='flex flex-row items-center gap-1'>
         {isPostOwner && <BlogPostOwnerAction postId={postId} />}
@@ -203,19 +203,22 @@ function CardFooter({
           to={`/blog/${postId}`}
         >
           <ChatBubbleIcon />
-          <p className='text-[15px]'>{counts.comments}</p>
+          <p>{counts.comments}</p>
         </NavLink>
       </div>
     </div>
   )
 }
 
+// Here user refers to the author of the post not the current user.
 export type HoverCardProps = {
   user: User
 }
 
 export function UserInfoHoverCard({ user }: HoverCardProps) {
   const { avatarUrl, username, email, id } = user
+  const currentUser = useOptionalUser()
+  const isInfoOwner = currentUser?.id === id
 
   return (
     <>
@@ -238,15 +241,16 @@ export function UserInfoHoverCard({ user }: HoverCardProps) {
               <Link
                 title={`Click here to view ${username}'s profile`}
                 to={`/users/${username}`}
-                className='text-lg font-semibold text-gray-800 dark:text-gray-100'
+                className='flex flex-row items-center gap-1'
               >
                 <h6>{username}</h6>
+                <OpenInNewWindowIcon />
               </Link>
 
               <p className='text- text-violet12 dark:text-violet12_dark'>
                 {email}
               </p>
-              {id && (
+              {isInfoOwner && (
                 <>
                   <Button size='small' variant='primary_filled'>
                     <Link

@@ -30,10 +30,10 @@ export default function Index() {
   const categories = useCategories()
 
   return (
-    <div className='md:gap-38 flex w-full flex-col gap-28'>
+    <div className='md:gap-38 flex w-full items-center flex-col gap-28'>
       <div className='flex w-full flex-col items-center gap-10 md:gap-20'>
         {/* probably remove dive around the headings if I don't change the font */}
-        <div className='flex flex-col items-center gap-20 '>
+        <div className='flex flex-col w-full items-center gap-20 '>
           <h1>Welcome to DerickCHoskinson.com </h1>
           <ScrollingBanner />
           <h3>

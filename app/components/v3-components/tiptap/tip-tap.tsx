@@ -2,8 +2,7 @@ import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor } from '@tiptap/react'
 import {
   CodeIcon,
-  DoubleArrowDownIcon,
-  DoubleArrowUpIcon,
+  DividerHorizontalIcon,
   FontBoldIcon,
   FontItalicIcon,
   HeadingIcon,
@@ -13,7 +12,6 @@ import {
   ListBulletIcon,
   Pencil1Icon,
   StrikethroughIcon,
-  TextIcon,
   UnderlineIcon
 } from '@radix-ui/react-icons'
 import Superscript from '@tiptap/extension-superscript'
@@ -46,6 +44,7 @@ import SuperScriptIcon from './icons/superscript'
 import { ResizableImage } from './tiptap-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import { EditorView } from 'prosemirror-view'
 
 // implimeent redo/undo and blockquote
 const MenuBar = ({ editor }: { editor: Editor }) => {
@@ -85,162 +84,138 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   }
 
   return (
-    <Toolbar.Root
-      className='flex  flex-wrap rounded-md bg-white p-[10px] text-black  shadow-black'
-      aria-label='Formatting options'
+    <div
+      className='flex p-[10px] w-full min-w-max rounded-md bg-white text-violet12 shadow-[0_2px_10px] shadow-blackA7'
+      aria-label='Editor toolbar'
     >
-      <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
-        <Toolbar.ToggleItem
-          className='text-mauve11 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 hover:bg-violet3 hover:text-violet11 focus:relative focus:shadow-[0_0_0_2px] focus:shadow-violet7 data-[state=on]:bg-violet5 data-[state=on]:text-red-500'
-          value='bold'
-          aria-label='Bold'
-        >
-          <MyTooltip content='Bold'>
-            <button
-              type='button'
-              className={editor.isActive('bold') ? 'border-2' : ''}
-              onClick={() => editor.chain().focus().toggleBold().run()}
-            >
-              <FontBoldIcon />
-            </button>
-          </MyTooltip>
-        </Toolbar.ToggleItem>
-        <Toolbar.ToggleItem
-          className='text-mauve11 ml-0.5 inline-flex h-[25px] flex-shrink-0 flex-grow-0 basis-auto items-center justify-center rounded bg-white px-[5px] text-[13px] leading-none outline-none first:ml-0 hover:bg-violet3 hover:text-violet11 focus:relative focus:shadow-[0_0_0_2px] focus:shadow-violet7 data-[state=on]:bg-violet5 data-[state=on]:text-red-500'
-          value='italic'
-          aria-label='Italic'
-        >
+      <div className='flex flex-row  items-center gap-1'>
+        <MyTooltip content='Bold'>
+          <button
+            type='button'
+            className={editor.isActive('bold') ? 'border-2' : ''}
+            onClick={() => editor.chain().focus().toggleBold().run()}
+          >
+            <FontBoldIcon />
+          </button>
+        </MyTooltip>
+
+        <MyTooltip content='Italic'>
           <button
             type='button'
             onClick={() => editor.chain().focus().toggleItalic().run()}
           >
             <FontItalicIcon />
           </button>
-        </Toolbar.ToggleItem>
+        </MyTooltip>
+
+        <MyTooltip content='Strikethrough'>
+          <button
+            type='button'
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+          >
+            <StrikethroughIcon />
+          </button>
+        </MyTooltip>
+
+        <MyTooltip content='Underline'>
+          <button
+            type='button'
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+          >
+            <UnderlineIcon />
+          </button>
+        </MyTooltip>
+
+        <MyTooltip content='Superscript'>
+          <button
+            type='button'
+            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          >
+            <SuperScriptIcon />
+          </button>
+        </MyTooltip>
+
+        <MyTooltip content='Subscript'>
+          <button
+            type='button'
+            onClick={() => editor.chain().focus().toggleSubscript().run()}
+          >
+            <SubscriptIcon />
+          </button>
+        </MyTooltip>
+      </div>
+      <div className='w-[1px] bg-violet6 mx-[10px]' />
+      <div className='flex flex-row items-center gap-1'>
         <button
           type='button'
-          onClick={() => editor.chain().focus().toggleStrike().run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          className={
+            editor.isActive('heading', { level: 1 })
+              ? 'is-active flex items-center'
+              : 'flex items-center'
+          }
         >
-          <StrikethroughIcon />
+          <HeadingIcon />
+          <p className='text-[15px]'>1</p>
         </button>
         <button
           type='button'
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={
+            editor.isActive('heading', { level: 2 })
+              ? 'is-active flex items-center font-bold outline-dashed'
+              : 'flex items-center'
+          }
         >
-          <UnderlineIcon />
+          <p className='text-[15px]'>H2</p>
         </button>
         <button
           type='button'
-          className='flex flex-row items-center gap-1'
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          className={
+            editor.isActive('heading', { level: 3 })
+              ? 'is-active flex items-center'
+              : 'flex items-center'
+          }
         >
-          <SuperScriptIcon />
+          <HeadingIcon />
+          <p className='text-[15px]'>3</p>
+        </button>
+      </div>
+
+      <div className='flex flex-row items-center gap-1'>
+        <button
+          type='button'
+          className={editor.isActive('bulletList') ? 'is-active' : ''}
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+        >
+          <ListBulletIcon />
         </button>
         <button
           type='button'
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          className={editor.isActive('orderedList') ? 'is-active' : ''}
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
         >
-          <SubscriptIcon />
+          <ListBulletIcon />
         </button>
-      </Toolbar.ToggleGroup>
-      <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
-        <div className='flex flex-row items-center gap-1'>
-          <button
-            type='button'
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 1 }).run()
-            }
-            className={
-              editor.isActive('heading', { level: 1 })
-                ? 'is-active flex items-center'
-                : 'flex items-center'
-            }
-          >
-            <HeadingIcon />
-            <p className='text-[15px]'>1</p>
-          </button>
-          <button
-            type='button'
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 2 }).run()
-            }
-            className={
-              editor.isActive('heading', { level: 2 })
-                ? 'is-active flex items-center font-bold outline-dashed'
-                : 'flex items-center'
-            }
-          >
-            <p className='text-[15px]'>H2</p>
-          </button>
-          <button
-            type='button'
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 3 }).run()
-            }
-            className={
-              editor.isActive('heading', { level: 3 })
-                ? 'is-active flex items-center'
-                : 'flex items-center'
-            }
-          >
-            <HeadingIcon />
-            <p className='text-[15px]'>3</p>
-          </button>
-          <button
-            type='button'
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 4 }).run()
-            }
-            className={
-              editor.isActive('heading', { level: 4 })
-                ? 'is-active flex items-center'
-                : 'flex items-center'
-            }
-          >
-            <HeadingIcon />
-            <p className='text-[15px]'>4</p>
-          </button>
-          <button
-            type='button'
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 5 }).run()
-            }
-            className={
-              editor.isActive('heading', { level: 5 })
-                ? 'is-active flex items-center'
-                : 'flex items-center'
-            }
-          >
-            <HeadingIcon />
-            <p className='text-[15px]'>5</p>
-          </button>
-          <button
-            type='button'
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 6 }).run()
-            }
-            className={
-              editor.isActive('heading', { level: 6 })
-                ? 'is-active flex items-center'
-                : 'flex items-center'
-            }
-          >
-            <HeadingIcon />
-            <p className='text-[15px]'>3</p>
-          </button>
-        </div>
-      </Toolbar.ToggleGroup>
-      <Toolbar.ToggleGroup type='multiple' aria-label='Text formatting'>
         <button
           type='button'
           onClick={() => editor.chain().focus().toggleHighlight().run()}
         >
           <Pencil1Icon />
         </button>
+      </div>
+      <div className='flex flex-row items-center gap-1'>
         <button
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >
-          setHorizontalRule
+          <DividerHorizontalIcon />
         </button>
         <button
           type='button'
@@ -276,23 +251,8 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         >
           <ImageIcon />
         </button>
-        <button
-          type='button'
-          className={editor.isActive('bulletList') ? 'is-active' : ''}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-        >
-          <ListBulletIcon />
-        </button>
-
-        <button
-          type='button'
-          className={editor.isActive('orderedList') ? 'is-active' : ''}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        >
-          <ListBulletIcon />
-        </button>
-      </Toolbar.ToggleGroup>
-    </Toolbar.Root>
+      </div>
+    </div>
   )
 }
 
@@ -324,7 +284,7 @@ const TipTap = ({ content }: { content?: string }) => {
         color: '#ff0000'
       }),
       Heading.configure({
-        levels: [1, 2, 3, 4, 5, 6]
+        levels: [1, 2, 3]
       }),
       CustomSuperscript,
       CustomSubscript,
@@ -335,48 +295,31 @@ const TipTap = ({ content }: { content?: string }) => {
       }),
       Underline,
       Highlight,
-      BulletList.configure({
-        HTMLAttributes: {
-          class: 'list-disc list-inside ml-4'
-        }
-      }),
-      OrderedList.configure({
-        HTMLAttributes: {
-          class: 'list-decimal list-inside ml-4'
-        }
-      }),
+      BulletList,
+      OrderedList,
       ListItem,
       Paragraph,
       History,
-      Link.configure({
-        HTMLAttributes: {
-          class: 'text-blue-500 underline'
-        }
-      }),
+      Link,
       TextStyle,
 
       CharacterCount.configure({
         limit
       }),
-      Image.configure({
-        HTMLAttributes: {
-          class: ''
-        }
-      }),
+      Image,
       Typography
     ],
     content: content,
 
     editorProps: {
       attributes: {
-        class:
-          'p-4 mx-auto border border-t-0 prose dark:prose-invert prose-sm sm:prose lg:prose-lg xl:prose-2xl w-full  text-sm m-5 focus:outline-non rounded-b-md mt-0 ',
+        class: 'prose dark:prose-invert focus:outline-none',
         spellcheck: 'true'
       }
     }
   })
   //       class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
-
+  // -4 mx-auto border border-t-0 prose dark:prose-invert prose-sm sm:prose lg:prose-lg xl:prose-2xl w-full  text-sm focus:outline-non rounded-b-md mt-0
   if (!editor) {
     return null
   }

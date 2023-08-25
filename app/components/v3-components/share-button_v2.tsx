@@ -9,6 +9,7 @@ import {
 } from '@radix-ui/react-icons'
 import toast from 'react-hot-toast'
 import * as Popover from '@radix-ui/react-popover'
+import { MyTooltip } from '../radix-tooltip'
 
 type Props = {
   id: string
@@ -79,7 +80,7 @@ export const ShareButton = ({ id }: Props) => {
               </a>
             </div>
             <Separator.Root className='my-[15px] data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px'>
-              <p className='text-violet30 text-xs dark:text-slate-400'>
+              <p className='text-violet12 text-xs dark:text-violet12_dark'>
                 Or share with link
               </p>
             </Separator.Root>
