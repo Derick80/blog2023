@@ -9,7 +9,6 @@ import {
 } from '@radix-ui/react-icons'
 import toast from 'react-hot-toast'
 import * as Popover from '@radix-ui/react-popover'
-import { MyTooltip } from '../radix-tooltip'
 
 type Props = {
   id: string
@@ -28,7 +27,12 @@ export const ShareButton = ({ id }: Props) => {
     ref.current?.select()
     ref.current?.setSelectionRange(0, 99999)
     navigator.clipboard.writeText(postUrl)
-    toast('📝 Copied to Clipboard')
+    toast('📝 Copied to Clipboard', {
+      style: {
+        background: 'green'
+      }
+    })
+
   }
 
   return (
