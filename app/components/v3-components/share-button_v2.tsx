@@ -32,7 +32,6 @@ export const ShareButton = ({ id }: Props) => {
         background: 'green'
       }
     })
-
   }
 
   return (

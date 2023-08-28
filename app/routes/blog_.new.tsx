@@ -57,7 +57,7 @@ export async function action({ request }: ActionArgs) {
   // check if the user is authenticated
   const user = await isAuthenticated(request)
   if (!user) {
-    setErrorMessage(session, 'Unauthorized')
+    setErrorMessage(session, 'You must be logged in as an admin to do that')
     return redirect('/login', {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -221,7 +221,9 @@ export function ErrorBoundary() {
   return (
     <div>
       <h1 className='text-2xl font-bold'>uh Oh..</h1>
-      <p className='text-xl'>something went wrong</p>
+      <p className='text-xl'>
+        something went wrong This is the error boundry for a new blog post
+      </p>
       <pre>{errorMessage}</pre>
     </div>
   )

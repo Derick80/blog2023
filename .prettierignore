@@ -23,3 +23,7 @@ coverage
 /app/styles/app.css
 /app/entry.server.tsx
 /app/entry.client.tsx
+.vscode/settings.json
+.markdownlint.json
+.gihub/workflows
+metronome.config.js
