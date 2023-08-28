@@ -15,7 +15,6 @@
   transform: rotate(180deg);
 }
 
-
 .container {
   align-items: center;
   position: relative;
@@ -116,5 +115,3 @@ p {
     transform: translateX(-100%);
   }
 }
-
-

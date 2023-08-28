@@ -3,6 +3,6 @@
  */
 module.exports = {
   ignoredRoutes: [],
-  ignoredPathnames: ["/healthcheck"],
-  ignoreHeadMethod: true,
-};
+  ignoredPathnames: ['/healthcheck'],
+  ignoreHeadMethod: true
+}
