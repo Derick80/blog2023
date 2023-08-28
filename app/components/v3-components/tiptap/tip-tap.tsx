@@ -37,14 +37,12 @@ import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import CodeBlock from '@tiptap/extension-code-block'
-import * as Toolbar from '@radix-ui/react-toolbar'
 import { MyTooltip } from '../../radix-tooltip'
 import SubscriptIcon from './icons/subscript'
 import SuperScriptIcon from './icons/superscript'
 import { ResizableImage } from './tiptap-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
-import { EditorView } from 'prosemirror-view'
 
 // implimeent redo/undo and blockquote
 const MenuBar = ({ editor }: { editor: Editor }) => {
