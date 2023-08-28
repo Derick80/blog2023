@@ -1,12 +1,12 @@
 // export async function action({ request, params }: ActionArgs) {
 //   const formData = await request.formData()
 
-import { LoaderArgs } from '@remix-run/node'
+import { LoaderArgs, json } from '@remix-run/node'
 import { redirect } from 'remix-typedjson'
-import { json } from 'zod-form-data'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { getPostsVersionTwo } from '~/server/post.server'
-
+import React, { useContext } from 'react'
+import { useLoaderData } from '@remix-run/react'
 //   return json({ message: 'success' })
 // }
 
@@ -23,6 +23,8 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export default function Beta() {
+  const { posts } = useLoaderData<typeof loader>()
+
   return (
     <div className='grid grid-cols-4 place-items-center gap-x-8 gap-y-10 px-2.5 pt-12 md:grid-cols-8 md:px-0'></div>
   )

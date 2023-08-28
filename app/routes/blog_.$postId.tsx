@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   NavLink,
@@ -18,11 +18,16 @@ export async function loader({ params }: LoaderArgs) {
   const post = await getSinglePostById(postId)
 
   if (!post) {
-    return json({ message: 'Post not found' }, { status: 404 })
+    throw new Error('Post not found')
   }
-  return json({ post })
+  return json({ post: await getSinglePostById(postId) })
 }
-
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: data?.post?.title },
+    { property: data?.post?.description, content: data?.post?.content }
+  ]
+}
 export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
