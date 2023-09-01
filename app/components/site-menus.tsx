@@ -10,12 +10,12 @@ export default function MenuBox({ title }: MenuBoxProps) {
   return (
     <div className='flex flex-col'>
       <div className='flex w-full items-center'>
-        <h6 className='text-sm font-bold'>{title}</h6>
+        <h6>{title}</h6>
         <button onClick={() => setMenu(!menu)}>
           {menu ? (
-            <ChevronUpIcon className='text-teal-400' />
+            <ChevronUpIcon className='text-violet-400' />
           ) : (
-            <ChevronDownIcon className='text-teal-400' />
+            <ChevronDownIcon className='text-violet-400' />
           )}
         </button>
       </div>
@@ -72,6 +72,7 @@ export function MapMenuItems({
     <>
       {menuItems.map((item, index) => (
         <NavLink
+          title={item.title}
           className='p-1 text-sm text-slate-900 dark:text-violet3'
           key={index}
           to={item.path}
