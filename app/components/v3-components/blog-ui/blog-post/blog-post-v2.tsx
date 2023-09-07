@@ -46,10 +46,12 @@ export default function BlogCard({ post, children }: BlogCardProps) {
           </Link>
         ))}
       </div>
-      <FavoriteContainer postId={post.id} favorites={post.favorites} />
-      <VerticalMenu>
-        <Actions postId={post.id} />
-      </VerticalMenu>
+      <div className='flex flex-row items-center justify-start gap-2'>
+        <FavoriteContainer postId={post.id} favorites={post.favorites} />
+        <VerticalMenu>
+          <Actions postId={post.id} />
+        </VerticalMenu>
+      </div>
       <div id='comments' className=''>
         <CommentBox postId={post.id} />
         <CommentContainer postId={post.id} open={open} />
@@ -87,9 +89,7 @@ function CardUpperBody({
 }) {
   return (
     <div className='flex-grow'>
-      <div className='aspect-h-4 aspect-w-3 md:aspect-h-2 md:aspect-w-3'>
-        <img src={imageUrl} alt={description} className='h-96 w-96' />
-      </div>
+      <img src={imageUrl} alt={description} className='' />
       <div
         className='prose indent-2 text-base leading-7 dark:prose-invert'
         dangerouslySetInnerHTML={{ __html: content }}
