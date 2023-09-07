@@ -8,7 +8,7 @@ export default function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='sticky top-0 z-10 flex items-center justify-between gap-1 bg-violet3 dark:bg-violet2_dark  md:flex-col lg:flex-row'>
+    <div className='sticky top-0 z-10 flex items-center justify-between gap-1 bg-violet2 dark:bg-violet2_dark  md:flex-col lg:flex-row'>
       <div className='flex flex-row items-center gap-2 p-2'>
         <NavLink
           title='Click on the Brand Icon to go to the home page'
@@ -26,7 +26,7 @@ export default function NavigationBar() {
           }}
           to='/'
         >
-          <p className='text-sm font-semibold dark:text-violet3'>Home</p>
+          <p className='text-base font-semibold dark:text-violet3'>Home</p>
         </NavLink>
         <NavLink
           title='Click here to go to the blog page'
@@ -35,7 +35,7 @@ export default function NavigationBar() {
           }}
           to='/blog'
         >
-          <p className='text-sm font-semibold dark:text-violet3'>Blog</p>
+          <p className='text-base font-semibold dark:text-violet3'>Blog</p>
         </NavLink>
 
         <NavLink
@@ -45,7 +45,7 @@ export default function NavigationBar() {
           }}
           to='/about'
         >
-          <p className='text-sm font-semibold dark:text-violet3'>About</p>
+          <p className='text-base font-semibold dark:text-violet3'>About</p>
         </NavLink>
         <NavLink
           title='Navigate to the projects page to see my web development projects'
@@ -54,7 +54,7 @@ export default function NavigationBar() {
           }}
           to='/projects'
         >
-          <p className='text-sm font-semibold dark:text-violet3'>Projects</p>
+          <p className='text-base font-semibold dark:text-violet3'>Projects</p>
         </NavLink>
         <MenuBox title='Links' />
       </div>
@@ -65,7 +65,7 @@ export default function NavigationBar() {
         </div>
       ) : (
         <NavLink title='Follow this link to login to your account' to='/login'>
-          <p className='text-sm font-semibold dark:text-violet3'>Login</p>
+          <p className='text-base font-semibold dark:text-violet3'>Login</p>
         </NavLink>
       )}
     </div>

@@ -2,7 +2,8 @@ import { useMatches, useRouteLoaderData } from '@remix-run/react'
 import { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
 import type { UserType } from './server/schemas/schemas'
-import type { Category_v2 } from './server/schemas/schemas_v2'
+import type { Category_v2, FullPost } from './server/schemas/schemas_v2'
+import React from 'react'
 
 const DEFAULT_REDIRECT = '/'
 
@@ -146,3 +147,75 @@ export function getUniqueCategories({ categories }: CatInput): Category_v2[] {
 export function capitalizeFirstLetter(string: string) {
   return string.replace(/\b\w/g, (char) => char.toUpperCase())
 }
+
+export function useUpdateQueryStringValueWithoutNavigation(
+  queryKey: string,
+  queryValue: string
+) {
+  React.useEffect(() => {
+    const currentSearchParams = new URLSearchParams(window.location.search)
+    const oldQuery = currentSearchParams.get(queryKey) ?? ''
+    if (queryValue === oldQuery) return
+
+    if (queryValue) {
+      currentSearchParams.set(queryKey, queryValue)
+    } else {
+      currentSearchParams.delete(queryKey)
+    }
+    const newUrl = [window.location.pathname, currentSearchParams.toString()]
+      .filter(Boolean)
+      .join('?')
+    // alright, let's talk about this...
+    // Normally with remix, you'd update the params via useSearchParams from react-router-dom
+    // and updating the search params will trigger the search to update for you.
+    // However, it also triggers a navigation to the new url, which will trigger
+    // the loader to run which we do not want because all our data is already
+    // on the client and we're just doing client-side filtering of data we
+    // already have. So we manually call `window.history.pushState` to avoid
+    // the router from triggering the loader.
+    window.history.replaceState(null, '', newUrl)
+  }, [queryKey, queryValue])
+}
+
+export function filterPosts(posts: Array<FullPost>, searchString: string) {
+  if (!searchString) return posts
+
+  const searches = new Set(searchString.split(' '))
+  const allResults = posts.filter((post) => {
+    const category = post.categories.map((category) => category.value)
+    return category.includes(searchString)
+  })
+
+  if (searches.size < 2) {
+    return allResults
+  }
+
+  // if there are multiple words, we'll conduct an individual search for each word
+  const [firstWord, ...restWords] = searches.values()
+  if (!firstWord) {
+    // this should be impossible, but if it does happen, we'll just return an empty array
+    return []
+  }
+
+  let individualWordResults = posts.filter((post) => {
+    const category = post.categories.map((category) => category.value)
+    return category.includes(firstWord)
+  })
+
+  // if there are more than one word, we'll filter the results of the first word
+  // and then filter the results of the second word, and so on
+
+  for (const word of restWords) {
+    const searchResult = posts.filter((post) => {
+      const category = post.categories.map((category) => category.value)
+      return category.includes(word)
+    })
+
+    individualWordResults = individualWordResults.filter((post) =>
+      searchResult.includes(post)
+    )
+  }
+
+  return Array.from(new Set([...allResults, ...individualWordResults]))
+}
+

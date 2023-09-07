@@ -113,7 +113,7 @@ function CardSideMenu({
   likes: Like_v2[]
 }) {
   return (
-    <div className='absolute -right-7 flex flex-col items-center justify-between gap-2 border-2 bg-violet3 dark:bg-violet3_dark '>
+    <div className='absolute -right-0 flex flex-col items-center justify-between gap-2 border-2 bg-violet3 dark:bg-violet3_dark '>
       <LikeContainer postId={postId} likes={likes} />
       <ShareButton id={postId} />
 

@@ -112,7 +112,7 @@ export default function App() {
       </head>
       <body
         id='body'
-        className='h-screen bg-violet2 text-slate-900 dark:bg-violet1_dark dark:text-violet3'
+        className='h-screen bg-primary text-slate-900  dark:text-violet3'
       >
         <script
           src='https://widget.cloudinary.com/v2.0/global/all.js'
