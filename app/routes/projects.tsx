@@ -29,7 +29,6 @@ export default function ProjectIndex() {
   const categories = projects.map((project) => project.categories).flat()
 
   const reducedCategories = getUniqueCategories({ categories })
-  console.log(reducedCategories, 'reduced categories')
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>

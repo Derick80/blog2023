@@ -211,6 +211,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       </div>
       <div className='flex flex-row items-center gap-1'>
         <button
+          type='button'
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >
           <DividerHorizontalIcon />
@@ -237,6 +238,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <CodeIcon />
         </button>
         <button
+          type='button'
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive('codeBlock') ? 'is-active' : ''}
         >
@@ -288,7 +290,8 @@ const TipTap = ({ content }: { content?: string }) => {
       CustomSubscript,
       CodeBlock.configure({
         HTMLAttributes: {
-          class: 'text-sm text-gray-600 bg-gray-100 p-2 rounded-md'
+          class:
+            'text-sm text-gray-600 bg-gray-100 p-2 rounded-md mt-2 min-h-[500px]'
         }
       }),
       Underline,
@@ -311,7 +314,7 @@ const TipTap = ({ content }: { content?: string }) => {
 
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert focus:outline-none',
+        class: 'h-full grow bg-white text-black',
         spellcheck: 'true'
       }
     }

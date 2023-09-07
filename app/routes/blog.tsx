@@ -3,15 +3,22 @@ import {
   isRouteErrorResponse,
   Outlet,
   useLoaderData,
-  useRouteError
+  useRouteError,
+  useSearchParams
 } from '@remix-run/react'
 import dayjs from 'dayjs'
 import { getAllPostsV1, getPosts } from '~/server/post.server'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
-import { useCategories } from '~/utilities'
+import {
+  filterPosts,
+  useCategories,
+  useUpdateQueryStringValueWithoutNavigation
+} from '~/utilities'
 import SeparatorV2 from '~/components/v3-components/separator_v2'
-import CategoryContainer from '~/components/v3-components/blog-ui/category_v2'
+import React from 'react'
+import CustomCheckbox from '~/components/v3-components/custom-checkbox_v2'
+
 dayjs.extend(relativeTime)
 
 export const meta: V2_MetaFunction = () => {
@@ -36,8 +43,46 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function BlogRoute() {
-  const data = useLoaderData<typeof loader>()
+  const { posts_v2 } = useLoaderData<typeof loader>()
   const categories = useCategories()
+
+  const [searchParams] = useSearchParams()
+
+  const [queryValue, setQuery] = React.useState<string>(() => {
+    return searchParams.get('q') ?? ''
+  })
+  const query = queryValue.trim()
+
+  useUpdateQueryStringValueWithoutNavigation('q', query)
+
+  const matchingPosts = React.useMemo(() => {
+    if (!query) return posts_v2
+
+    let filteredPosts = posts_v2
+    return filterPosts(filteredPosts, query)
+  }, [query, posts_v2])
+
+  const isSearching = query.length > 0
+
+  const visibleTags = isSearching
+    ? new Set(
+        matchingPosts.flatMap((post) =>
+          post.categories.map((p) => p.value).filter(Boolean)
+        )
+      )
+    : new Set(categories.map((p) => p.value))
+
+  function toggleTag(tag: string) {
+    setQuery((q) => {
+      const expression = new RegExp(`\\b${tag}\\b`, 'ig')
+
+      const newQuery = expression.test(q)
+        ? q.replace(expression, '')
+        : `${q} ${tag}`
+
+      return newQuery.replace(/\s+/g, ' ').trim()
+    })
+  }
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
@@ -51,21 +96,50 @@ export default function BlogRoute() {
       <div className='flex w-full flex-col gap-2'>
         <SeparatorV2 orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          <h6 className='text-left'>You can still browse the Blog by </h6>
+          <h6 className='text-left'>You can browse the Blog by </h6>
           <h1>Category</h1>
+        </div>{' '}
+        <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
+          {categories.map((category) => {
+            const selected = query.includes(category)
+            return (
+              <CustomCheckbox
+                key={category.id}
+                name='category'
+                tag={category.value}
+                selected={selected}
+                onClick={() => toggleTag(category.value)}
+                disabled={!visibleTags.has(category.value)}
+              />
+            )
+          })}
         </div>
-        {categories && <CategoryContainer categories={categories} />}
       </div>
       <div className='bg-violet flex w-full flex-col items-center gap-2'>
         <Outlet />
         <SeparatorV2 orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          <h6 className='text-left'>Browse all the </h6>
-          <h1>Blog Posts</h1>
+          {!queryValue ? (
+            <>
+              <h6 className='text-left'>Viewing all the </h6>
+              <h1>Blog Posts</h1>
+            </>
+          ) : (
+            <>
+              <h6 className='text-left'>
+                Viewing Blog Posts with the category(ies)
+              </h6>
+              {queryValue.split(' ').map((tag) => (
+                <h1 key={tag} className='text-primary'>
+                  {tag}
+                </h1>
+              ))}
+            </>
+          )}
         </div>
 
         <div className='flex flex-col gap-5'>
-          {data.posts_v2.map((post) => (
+          {matchingPosts?.map((post) => (
             <BlogPreviewV2 key={post.id} post={post} />
           ))}
         </div>
