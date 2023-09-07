@@ -25,7 +25,10 @@ export async function loader({ params }: LoaderArgs) {
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
   return [
     { title: data?.post?.title },
-    { property: data?.post?.description, content: data?.post?.content }
+    {
+      name: data?.post?.description,
+      content: data?.post?.content.substring(0, 160)
+    }
   ]
 }
 export default function BlogPostRoute() {
@@ -36,8 +39,12 @@ export default function BlogPostRoute() {
   return (
     <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
       {/* create a back button */}
-      <NavLink className='flex flex-row items-center gap-1' to='/blog'>
-        <ChevronLeftIcon />
+      <NavLink
+        title='Go Back'
+        className='flex flex-row items-center gap-1'
+        to='/blog'
+      >
+        <ChevronLeftIcon className='text-violet-400' />
         Back
       </NavLink>
       <div className='flex flex-col items-center gap-4'>

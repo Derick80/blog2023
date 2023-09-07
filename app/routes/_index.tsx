@@ -19,9 +19,11 @@ import CustomCheckbox from '~/components/v3-components/custom-checkbox_v2'
 import { MyTooltip } from '~/components/radix-tooltip'
 export const meta: V2_MetaFunction = () => {
   return [
-    { title: `Derick's Blog` },
-    { name: 'description', content: 'A new Remix app' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    { title: `Derick C Hoskinson's Blog` },
+    {
+      name: 'description',
+      content: 'A social media style blog and project showcase'
+    }
   ]
 }
 

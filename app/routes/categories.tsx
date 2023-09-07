@@ -4,6 +4,7 @@ import { redirect, json } from '@remix-run/node'
 import {
   Form,
   Outlet,
+  V2_MetaFunction,
   useActionData,
   useFetcher,
   useLoaderData,
@@ -20,8 +21,7 @@ import { prisma } from '~/server/prisma.server'
 import {
   commitSession,
   getSession,
-  setErrorMessage,
-  setSuccessMessage
+  setErrorMessage
 } from '~/server/session.server'
 import {
   capitalizeFirstLetter,
@@ -37,6 +37,17 @@ export async function loader({ request, params }: LoaderArgs) {
   })
   if (!categories) throw new Error('No categories found')
   return json({ categories })
+}
+
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: 'Categories' },
+    {
+      name: 'Categories',
+
+      content: data?.categories?.map((category) => category.label).join(', ')
+    }
+  ]
 }
 
 export const schema = z.object({
