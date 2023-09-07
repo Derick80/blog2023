@@ -1,9 +1,8 @@
 import { useMatches, useRouteLoaderData } from '@remix-run/react'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
 import type { UserType } from './server/schemas/schemas'
 import type { Category_v2, FullPost } from './server/schemas/schemas_v2'
-import React from 'react'
 
 const DEFAULT_REDIRECT = '/'
 
