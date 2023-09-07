@@ -1,6 +1,10 @@
 import type { V2_MetaFunction } from '@remix-run/react'
-import { useLoaderData } from '@remix-run/react'
-import { useCategories } from '~/utilities'
+import { useLoaderData, useSearchParams } from '@remix-run/react'
+import {
+  filterPosts,
+  useCategories,
+  useUpdateQueryStringValueWithoutNavigation
+} from '~/utilities'
 
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
@@ -10,6 +14,9 @@ import SeparatorV2 from '~/components/v3-components/separator_v2'
 import CategoryContainer from '~/components/v3-components/blog-ui/category_v2'
 import ContactWidget from '~/components/v3-components/contact-widget'
 import ScrollingBanner from '~/components/scroll-banner_v2'
+import React from 'react'
+import CustomCheckbox from '~/components/v3-components/custom-checkbox_v2'
+import { MyTooltip } from '~/components/radix-tooltip'
 export const meta: V2_MetaFunction = () => {
   return [
     { title: `Derick's Blog` },
@@ -28,6 +35,43 @@ export async function loader({ request }: LoaderArgs) {
 export default function Index() {
   const { posts } = useLoaderData<typeof loader>()
   const categories = useCategories()
+  const [searchParams] = useSearchParams()
+
+  const [queryValue, setQuery] = React.useState<string>(() => {
+    return searchParams.get('q') ?? ''
+  })
+  const query = queryValue.trim()
+
+  useUpdateQueryStringValueWithoutNavigation('q', query)
+
+  const matchingPosts = React.useMemo(() => {
+    if (!query) return posts
+
+    let filteredPosts = posts
+    return filterPosts(filteredPosts, query)
+  }, [query, posts])
+
+  const isSearching = query.length > 0
+
+  const visibleTags = isSearching
+    ? new Set(
+        matchingPosts.flatMap((post) =>
+          post.categories.map((p) => p.value).filter(Boolean)
+        )
+      )
+    : new Set(categories.map((p) => p.value))
+
+  function toggleTag(tag: string) {
+    setQuery((q) => {
+      const expression = new RegExp(`\\b${tag}\\b`, 'ig')
+
+      const newQuery = expression.test(q)
+        ? q.replace(expression, '')
+        : `${q} ${tag}`
+
+      return newQuery.replace(/\s+/g, ' ').trim()
+    })
+  }
 
   return (
     <div className='md:gap-38 flex w-full items-center flex-col gap-28'>
@@ -45,10 +89,31 @@ export default function Index() {
         <div className='flex w-full flex-col gap-2'>
           <SeparatorV2 orientation='horizontal' />
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
-            <h6 className='text-left'>Browse the Blog by </h6>
+            <MyTooltip content='This only filters the 5 latest posts go to the blog page to see all the posts!'>
+              <h6 className='text-left'>
+                Filter the 5 most Recent Blog Posts by
+              </h6>
+            </MyTooltip>
+
             <h1>Category</h1>
           </div>
-          {categories && <CategoryContainer categories={categories} />}
+          <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
+            {categories
+              ? categories.map((category) => {
+                  const selected = query.includes(category.value)
+                  return (
+                    <CustomCheckbox
+                      key={category.id}
+                      name='category'
+                      tag={category.value}
+                      selected={selected}
+                      onClick={() => toggleTag(category.value)}
+                      disabled={!visibleTags.has(category.value)}
+                    />
+                  )
+                })
+              : null}
+          </div>
         </div>
       </div>
 
@@ -59,7 +124,7 @@ export default function Index() {
           <h1>Latest Posts</h1>
         </div>
         <div className='flex w-full flex-col items-center gap-5'>
-          {posts.map((post) => (
+          {matchingPosts.map((post) => (
             <BlogPreviewV2 key={post.id} post={post} />
           ))}
         </div>
