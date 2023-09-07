@@ -33,7 +33,7 @@ export default function ScrollToTop() {
           onClick={goToTop}
         >
           <ToolTip tip='Scroll to top'>
-            <ArrowUpIcon className='text-violet11' />
+            <ArrowUpIcon className='text-violet11 dark:text-violet12_dark' />
           </ToolTip>
         </Button>
       )}

@@ -101,7 +101,7 @@ export default function BlogRoute() {
         </div>{' '}
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
           {categories.map((category) => {
-            const selected = query.includes(category)
+            const selected = query.includes(category.value)
             return (
               <CustomCheckbox
                 key={category.id}
@@ -125,7 +125,7 @@ export default function BlogRoute() {
               <h1>Blog Posts</h1>
             </>
           ) : (
-            <>
+            <div className='flex flex-row items-center gap-2 flex-wrap'>
               <h6 className='text-left'>
                 Viewing Blog Posts with the category(ies)
               </h6>
@@ -134,11 +134,11 @@ export default function BlogRoute() {
                   {tag}
                 </h1>
               ))}
-            </>
+            </div>
           )}
         </div>
 
-        <div className='flex flex-col gap-5'>
+        <div className='flex flex-col gap-5 w-full items-center'>
           {matchingPosts?.map((post) => (
             <BlogPreviewV2 key={post.id} post={post} />
           ))}
