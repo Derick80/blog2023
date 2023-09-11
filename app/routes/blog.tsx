@@ -13,6 +13,7 @@ import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-pre
 import {
   filterPosts,
   useCategories,
+  useOptionalUser,
   useUpdateQueryStringValueWithoutNavigation
 } from '~/utilities'
 import SeparatorV2 from '~/components/v3-components/separator_v2'
@@ -43,6 +44,8 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function BlogRoute() {
+  const user = useOptionalUser()
+  const isAdmin = user?.role === 'ADMIN'
   const { posts_v2 } = useLoaderData<typeof loader>()
   const categories = useCategories()
 
@@ -86,6 +89,11 @@ export default function BlogRoute() {
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
+      {isAdmin && (
+        <div className='flex flex-col items-center gap-2'>
+          <h1>Admin Controls</h1>
+        </div>
+      )}
       <div className='flex flex-col items-center gap-20 '>
         <h1>Welcome to the Blog for DerickCHoskinson.com </h1>
         <h4>
@@ -167,8 +175,8 @@ export function ErrorBoundary() {
   }
   return (
     <div>
-      <h1 className='text-2xl font-bold'>uh Oh..</h1>
-      <p className='text-xl'>something went wrong</p>
+      <h1>uh Oh..</h1>
+      <p>something went wrong</p>
       <pre>{errorMessage}</pre>
     </div>
   )

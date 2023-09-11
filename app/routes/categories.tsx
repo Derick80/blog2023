@@ -1,10 +1,10 @@
 import { Cross1Icon } from '@radix-ui/react-icons'
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
 import { redirect, json } from '@remix-run/node'
+import type { V2_MetaFunction } from '@remix-run/react'
 import {
   Form,
   Outlet,
-  V2_MetaFunction,
   useActionData,
   useFetcher,
   useLoaderData,
@@ -51,6 +51,7 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 }
 
 export const schema = z.object({
+  intent: z.enum(['delete', 'create']),
   categoryName: z.string().min(3).max(50)
 })
 
@@ -151,6 +152,8 @@ export default function CategoriesRoute() {
                   variant='icon_unfilled'
                   size='small'
                   type='submit'
+                  name='intent'
+                  value='delete'
                 >
                   <Cross1Icon />
                 </Button>

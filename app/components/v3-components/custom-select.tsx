@@ -152,7 +152,8 @@ function CreateNewCategoryForm({
   const categoryCreateFetcher = useFetcher()
   const actionRoute = `${actionPath}${category}`
 
-  const handleCategorySubmit = () => {
+  const handleCategorySubmit = (event) => {
+    event.preventDefault()
     categoryCreateFetcher.submit(
       {
         category: category
@@ -179,8 +180,9 @@ function CreateNewCategoryForm({
             className='m-0 w-3/4 rounded-md border-none text-black'
           />
           <button
-            type='submit'
-            onClick={() => handleCategorySubmit()}
+            type='button'
+            name='intent'
+            onClick={(e) => handleCategorySubmit(e)}
             className=''
           >
             <PlusCircledIcon />

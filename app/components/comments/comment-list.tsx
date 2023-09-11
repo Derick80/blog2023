@@ -106,7 +106,7 @@ function SiblingComments({ commentId }: { commentId: string }) {
       <div className='border-1 ml-5 rounded-md shadow-lg'>
         {sibFetcher?.data?.comments?.map((comment: CommentWithChildren) => (
           <>
-            <Comment key={comment?.id} comments={comment} />
+            <Comment key={comment.id} comments={comment} />
             <CommentReplyBox
               commentId={comment.id}
               postId={comment.postId}

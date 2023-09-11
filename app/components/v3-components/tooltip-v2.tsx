@@ -10,9 +10,7 @@ export default function ToolTip({
   return (
     <Tooltip.Provider>
       <Tooltip.Root>
-        <Tooltip.Trigger asChild>
-          <button className=''>{children}</button>
-        </Tooltip.Trigger>
+        <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content
             className='z-10 rounded-md bg-slate-300 p-1 text-xs text-black dark:text-violet3'

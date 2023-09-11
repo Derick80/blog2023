@@ -26,9 +26,9 @@ export default function VerticalMenu({
     <div className='relative'>
       <Button onClick={() => setOpen(!open)} variant='ghost' size='tiny'>
         {!open ? (
-          <DotsVerticalIcon className='h-6 w-6' />
+          <DotsVerticalIcon className='text-violet-900 dark:text-violet3' />
         ) : (
-          <DotsHorizontalIcon className='h-6 w-6' />
+          <DotsHorizontalIcon className='text-violet-900 dark:text-violet3' />
         )}
       </Button>
 

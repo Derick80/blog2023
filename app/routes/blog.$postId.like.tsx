@@ -1,10 +1,15 @@
 import type { ActionFunction, LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/prisma.server'
+import {
+  commitSession,
+  getSession,
+  setErrorMessage,
+  setSuccessMessage
+} from '~/server/session.server'
 
 // or cloudflare/deno
 
@@ -23,6 +28,8 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
+  const session = await getSession(request.headers.get('Cookie'))
+
   const user = await isAuthenticated(request)
   if (!user) {
     throw new Error('You need to be authenticated to like a post')
@@ -42,16 +49,20 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   try {
     if (request.method === 'POST') {
-      return await prisma.like.create({
+      const liked = await prisma.like.create({
         data: {
           postId,
           userId
         }
       })
+      if (!liked) throw new Error('could not like post')
+      if (liked) {
+        setSuccessMessage(session, 'liked')
+      }
     }
 
     if (request.method === 'DELETE') {
-      return await prisma.like.delete({
+      const unliked = await prisma.like.delete({
         where: {
           postId_userId: {
             postId,
@@ -59,9 +70,17 @@ export const action: ActionFunction = async ({ request, params }) => {
           }
         }
       })
+      if (!unliked) throw new Error('could not delete like')
+      if (unliked) {
+        setErrorMessage(session, 'unliked')
+      }
     }
 
-    return json({ message: 'like created or deleted successfully' })
+    return new Response(null, {
+      headers: {
+        'Set-Cookie': await commitSession(session)
+      }
+    })
   } catch (error) {
     return json({ error: 'invalid form data like' }, { status: 400 })
   }
