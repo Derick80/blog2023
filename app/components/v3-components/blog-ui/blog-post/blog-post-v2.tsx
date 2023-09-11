@@ -64,11 +64,10 @@ export default function BlogCard({ post, children }: BlogCardProps) {
 function CardHeader({ title, postId }: { title: string; postId: string }) {
   return (
     <div className='flex w-full flex-row items-center justify-between gap-2'>
-      <NavLink
-        to={`/blog/${postId}`}
-        className='p-1 pl-0 text-xl font-semibold leading-4 hover:underline'
-      >
-        {title}
+      <NavLink to={`/blog/${postId}`} className='p-1 pl-0  hover:underline'>
+        <div className='scroll-m-12 text-2xl font-bold tracking-tight lg:text-3xl'>
+          {title}
+        </div>
       </NavLink>
     </div>
   )

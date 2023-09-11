@@ -4,7 +4,6 @@ import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link, Form, Outlet } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
-import { RowBox } from '~/components/boxes'
 import Button from '~/components/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/prisma.server'
@@ -187,7 +186,7 @@ export default function UserRoute() {
             <h3 className='text-xl font-bold'>{data.user.username}</h3>
           </div>
           <p>{data.user.email}</p>
-          <RowBox>
+          <div className='flex flex-row'>
             <Link to={`/users/${data.user.id}`}>View User</Link>
             <Form method='POST'>
               <Button
@@ -200,7 +199,7 @@ export default function UserRoute() {
                 Block User
               </Button>
             </Form>
-          </RowBox>
+          </div>
         </li>
       </ul>
       <strong>Chats:</strong>

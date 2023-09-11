@@ -3,7 +3,6 @@ import type { V2_MetaFunction } from '@remix-run/react'
 import { Link } from '@remix-run/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback } from 'react'
-import { ColBox, RowBox } from '~/components/boxes'
 import { blurb } from '~/resources/resume/blurb'
 import { pubs } from '~/resources/resume/pubs'
 import { skills } from '~/resources/resume/skills'
@@ -22,22 +21,22 @@ export default function Cv() {
   return (
     <>
       <div className='items-censter flex flex-col justify-center gap-1 font-Montserrat'>
-        <ColBox>
-          <h1 className='text-2xl font-bold'>Derick Hoskinson, PhD</h1>
-          <h2 className='text-xl font-bold'></h2>
-          <p className='text-sm'>
+        <div className='flex flex-col gap-1 md:gap-2'>
+          <h1>Derick Hoskinson, PhD</h1>
+          <h2></h2>
+          <p>
             <span className='text-xs'>{blurb.blurb}</span>
           </p>
-        </ColBox>
+        </div>
 
-        <h1 className='text-2xl font-bold'>Work Experience</h1>
+        <h1>Work Experience</h1>
 
         {work_experience.map((job, index) => (
           <div
             key={index}
             className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
           >
-            <h3 className='text-md font-Montserrat'>{job.institution}</h3>
+            <h3 className='font-Montserrat'>{job.institution}</h3>
             <AccordianTriggers job={job}>
               <div className='flex flex-col items-start px-4'>
                 <ul>
@@ -55,13 +54,13 @@ export default function Cv() {
             </AccordianTriggers>
           </div>
         ))}
-        <h1 className='text-2xl font-bold'>Publications</h1>
+        <h1>Publications</h1>
         {pubs.map((pub, index) => (
           <div
             key={index}
             className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
           >
-            <h3 className='text-md font-Montserrat'>{pub.title}</h3>
+            <h3 className='font-Montserrat'>{pub.title}</h3>
 
             <AccordianTriggerPub pub={pub}>
               <div className='flex flex-col items-start px-4'>
@@ -69,7 +68,7 @@ export default function Cv() {
                   <li className='list-disc text-teal-400' key={pub.id}>
                     <div className='flex flex-row items-center'>
                       {pub.authors.map((author, index) => (
-                        <ColBox key={index}>
+                        <div className='flex flex-col' key={index}>
                           <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                             {author}
                           </span>
@@ -80,10 +79,10 @@ export default function Cv() {
                           <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
                             <Link to={pub.url}>{pub.journal}</Link>
                           </span>
-                          <RowBox>
+                          <div className='flex'>
                             <span className='text-xs leading-5 text-slate-900 dark:text-violet3'></span>
-                          </RowBox>
-                        </ColBox>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </li>
@@ -92,26 +91,26 @@ export default function Cv() {
             </AccordianTriggerPub>
           </div>
         ))}
-        <h1 className='text-2xl font-bold'>Education</h1>
-        <ColBox>
+        <h1>Education</h1>
+        <div className='flex flex-col'>
           {education.map((edu, index) => (
             <div
               key={index}
               className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
             >
-              <h3 className='text-md font-Montserrat'>{edu.institution}</h3>
-              <RowBox className='flex flex-row items-center justify-between'>
-                <h4 className='text-md font-Montserrat'>{edu.degree}</h4>
-                <h4 className='text-md font-Montserrat'>
+              <h3 className='font-Montserrat'>{edu.institution}</h3>
+              <div className='flex flex-row items-center justify-between'>
+                <h4 className='font-Montserrat'>{edu.degree}</h4>
+                <h4 className='font-Montserrat'>
                   {edu.startDate} - {edu.endDate}
                 </h4>
-              </RowBox>
+              </div>
             </div>
           ))}
-        </ColBox>
-        <ColBox className='flex flex-col items-stretch gap-2 rounded-md p-1'>
+        </div>
+        <div className='flex flex-col items-stretch gap-1 md:gap-2 rounded-md p-1'>
           <div className='flex flex-col justify-between gap-2 text-xs'>
-            <h1 className='text-2xl font-bold'>Skills</h1>
+            <h1>Skills</h1>
 
             <ul className='flex list-none flex-row flex-wrap gap-2'>
               {skills.map((skill, index) => (
@@ -126,7 +125,7 @@ export default function Cv() {
               ))}
             </ul>
           </div>
-        </ColBox>
+        </div>
       </div>
     </>
   )

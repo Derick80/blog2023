@@ -179,10 +179,8 @@ export function ErrorBoundary() {
         <body>
           <div className='flex h-full w-full flex-col items-center justify-center text-center'>
             <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
-            <h1 className='text-2xl font-bold text-red-500'>
-              Status:{error.status}
-            </h1>
-            <p className='text-xl'>{error.data.message}</p>
+            <h2 className='font-bold text-red-500'>Status:{error.status}</h2>
+            <p>{error.data.message}</p>
           </div>
           <Scripts />
         </body>

@@ -116,6 +116,7 @@ export default function NewPostRoute() {
       : 'Save'
 
   const categories = useCategories()
+  // const categories = allcategories.map((cat) => cat.value)
 
   return (
     <div className=' mx-auto flex h-full w-full flex-col p-1'>
@@ -177,6 +178,14 @@ export default function NewPostRoute() {
           options={categories}
           picked={[]}
         />
+        {/* <CustomSelectBox 
+          name='categories'
+          options={categories}
+          picked={[]}
+          creatable={true}
+          actionPath='/categories'
+        /> */}
+
         {actionData?.errors?.categories && (
           <p id='categories-error' role='alert' className='text-red-500'>
             {actionData?.errors?.categories}

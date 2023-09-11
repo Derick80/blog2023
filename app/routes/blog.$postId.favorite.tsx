@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
+import { Response, json } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
@@ -18,6 +18,8 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export async function action({ request, params }: ActionArgs) {
+  const session = await getSession(request.headers.get('Cookie'))
+
   const user = await isAuthenticated(request)
   if (!user) {
     throw new Error('You need to be authenticated to favorite a post')
@@ -34,19 +36,21 @@ export async function action({ request, params }: ActionArgs) {
     )
   }
 
-  console.log(request.method, 'request method')
-
   try {
     if (request.method === 'POST') {
-      return await prisma.favorite.create({
+      const _favorited = await prisma.favorite.create({
         data: {
           postId,
           userId
         }
       })
+      if (!_favorited) throw new Error('could not favorite post')
+      if (_favorited) {
+        setSuccessMessage(session, 'favorited')
+      }
     }
     if (request.method === 'DELETE') {
-      return await prisma.favorite.delete({
+      const _deleted = await prisma.favorite.delete({
         where: {
           postId_userId: {
             postId,
@@ -54,8 +58,17 @@ export async function action({ request, params }: ActionArgs) {
           }
         }
       })
+      if (!_deleted) throw new Error('could not delete favorite')
+      if (_deleted) {
+        setErrorMessage(session, 'unfavorited')
+      }
     }
-    return json({ message: 'success' })
+
+    return new Response(null, {
+      headers: {
+        'Set-Cookie': await commitSession(session)
+      }
+    })
   } catch (error) {
     return json({ error: 'invalid data' }, { status: 400 })
   }

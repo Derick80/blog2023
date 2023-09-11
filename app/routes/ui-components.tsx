@@ -35,7 +35,7 @@ export async function loader({ request, params }: LoaderArgs) {
 export default function ComponentsIndex() {
   return (
     <div className='flex flex-col items-center justify-start gap-1'>
-      <h1 className='text-2xl font-bold'>UI Components</h1>
+      <h1>UI Components</h1>
       <div className='flex flex-col items-center md:flex-row'>
         {/* first column */}
         <div className='w-full items-center'>

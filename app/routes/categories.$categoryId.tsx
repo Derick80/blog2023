@@ -85,7 +85,7 @@ export default function CategoryIndex() {
 
   return (
     <div className=''>
-      <h1 className='text-4xl font-semibold'>{category.value}</h1>
+      <h1>{category.value}</h1>
     </div>
   )
 }
@@ -108,8 +108,8 @@ export function ErrorBoundary() {
   }
   return (
     <div>
-      <h1 className='text-2xl font-bold'>uh Oh..</h1>
-      <p className='text-xl'>something went wrong</p>
+      <h1>uh Oh..</h1>
+      <p>something went wrong</p>
       <pre>{errorMessage}</pre>
     </div>
   )
