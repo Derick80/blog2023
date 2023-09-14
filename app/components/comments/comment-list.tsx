@@ -104,16 +104,18 @@ function SiblingComments({ commentId }: { commentId: string }) {
   return (
     <>
       <div className='border-1 ml-5 rounded-md shadow-lg'>
-        {sibFetcher?.data?.comments?.map((comment: CommentWithChildren) => (
-          <>
-            <Comment key={comment.id} comments={comment} />
-            <CommentReplyBox
-              commentId={comment.id}
-              postId={comment.postId}
-              userId={comment.userId}
-            />
-          </>
-        ))}
+        {sibFetcher?.data?.comments?.map(
+          (comment: CommentWithChildren, index: number) => (
+            <>
+              <Comment key={index} comments={comment} />
+              <CommentReplyBox
+                commentId={comment.id}
+                postId={comment.postId}
+                userId={comment.userId}
+              />
+            </>
+          )
+        )}
       </div>
     </>
   )

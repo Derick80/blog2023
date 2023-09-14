@@ -13,12 +13,15 @@ import VerticalMenu from '~/components/vertical-menu'
 import Actions from '../blog-post-owner-action-container'
 import { ShareButton } from '../../share-button_v2'
 import FavoriteContainer from '../../favorite-container_v2'
+import CommentList from '../comments/comment-list_v2'
 interface BlogCardProps {
   post: Post
   children?: React.ReactNode
 }
 
 export default function BlogCard({ post, children }: BlogCardProps) {
+  console.log('post', post)
+
   const [open] = React.useState(true)
   return (
     <article
@@ -54,6 +57,7 @@ export default function BlogCard({ post, children }: BlogCardProps) {
       </div>
       <div id='comments' className=''>
         <CommentBox postId={post.id} />
+        {/* <CommentList postId={post.id} /> */}
         <CommentContainer postId={post.id} open={open} />
       </div>
       <CardSideMenu postId={post.id} counts={post._count} likes={post.likes} />
