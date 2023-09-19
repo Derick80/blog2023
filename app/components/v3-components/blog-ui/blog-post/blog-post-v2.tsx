@@ -57,8 +57,8 @@ export default function BlogCard({ post, children }: BlogCardProps) {
       </div>
       <div id='comments' className=''>
         <CommentBox postId={post.id} />
-        {/* <CommentList postId={post.id} /> */}
-        <CommentContainer postId={post.id} open={open} />
+        <CommentList postId={post.id} />
+        {/* <CommentContainer postId={post.id} open={open} /> */}
       </div>
       <CardSideMenu postId={post.id} counts={post._count} likes={post.likes} />
     </article>
@@ -120,14 +120,9 @@ function CardSideMenu({
       <LikeContainer postId={postId} likes={likes} />
       <ShareButton id={postId} />
 
-      <NavLink
-        className='flex flex-row items-center gap-1'
-        to={`/blog/${postId}`}
-      >
-        <NavLink className='flex flex-row items-center gap-1' to='#comments'>
-          <ChatBubbleIcon />
-          <p className='text-[15px]'>{counts?.comments}</p>
-        </NavLink>
+      <NavLink className='flex flex-row items-center gap-1' to='#comments'>
+        <ChatBubbleIcon />
+        <p className='text-[15px]'>{counts?.comments}</p>
       </NavLink>
     </div>
   )

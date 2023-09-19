@@ -1,6 +1,9 @@
+import { ArrowRightIcon } from '@radix-ui/react-icons'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
+import Button from '~/components/button'
 import { CommentWithChildren } from '~/server/schemas/schemas'
+import CommentBox from './comment-form'
 
 export type CommentListProps = {
   postId: string
@@ -31,7 +34,7 @@ export default function CommentList({ postId }: CommentListProps) {
           if (parentComment.children) {
             parentComment.children.push(comment)
           } else {
-            parentComment.children = [comment]
+            parentComment.children = []
           }
         }
       }
@@ -57,17 +60,58 @@ export default function CommentList({ postId }: CommentListProps) {
 }
 
 function Comment({ comment }: { comment: CommentWithChildren }) {
+  const [isReplying, setIsReplying] = React.useState(false)
+  const [open, setOpen] = React.useState(false)
   return (
-    <div>
-      <p>{comment.message}</p>
-      {comment.children?.map((child) => (
-        <div key={child.id}>
-          <p>{child.message} child</p>
+    <div className='flex flex-col gap-1 rounded-md pl-2 border-r-0 border-b-0 border-t-0  border-2'>
+      <div className='flex flex-row items-center justify-between gap-2'>
+        <div className='flex flex-col items-start gap-1'>
+          <div className='text-sm font-semibold rounded-md border-2 w-full p-1 md:p-2'>
+            {comment.message}
+          </div>
         </div>
-      ))}
+        <Button
+          variant='icon_text_filled'
+          size='small'
+          onClick={() => setIsReplying(!isReplying)}
+        >
+          <span>Reply</span>
+          <ArrowRightIcon />
+        </Button>
+      </div>
+      {isReplying && (
+        <CommentBox
+          postId={comment.postId}
+          parentId={comment.id}
+          setIsReplying={setIsReplying}
+        />
+      )}
+      {comment?.children?.length > 0 && (
+        <div className='flex flex-row items-center justify-between gap-2'>
+          <div className='text-xs font-semibold rounded-md border-2 w-full p-1 md:p-2'>
+            {comment?.children?.length} Replies
+          </div>
+          <Button
+            variant='icon_text_filled'
+            size='small'
+            onClick={() => setOpen(!open)}
+          >
+            <span>See Replies</span>
+            <ArrowRightIcon />
+          </Button>
+        </div>
+      )}
+      {open &&
+        comment.children?.map((child) => (
+          <div className='indent-6' key={child.id}>
+            <div>{child.message} child</div>
+          </div>
+        ))}
     </div>
   )
 }
+
+function CommentReplyBox({ commentId }: { commentId: string }) {}
 
 const tstData = [
   {

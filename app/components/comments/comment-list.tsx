@@ -156,6 +156,11 @@ function Comment({
           <div className='prose w-full flex-col justify-start text-sm dark:prose-invert'>
             <div className='prose flex items-center justify-between dark:prose-invert'>
               <div className='text-base leading-4'>{comments?.message}</div>
+              <CommentReplyBox
+                commentId={comments.id}
+                postId={comments.postId}
+                userId={comments.userId}
+              />
               <LikeComment
                 commentId={comments?.id}
                 commentLikesNumber={comments?.likes?.length}
