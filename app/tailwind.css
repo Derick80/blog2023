@@ -118,11 +118,6 @@ h5 {
 h6 {
   @apply scroll-m-6 text-base font-bold tracking-tight lg:text-lg;
 }
-
-p {
-  @apply scroll-m-6 text-base tracking-tight;
-}
-
 .scrolling-text {
   white-space: nowrap;
   animation: scroll-left 10s linear infinite;

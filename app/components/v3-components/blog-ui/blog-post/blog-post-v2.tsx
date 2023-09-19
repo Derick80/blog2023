@@ -13,6 +13,7 @@ import VerticalMenu from '~/components/vertical-menu'
 import Actions from '../blog-post-owner-action-container'
 import { ShareButton } from '../../share-button_v2'
 import FavoriteContainer from '../../favorite-container_v2'
+import CommentSection from '../comment/comment-section_v2'
 interface BlogCardProps {
   post: Post
   children?: React.ReactNode
@@ -25,16 +26,16 @@ export default function BlogCard({ post, children }: BlogCardProps) {
       id='blog-card'
       className='hover:violet4 prose relative flex w-full  max-w-prose  border-collapse flex-col rounded-md bg-violet3 shadow-xl dark:prose-invert hover:border-2 hover:border-violet8 dark:bg-violet3_dark hover:dark:border-violet8_dark dark:hover:bg-violet4_dark'
     >
-      <CardHeader title={post.title} postId={post.id} />
+      {/* <CardHeader title={post.title} postId={post.id} />
       <CardUpperBody
         postId={post.id}
         imageUrl={post.imageUrl}
         description={post.description}
         content={post.content}
-      />
+      /> */}
       {/* create a section divider */}
-      <Separator orientation='horizontal' decorative />
-      <div className='flex flex-wrap justify-start'>
+      {/* <Separator orientation='horizontal' decorative /> */}
+      {/* <div className='flex flex-wrap justify-start'>
         {post.categories.map((category) => (
           <Link to={`/blog/categories/${category.value}`} key={category.id}>
             <span
@@ -45,17 +46,14 @@ export default function BlogCard({ post, children }: BlogCardProps) {
             </span>
           </Link>
         ))}
-      </div>
+      </div> */}
       <div className='flex flex-row items-center justify-start gap-2'>
         <FavoriteContainer postId={post.id} favorites={post.favorites} />
         <VerticalMenu>
           <Actions postId={post.id} />
         </VerticalMenu>
       </div>
-      <div id='comments' className=''>
-        <CommentBox postId={post.id} />
-        <CommentContainer postId={post.id} open={open} />
-      </div>
+      <CommentSection postId={post.id} />
       <CardSideMenu postId={post.id} counts={post._count} likes={post.likes} />
     </article>
   )
