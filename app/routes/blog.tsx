@@ -1,6 +1,7 @@
 import { json, type LoaderArgs, type V2_MetaFunction } from '@remix-run/node'
 import {
   isRouteErrorResponse,
+  Link,
   Outlet,
   useLoaderData,
   useRouteError,
@@ -92,6 +93,17 @@ export default function BlogRoute() {
       {isAdmin && (
         <div className='flex flex-col items-center gap-2'>
           <h1>Admin Controls</h1>
+          <div className='flex flex-row items-center gap-2'>
+            <Link title='Create a new Post' to='/blog/new'>
+              <h3>Create a new Post</h3>
+            </Link>
+            <Link title='Create a new Category' to='/categories'>
+              <h3>Create a new Category</h3>
+            </Link>
+            <Link to='/blog/drafts' title='View Drafts'>
+              <h3>View Drafts</h3>
+            </Link>
+          </div>
         </div>
       )}
       <div className='flex flex-col items-center gap-20 '>

@@ -104,16 +104,18 @@ function SiblingComments({ commentId }: { commentId: string }) {
   return (
     <>
       <div className='border-1 ml-5 rounded-md shadow-lg'>
-        {sibFetcher?.data?.comments?.map((comment: CommentWithChildren) => (
-          <>
-            <Comment key={comment.id} comments={comment} />
-            <CommentReplyBox
-              commentId={comment.id}
-              postId={comment.postId}
-              userId={comment.userId}
-            />
-          </>
-        ))}
+        {sibFetcher?.data?.comments?.map(
+          (comment: CommentWithChildren, index: number) => (
+            <>
+              <Comment key={index} comments={comment} />
+              <CommentReplyBox
+                commentId={comment.id}
+                postId={comment.postId}
+                userId={comment.userId}
+              />
+            </>
+          )
+        )}
       </div>
     </>
   )
@@ -154,13 +156,21 @@ function Comment({
           <div className='prose w-full flex-col justify-start text-sm dark:prose-invert'>
             <div className='prose flex items-center justify-between dark:prose-invert'>
               <div className='text-base leading-4'>{comments?.message}</div>
+              <CommentReplyBox
+                commentId={comments.id}
+                postId={comments.postId}
+                userId={comments.userId}
+              />
               <LikeComment
                 commentId={comments?.id}
                 commentLikesNumber={comments?.likes?.length}
                 likes={comments?.likes}
               />
             </div>
-            <SiblingComments commentId={comments?.id} />
+            {children &&
+              children.map((comment: CommentWithChildren) => (
+                <SiblingComments key={comment?.id} commentId={comments?.id} />
+              ))}
           </div>
         )}
       </CommentCardUserOptions>
