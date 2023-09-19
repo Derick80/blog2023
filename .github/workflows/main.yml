@@ -7,9 +7,10 @@ env:
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 jobs:
   deploy:
-    name: Deploy to Fly
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: superfly/flyctl-actions/setup=flyctl@master
-      - run: flyctl deploy --remote-only
+      - name: Deploy to Fly
+        uses: superfly/flyctl-action@v1
+        with:
+          args: deploy
