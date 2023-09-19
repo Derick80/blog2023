@@ -17,8 +17,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const comments = await prisma.comment.findMany({
     where: {
-      postId,
-      parentId: null
+      postId
     },
     include: {
       user: {
