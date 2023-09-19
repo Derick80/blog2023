@@ -167,7 +167,10 @@ function Comment({
                 likes={comments?.likes}
               />
             </div>
-            <SiblingComments commentId={comments?.id} />
+            {children &&
+              children.map((comment: CommentWithChildren) => (
+                <SiblingComments key={comment?.id} commentId={comments?.id} />
+              ))}
           </div>
         )}
       </CommentCardUserOptions>

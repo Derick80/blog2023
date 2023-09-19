@@ -22,37 +22,10 @@ export default function CommentList({ postId }: CommentListProps) {
     comments: CommentWithChildren[]
   }
   console.log('data', data)
-  //   create a function that looks for comments that have a parentId that is not null and then nest them under the parent comment.
-
-  const organizedComments = data?.comments?.reduce(
-    (acc: CommentWithChildren[], comment: CommentWithChildren) => {
-      if (comment.parentId === null) {
-        acc.push(comment)
-      } else {
-        const parentComment = acc.find((c) => c.id === comment.parentId)
-        if (parentComment) {
-          if (parentComment.children) {
-            parentComment.children.push(comment)
-          } else {
-            parentComment.children = []
-          }
-        }
-      }
-      return acc
-    },
-    []
-  )
-  console.log('organizedComments', organizedComments)
-
-  const parentComments = data?.comments?.filter(
-    (comment: CommentWithChildren) => comment.parentId === null
-  )
-
-  console.log('parentComments', parentComments)
 
   return (
     <div className='flex flex-col gap-1 rounded-md pl-2'>
-      {organizedComments?.map((comment: CommentWithChildren) => (
+      {data?.comments?.map((comment: CommentWithChildren) => (
         <Comment key={comment.id} comment={comment} />
       ))}
     </div>
