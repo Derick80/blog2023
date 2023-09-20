@@ -40,6 +40,7 @@ export async function action({ request, params }: ActionArgs) {
     return json({ error: 'Not authenticated' })
   }
   const session = await getSession(request.headers.get('Cookie'))
+console.log(params, 'params from comment action')
 
   const { postId } = zx.parseParams(params, { postId: z.string() })
 

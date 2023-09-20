@@ -10,17 +10,54 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogCard from '~/components/v3-components/blog-ui/blog-post/blog-post-v2'
-import { getSinglePostById } from '~/server/post.server'
-import type { Post } from '~/server/schemas/schemas'
+import { prisma } from '~/server/prisma.server'
+import type { Comment, Post } from '~/server/schemas/schemas'
 
 export async function loader({ params }: LoaderArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
-  const post = await getSinglePostById(postId)
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    include: {
+      comments: {
+        include: {
+          user: true
+        }
+      },
+      categories: true,
+      likes: true
+    }
+  })
 
   if (!post) {
     throw new Error('Post not found')
   }
-  return json({ post: await getSinglePostById(postId) })
+
+  const comments = await prisma.comment.findMany({
+    where: {
+      postId
+    },
+    include: {
+      user: true,
+      likes: true,
+      children: {
+        include: {
+          user: true,
+          children: {
+            include: {
+              user: true
+            }
+          }
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'asc'
+    },
+    distinct: ['id']
+  })
+  console.log(comments, 'comments from loader')
+
+  return json({ post, comments })
 }
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -34,6 +71,7 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
+    comments: Comment[]
   }>()
 
   return (
@@ -48,7 +86,7 @@ export default function BlogPostRoute() {
         Back
       </NavLink>
       <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data.post} />
+        <BlogCard post={data.post} comments={data.comments} />
       </div>
     </div>
   )
