@@ -150,13 +150,14 @@ function CreateNewCategoryForm({
   const [category, setCategory] = React.useState('')
 
   const categoryCreateFetcher = useFetcher()
-  const actionRoute = `${actionPath}${category}`
+  const actionRoute = `${actionPath}`
 
-  const handleCategorySubmit = (event) => {
+  const handleCategorySubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     categoryCreateFetcher.submit(
       {
-        category: category
+        intent: 'create',
+        categoryName: category
       },
       {
         method: 'POST',
@@ -165,6 +166,7 @@ function CreateNewCategoryForm({
     )
     setExpanded(false)
   }
+
   return (
     <>
       {expanded ? (

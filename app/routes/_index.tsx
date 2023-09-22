@@ -9,12 +9,12 @@ import {
 import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { getAllPostsV1 } from '~/server/post.server'
-import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
-import SeparatorV2 from '~/components/v3-components/separator_v2'
-import ContactWidget from '~/components/v3-components/contact-widget'
-import ScrollingBanner from '~/components/scroll-banner_v2'
+import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
+import SeparatorV2 from '~/components/v2-components/separator_v2'
+import ContactWidget from '~/components/v2-components/contact-widget'
+import ScrollingBanner from '~/components/v2-components/scroll-banner_v2'
 import React from 'react'
-import CustomCheckbox from '~/components/v3-components/custom-checkbox_v2'
+import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
 import { MyTooltip } from '~/components/radix-tooltip'
 export const meta: V2_MetaFunction = () => {
   return [

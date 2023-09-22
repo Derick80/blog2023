@@ -2,10 +2,10 @@ import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { projects } from '~/resources/projects'
-import SeparatorV2 from '~/components/v3-components/separator_v2'
-import ProjectAccordian from '~/components/v3-components/project/project-accordian_v2'
+import SeparatorV2 from '~/components/v2-components/separator_v2'
+import ProjectAccordian from '~/components/v2-components/project/project-accordian_v2'
 import { getUniqueCategories } from '~/utilities'
-import TechnologiesContainer from '~/components/v3-components/project/project-tech-container'
+import TechnologiesContainer from '~/components/v2-components/project/project-tech-container'
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)

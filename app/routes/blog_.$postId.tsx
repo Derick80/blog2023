@@ -9,7 +9,8 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import BlogCard from '~/components/v3-components/blog-ui/blog-post/blog-post-v2'
+import BlogCard from '~/components/v2-components/blog-ui/blog-post/blog-post-v2'
+import { DefaultUserSelect } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
 
@@ -18,13 +19,15 @@ export async function loader({ params }: LoaderArgs) {
   const post = await prisma.post.findUnique({
     where: { id: postId },
     include: {
-      comments: {
-        include: {
-          user: true
-        }
-      },
       categories: true,
-      likes: true
+      likes: true,
+      favorites: true,
+      _count: {
+        select: {
+          comments: true,
+          likes: true
+        }
+      }
     }
   })
 
@@ -37,23 +40,14 @@ export async function loader({ params }: LoaderArgs) {
       postId
     },
     include: {
-      user: true,
-      likes: true,
-      children: {
-        include: {
-          user: true,
-          children: {
-            include: {
-              user: true
-            }
-          }
-        }
-      }
+      user: {
+        select: DefaultUserSelect
+      },
+      likes: true
     },
     orderBy: {
       createdAt: 'asc'
-    },
-    distinct: ['id']
+    }
   })
   console.log(comments, 'comments from loader')
 

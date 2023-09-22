@@ -9,9 +9,9 @@ import {
 } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
-import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
+import ImageUploader from '~/components/v2-components/blog-ui/image-fetcher'
 import Button from '~/components/button'
-import TipTap from '~/components/v3-components/tiptap/tip-tap'
+import TipTap from '~/components/v2-components/tiptap/tip-tap'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import {
   commitSession,
@@ -23,6 +23,7 @@ import { createPost } from '~/server/post.server'
 import { useCategories, validateAction } from '~/utilities'
 import * as Switch from '@radix-ui/react-switch'
 import SelectBox from '~/components/select'
+import CustomSelectBox from '~/components/v2-components/custom-select'
 export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -172,19 +173,20 @@ export default function NewPostRoute() {
         <TipTap />
 
         <label htmlFor='categories'>Categories</label>
-        <SelectBox
+        {/* <SelectBox
           multiple
           name='categories'
           options={categories}
           picked={[]}
-        />
-        {/* <CustomSelectBox 
+        /> */}
+        <CustomSelectBox
           name='categories'
-          options={categories}
+          multiple={true}
+          options={categories.map((cat) => cat.value)}
           picked={[]}
           creatable={true}
           actionPath='/categories'
-        /> */}
+        />
 
         {actionData?.errors?.categories && (
           <p id='categories-error' role='alert' className='text-red-500'>

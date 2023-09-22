@@ -12,7 +12,7 @@ import { validateAction } from '~/utilities'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import Button from '~/components/button'
 import { createTask, getTaskCategories } from '~/server/task.server'
-import CustomSelectBox from '~/components/v3-components/custom-select'
+import CustomSelectBox from '~/components/v2-components/custom-select'
 
 export async function loader({ request, params }: LoaderArgs) {
   const categories = await getTaskCategories()

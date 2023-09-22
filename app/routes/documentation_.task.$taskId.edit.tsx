@@ -15,7 +15,7 @@ import { Form, useActionData } from '@remix-run/react'
 import Button from '~/components/button'
 import { FilePlusIcon } from '@radix-ui/react-icons'
 import { validateAction } from '~/utilities'
-import CustomSelectBox from '~/components/v3-components/custom-select'
+import CustomSelectBox from '~/components/v2-components/custom-select'
 import { typedjson, useTypedLoaderData } from 'remix-typedjson'
 
 export async function loader({ request, params }: LoaderArgs) {
