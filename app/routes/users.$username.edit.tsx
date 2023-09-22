@@ -3,7 +3,7 @@ import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 
 import type { LoaderArgs, ActionArgs } from '@remix-run/node'
-import ImageUploader from '~/components/v3-components/blog-ui/image-fetcher'
+import ImageUploader from '~/components/v2-components/blog-ui/image-fetcher'
 import type { User } from '~/server/schemas/schemas'
 import React from 'react'
 import { prisma } from '~/server/prisma.server'

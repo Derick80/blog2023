@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { NavLink, useLoaderData } from '@remix-run/react'
-import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
+import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
 import { getAllPostsV1 } from '~/server/post.server'
 import { FullPost } from '~/server/schemas/schemas_v2'
 export async function loader({ request, params }: LoaderArgs) {

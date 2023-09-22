@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
 import { getAllUserDraftsV1 } from '~/server/post.server'
-import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
+import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
 export async function loader({ request, params }: LoaderArgs) {
   const user = await isAuthenticated(request)
   if (!user) {

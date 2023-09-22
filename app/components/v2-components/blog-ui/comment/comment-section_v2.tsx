@@ -13,8 +13,6 @@ export default function CommentSection({
 }: CommentSectionProps) {
   if (!comments) return null
 
-  const noParentComments = comments.filter((comment) => !comment.parentId)
-  console.log(noParentComments, 'noParentComments')
 
   const formattedData = formComments(comments)
 

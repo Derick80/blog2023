@@ -14,7 +14,7 @@ import clsx from 'clsx'
 import React from 'react'
 import { z } from 'zod'
 import Button from '~/components/button'
-import SeparatorV2 from '~/components/v3-components/separator_v2'
+import SeparatorV2 from '~/components/v2-components/separator_v2'
 import { isAuthenticated } from '~/server/auth/auth.server'
 
 import { prisma } from '~/server/prisma.server'
@@ -74,33 +74,50 @@ export async function action({ request, params }: ActionArgs) {
     return json({ errors })
   }
 
-  const { categoryName } = formData as ActionInput
+  const { categoryName, intent } = formData as ActionInput
   // I"m type casting here for now because I am performing multiple actions in one route and my zod schema is not set up to handle that
 
-  const categoryExists = await prisma.category.findUnique({
-    where: {
-      value: capitalizeFirstLetter(categoryName)
-    }
-  })
-  if (categoryExists) {
-    setErrorMessage(session, 'Category already exists')
-    return redirect('/categories', {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    })
-  } else {
-    const category = await prisma.category.create({
-      data: {
-        value: capitalizeFirstLetter(categoryName),
-        label: capitalizeFirstLetter(categoryName)
-      }
-    })
+  switch (intent) {
+    case 'create': {
+      const categoryExists = await prisma.category.findUnique({
+        where: {
+          value: capitalizeFirstLetter(categoryName)
+        }
+      })
+      if (categoryExists) {
+        setErrorMessage(session, 'Category already exists')
+        return redirect('/categories', {
+          headers: {
+            'Set-Cookie': await commitSession(session)
+          }
+        })
+      } else {
+        const category = await prisma.category.create({
+          data: {
+            value: capitalizeFirstLetter(categoryName),
+            label: capitalizeFirstLetter(categoryName)
+          }
+        })
 
-    if (!category) {
-      return json({ errors: { categoryName: 'Category not created' } })
-    } else {
-      return json({ category })
+        if (!category) {
+          return json({ errors: { categoryName: 'Category not created' } })
+        } else {
+          return json({ category })
+        }
+      }
+    }
+    case 'delete': {
+      // const { categoryId } = formData as ActionInput
+      // const category = await prisma.category.delete({
+      //   where: {
+      //     id: categoryId
+      //   }
+      // })
+      // if (!category) {
+      //   return json({ errors: { categoryName: 'Category not deleted' } })
+      // } else {
+      //   return json({ category })
+      // }
     }
   }
 }

@@ -113,14 +113,9 @@ function CardSideMenu({
       <LikeContainer postId={postId} likes={likes} />
       <ShareButton id={postId} />
 
-      <NavLink
-        className='flex flex-row items-center gap-1'
-        to={`/blog/${postId}`}
-      >
-        <NavLink className='flex flex-row items-center gap-1' to='#comments'>
-          <ChatBubbleIcon />
-          <p className='text-[15px]'>{counts?.comments}</p>
-        </NavLink>
+      <NavLink className='flex flex-row items-center gap-1' to='#comments'>
+        <ChatBubbleIcon />
+        <p className='text-[15px]'>{counts?.comments}</p>
       </NavLink>
     </div>
   )

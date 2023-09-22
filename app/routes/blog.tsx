@@ -9,16 +9,16 @@ import {
 import dayjs from 'dayjs'
 import { getAllPostsV1, getPosts } from '~/server/post.server'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import BlogPreviewV2 from '~/components/v3-components/blog-ui/blog-post/blog-preview_v2'
+import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
 import {
   filterPosts,
   useCategories,
   useOptionalUser,
   useUpdateQueryStringValueWithoutNavigation
 } from '~/utilities'
-import SeparatorV2 from '~/components/v3-components/separator_v2'
+import SeparatorV2 from '~/components/v2-components/separator_v2'
 import React from 'react'
-import CustomCheckbox from '~/components/v3-components/custom-checkbox_v2'
+import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
 
 dayjs.extend(relativeTime)
 
