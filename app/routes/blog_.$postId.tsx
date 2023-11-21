@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
-import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   NavLink,
@@ -14,7 +14,7 @@ import { DefaultUserSelect } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   const post = await prisma.post.findUnique({
     where: { id: postId },
@@ -53,7 +53,7 @@ export async function loader({ params }: LoaderArgs) {
 
   return json({ post, comments })
 }
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     { title: data?.post?.title },
     {

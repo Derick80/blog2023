@@ -1,7 +1,7 @@
-// export async function action({ request, params }: ActionArgs) {
+// export async function action({ request, params }: ActionFunctionArgs) {
 //   const formData = await request.formData()
 
-import { LoaderArgs, json } from '@remix-run/node'
+import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { redirect } from 'remix-typedjson'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { getPostsVersionTwo } from '~/server/post.server'
@@ -10,7 +10,7 @@ import { useLoaderData } from '@remix-run/react'
 //   return json({ message: 'success' })
 // }
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')

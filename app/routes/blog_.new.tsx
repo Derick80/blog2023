@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
   Form,
@@ -24,7 +24,7 @@ import { useCategories, validateAction } from '~/utilities'
 import * as Switch from '@radix-ui/react-switch'
 import SelectBox from '~/components/select'
 import CustomSelectBox from '~/components/v2-components/custom-select'
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   if (!user) {
@@ -52,7 +52,7 @@ export const schema = z.object({
 })
 
 type ActionInput = z.infer<typeof schema>
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   // check if the user is authenticated
@@ -113,8 +113,8 @@ export default function NewPostRoute() {
     navigation.state === 'submitting'
       ? 'Saving...'
       : navigation.state === 'loading'
-      ? 'Saved!'
-      : 'Save'
+        ? 'Saved!'
+        : 'Save'
 
   const categories = useCategories()
   // const categories = allcategories.map((cat) => cat.value)

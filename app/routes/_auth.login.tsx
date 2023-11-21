@@ -1,14 +1,13 @@
 import { DiscordLogoIcon } from '@radix-ui/react-icons'
-import type { ActionFunction, LoaderArgs } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
+import type { ActionFunction, LoaderFunctionArgs } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 import { Link } from '@remix-run/react'
-import { badRequest, serverError } from 'remix-utils'
 import { AuthForm } from '~/components/auth/auth-form'
 import { SocialLoginForm } from '~/components/auth/social-login-form'
 import Button from '~/components/button'
 import { authenticator, isAuthenticated } from '~/server/auth/auth.server'
 
-export async function loader(args: LoaderArgs) {
+export async function loader(args: LoaderFunctionArgs) {
   return (await isAuthenticated(args.request)) ? redirect('/') : null
 }
 
@@ -20,8 +19,9 @@ export const action: ActionFunction = async ({ request }) => {
   } catch (error) {
     if (error instanceof Response) return error
     if (error instanceof Error)
-      return badRequest({ message: `${error.message} +login error` })
-    return serverError(error)
+      return json({
+        message: error.message
+      })
   }
 }
 export default function Login() {

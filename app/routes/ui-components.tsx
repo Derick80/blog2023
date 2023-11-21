@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import Button from '~/components/button'
@@ -24,7 +24,7 @@ const picked = [
 ]
 
 const singlePicked = [{ id: '1', value: 'one', label: 'one' }]
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return json({ message: 'not authorized' }, { status: 401 })

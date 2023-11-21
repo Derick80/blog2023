@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -14,7 +14,7 @@ import Button from '~/components/button'
 import { createTask, getTaskCategories } from '~/server/task.server'
 import CustomSelectBox from '~/components/v2-components/custom-select'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const categories = await getTaskCategories()
   if (!categories) {
     return json({ categories: [] })
@@ -38,7 +38,7 @@ const schema = z.object({
 })
 
 type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   const isAdmin = user?.role === 'ADMIN'

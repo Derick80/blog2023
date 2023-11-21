@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'
@@ -11,7 +11,7 @@ import {
   setSuccessMessage
 } from '~/server/session.server'
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   if (!postId) {
     throw new Error('Post id is required')

@@ -1,4 +1,4 @@
-import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import Button from '~/components/button'
@@ -6,7 +6,7 @@ import { UserPlaceHolder } from '~/resources/user-placeholder'
 import type { UserType } from '~/server/schemas/schemas'
 import { getUsers } from '~/server/user.server'
 import { useOptionalUser } from '~/utilities'
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       title: `https://derickchoskinson.com Users`
@@ -17,7 +17,7 @@ export const meta: V2_MetaFunction = () => {
     }
   ]
 }
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const users = await getUsers()
 
   if (!users) {

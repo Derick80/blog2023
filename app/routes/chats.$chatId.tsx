@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect, json } from '@remix-run/node'
 import {
   useActionData,
@@ -8,7 +8,7 @@ import {
   useRevalidator
 } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
-import { useEventSource } from 'remix-utils'
+import { useEventSource } from 'remix-utils/sse/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import Button from '~/components/button'
@@ -22,7 +22,7 @@ import {
 } from '~/server/session.server'
 import { useOptionalUser, validateAction } from '~/utilities'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { chatId } = zx.parseParams(params, { chatId: z.string() })
   const user = await isAuthenticated(request)
   if (!user) {
@@ -69,7 +69,7 @@ const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   if (!user) {

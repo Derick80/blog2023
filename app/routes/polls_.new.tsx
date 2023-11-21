@@ -1,5 +1,5 @@
 import { isAuthenticated } from '~/server/auth/auth.server'
-import type { ActionArgs } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import { prisma } from '~/server/prisma.server'
@@ -10,7 +10,7 @@ import {
   setSuccessMessage
 } from '~/server/session.server'
 import Button from '~/components/button'
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const formData = await request.formData()
   const title = formData.get('title')

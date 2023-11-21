@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { useLoaderData, useParams } from '@remix-run/react'
 import { z } from 'zod'
@@ -6,7 +6,7 @@ import { zx } from 'zodix'
 import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
 import { getAllPostsV1WithFilter } from '~/server/post.server'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { categoryName } = zx.parseParams(params, { categoryName: z.string() })
 
   if (!categoryName) {

@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { zx } from 'zodix'
@@ -25,7 +25,7 @@ import ImageUploader from '~/components/v2-components/blog-ui/image-fetcher'
 import Button from '~/components/button'
 import SelectBox from '~/components/select'
 import * as Switch from '@radix-ui/react-switch'
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')
@@ -59,7 +59,7 @@ const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
 

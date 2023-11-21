@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
 import { prisma } from '~/server/prisma.server'
@@ -11,7 +11,7 @@ import {
   setSuccessMessage
 } from '~/server/session.server'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { commentId } = zx.parseParams(params, { commentId: z.string() })
 
   const comments = await prisma.comment.findMany({
@@ -35,7 +35,7 @@ const schema = z.object({
 })
 
 export type ActionData = z.infer<typeof schema>
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   console.log(params, 'params')
 

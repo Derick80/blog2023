@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderArgs } from '@remix-run/node'
+import type { ActionFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'
@@ -13,7 +13,7 @@ import {
 
 // or cloudflare/deno
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
 
   if (!user) {

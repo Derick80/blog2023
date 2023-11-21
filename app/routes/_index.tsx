@@ -1,4 +1,4 @@
-import type { V2_MetaFunction } from '@remix-run/react'
+import type { MetaFunction } from '@remix-run/react'
 import { useLoaderData, useSearchParams } from '@remix-run/react'
 import {
   filterPosts,
@@ -6,7 +6,7 @@ import {
   useUpdateQueryStringValueWithoutNavigation
 } from '~/utilities'
 
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { getAllPostsV1 } from '~/server/post.server'
 import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
@@ -16,7 +16,7 @@ import ScrollingBanner from '~/components/v2-components/scroll-banner_v2'
 import React from 'react'
 import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
 import { MyTooltip } from '~/components/radix-tooltip'
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { title: `Derick C Hoskinson's Blog` },
     {
@@ -26,7 +26,7 @@ export const meta: V2_MetaFunction = () => {
   ]
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const posts = await getAllPostsV1(5)
   if (!posts) throw new Error('No posts found')
 

@@ -1,9 +1,9 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
 import { z } from 'zod'
 import { getUserPosts } from '~/server/post.server'
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { username } = zx.parseParams(params, { username: z.string() })
 
   const userPosts = await getUserPosts(username)

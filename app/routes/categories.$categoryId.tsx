@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { zx } from 'zodix'
@@ -16,7 +16,7 @@ import {
   setErrorMessage,
   setSuccessMessage
 } from '~/server/session.server'
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     throw new Error('You must be logged in to do that')
@@ -45,7 +45,7 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({})
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   if (!user) {

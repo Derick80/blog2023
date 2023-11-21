@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { zx } from 'zodix'
@@ -16,7 +16,7 @@ const schema = z.object({
 })
 
 type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const { taskId } = zx.parseParams(params, { taskId: z.string() })
   console.log(taskId, 'taskId')
   const session = await getSession(request.headers.get('Cookie'))

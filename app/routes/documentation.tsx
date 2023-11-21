@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
@@ -8,7 +8,7 @@ import SearchBar from '~/components/search-bar'
 import type { Prisma } from '@prisma/client'
 import { prisma } from '~/server/prisma.server'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url)
 
   const filter = url.searchParams.get('filter')
