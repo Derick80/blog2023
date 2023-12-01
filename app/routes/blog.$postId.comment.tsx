@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { z } from 'zod'
@@ -12,7 +12,7 @@ import {
 } from '~/server/session.server'
 import { DefaultUserSelect } from '~/server/post.server'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
 
   const comments = await prisma.comment.findMany({
@@ -34,13 +34,13 @@ export const schema = z.object({
 })
 
 export type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return json({ error: 'Not authenticated' })
   }
   const session = await getSession(request.headers.get('Cookie'))
-console.log(params, 'params from comment action')
+  console.log(params, 'params from comment action')
 
   const { postId } = zx.parseParams(params, { postId: z.string() })
 

@@ -1,5 +1,5 @@
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { prisma } from '~/server/prisma.server'
@@ -13,7 +13,7 @@ import {
 } from '~/server/session.server'
 import { z } from 'zod'
 import { validateAction } from '~/utilities'
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const polls = await prisma.poll.findMany({
     include: {
       options: {
@@ -39,7 +39,7 @@ export const schema = z.object({
 })
 
 type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   const { formData, errors } = await validateAction({ request, schema })

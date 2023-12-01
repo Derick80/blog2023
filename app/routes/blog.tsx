@@ -1,4 +1,8 @@
-import { json, type LoaderArgs, type V2_MetaFunction } from '@remix-run/node'
+import {
+  json,
+  type LoaderFunctionArgs,
+  type MetaFunction
+} from '@remix-run/node'
 import {
   isRouteErrorResponse,
   Outlet,
@@ -22,7 +26,7 @@ import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
 
 dayjs.extend(relativeTime)
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       title: `Derick's Blog`
@@ -30,7 +34,7 @@ export const meta: V2_MetaFunction = () => {
   ]
 }
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   // I don't need to use the posts from the loader because I'm using the posts from the getAllPostsV1 function but at the moment I'm using the old getPosts function to get the comments
   // get all posts and comments
   const posts = await getPosts()

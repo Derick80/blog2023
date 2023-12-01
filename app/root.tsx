@@ -1,7 +1,7 @@
 import type {
   LinksFunction,
-  LoaderArgs,
-  V2_MetaFunction
+  LoaderFunctionArgs,
+  MetaFunction
 } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
@@ -21,7 +21,7 @@ import Layout from './components/layout/layout'
 import stylesheet from '~/tailwind.css'
 import type { ToastMessage } from './server/session.server'
 import { commitSession, getSession } from './server/session.server'
-import React, { Suspense, lazy } from 'react'
+import React from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -32,7 +32,7 @@ export const links: LinksFunction = () => [
 ]
 
 // SEO  meta tags
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       name: 'viewport',
@@ -45,7 +45,7 @@ export const meta: V2_MetaFunction = () => {
   ]
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const ENV = {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ?? '',
     CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET ?? ''
@@ -73,11 +73,6 @@ export async function loader({ request }: LoaderArgs) {
     }
   )
 }
-
-const RemixDevTools =
-  process.env.NODE_ENV === 'development'
-    ? lazy(() => import('remix-development-tools'))
-    : null
 
 export default function App() {
   const data = useLoaderData<typeof loader>()
@@ -155,11 +150,6 @@ export default function App() {
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
-          {RemixDevTools ? (
-            <Suspense>
-              <RemixDevTools />
-            </Suspense>
-          ) : null}
         </Layout>
       </body>
     </html>

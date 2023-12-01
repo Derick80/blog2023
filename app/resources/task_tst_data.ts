@@ -1,7 +1,4 @@
-import type {
-  SectionDocumentation as SectionDoc,
-  Task as TaskImport
-} from '@prisma/client'
+import type { Task as TaskImport } from '@prisma/client'
 import type { SerializeFrom } from '@remix-run/node'
 
 export type Sections = SerializeFrom<SectionDoc>

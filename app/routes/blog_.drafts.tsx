@@ -1,11 +1,11 @@
-import type { LoaderArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
 import { getAllUserDraftsV1 } from '~/server/post.server'
 import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')

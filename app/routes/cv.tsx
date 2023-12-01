@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
-import type { V2_MetaFunction } from '@remix-run/react'
+import type { MetaFunction } from '@remix-run/react'
 import { Link } from '@remix-run/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback } from 'react'
@@ -9,7 +9,7 @@ import { skills } from '~/resources/resume/skills'
 import { work_experience } from '~/resources/resume/workexperience'
 import { education } from '~/resources/resume/education'
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       title: `Derick Hoskinson's Resume`

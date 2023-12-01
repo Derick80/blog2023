@@ -2,7 +2,7 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 
-import type { LoaderArgs, ActionArgs } from '@remix-run/node'
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
 import ImageUploader from '~/components/v2-components/blog-ui/image-fetcher'
 import type { User } from '~/server/schemas/schemas'
 import React from 'react'
@@ -18,7 +18,7 @@ import { zx } from 'zodix'
 import { validateAction } from '~/utilities'
 import Button from '~/components/button'
 import { ArrowRightIcon } from '@radix-ui/react-icons'
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { username } = params
   const user = await isAuthenticated(request)
   if (!user) {
@@ -48,7 +48,7 @@ const schema = z.object({
   imageUrl: z.string().url().min(3).max(1000)
 })
 type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const { username } = zx.parseParams(params, { username: z.string() })
   if (!username) {
     return json({ error: 'No username provided' })

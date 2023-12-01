@@ -1,7 +1,7 @@
 import { Cross1Icon } from '@radix-ui/react-icons'
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect, json } from '@remix-run/node'
-import type { V2_MetaFunction } from '@remix-run/react'
+import type { MetaFunction } from '@remix-run/react'
 import {
   Form,
   Outlet,
@@ -29,7 +29,7 @@ import {
   validateAction
 } from '~/utilities'
 // deleting a category doesn't work correctly it deletes the wrong category
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const categories = await prisma.category.findMany({
     orderBy: {
       value: 'asc'
@@ -39,7 +39,7 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ categories })
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     { title: 'Categories' },
     {
@@ -57,7 +57,7 @@ export const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)

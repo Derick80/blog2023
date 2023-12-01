@@ -1,5 +1,5 @@
 import type { Chat } from '@prisma/client'
-import type { ActionArgs, LoaderArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link, Form, Outlet } from '@remix-run/react'
 import invariant from 'tiny-invariant'
@@ -11,7 +11,7 @@ import { getSession, setErrorMessage } from '~/server/session.server'
 import type { User } from '~/server/schemas/schemas'
 import { useOptionalUser, validateAction } from '~/utilities'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const username = params.username
   if (!username) {
     return { json: { message: 'No username provided' } }
@@ -65,7 +65,7 @@ const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const username = params.username
   console.log(username, 'username')

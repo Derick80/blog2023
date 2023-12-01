@@ -1,4 +1,4 @@
-import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node'
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import { projects } from '~/resources/projects'
@@ -7,7 +7,7 @@ import ProjectAccordian from '~/components/v2-components/project/project-accordi
 import { getUniqueCategories } from '~/utilities'
 import TechnologiesContainer from '~/components/v2-components/project/project-tech-container'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return null
@@ -15,7 +15,7 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ user })
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     {
       title: `Derick's Projects`

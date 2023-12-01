@@ -1,13 +1,13 @@
 import { Message } from '@prisma/client'
-import { LoaderArgs, redirect } from '@remix-run/node'
-import { eventStream } from 'remix-utils'
+import { LoaderFunctionArgs, redirect } from '@remix-run/node'
+import { eventStream } from 'remix-utils/sse/server'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { chatEmitter, EVENTS } from '~/server/chat.server'
 import { prisma } from '~/server/prisma.server'
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const currentUser = await isAuthenticated(request)
 
   if (!currentUser) return redirect('/login')
