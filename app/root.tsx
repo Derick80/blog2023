@@ -26,6 +26,7 @@ import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MetronomeLinks } from '@metronome-sh/react'
+import { getEnv } from './server/env.server'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -45,15 +46,10 @@ export const meta: MetaFunction = () => {
   ]
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
-export async function loader({ request }: LoaderFunctionArgs) {
-  const ENV = {
-    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ?? '',
-    CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET ?? ''
-  }
+export async function loader ({ request }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   const categories = await prisma.category.findMany()
   const session = await getSession(request.headers.get('Cookie'))
-
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
   if (!toastMessage) {
@@ -65,7 +61,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   return json(
-    { toastMessage, user, categories, ENV },
+    { toastMessage, user, categories, ENV: getEnv() },
     {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -74,7 +70,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   )
 }
 
-export default function App() {
+export default function App () {
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
 
@@ -109,31 +105,27 @@ export default function App() {
         id='body'
         className='h-screen bg-primary text-slate-900  dark:text-violet3'
       >
-        <script
-          src='https://widget.cloudinary.com/v2.0/global/all.js'
-          type='text/javascript'
-        />
 
         <Layout>
-          <AnimatePresence mode='wait' initial={false}>
+          <AnimatePresence mode='wait' initial={ false }>
             <motion.div
-              key={useLocation().pathname}
-              animate={{ x: '90', opacity: 1 }}
-              transition={{
+              key={ useLocation().pathname }
+              animate={ { x: '90', opacity: 1 } }
+              transition={ {
                 duration: 0.25,
                 type: 'spring',
                 stiffness: 150,
                 damping: 20
-              }}
-              exit={{ x: '-40%', opacity: 0 }}
+              } }
+              exit={ { x: '-40%', opacity: 0 } }
             >
               <Outlet />
             </motion.div>
           </AnimatePresence>
-          {/* <ChatWidget /> */}
+          {/* <ChatWidget /> */ }
           <Toaster
             position='bottom-right'
-            toastOptions={{
+            toastOptions={ {
               success: {
                 style: {
                   background: 'green'
@@ -144,7 +136,7 @@ export default function App() {
                   background: 'red'
                 }
               }
-            }}
+            } }
           />
 
           <ScrollRestoration />
@@ -156,7 +148,7 @@ export default function App() {
   )
 }
 
-export function ErrorBoundary() {
+export function ErrorBoundary () {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
@@ -169,8 +161,8 @@ export function ErrorBoundary() {
         <body>
           <div className='flex h-full w-full flex-col items-center justify-center text-center'>
             <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
-            <h2 className='font-bold text-red-500'>Status:{error.status}</h2>
-            <p>{error.data.message}</p>
+            <h2 className='font-bold text-red-500'>Status:{ error.status }</h2>
+            <p>{ error.data.message }</p>
           </div>
           <Scripts />
         </body>
@@ -194,8 +186,8 @@ export function ErrorBoundary() {
         <div className='flex h-full w-full flex-col items-center justify-center text-center'>
           <h1 className='text-2xl font-bold'>uh Oh..</h1>
           <p className='text-xl'>something went wrong</p>
-          <pre>{errorMessage}</pre>
-        </div>{' '}
+          <pre>{ errorMessage }</pre>
+        </div>{ ' ' }
         <Scripts />
       </body>
     </html>

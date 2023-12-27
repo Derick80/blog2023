@@ -26,14 +26,14 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader ({ request }: LoaderFunctionArgs) {
   const posts = await getAllPostsV1(5)
   if (!posts) throw new Error('No posts found')
 
   return json({ posts })
 }
 
-export default function Index() {
+export default function Index () {
   const { posts } = useLoaderData<typeof loader>()
   const categories = useCategories()
   const [searchParams] = useSearchParams()
@@ -56,13 +56,13 @@ export default function Index() {
 
   const visibleTags = isSearching
     ? new Set(
-        matchingPosts.flatMap((post) =>
-          post.categories.map((p) => p.value).filter(Boolean)
-        )
+      matchingPosts.flatMap((post) =>
+        post.categories.map((p) => p.value).filter(Boolean)
       )
+    )
     : new Set(categories.map((p) => p.value))
 
-  function toggleTag(tag: string) {
+  function toggleTag (tag: string) {
     setQuery((q) => {
       const expression = new RegExp(`\\b${tag}\\b`, 'ig')
 
@@ -77,7 +77,7 @@ export default function Index() {
   return (
     <div className='md:gap-38 flex w-full items-center flex-col gap-28'>
       <div className='flex w-full flex-col items-center gap-10 md:gap-20'>
-        {/* probably remove dive around the headings if I don't change the font */}
+        {/* probably remove dive around the headings if I don't change the font */ }
         <div className='flex flex-col w-full items-center gap-20 '>
           <h1>Welcome to DerickCHoskinson.com </h1>
           <ScrollingBanner />
@@ -99,21 +99,21 @@ export default function Index() {
             <h1>Category</h1>
           </div>
           <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
-            {categories
+            { categories
               ? categories.map((category) => {
-                  const selected = query.includes(category.value)
-                  return (
-                    <CustomCheckbox
-                      key={category.id}
-                      name='category'
-                      tag={category.value}
-                      selected={selected}
-                      onClick={() => toggleTag(category.value)}
-                      disabled={!visibleTags.has(category.value)}
-                    />
-                  )
-                })
-              : null}
+                const selected = query.includes(category.value)
+                return (
+                  <CustomCheckbox
+                    key={ category.id }
+                    name='category'
+                    tag={ category.value }
+                    selected={ selected }
+                    onClick={ () => toggleTag(category.value) }
+                    disabled={ !visibleTags.has(category.value) }
+                  />
+                )
+              })
+              : null }
           </div>
         </div>
       </div>
@@ -125,9 +125,9 @@ export default function Index() {
           <h1>Latest Posts</h1>
         </div>
         <div className='flex w-full flex-col items-center gap-5'>
-          {matchingPosts.map((post) => (
-            <BlogPreviewV2 key={post.id} post={post} />
-          ))}
+          { matchingPosts.map((post) => (
+            <BlogPreviewV2 key={ post.id } post={ post } />
+          )) }
         </div>
         <div className='flex w-full flex-col gap-2'>
           <SeparatorV2 orientation='horizontal' />
