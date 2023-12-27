@@ -17,7 +17,13 @@ export async function uploadImage(data: AsyncIterable<Uint8Array>) {
   const uploadPromise = new Promise(async (resolve, reject) => {
     const uploadStream = cloudinary.v2.uploader.upload_stream(
       {
-        cloud_name: 'dch-photo'
+        cloud_name: 'dch-photo',
+        transformation: [
+          {
+            format: 'webp',
+            fetch_format: 'webp'
+          }
+        ]
       },
       (error, result) => {
         if (error) {
