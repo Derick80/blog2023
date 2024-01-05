@@ -9,9 +9,6 @@ import Button from '~/components/button'
 import { Separator } from '~/components/ui/separator'
 import { authenticator, isAuthenticated } from '~/server/auth/auth.server'
 
-export async function loader (args: LoaderFunctionArgs) {
-  return (await isAuthenticated(args.request)) ? redirect('/') : null
-}
 
 export const action: ActionFunction = async ({ request }) => {
   try {

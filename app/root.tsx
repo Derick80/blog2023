@@ -62,7 +62,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
   if (!toastMessage) {
-    return json({ toastMessage: null, categories, theme })
+    return json({ toastMessage: null, categories, user, theme })
   }
 
   if (!toastMessage.type) {
@@ -70,7 +70,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   }
 
   return json(
-    { toastMessage, categories, theme, ENV: getEnv() },
+    { toastMessage, categories, user, theme, ENV: getEnv() },
     {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -81,7 +81,6 @@ export async function loader ({ request }: LoaderFunctionArgs) {
 
 export default function App () {
   const { theme = 'system' } = useLoaderData<typeof loader>()
-  const user = useOptionalUser()
 
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
