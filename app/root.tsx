@@ -184,8 +184,8 @@ export function ErrorBoundary () {
       </head>
       <body>
         <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-          <h1 className='text-2xl font-bold'>uh Oh..</h1>
-          <p className='text-xl'>something went wrong</p>
+          <h1 >uh Oh..</h1>
+          <h2 >something went wrong</h2>
           <pre>{ errorMessage }</pre>
         </div>{ ' ' }
         <Scripts />
