@@ -150,14 +150,15 @@ export async function action ({ request, params }: ActionFunctionArgs) {
 }
 export default function CategoriesRoute () {
   const user = useOptionalUser()
-  const userRole = user?.role
+  const isAdmin = user?.role === 'ADMIN' ? true : false
+
+  console.log(isAdmin);
 
   const data = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: Record<string, string> }>()
   const navigation = useNavigation()
   const formRef = React.useRef<HTMLFormElement>(null)
 
-  const deleteFetcher = useFetcher()
 
   React.useEffect(() => {
     if (navigation.state === 'submitting') {
@@ -178,20 +179,20 @@ export default function CategoriesRoute () {
         </div>
         <div className='bg-violet flex w-full flex-row flex-wrap items-center gap-2'>
           { data.categories.map((category) => (
-            <>
-              <Form
-                key={ category.id }
-                id='deleteCategory'
-                className={ clsx(
-                  'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
-                ) }
-                method='POST'
-              >
-                <p className='flex-1'>{ category.label }</p>
 
-                <input type='hidden' name='categoryId' value={ category.id } />
-                <Button
-                  disabled={ userRole !== 'ADMIN' }
+            <Form
+              key={ category.id }
+              id='deleteCategory'
+              className={ clsx(
+                'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
+              ) }
+              method='POST'
+            >
+              <p className='flex-1'>{ category.label }</p>
+
+              <input type='hidden' name='categoryId' value={ category.id } />
+              {
+                isAdmin && (<Button
                   variant='icon_unfilled'
                   size='small'
                   type='submit'
@@ -199,39 +200,17 @@ export default function CategoriesRoute () {
                   value='delete'
                 >
                   <Cross1Icon />
-                </Button>
-              </Form>
-            </>
+                </Button>)
+              }
+            </Form>
+
           )) }
         </div>
       </div>
 
-      <Form
-        id='createCategory'
-        ref={ formRef }
-        className='flex flex-col items-center gap-2'
-        method='POST'
-      >
-        <label htmlFor='categoryName'>Add A Category</label>
-        <input
-          type='text'
-          className='rounded-md border text-sm text-black'
-          name='categoryName'
-        />
-        { actionData?.errors?.categoryName && (
-          <div>{ actionData.errors.categoryName }</div>
-        ) }
-        <Button
-          form='createCategory'
-          variant='success_filled'
-          size='base'
-          type='submit'
-          name='intent'
-          value='create'
-        >
-          Save
-        </Button>
-      </Form>
+      {
+        isAdmin
+      }
       <Outlet />
     </div>
   )
