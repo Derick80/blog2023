@@ -96,9 +96,13 @@ export default function Index() {
               </h6>
             </MyTooltip>
 
+<<<<<<< HEAD
             <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
               Category
             </p>
+=======
+            <h1>Category</h1>
+>>>>>>> main
           </div>
           <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
             {categories
@@ -124,9 +128,13 @@ export default function Index() {
         <Separator />{' '}
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <h6 className='text-left'>Get started with the</h6>
+<<<<<<< HEAD
           <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
             Latest Posts
           </p>
+=======
+          <h1>Latest Posts</h1>
+>>>>>>> main
         </div>
         <div className='flex w-full flex-col items-center gap-5'>
           {matchingPosts.map((post) => (
@@ -137,9 +145,13 @@ export default function Index() {
           <Separator />{' '}
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
             <h6 className='text-left'>Want to </h6>
+<<<<<<< HEAD
             <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
               Connect with me?
             </p>
+=======
+            <h1>Connect with me?</h1>
+>>>>>>> main
           </div>
         </div>
         <ContactWidget />
