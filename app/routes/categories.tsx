@@ -29,7 +29,7 @@ import {
   validateAction
 } from '~/utilities'
 // deleting a category doesn't work correctly it deletes the wrong category
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const categories = await prisma.category.findMany({
     orderBy: {
       value: 'asc'
@@ -50,14 +50,24 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ]
 }
 
-export const schema = z.object({
-  intent: z.enum(['delete', 'create']),
-  categoryName: z.string().min(3).max(50)
-})
-
+export const schema = z.discriminatedUnion('intent', [
+  z.object({
+    intent: z.literal('create'),
+    categoryName: z.string().min(1, 'Category name is required')
+  }),
+  z.object({
+    intent: z.literal('delete'),
+    categoryId: z.string().min(1, 'Category name is required')
+  }),
+  z.object({
+    intent: z.literal('update'),
+    categoryId: z.string().min(1, 'Category name is required'),
+    categoryName: z.string().min(1, 'Category name is required')
+  })
+])
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -65,23 +75,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
     setErrorMessage(session, 'You must be logged in to do that')
   }
 
-  const { formData, errors } = await validateAction({
-    request,
-    schema
-  })
+  const formData = await request.formData()
 
-  if (errors) {
-    return json({ errors })
+  // Parse the form data
+  const payload = Object.fromEntries(formData)
+  const result = schema.safeParse(payload)
+
+  if (!result.success) {
+    return json({
+      error: result.error.flatten().fieldErrors,
+      success: false,
+    })
   }
 
-  const { categoryName, intent } = formData as ActionInput
-  // I"m type casting here for now because I am performing multiple actions in one route and my zod schema is not set up to handle that
 
-  switch (intent) {
+  switch (result.data.intent) {
     case 'create': {
       const categoryExists = await prisma.category.findUnique({
         where: {
-          value: capitalizeFirstLetter(categoryName)
+          value: capitalizeFirstLetter(result.data.categoryName)
         }
       })
       if (categoryExists) {
@@ -94,8 +106,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
       } else {
         const category = await prisma.category.create({
           data: {
-            value: capitalizeFirstLetter(categoryName),
-            label: capitalizeFirstLetter(categoryName)
+            value: capitalizeFirstLetter(result.data.categoryName),
+            label: capitalizeFirstLetter(result.data.categoryName)
           }
         })
 
@@ -107,21 +119,36 @@ export async function action({ request, params }: ActionFunctionArgs) {
       }
     }
     case 'delete': {
-      // const { categoryId } = formData as ActionInput
-      // const category = await prisma.category.delete({
-      //   where: {
-      //     id: categoryId
-      //   }
-      // })
-      // if (!category) {
-      //   return json({ errors: { categoryName: 'Category not deleted' } })
-      // } else {
-      //   return json({ category })
-      // }
+      const category = await prisma.category.delete({
+        where: {
+          id: result.data.categoryId
+        }
+      })
+      if (!category) {
+        return json({ errors: { categoryName: 'Category not deleted' } })
+      } else {
+        return json({ category })
+      }
+    }
+    case 'update': {
+      const category = await prisma.category.update({
+        where: {
+          id: result.data.categoryId
+        },
+        data: {
+          value: capitalizeFirstLetter(result.data.categoryName),
+          label: capitalizeFirstLetter(result.data.categoryName)
+        }
+      })
+      if (!category) {
+        return json({ errors: { categoryName: 'Category not updated' } })
+      } else {
+        return json({ category })
+      }
     }
   }
 }
-export default function CategoriesRoute() {
+export default function CategoriesRoute () {
   const user = useOptionalUser()
   const userRole = user?.role
 
@@ -150,22 +177,21 @@ export default function CategoriesRoute() {
           <h1>Categories</h1>
         </div>
         <div className='bg-violet flex w-full flex-row flex-wrap items-center gap-2'>
-          {data.categories.map((category) => (
+          { data.categories.map((category) => (
             <>
-              <deleteFetcher.Form
-                key={category.id}
+              <Form
+                key={ category.id }
                 id='deleteCategory'
-                className={clsx(
+                className={ clsx(
                   'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
-                )}
-                action={`/categories/${category.id}/`}
-                method='post'
+                ) }
+                method='POST'
               >
-                <p className='flex-1'>{category.label}</p>
+                <p className='flex-1'>{ category.label }</p>
 
-                <input type='hidden' name='categoryId' value={category.id} />
+                <input type='hidden' name='categoryId' value={ category.id } />
                 <Button
-                  disabled={userRole !== 'ADMIN'}
+                  disabled={ userRole !== 'ADMIN' }
                   variant='icon_unfilled'
                   size='small'
                   type='submit'
@@ -174,18 +200,17 @@ export default function CategoriesRoute() {
                 >
                   <Cross1Icon />
                 </Button>
-              </deleteFetcher.Form>
+              </Form>
             </>
-          ))}
+          )) }
         </div>
       </div>
 
       <Form
         id='createCategory'
-        ref={formRef}
+        ref={ formRef }
         className='flex flex-col items-center gap-2'
         method='POST'
-        action='/categories'
       >
         <label htmlFor='categoryName'>Add A Category</label>
         <input
@@ -193,14 +218,16 @@ export default function CategoriesRoute() {
           className='rounded-md border text-sm text-black'
           name='categoryName'
         />
-        {actionData?.errors?.categoryName && (
-          <div>{actionData.errors.categoryName}</div>
-        )}
+        { actionData?.errors?.categoryName && (
+          <div>{ actionData.errors.categoryName }</div>
+        ) }
         <Button
           form='createCategory'
           variant='success_filled'
           size='base'
           type='submit'
+          name='intent'
+          value='create'
         >
           Save
         </Button>

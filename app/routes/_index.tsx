@@ -96,7 +96,9 @@ export default function Index () {
               </h6>
             </MyTooltip>
 
-            <h1>Category</h1>
+            <p
+              className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'
+            >Category</p>
           </div>
           <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
             { categories
@@ -122,7 +124,9 @@ export default function Index () {
         <SeparatorV2 orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <h6 className='text-left'>Get started with the</h6>
-          <h1>Latest Posts</h1>
+          <p
+            className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'
+          >Latest Posts</p>
         </div>
         <div className='flex w-full flex-col items-center gap-5'>
           { matchingPosts.map((post) => (
@@ -133,7 +137,11 @@ export default function Index () {
           <SeparatorV2 orientation='horizontal' />
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
             <h6 className='text-left'>Want to </h6>
-            <h1>Connect with me?</h1>
+            <p
+              className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
+
+
+              Connect with me?</p>
           </div>
         </div>
         <ContactWidget />
