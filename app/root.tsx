@@ -12,6 +12,7 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
+  useFetcher,
   useLoaderData,
   useLocation,
   useRouteError
@@ -27,6 +28,8 @@ import { prisma } from './server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MetronomeLinks } from '@metronome-sh/react'
 import { getEnv } from './server/env.server'
+import { ThemeProvider } from './components/theme/theme-provider'
+import { getThemeFromCookie } from './server/theme.server'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -47,13 +50,15 @@ export const meta: MetaFunction = () => {
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
 export async function loader ({ request }: LoaderFunctionArgs) {
+  const theme = await getThemeFromCookie(request)
+
   const user = await isAuthenticated(request)
   const categories = await prisma.category.findMany()
   const session = await getSession(request.headers.get('Cookie'))
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
   if (!toastMessage) {
-    return json({ toastMessage: null, user, categories })
+    return json({ toastMessage: null, user, categories, theme })
   }
 
   if (!toastMessage.type) {
@@ -61,7 +66,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   }
 
   return json(
-    { toastMessage, user, categories, ENV: getEnv() },
+    { toastMessage, user, categories, theme, ENV: getEnv() },
     {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -71,6 +76,8 @@ export async function loader ({ request }: LoaderFunctionArgs) {
 }
 
 export default function App () {
+  const { theme = 'system' } = useLoaderData<typeof loader>()
+
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
 
@@ -91,7 +98,17 @@ export default function App () {
         throw new Error(`${type} is not handled`)
     }
   }, [toastMessage])
-
+  const fetcher = useFetcher()
+  const onThemeChange = (theme: string) => {
+    fetcher.submit(
+      { theme },
+      {
+        method: 'post',
+        encType: 'application/json',
+        action: '/actions/set-theme',
+      }
+    )
+  }
   return (
     <html lang='en'>
       <head>
@@ -103,46 +120,50 @@ export default function App () {
       </head>
       <body
         id='body'
-        className='h-screen bg-primary text-slate-900  dark:text-violet3'
+        className='h-screen bg-background text-foreground'
       >
-
-        <Layout>
-          <AnimatePresence mode='wait' initial={ false }>
-            <motion.div
-              key={ useLocation().pathname }
-              animate={ { x: '90', opacity: 1 } }
-              transition={ {
-                duration: 0.25,
-                type: 'spring',
-                stiffness: 150,
-                damping: 20
+        <ThemeProvider
+          defaultTheme={ theme }
+          onThemeChange={ onThemeChange }
+        >
+          <Layout>
+            <AnimatePresence mode='wait' initial={ false }>
+              <motion.div
+                key={ useLocation().pathname }
+                animate={ { x: '90', opacity: 1 } }
+                transition={ {
+                  duration: 0.25,
+                  type: 'spring',
+                  stiffness: 150,
+                  damping: 20
+                } }
+                exit={ { x: '-40%', opacity: 0 } }
+              >
+                <Outlet />
+              </motion.div>
+            </AnimatePresence>
+            {/* <ChatWidget /> */ }
+            <Toaster
+              position='bottom-right'
+              toastOptions={ {
+                success: {
+                  style: {
+                    background: 'green'
+                  }
+                },
+                error: {
+                  style: {
+                    background: 'red'
+                  }
+                }
               } }
-              exit={ { x: '-40%', opacity: 0 } }
-            >
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
-          {/* <ChatWidget /> */ }
-          <Toaster
-            position='bottom-right'
-            toastOptions={ {
-              success: {
-                style: {
-                  background: 'green'
-                }
-              },
-              error: {
-                style: {
-                  background: 'red'
-                }
-              }
-            } }
-          />
+            />
 
-          <ScrollRestoration />
-          <Scripts />
-          <LiveReload />
-        </Layout>
+            <ScrollRestoration />
+            <Scripts />
+            <LiveReload />
+          </Layout>
+        </ThemeProvider>
       </body>
     </html>
   )
@@ -184,11 +205,17 @@ export function ErrorBoundary () {
       </head>
       <body>
         <div className='flex h-full w-full flex-col items-center justify-center text-center'>
+<<<<<<< HEAD
+          <h1>uh Oh..</h1>
+          <h2>something went wrong</h2>
+=======
           <h1 className='text-2xl font-bold'>uh Oh..</h1>
           <p className='text-xl'>something went wrong</p>
+>>>>>>> main
           <pre>{ errorMessage }</pre>
         </div>{ ' ' }
         <Scripts />
+
       </body>
     </html>
   )

@@ -10,7 +10,7 @@ if (!secret) {
 // 7.26.23 changed lax as 'lax' to lax as const
 // revisit secure before production
 const cookieOptions = {
-  name: '__message',
+  name: '__dchapp_session',
   httpOnly: true,
   sameSite: 'lax' as const,
   path: '/',

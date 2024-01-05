@@ -18,19 +18,19 @@ import { getUniqueCategories } from '~/utilities'
 type AccordianProps = {
   projects: Project
 }
-export default function ProjectAccordian({ projects }: AccordianProps) {
+export default function ProjectAccordian ({ projects }: AccordianProps) {
   return (
     <Accordion.Root
       className='w-full rounded-md bg-violet1 shadow-[0_2px_10px] shadow-black/5'
       type='multiple'
     >
       <AccordionItem
-        value={projects.id}
+        value={ projects.id }
         className='border-[1px] border-b border-violet4'
       >
-        <AccordionTrigger>{projects.title}</AccordionTrigger>
+        <AccordionTrigger>{ projects.title }</AccordionTrigger>
         <AccordionContent>
-          <ProjectDetails project={projects} />
+          <ProjectDetails project={ projects } />
         </AccordionContent>
       </AccordionItem>
     </Accordion.Root>
@@ -47,14 +47,14 @@ const AccordionItem = React.forwardRef<HTMLDivElement, AccordianItemProps>(
   ({ children, className, ...props }, forwardedRef) => (
     <Accordion.Item
       value='item-1'
-      className={clsx(
+      className={ clsx(
         'focus-within:shadow-mauve12 mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b focus-within:relative focus-within:z-10 focus-within:shadow-[0_0_0_2px]',
         className
-      )}
-      {...props}
-      ref={forwardedRef}
+      ) }
+      { ...props }
+      ref={ forwardedRef }
     >
-      {children}
+      { children }
     </Accordion.Item>
   )
 )
@@ -70,14 +70,14 @@ const AccordionTrigger = React.forwardRef<
 >(({ children, className, ...props }, forwardedRef) => (
   <Accordion.Header className='flex'>
     <Accordion.Trigger
-      className={clsx(
+      className={ clsx(
         'hover:bg-mauve2 group flex h-[45px] flex-1 cursor-default items-center justify-between bg-white px-5 text-[15px] leading-none text-violet12 shadow-[0_1px_0] shadow-violet6 outline-none',
         className
-      )}
-      {...props}
-      ref={forwardedRef}
+      ) }
+      { ...props }
+      ref={ forwardedRef }
     >
-      {children}
+      { children }
       <ChevronDownIcon
         className='text-violet10 transition-transform duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180'
         aria-hidden
@@ -96,43 +96,46 @@ const AccordionContent = React.forwardRef<
   AccordionContentProps
 >(({ children, className, ...props }, forwardedRef) => (
   <Accordion.Content
-    className={clsx(
+    className={ clsx(
       'data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp overflow-hidden bg-violet1 text-[15px] text-black dark:bg-violet3_dark  dark:text-violet3',
       className
-    )}
-    {...props}
-    ref={forwardedRef}
+    ) }
+    { ...props }
+    ref={ forwardedRef }
   >
-    <div className='px-5 py-[15px]'>{children}</div>
+    <div className='px-5 py-[15px]'>{ children }</div>
   </Accordion.Content>
 ))
 
-function ProjectDetails({ project }: { project: Project }) {
+function ProjectDetails ({ project }: { project: Project }) {
+  const myuniques = Array.from(new Set(project.categories.flatMap(c => c.label)))
+  console.log(myuniques, 'myuniques')
   return (
     <div className='flex flex-col gap-2'>
       <h3 className='text-base'>Description</h3>
-      <p className='text-sm'>{project.description}</p>
+      <p className='text-sm'>{ project.description }</p>
       <h3 className='text-base'>Implementations</h3>
       <ul className='flex flex-col items-start px-4'>
-        {project?.implementations?.map((implementation: Implementation) => (
-          <li className='list-disc text-teal-400' key={implementation.id}>
+        { project?.implementations?.map((implementation: Implementation) => (
+          <li className='list-disc text-teal-400' key={ implementation.id }>
             <div className='flex flex-row items-center'>
               <span className='text-xs leading-5 text-slate-900 dark:text-violet3'>
-                {implementation.task}
+                { implementation.task }
               </span>
             </div>
           </li>
-        ))}
+        )) }
       </ul>
       <h3 className='text-base'>Technologies</h3>
-      <TechnologiesContainer categories={project.categories} />
+
+      <TechnologiesContainer categories={ myuniques } />
 
       <h3 className='text-base'>Project code and Github</h3>
       <div className='flex flex-row items-center gap-2'>
         <ToolTip tip='Link to the Github repo'>
           <Link
             title='Link to my github repo for this project'
-            to={project.githubUrl}
+            to={ project.githubUrl }
             referrerPolicy='no-referrer'
             target='_blank'
           >
@@ -140,12 +143,12 @@ function ProjectDetails({ project }: { project: Project }) {
           </Link>
         </ToolTip>
         <div className='flex-1' />
-        {project.status !== 'Abandoned' && (
+        { project.status !== 'Abandoned' && (
           <>
             <ToolTip tip='Link to the live project'>
               <Link
                 title='Link to the live project'
-                to={project.projectUrl}
+                to={ project.projectUrl }
                 referrerPolicy='no-referrer'
                 target='_blank'
               >
@@ -153,7 +156,7 @@ function ProjectDetails({ project }: { project: Project }) {
               </Link>
             </ToolTip>
           </>
-        )}
+        ) }
       </div>
     </div>
   )

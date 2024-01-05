@@ -13,7 +13,6 @@ export default function CommentSection({
 }: CommentSectionProps) {
   if (!comments) return null
 
-
   const formattedData = formComments(comments)
 
   return (

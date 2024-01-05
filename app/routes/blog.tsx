@@ -20,9 +20,9 @@ import {
   useOptionalUser,
   useUpdateQueryStringValueWithoutNavigation
 } from '~/utilities'
-import SeparatorV2 from '~/components/v2-components/separator_v2'
 import React from 'react'
 import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
+import { Separator } from '~/components/ui/separator'
 
 dayjs.extend(relativeTime)
 
@@ -106,10 +106,17 @@ export default function BlogRoute() {
         </h4>
       </div>
       <div className='flex w-full flex-col gap-2'>
-        <SeparatorV2 orientation='horizontal' />
+        <Separator orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <h6 className='text-left'>You can browse the Blog by </h6>
+<<<<<<< HEAD
+          <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
+            Category
+          </p>
+          S
+=======
           <h1>Category</h1>
+>>>>>>> main
         </div>{' '}
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
           {categories.map((category) => {
@@ -129,12 +136,18 @@ export default function BlogRoute() {
       </div>
       <div className='bg-violet flex w-full flex-col items-center gap-2'>
         <Outlet />
-        <SeparatorV2 orientation='horizontal' />
+        <Separator orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           {!queryValue ? (
             <>
               <h6 className='text-left'>Viewing all the </h6>
+<<<<<<< HEAD
+              <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
+                Blog Posts
+              </p>
+=======
               <h1>Blog Posts</h1>
+>>>>>>> main
             </>
           ) : (
             <div className='flex flex-row items-center gap-2 flex-wrap'>
@@ -142,12 +155,25 @@ export default function BlogRoute() {
                 Viewing Blog Posts with the category(ies)
               </h6>
               {queryValue.split(' ').map((tag) => (
+<<<<<<< HEAD
+                <p
+                  key={tag}
+                  className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'
+                >
+                  {tag}
+                </p>
+              ))}
+            </div>
+          )}
+          sS
+=======
                 <h1 key={tag} className='text-primary'>
                   {tag}
                 </h1>
               ))}
             </div>
           )}
+>>>>>>> main
         </div>
 
         <div className='flex flex-col gap-5 w-full items-center'>
@@ -166,7 +192,11 @@ export function ErrorBoundary() {
     return (
       <div>
         <h1>oops</h1>
+<<<<<<< HEAD
+        <h2>Status:{error.status}</h2>
+=======
         <h1>Status:{error.status}</h1>
+>>>>>>> main
         <p>{error.data.message}</p>
       </div>
     )
