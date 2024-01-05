@@ -209,7 +209,34 @@ export default function CategoriesRoute () {
       </div>
 
       {
-        isAdmin
+        isAdmin && (
+          <Form
+            id='createCategory'
+            ref={ formRef }
+            className='flex flex-col items-center gap-2'
+            method='POST'
+          >
+            <label htmlFor='categoryName'>Add A Category</label>
+            <input
+              type='text'
+              className='rounded-md border text-sm text-black'
+              name='categoryName'
+            />
+            { actionData?.errors?.categoryName && (
+              <div>{ actionData.errors.categoryName }</div>
+            ) }
+            <Button
+              form='createCategory'
+              variant='success_filled'
+              size='base'
+              type='submit'
+              name='intent'
+              value='create'
+            >
+              Save
+            </Button>
+          </Form>
+        )
       }
       <Outlet />
     </div>
