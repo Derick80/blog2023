@@ -7,27 +7,6 @@
 
 @tailwind utilities;
 
-@layer utilities {
-  .bg-primary {
-    @apply bg-violet1 dark:bg-violet1_dark;
-  }
-  .bg-secondary {
-    @apply bg-violet2 dark:bg-violet3_dark;
-  }
-  .bg-inverse {
-    @apply dark:bg-violet1_dark bg-violet1;
-  }
-  .text-primary {
-    @apply dark:text-violet1 text-violet1_dark;
-  }
-  .text-inverse {
-    @apply text-violet1_dark dark:text-violet1;
-  }
-
-  .focus-ring {
-    @apply ring-offset-4 ring-offset-white transition duration-300 focus-within:outline-none focus-within:ring-2  focus:outline-none focus:ring-2  disabled:ring-0 group-hover:ring-2 group-focus:ring-2  dark:ring-offset-gray-900;
-  }
-}
 /* styles.css */
 .AccordionChevron {
   transition: transform 300ms;
