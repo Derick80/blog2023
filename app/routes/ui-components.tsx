@@ -3,7 +3,6 @@ import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
 import Button from '~/components/button'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
-import MenuBox from '~/components/site-menus'
 import SelectBox from '~/components/select'
 import Dropdown from '~/components/dropdown-menu'
 const options = [
@@ -290,8 +289,6 @@ export default function ComponentsIndex() {
               doesn't use a portal (yet) and I might improve it by making the
               entire title and icon clickable
             </p>
-
-            <MenuBox title='Menu'></MenuBox>
           </div>
           <div className='flex flex-col items-start gap-2'>
             <p className='text-base font-semibold'>Single Select</p>

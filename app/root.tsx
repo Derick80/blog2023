@@ -46,7 +46,7 @@ export const meta: MetaFunction = () => {
   ]
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   const categories = await prisma.category.findMany()
   const session = await getSession(request.headers.get('Cookie'))
@@ -70,7 +70,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   )
 }
 
-export default function App () {
+export default function App() {
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
 
@@ -105,27 +105,26 @@ export default function App () {
         id='body'
         className='h-screen bg-primary text-slate-900  dark:text-violet3'
       >
-
         <Layout>
-          <AnimatePresence mode='wait' initial={ false }>
+          <AnimatePresence mode='wait' initial={false}>
             <motion.div
-              key={ useLocation().pathname }
-              animate={ { x: '90', opacity: 1 } }
-              transition={ {
+              key={useLocation().pathname}
+              animate={{ x: '90', opacity: 1 }}
+              transition={{
                 duration: 0.25,
                 type: 'spring',
                 stiffness: 150,
                 damping: 20
-              } }
-              exit={ { x: '-40%', opacity: 0 } }
+              }}
+              exit={{ x: '-40%', opacity: 0 }}
             >
               <Outlet />
             </motion.div>
           </AnimatePresence>
-          {/* <ChatWidget /> */ }
+          {/* <ChatWidget /> */}
           <Toaster
             position='bottom-right'
-            toastOptions={ {
+            toastOptions={{
               success: {
                 style: {
                   background: 'green'
@@ -136,7 +135,7 @@ export default function App () {
                   background: 'red'
                 }
               }
-            } }
+            }}
           />
 
           <ScrollRestoration />
@@ -148,7 +147,7 @@ export default function App () {
   )
 }
 
-export function ErrorBoundary () {
+export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
@@ -161,8 +160,8 @@ export function ErrorBoundary () {
         <body>
           <div className='flex h-full w-full flex-col items-center justify-center text-center'>
             <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
-            <h2 className='font-bold text-red-500'>Status:{ error.status }</h2>
-            <p>{ error.data.message }</p>
+            <h2 className='font-bold text-red-500'>Status:{error.status}</h2>
+            <p>{error.data.message}</p>
           </div>
           <Scripts />
         </body>
@@ -184,10 +183,10 @@ export function ErrorBoundary () {
       </head>
       <body>
         <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-          <h1 >uh Oh..</h1>
-          <h2 >something went wrong</h2>
-          <pre>{ errorMessage }</pre>
-        </div>{ ' ' }
+          <h1>uh Oh..</h1>
+          <h2>something went wrong</h2>
+          <pre>{errorMessage}</pre>
+        </div>{' '}
         <Scripts />
       </body>
     </html>

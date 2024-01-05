@@ -2,13 +2,13 @@ import { NavLink } from '@remix-run/react'
 import { BrandIcon } from '~/resources/brand-icon'
 import { useOptionalUser } from '~/utilities'
 import HoverOverCard from '../hovercard/hover-card'
-import MenuBox from '../site-menus'
+import MenuBar from '../more-menu'
 // sticky top-0 z-50 flex w-full flex-row items-center justify-around bg-slate-50 dark:bg-slate-800
 export default function NavigationBar() {
   const user = useOptionalUser()
   // fix w-4/s6 if I want to change the latout
   return (
-    <div className='sticky top-0 z-10 flex items-center justify-between gap-1 bg-violet2 dark:bg-violet2_dark  md:flex-col lg:flex-row'>
+    <div className='sticky top-0 z-10 flex items-center justify-between gap-1 bg-primary  md:flex-col lg:flex-row'>
       <div className='flex flex-row items-center gap-2 p-2'>
         <NavLink
           title='Click on the Brand Icon to go to the home page'
@@ -56,7 +56,7 @@ export default function NavigationBar() {
         >
           <p className='text-base font-semibold dark:text-violet3'>Projects</p>
         </NavLink>
-        <MenuBox title='Links' />
+        <MenuBar title='More' menuItems={moreMenuItems} />
       </div>
 
       {user ? (
@@ -71,3 +71,31 @@ export default function NavigationBar() {
     </div>
   )
 }
+
+const moreMenuItems = [
+  {
+    label: 'CV',
+    path: '/cv'
+  },
+  {
+    label: 'Categories',
+    path: '/categories'
+  },
+
+  {
+    label: 'Users',
+    path: '/users'
+  },
+  {
+    label: 'UI',
+    path: '/ui-components'
+  },
+  {
+    label: 'Beta',
+    path: '/beta'
+  },
+  {
+    label: 'Documentation',
+    path: '/documentation'
+  }
+]

@@ -36,69 +36,6 @@
   transform: rotate(180deg);
 }
 
-.container {
-  align-items: center;
-  position: relative;
-  max-width: 600px;
-  height: auto;
-  border: 2px solid #ffffff;
-  margin: 10px auto;
-  padding: 30px;
-  box-sizing: border-box;
-  background: #ffffff;
-  z-index: 10;
-}
-
-.container:after {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  border-top: 2px solid transparent;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-  border-left: 2px solid transparent;
-  top: 20px;
-  right: 52%;
-  left: 46%;
-  content: '';
-  z-index: 0;
-  transform: rotate(45deg);
-  margin-top: -25px;
-  background: #ffffff;
-}
-
-li {
-  margin-bottom: 10px;
-  list-style: disc;
-}
-
-code {
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-size: 0.9em;
-  font-family: 'Roboto', sans-serif;
-}
-ul {
-  margin-left: 20px;
-}
-
-ol {
-  margin-left: 20px;
-}
-ol li {
-  list-style-type: upper-roman;
-}
-details {
-  margin-bottom: 2rem;
-  padding: 0.5rem 1rem;
-  width: max-content;
-}
-summary > * {
-  font-weight: bold;
-  cursor: pointer;
-  display: inline;
-}
-
 /* create custom classes for headings to use in tiptap editor */
 h1 {
   @apply scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl;

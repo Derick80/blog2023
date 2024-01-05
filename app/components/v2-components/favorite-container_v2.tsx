@@ -17,7 +17,7 @@ export default function FavoriteContainer({
 }: FavoriteContainerProps) {
   const user = useOptionalUser()
   const currentUser = user?.id || ''
-const isLogged = user ? true : false
+  const isLogged = user ? true : false
 
   const fetcher = useFetcher()
   const userFavoritedPost = favorites?.find(

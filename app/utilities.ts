@@ -217,4 +217,3 @@ export function filterPosts(posts: Array<FullPost>, searchString: string) {
 
   return Array.from(new Set([...allResults, ...individualWordResults]))
 }
-

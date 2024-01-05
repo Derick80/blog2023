@@ -1,67 +1,109 @@
-import { Form, useSearchParams } from '@remix-run/react'
+import { Form, Link } from '@remix-run/react'
 import Button from '../button'
-
+import { Label } from '../ui/label'
+import { Input } from '../ui/input'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card'
 type Props = {
   authType: 'register' | 'login' | 'request' | 'confirm'
 }
 
-const actionMap: Record<Props['authType'], { button: string; url: string }> = {
+const actionMap: Record<
+  Props['authType'],
+  { button: string; url: string; emailCaption: string; socialsCaption: string }
+> = {
   register: {
     url: '/register',
-    button: 'Sign up'
+    button: 'Sign up',
+    emailCaption: 'Register a new account using your email and password.',
+    socialsCaption:
+      'You can register using your social media account and there is no need to provide a new password.'
   },
   login: {
     url: '/login',
-    button: 'Log in'
+    button: 'Log in',
+    emailCaption: 'Login to your account using your email and password.',
+    socialsCaption:
+      'You can login using your social media account and there is no need to register a new email and password.'
   },
   request: {
     url: '/request-password-reset',
-    button: 'Request password reset'
+    button: 'Request password reset',
+    emailCaption:
+      'Enter your email address and we will send you a link to reset your password.',
+    socialsCaption:
+      'You can login using your social media account and there is no need to register a new email and password.'
   },
   confirm: {
     url: '/confirm-password-reset',
-    button: 'Confirm password'
+    button: 'Confirm password',
+    emailCaption:
+      'Enter your email address and we will send you a link to reset your password.',
+    socialsCaption:
+      'You can login using your social media account and there is no need to register a new email and password.'
   }
 }
 
 export const AuthForm = ({ authType }: Props) => {
-  const [searchParams] = useSearchParams()
   const { button, url } = actionMap[authType]
 
-  const token = searchParams.get('token')
-  const redirectTo = searchParams.get('redirectTo')
+  const generalMemberLoginInstructions =
+    'Login to your account using your email and password.'
+  const notAMemberRegisterInstructions =
+    'Register a new account using your email and password.'
 
   return (
-    <Form className='flex flex-col gap-2' method='post' action={url}>
-      <input type='hidden' name='redirectTo' value={redirectTo || '/'} />
-      <input type='hidden' name='token' value={token || ''} />
-
-      {authType !== 'confirm' && (
-        <>
-          <label className=''>Email</label>
-          <input placeholder='enter email' name='email' type='email' required />
-        </>
-      )}
-      {authType !== 'request' && (
-        <>
-          <label className=''>Username</label>
-          <input type='text' placeholder='enter username' name='username' />
-
-          <label>Password</label>
-          <input
-            type='password'
-            name='password'
-            placeholder='enter password'
+    <Card className=''>
+      <CardHeader>
+        <CardTitle>Welcome back</CardTitle>
+        <CardDescription>
+          {authType === 'login'
+            ? generalMemberLoginInstructions
+            : notAMemberRegisterInstructions}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form method='POST' className='grid gap-3' action={url}>
+          <Label className='sr-only' htmlFor='email'>
+            Email
+          </Label>
+          <Input
+            type='email'
+            name='email'
+            id='email'
+            placeholder='Email'
+            autoComplete='email'
             required
           />
-        </>
-      )}
+          <Label className='sr-only' htmlFor='password'>
+            Password
+          </Label>
+          <Input
+            type='password'
+            name='password'
+            id='password'
+            placeholder='Password'
+            autoComplete='current-password'
+            required
+          />
 
-      <div className='flex flex-col items-center gap-1'>
-        <Button variant='primary_filled' type='submit'>
-          {button}
-        </Button>
-      </div>
-    </Form>
+          <Button variant='primary_filled' type='submit'>
+            {button}
+          </Button>
+        </Form>
+      </CardContent>
+      <CardContent></CardContent>
+      <CardFooter>
+        <Link to='/register'>
+          <p className='text-sm italic'>{}</p>
+        </Link>
+      </CardFooter>
+    </Card>
   )
 }

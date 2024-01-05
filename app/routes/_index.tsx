@@ -10,12 +10,12 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { getAllPostsV1 } from '~/server/post.server'
 import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
-import SeparatorV2 from '~/components/v2-components/separator_v2'
 import ContactWidget from '~/components/v2-components/contact-widget'
 import ScrollingBanner from '~/components/v2-components/scroll-banner_v2'
 import React from 'react'
 import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
 import { MyTooltip } from '~/components/radix-tooltip'
+import { Separator } from '~/components/ui/separator'
 export const meta: MetaFunction = () => {
   return [
     { title: `Derick C Hoskinson's Blog` },
@@ -26,14 +26,14 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const posts = await getAllPostsV1(5)
   if (!posts) throw new Error('No posts found')
 
   return json({ posts })
 }
 
-export default function Index () {
+export default function Index() {
   const { posts } = useLoaderData<typeof loader>()
   const categories = useCategories()
   const [searchParams] = useSearchParams()
@@ -56,13 +56,13 @@ export default function Index () {
 
   const visibleTags = isSearching
     ? new Set(
-      matchingPosts.flatMap((post) =>
-        post.categories.map((p) => p.value).filter(Boolean)
+        matchingPosts.flatMap((post) =>
+          post.categories.map((p) => p.value).filter(Boolean)
+        )
       )
-    )
     : new Set(categories.map((p) => p.value))
 
-  function toggleTag (tag: string) {
+  function toggleTag(tag: string) {
     setQuery((q) => {
       const expression = new RegExp(`\\b${tag}\\b`, 'ig')
 
@@ -77,7 +77,7 @@ export default function Index () {
   return (
     <div className='md:gap-38 flex w-full items-center flex-col gap-28'>
       <div className='flex w-full flex-col items-center gap-10 md:gap-20'>
-        {/* probably remove dive around the headings if I don't change the font */ }
+        {/* probably remove dive around the headings if I don't change the font */}
         <div className='flex flex-col w-full items-center gap-20 '>
           <h1>Welcome to DerickCHoskinson.com </h1>
           <ScrollingBanner />
@@ -88,7 +88,7 @@ export default function Index () {
           </h3>
         </div>
         <div className='flex w-full flex-col gap-2'>
-          <SeparatorV2 orientation='horizontal' />
+          <Separator orientation='horizontal' />
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
             <MyTooltip content='This only filters the 5 latest posts go to the blog page to see all the posts!'>
               <h6 className='text-left'>
@@ -96,52 +96,50 @@ export default function Index () {
               </h6>
             </MyTooltip>
 
-            <p
-              className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'
-            >Category</p>
+            <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
+              Category
+            </p>
           </div>
           <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
-            { categories
+            {categories
               ? categories.map((category) => {
-                const selected = query.includes(category.value)
-                return (
-                  <CustomCheckbox
-                    key={ category.id }
-                    name='category'
-                    tag={ category.value }
-                    selected={ selected }
-                    onClick={ () => toggleTag(category.value) }
-                    disabled={ !visibleTags.has(category.value) }
-                  />
-                )
-              })
-              : null }
+                  const selected = query.includes(category.value)
+                  return (
+                    <CustomCheckbox
+                      key={category.id}
+                      name='category'
+                      tag={category.value}
+                      selected={selected}
+                      onClick={() => toggleTag(category.value)}
+                      disabled={!visibleTags.has(category.value)}
+                    />
+                  )
+                })
+              : null}
           </div>
         </div>
       </div>
 
       <div className='flex w-full flex-col gap-2'>
-        <SeparatorV2 orientation='horizontal' />
+        <Separator />{' '}
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <h6 className='text-left'>Get started with the</h6>
-          <p
-            className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'
-          >Latest Posts</p>
+          <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
+            Latest Posts
+          </p>
         </div>
         <div className='flex w-full flex-col items-center gap-5'>
-          { matchingPosts.map((post) => (
-            <BlogPreviewV2 key={ post.id } post={ post } />
-          )) }
+          {matchingPosts.map((post) => (
+            <BlogPreviewV2 key={post.id} post={post} />
+          ))}
         </div>
         <div className='flex w-full flex-col gap-2'>
-          <SeparatorV2 orientation='horizontal' />
+          <Separator />{' '}
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
             <h6 className='text-left'>Want to </h6>
-            <p
-              className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
-
-
-              Connect with me?</p>
+            <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
+              Connect with me?
+            </p>
           </div>
         </div>
         <ContactWidget />

@@ -14,7 +14,7 @@ import clsx from 'clsx'
 import React from 'react'
 import { z } from 'zod'
 import Button from '~/components/button'
-import SeparatorV2 from '~/components/v2-components/separator_v2'
+import { Separator } from '~/components/ui/separator'
 import { isAuthenticated } from '~/server/auth/auth.server'
 
 import { prisma } from '~/server/prisma.server'
@@ -29,7 +29,7 @@ import {
   validateAction
 } from '~/utilities'
 // deleting a category doesn't work correctly it deletes the wrong category
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const categories = await prisma.category.findMany({
     orderBy: {
       value: 'asc'
@@ -67,7 +67,7 @@ export const schema = z.discriminatedUnion('intent', [
 ])
 type ActionInput = z.infer<typeof schema>
 
-export async function action ({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -84,10 +84,9 @@ export async function action ({ request, params }: ActionFunctionArgs) {
   if (!result.success) {
     return json({
       error: result.error.flatten().fieldErrors,
-      success: false,
+      success: false
     })
   }
-
 
   switch (result.data.intent) {
     case 'create': {
@@ -148,17 +147,16 @@ export async function action ({ request, params }: ActionFunctionArgs) {
     }
   }
 }
-export default function CategoriesRoute () {
+export default function CategoriesRoute() {
   const user = useOptionalUser()
   const isAdmin = user?.role === 'ADMIN' ? true : false
 
-  console.log(isAdmin);
+  console.log(isAdmin)
 
   const data = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: Record<string, string> }>()
   const navigation = useNavigation()
   const formRef = React.useRef<HTMLFormElement>(null)
-
 
   React.useEffect(() => {
     if (navigation.state === 'submitting') {
@@ -172,27 +170,26 @@ export default function CategoriesRoute () {
         <h4>These are the list of categories used by the blog posts.</h4>
       </div>
       <div className='flex w-full flex-col gap-2'>
-        <SeparatorV2 orientation='horizontal' />
+        <Separator />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <h6 className='text-left'>If you are an Admin you may delete </h6>
           <h1>Categories</h1>
         </div>
         <div className='bg-violet flex w-full flex-row flex-wrap items-center gap-2'>
-          { data.categories.map((category) => (
-
+          {data.categories.map((category) => (
             <Form
-              key={ category.id }
+              key={category.id}
               id='deleteCategory'
-              className={ clsx(
+              className={clsx(
                 'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
-              ) }
+              )}
               method='POST'
             >
-              <p className='flex-1'>{ category.label }</p>
+              <p className='flex-1'>{category.label}</p>
 
-              <input type='hidden' name='categoryId' value={ category.id } />
-              {
-                isAdmin && (<Button
+              <input type='hidden' name='categoryId' value={category.id} />
+              {isAdmin && (
+                <Button
                   variant='icon_unfilled'
                   size='small'
                   type='submit'
@@ -200,44 +197,41 @@ export default function CategoriesRoute () {
                   value='delete'
                 >
                   <Cross1Icon />
-                </Button>)
-              }
+                </Button>
+              )}
             </Form>
-
-          )) }
+          ))}
         </div>
       </div>
 
-      {
-        isAdmin && (
-          <Form
-            id='createCategory'
-            ref={ formRef }
-            className='flex flex-col items-center gap-2'
-            method='POST'
+      {isAdmin && (
+        <Form
+          id='createCategory'
+          ref={formRef}
+          className='flex flex-col items-center gap-2'
+          method='POST'
+        >
+          <label htmlFor='categoryName'>Add A Category</label>
+          <input
+            type='text'
+            className='rounded-md border text-sm text-black'
+            name='categoryName'
+          />
+          {actionData?.errors?.categoryName && (
+            <div>{actionData.errors.categoryName}</div>
+          )}
+          <Button
+            form='createCategory'
+            variant='success_filled'
+            size='base'
+            type='submit'
+            name='intent'
+            value='create'
           >
-            <label htmlFor='categoryName'>Add A Category</label>
-            <input
-              type='text'
-              className='rounded-md border text-sm text-black'
-              name='categoryName'
-            />
-            { actionData?.errors?.categoryName && (
-              <div>{ actionData.errors.categoryName }</div>
-            ) }
-            <Button
-              form='createCategory'
-              variant='success_filled'
-              size='base'
-              type='submit'
-              name='intent'
-              value='create'
-            >
-              Save
-            </Button>
-          </Form>
-        )
-      }
+            Save
+          </Button>
+        </Form>
+      )}
       <Outlet />
     </div>
   )
