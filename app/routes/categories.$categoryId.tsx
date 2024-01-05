@@ -16,7 +16,7 @@ import {
   setErrorMessage,
   setSuccessMessage
 } from '~/server/session.server'
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     throw new Error('You must be logged in to do that')
@@ -45,7 +45,7 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
   return json({})
 }
 
-export async function action ({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   if (!user) {
@@ -73,7 +73,7 @@ export async function action ({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function CategoryIndex () {
+export default function CategoryIndex() {
   const parentData = useMatchesData('root') as {
     categories: Category[]
   }
@@ -85,18 +85,18 @@ export default function CategoryIndex () {
 
   return (
     <div className=''>
-      <h1>{ category.value }</h1>
+      <h1>{category.value}</h1>
     </div>
   )
 }
-export function ErrorBoundary () {
+export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
         <h1>oops</h1>
-        <h2>Status:{ error.status }</h2>
-        <p>{ error.data.message }</p>
+        <h1>Status:{error.status}</h1>
+        <p>{error.data.message}</p>
       </div>
     )
   }
@@ -110,7 +110,7 @@ export function ErrorBoundary () {
     <div>
       <h1>uh Oh..</h1>
       <p>something went wrong</p>
-      <pre>{ errorMessage }</pre>
+      <pre>{errorMessage}</pre>
     </div>
   )
 }
