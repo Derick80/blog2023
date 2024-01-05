@@ -29,7 +29,7 @@ import {
   validateAction
 } from '~/utilities'
 // deleting a category doesn't work correctly it deletes the wrong category
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const categories = await prisma.category.findMany({
     orderBy: {
       value: 'asc'
@@ -57,7 +57,7 @@ export const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -70,20 +70,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     schema
   })
 
-<<<<<<< HEAD:app/routes/_admin.categories.tsx
-  // Parse the form data
-  const payload = Object.fromEntries(formData)
-  const result = schema.safeParse(payload)
-
-  if (!result.success) {
-    return json({
-      error: result.error.flatten().fieldErrors,
-      success: false
-    })
-  }
-
-  switch (result.data.intent) {
-=======
   if (errors) {
     return json({ errors })
   }
@@ -92,7 +78,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   // I"m type casting here for now because I am performing multiple actions in one route and my zod schema is not set up to handle that
 
   switch (intent) {
->>>>>>> main:app/routes/categories.tsx
     case 'create': {
       const categoryExists = await prisma.category.findUnique({
         where: {
@@ -136,26 +121,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
   }
 }
-export default function CategoriesRoute() {
+export default function CategoriesRoute () {
   const user = useOptionalUser()
-<<<<<<< HEAD:app/routes/_admin.categories.tsx
-  const isAdmin = user?.role === 'ADMIN' ? true : false
-
-  console.log(isAdmin)
-=======
   const userRole = user?.role
->>>>>>> main:app/routes/categories.tsx
 
   const data = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: Record<string, string> }>()
   const navigation = useNavigation()
   const formRef = React.useRef<HTMLFormElement>(null)
 
-<<<<<<< HEAD:app/routes/_admin.categories.tsx
-=======
   const deleteFetcher = useFetcher()
 
->>>>>>> main:app/routes/categories.tsx
   React.useEffect(() => {
     if (navigation.state === 'submitting') {
       formRef.current?.reset()
@@ -174,38 +150,22 @@ export default function CategoriesRoute() {
           <h1>Categories</h1>
         </div>
         <div className='bg-violet flex w-full flex-row flex-wrap items-center gap-2'>
-          {data.categories.map((category) => (
-<<<<<<< HEAD:app/routes/_admin.categories.tsx
-            <Form
-              key={category.id}
-              id='deleteCategory'
-              className={clsx(
-                'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
-              )}
-              method='POST'
-            >
-              <p className='flex-1'>{category.label}</p>
-
-              <input type='hidden' name='categoryId' value={category.id} />
-              {isAdmin && (
-                <Button
-=======
+          { data.categories.map((category) => (
             <>
               <deleteFetcher.Form
-                key={category.id}
+                key={ category.id }
                 id='deleteCategory'
-                className={clsx(
+                className={ clsx(
                   'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
-                )}
-                action={`/categories/${category.id}/`}
+                ) }
+                action={ `/categories/${category.id}/` }
                 method='post'
               >
-                <p className='flex-1'>{category.label}</p>
+                <p className='flex-1'>{ category.label }</p>
 
-                <input type='hidden' name='categoryId' value={category.id} />
+                <input type='hidden' name='categoryId' value={ category.id } />
                 <Button
-                  disabled={userRole !== 'ADMIN'}
->>>>>>> main:app/routes/categories.tsx
+                  disabled={ userRole !== 'ADMIN' }
                   variant='icon_unfilled'
                   size='small'
                   type='submit'
@@ -214,50 +174,15 @@ export default function CategoriesRoute() {
                 >
                   <Cross1Icon />
                 </Button>
-<<<<<<< HEAD:app/routes/_admin.categories.tsx
-              )}
-            </Form>
-=======
               </deleteFetcher.Form>
             </>
->>>>>>> main:app/routes/categories.tsx
-          ))}
+          )) }
         </div>
       </div>
 
-<<<<<<< HEAD:app/routes/_admin.categories.tsx
-      {isAdmin && (
-        <Form
-          id='createCategory'
-          ref={formRef}
-          className='flex flex-col items-center gap-2'
-          method='POST'
-        >
-          <label htmlFor='categoryName'>Add A Category</label>
-          <input
-            type='text'
-            className='rounded-md border text-sm text-black'
-            name='categoryName'
-          />
-          {actionData?.errors?.categoryName && (
-            <div>{actionData.errors.categoryName}</div>
-          )}
-          <Button
-            form='createCategory'
-            variant='success_filled'
-            size='base'
-            type='submit'
-            name='intent'
-            value='create'
-          >
-            Save
-          </Button>
-        </Form>
-      )}
-=======
       <Form
         id='createCategory'
-        ref={formRef}
+        ref={ formRef }
         className='flex flex-col items-center gap-2'
         method='POST'
         action='/categories'
@@ -268,9 +193,9 @@ export default function CategoriesRoute() {
           className='rounded-md border text-sm text-black'
           name='categoryName'
         />
-        {actionData?.errors?.categoryName && (
-          <div>{actionData.errors.categoryName}</div>
-        )}
+        { actionData?.errors?.categoryName && (
+          <div>{ actionData.errors.categoryName }</div>
+        ) }
         <Button
           form='createCategory'
           variant='success_filled'
@@ -280,8 +205,7 @@ export default function CategoriesRoute() {
           Save
         </Button>
       </Form>
->>>>>>> main:app/routes/categories.tsx
       <Outlet />
-    </div>
+    </div >
   )
 }

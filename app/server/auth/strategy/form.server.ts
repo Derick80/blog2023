@@ -10,19 +10,18 @@ import { zfd } from 'zod-form-data'
 const registerSchema = zfd.formData(
   z.object({
     email: z.string(),
-    username: z.string(),
     password: z.string()
   })
 )
 
 export const registerStrategy = new FormStrategy(async ({ form }) => {
-  const { email, password, username } = registerSchema.parse(form)
+  const { email, password } = registerSchema.parse(form)
 
   const existingUser = await getUser({ email })
   if (existingUser) {
     throw new Error('User already exists')
   }
-  const user = await createUser({ email, password, username } as AuthInput)
+  const user = await createUser({ email, password } as AuthInput)
   return user.id
 })
 

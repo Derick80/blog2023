@@ -10,87 +10,86 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id String @id @default(cuid())
-  email String @unique
-  username String @unique
-  avatarUrl String?
-  password String?
-  role String @default("USER")
-  profile Profile?
-  posts Post[]
-  comments Comment[]
-  likes Like[]
-  chats Chat[]
-  messages Message[]
-  accounts Account[]
-  tokens Token[]
-  notes Note[]  
-  favorites Favorite[]
-  projects Project[]
+  id            String        @id @default(cuid())
+  email         String        @unique
+  username      String?       @unique
+  avatarUrl     String?
+  password      String?
+  role          String        @default("USER")
+  profile       Profile?
+  posts         Post[]
+  comments      Comment[]
+  likes         Like[]
+  chats         Chat[]
+  messages      Message[]
+  accounts      Account[]
+  tokens        Token[]
+  notes         Note[]
+  favorites     Favorite[]
+  projects      Project[]
   commentsLiked CommentLike[]
-  votes Vote[]
-  blocked Block[]
-
+  votes         Vote[]
+  blocked       Block[]
 }
 
 model Block {
-  id String @id @default(cuid())
+  id      String  @id @default(cuid())
   blocked Boolean @default(false)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId  String  @unique
 }
+
 model Note {
-  id String @id @default(cuid())
-  title String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  id        String   @id @default(cuid())
+  title     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model Post {
-  id String @id @default(cuid())
-  title String
-  slug String @unique
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
   description String
-  content String
-  imageUrl String
-  featured Boolean @default(false)
-  published Boolean @default(false)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  comments Comment[]
-  likes Like[]
-  favorites Favorite[]
-  categories Category[] 
+  content     String
+  imageUrl    String
+  featured    Boolean    @default(false)
+  published   Boolean    @default(false)
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt()
+  comments    Comment[]
+  likes       Like[]
+  favorites   Favorite[]
+  categories  Category[]
 }
 
 model Comment {
-  id        String    @id @default(uuid())
+  id        String        @id @default(uuid())
   message   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   createdBy String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
-  parent    Comment?  @relation("comment_children", fields: [parentId], references: [id], onDelete: Cascade)
-  children  Comment[] @relation("comment_children")
+  parent    Comment?      @relation("comment_children", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Comment[]     @relation("comment_children")
   parentId  String?
   likes     CommentLike[]
 }
 
 model Category {
-  id       String    @id @unique @default(uuid())
-  label    String
-  value    String    @unique
-  posts    Post[]  
+  id    String @id @unique @default(uuid())
+  label String
+  value String @unique
+  posts Post[]
 }
-
 
 model Like {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -107,6 +106,7 @@ model Like {
   @@index([postId])
   @@index([userId])
 }
+
 model Favorite {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
@@ -122,10 +122,10 @@ model Favorite {
 }
 
 model CommentLike {
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId   String  
-  comment  Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  commentId String  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  commentId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -134,7 +134,6 @@ model CommentLike {
   @@index([userId])
   @@index([commentId, userId])
 }
-
 
 model Profile {
   id             String   @id @unique @default(uuid())
@@ -149,10 +148,9 @@ model Profile {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String  @unique
+  userId         String   @unique
   email          String
   socials        Socials?
-
 }
 
 model Socials {
@@ -168,27 +166,26 @@ model Socials {
   profileId String   @unique
 }
 
-
 model Project {
-  id          String     @id @unique @default(uuid())
-  title       String
-  description String
-  projectImg  String
-  projectUrl  String
-  githubUrl   String
-  status      String     @default("In Progress")
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt()
-  implementations  ProjectImplementation[]
-  technologies  ProjectTechnologies[]
+  id              String                  @id @unique @default(uuid())
+  title           String
+  description     String
+  projectImg      String
+  projectUrl      String
+  githubUrl       String
+  status          String                  @default("In Progress")
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt()
+  implementations ProjectImplementation[]
+  technologies    ProjectTechnologies[]
 
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId      String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
 }
 
 model ProjectImplementation {
-  id       String   @id @unique @default(uuid())
-  title      String
+  id        String   @id @unique @default(uuid())
+  title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -196,14 +193,13 @@ model ProjectImplementation {
 }
 
 model ProjectTechnologies {
-  id       String   @id @unique @default(uuid())
-  title      String
+  id        String   @id @unique @default(uuid())
+  title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   projectId String   @unique
 }
-
 
 model Token {
   id        String    @id @default(cuid())
@@ -235,24 +231,23 @@ model Account {
   @@index([userId])
 }
 
-
 model Chat {
-  id String @id @default(cuid())
- createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users User[]
-  messages Message[]
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  users     User[]
+  messages  Message[]
 }
 
 model Message {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  content String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chatId String
+  content   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chatId    String
 }
 
 enum TokenType {
@@ -262,59 +257,55 @@ enum TokenType {
 }
 
 model Poll {
-    id String @id @default(cuid())
-    title String
-    description String
-    options Option[]
-    votes Vote[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    completed Boolean @default(false)
-
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  options     Option[]
+  votes       Vote[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completed   Boolean  @default(false)
 }
 
-model Option{
-    id String @id @default(cuid())
-    value String
-    poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    pollId String
-    votes Vote[]
+model Option {
+  id     String @id @default(cuid())
+  value  String
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pollId String
+  votes  Vote[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Vote {
-    id String @id @default(cuid())
-    option Option @relation(fields: [optionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    optionId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    userId String
-    poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    pollId String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-
-
-model Task {
-  id String @id @default(cuid())
-  title String
-  description String
-  section String
-  status String  @default("To Do")
+  id        String   @id @default(cuid())
+  option    Option   @relation(fields: [optionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  optionId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pollId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  categories TaskCategory[]
- 
+}
+
+model Task {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  section     String
+  status      String         @default("To Do")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  categories  TaskCategory[]
 }
 
 model TaskCategory {
-  id String @id @default(cuid())
-  label String
-  value String @unique
-  tasks Task[]
+  id        String   @id @default(cuid())
+  label     String
+  value     String   @unique
+  tasks     Task[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

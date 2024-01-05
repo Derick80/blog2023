@@ -52,8 +52,7 @@ export const createUser = async (
   }
 ) => {
   const data: Prisma.UserCreateInput = {
-    email: input.email,
-    username: input.username
+    email: input.email
   }
 
   if (input.password) {
@@ -78,6 +77,16 @@ export const createUser = async (
     select: defaultUserSelect
   })
 
+  return user
+}
+
+export const getUserByEmail = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email
+    },
+    select: defaultUserSelect
+  })
   return user
 }
 

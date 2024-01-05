@@ -30,6 +30,8 @@ import { MetronomeLinks } from '@metronome-sh/react'
 import { getEnv } from './server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { getThemeFromCookie } from './server/theme.server'
+import { useOptionalUser } from './utilities'
+import { getUserByEmail } from './server/user.server'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -51,6 +53,8 @@ export const meta: MetaFunction = () => {
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
 export async function loader ({ request }: LoaderFunctionArgs) {
   const theme = await getThemeFromCookie(request)
+  // const user = await getUserByEmail('wowbearwow80@gmail.com')
+  // console.log(user, 'user');
 
   const user = await isAuthenticated(request)
   const categories = await prisma.category.findMany()
@@ -58,7 +62,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
   if (!toastMessage) {
-    return json({ toastMessage: null, user, categories, theme })
+    return json({ toastMessage: null, categories, theme })
   }
 
   if (!toastMessage.type) {
@@ -66,7 +70,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   }
 
   return json(
-    { toastMessage, user, categories, theme, ENV: getEnv() },
+    { toastMessage, categories, theme, ENV: getEnv() },
     {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -77,6 +81,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
 
 export default function App () {
   const { theme = 'system' } = useLoaderData<typeof loader>()
+  const user = useOptionalUser()
 
   const data = useLoaderData<typeof loader>()
   const { toastMessage } = data
@@ -205,13 +210,8 @@ export function ErrorBoundary () {
       </head>
       <body>
         <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-<<<<<<< HEAD
-          <h1>uh Oh..</h1>
-          <h2>something went wrong</h2>
-=======
           <h1 className='text-2xl font-bold'>uh Oh..</h1>
           <p className='text-xl'>something went wrong</p>
->>>>>>> main
           <pre>{ errorMessage }</pre>
         </div>{ ' ' }
         <Scripts />

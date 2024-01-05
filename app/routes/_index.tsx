@@ -133,16 +133,10 @@ export default function Index () {
           <Separator />{ ' ' }
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
             <h6 className='text-left'>Want to </h6>
-<<<<<<< HEAD
-  <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
-    Connect with me?
-  </p>
-=======
             <h1>Connect with me?</h1>
->>>>>>> main
           </div >
         </div >
-    <ContactWidget />
+        <ContactWidget />
       </div >
     </div >
   )

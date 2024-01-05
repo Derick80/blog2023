@@ -29,7 +29,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login () {
   return (
     <div className='grid gap-5 items-center'>
-      {/* <AuthForm authType='login' /> */ }
+      <AuthForm authType='login' />
 
       <h3 className='text-center'>Or</h3>
       <SocialLoginForm />
