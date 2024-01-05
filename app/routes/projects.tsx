@@ -1,13 +1,12 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
-import { projects } from '~/resources/projects'
+import { Project, projects } from '~/resources/projects'
 import ProjectAccordian from '~/components/v2-components/project/project-accordian_v2'
-import { getUniqueCategories } from '~/utilities'
 import TechnologiesContainer from '~/components/v2-components/project/project-tech-container'
 import { Separator } from '~/components/ui/separator'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return null
@@ -23,12 +22,28 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export default function ProjectIndex() {
-  // this was way too complicated  when it really shouldn't have been
-  // When I first finished i realized that these categories are specific to projects and not blog posts. So I had to make a new component for the categories
-  const categories = projects.map((project) => project.categories).flat()
 
-  const reducedCategories = getUniqueCategories({ categories })
+type Props = {
+  projects: Project[];
+};
+
+export const ExtractUniqueCategories = ({ projects }: Props) => {
+
+
+  // Extract categories from each project, flatten them into one array, and remove duplicates
+  const uniqueCategories = Array.from(new Set(projects.flatMap(p => p.categories.flatMap(c => c.label))));
+
+  return uniqueCategories
+}
+
+
+export default function ProjectIndex () {
+
+
+  // Additional logic to handle the unique categories list
+  // ...
+  const uniqueCategories = ExtractUniqueCategories({ projects });
+
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
@@ -42,12 +57,13 @@ export default function ProjectIndex() {
           S
         </div>
       </div>
-      <TechnologiesContainer categories={reducedCategories} />
+      <TechnologiesContainer categories={ uniqueCategories } />
       <div className='w-full columns-1 md:columns-2 gap-5'>
-        {projects.map((project) => (
-          <ProjectAccordian key={project.id} projects={project} />
-        ))}
+        { projects.map((project) => (
+          <ProjectAccordian key={ project.id } projects={ project } />
+        )) }
       </div>
     </div>
   )
 }
+

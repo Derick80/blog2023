@@ -9,7 +9,7 @@ import Button from '~/components/button'
 import { Separator } from '~/components/ui/separator'
 import { authenticator, isAuthenticated } from '~/server/auth/auth.server'
 
-export async function loader(args: LoaderFunctionArgs) {
+export async function loader (args: LoaderFunctionArgs) {
   return (await isAuthenticated(args.request)) ? redirect('/') : null
 }
 
@@ -26,10 +26,10 @@ export const action: ActionFunction = async ({ request }) => {
       })
   }
 }
-export default function Login() {
+export default function Login () {
   return (
     <div className='grid gap-5 items-center'>
-      <AuthForm authType='login' />
+      {/* <AuthForm authType='login' /> */ }
 
       <h3 className='text-center'>Or</h3>
       <SocialLoginForm />

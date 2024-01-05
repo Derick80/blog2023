@@ -59,16 +59,17 @@ export default function NavigationBar () {
         </NavLink>
         <MenuBar title='More' menuItems={ moreMenuItems } />
       </div>
-      <ThemeToggle />
-      { user ? (
-        <div className='flex flex-row items-center gap-2 p-2'>
+      <div className='flex flex-row items-center gap-2 p-2'>
+
+        <ThemeToggle />
+        { user ? (
           <HoverOverCard />
-        </div>
-      ) : (
-        <NavLink title='Follow this link to login to your account' to='/login'>
-          <p className='text-base font-semibold dark:text-violet3'>Login</p>
-        </NavLink>
-      ) }
+        ) : (
+          <NavLink title='Follow this link to login to your account' to='/login'>
+            <p className='text-base font-semibold dark:text-violet3'>Login</p>
+          </NavLink>
+        ) }
+      </div>
     </div>
   )
 }
