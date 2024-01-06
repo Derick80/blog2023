@@ -6,8 +6,7 @@ import {
   CardTitle
 } from '~/components/ui/card'
 import { DiscordLogoIcon, GitHubLogoIcon } from '@radix-ui/react-icons'
-import { Form } from '@remix-run/react'
-import { Button } from '../ui/button'
+
 
 export const socialProviders = [
   {

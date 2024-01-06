@@ -59,17 +59,19 @@ export const AuthForm = ({ authType }: Props) => {
     'Register a new account using your email and password.'
 
   return (
-    <Card className=''>
+    <Card>
       <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
+        <CardTitle
+          className='text-center'
+        >Welcome back</CardTitle>
         <CardDescription>
-          {authType === 'login'
+          { authType === 'login'
             ? generalMemberLoginInstructions
-            : notAMemberRegisterInstructions}
+            : notAMemberRegisterInstructions }
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form method='POST' className='grid gap-3' action={url}>
+        <Form method='POST' className='grid gap-3' action={ url }>
           <Label className='sr-only' htmlFor='email'>
             Email
           </Label>
@@ -93,15 +95,17 @@ export const AuthForm = ({ authType }: Props) => {
             required
           />
 
-          <Button variant='primary_filled' type='submit'>
-            {button}
+          <Button
+            className='w-full'
+            variant='primary_filled' type='submit'>
+            { button }
           </Button>
         </Form>
       </CardContent>
       <CardContent></CardContent>
       <CardFooter>
         <Link to='/register'>
-          <p className='text-sm italic'>{}</p>
+          <p className='text-sm italic'>{ }</p>
         </Link>
       </CardFooter>
     </Card>
