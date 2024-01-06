@@ -1,14 +1,12 @@
-import { DiscordLogoIcon, GitHubLogoIcon } from '@radix-ui/react-icons'
-import type { ActionFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
-import { Form, Link } from '@remix-run/react'
+import type { ActionFunction } from '@remix-run/node'
+import { json } from '@remix-run/node'
+import { Form } from '@remix-run/react'
 import { AuthForm } from '~/components/auth/auth-form'
-import { SocialLoginForm } from '~/components/auth/social-login-form'
+
 import Button from '~/components/button'
 
-import { Separator } from '~/components/ui/separator'
-import { authenticator, isAuthenticated } from '~/server/auth/auth.server'
-
+import { authenticator } from '~/server/auth/auth.server'
+import { socialProviders } from '~/components/auth/social-login-form'
 
 export const action: ActionFunction = async ({ request }) => {
   try {
@@ -29,7 +27,22 @@ export default function Login () {
       <AuthForm authType='login' />
 
       <h3 className='text-center'>Or</h3>
-      <SocialLoginForm />
+      { socialProviders.map((item, index) => (
+        <Form
+          key={ index }
+
+          action={ `/${item.provider}` }
+          className='' method='POST' >
+
+          <Button
+
+            value={ item.provider }
+            variant='ghost'
+          >
+            { item.icon }
+          </Button>
+        </Form>
+      )) }
     </div>
   )
 }

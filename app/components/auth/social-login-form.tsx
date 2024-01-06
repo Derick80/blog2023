@@ -5,11 +5,11 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
-import Button from '../button'
 import { DiscordLogoIcon, GitHubLogoIcon } from '@radix-ui/react-icons'
 import { Form } from '@remix-run/react'
+import { Button } from '../ui/button'
 
-const socialProviders = [
+export const socialProviders = [
   {
     provider: 'discord',
     icon: <DiscordLogoIcon width={ 20 } height={ 20 } />
@@ -33,23 +33,7 @@ export const SocialLoginForm = () => {
         <h3>Use any of these socials</h3>
         <div className='flex gap-3 justify-center'>
 
-          { socialProviders.map((item, index) => (
-            <Form
-              key={ index }
-              name={ `social-login-form-${item.provider}` }
-              className='' method='post' action={ `/${item.provider}` }>
 
-              <Button
-                type='submit'
-                form={ `social-login-form-${item.provider}` }
-                name='provider'
-                value={ item.provider }
-                variant='icon_unfilled'
-              >
-                { item.icon }
-              </Button>
-            </Form>
-          )) }
         </div>
       </CardContent>
     </Card>
