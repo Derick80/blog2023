@@ -10,9 +10,7 @@ import {
   useRouteError,
   useSearchParams
 } from '@remix-run/react'
-import dayjs from 'dayjs'
 import { getAllPostsV1, getPosts } from '~/server/post.server'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
 import {
   filterPosts,
@@ -24,7 +22,6 @@ import React from 'react'
 import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
 
-dayjs.extend(relativeTime)
 
 export const meta: MetaFunction = () => {
   return [

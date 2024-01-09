@@ -1,4 +1,4 @@
-import { Form, Link } from '@remix-run/react'
+import { Form, useActionData } from '@remix-run/react'
 import Button from '../button'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
@@ -10,12 +10,31 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
+import type { ActionInput } from '~/routes/_auth.login'
+import React from 'react'
+import { DiscordLogoIcon } from '@radix-ui/react-icons'
+import { Separator } from '../ui/separator'
+import { Muted } from '../ui/typography'
+
+export const socialProviders = [
+  {
+    provider: 'discord',
+    label: 'Login with Discord',
+    icon: <DiscordLogoIcon width={ 20 } height={ 20 } />
+  },
+  // {
+  //   provider: 'github',
+  //   label: 'Login with Github',
+  //   icon: <GitHubLogoIcon width={ 20 } height={ 20 } />
+  // },
+
+]
 type Props = {
-  authType: 'register' | 'login' | 'request' | 'confirm'
+  mode: 'register' | 'login' | 'request' | 'confirm' | 'OTP'
 }
 
 const actionMap: Record<
-  Props['authType'],
+  Props['mode'],
   { button: string; url: string; emailCaption: string; socialsCaption: string }
 > = {
   register: {
@@ -47,11 +66,30 @@ const actionMap: Record<
       'Enter your email address and we will send you a link to reset your password.',
     socialsCaption:
       'You can login using your social media account and there is no need to register a new email and password.'
+  },
+  OTP: {
+    url: '/login-otp',
+    button: 'Confirm OTP',
+    emailCaption:
+      'Enter your email address and we will send you a link to reset your password.',
+    socialsCaption:
+      'You can login using your social media account and there is no need to register a new email and password.'
   }
 }
 
-export const AuthForm = ({ authType }: Props) => {
-  const { button, url } = actionMap[authType]
+export const AuthForm = () => {
+  const actionData = useActionData<{
+    errors:
+    {
+      email: string
+      password: string
+      username?: string
+
+    }
+  }>()
+
+  const [mode, setMode] = React.useState<'login' | 'register' | 'OTP'>('login')
+  const { button, url } = actionMap[mode]
 
   const generalMemberLoginInstructions =
     'Login to your account using your email and password.'
@@ -59,19 +97,26 @@ export const AuthForm = ({ authType }: Props) => {
     'Register a new account using your email and password.'
 
   return (
-    <Card className=''>
+    <Card
+
+    >
       <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
+        <CardTitle
+          className='text-center'
+        >Welcome back</CardTitle>
         <CardDescription>
-          {authType === 'login'
-            ? generalMemberLoginInstructions
-            : notAMemberRegisterInstructions}
+          { mode === 'login'
+            ? generalMemberLoginInstructions :
+
+            mode === 'register' ? notAMemberRegisterInstructions : 'Register or Login by sending me an OTP code'
+
+          }
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form method='POST' className='grid gap-3' action={url}>
-          <Label className='sr-only' htmlFor='email'>
-            Email
+        <Form method='POST' className='grid gap-3' action={ url }>
+          <Label htmlFor='email'>
+            Email address
           </Label>
           <Input
             type='email'
@@ -81,28 +126,128 @@ export const AuthForm = ({ authType }: Props) => {
             autoComplete='email'
             required
           />
-          <Label className='sr-only' htmlFor='password'>
-            Password
-          </Label>
-          <Input
-            type='password'
-            name='password'
-            id='password'
-            placeholder='Password'
-            autoComplete='current-password'
-            required
-          />
+          { actionData?.errors?.email && (
+            <p id='title-error' className='text-red-500'>
+              { actionData?.errors?.email }
+            </p>
+          ) }
 
-          <Button variant='primary_filled' type='submit'>
-            {button}
+          {
+            mode === 'register' && (
+              <>
+                <Label className='sr-only' htmlFor='username'>
+                  Username
+                </Label>
+                <Input
+                  type='text'
+                  name='username'
+                  id='username'
+                  placeholder='Username'
+                  autoComplete='username'
+                  required
+                />
+                { actionData?.errors?.username && (
+                  <p id='title-error' className='text-red-500'>
+                    { actionData?.errors?.username }
+                  </p>
+                ) }
+
+              </>
+            )
+          }
+
+          {
+            mode !== 'OTP' && (
+              <>
+                <Label className='sr-only' htmlFor='password'>
+                  Password
+                </Label>
+                <Input
+                  type='password'
+                  name='password'
+                  id='password'
+                  placeholder='Password'
+                  autoComplete='current-password'
+                  required
+                />
+                { actionData?.errors?.password && (
+                  <p id='title-error' className='text-red-500'>
+                    { actionData?.errors?.password }
+                  </p>
+                ) }
+              </>
+            )
+          }
+
+          <Button
+            className='w-full justify-center'
+            variant='primary_filled'
+            name='intent'
+            value={ mode }
+            type='submit'>
+            { button }
           </Button>
         </Form>
       </CardContent>
-      <CardContent></CardContent>
-      <CardFooter>
-        <Link to='/register'>
-          <p className='text-sm italic'>{}</p>
-        </Link>
+      <CardContent>
+        <Separator />
+        <Muted
+          className='text-center text-base pt-2'
+        >or</Muted>
+      </CardContent>
+      <CardContent
+        className='items-center justify-center gap-2'
+      >
+        { socialProviders.map((item, index) => (
+          <Form
+            key={ index }
+            name={ `social-login-${item.provider}` }
+            action={ `/${item.provider}` }
+            className='flex flex-col items-center gap-2'
+            method='POST' >
+
+            <Button
+              className='w-full text-center justify-center gap-2'
+              // form={ `social-login-${item.provider}` }
+              value={ item.provider }
+              variant='icon_text_filled'
+            >
+              { item.icon }
+
+              <p>{ item.label } </p>
+            </Button>
+          </Form>
+        )) }
+      </CardContent>
+      <CardFooter
+        className='flex flex-row items-center mx-auto gap-2'
+
+      >
+        <Button
+          type='button'
+          className='w-full justify-center'
+          variant='ghost'
+          onClick={ () => setMode(mode === 'login' ? 'register' : 'login') }>
+          <Muted
+            className='text-base'>
+
+            { mode === 'login' ? 'Not a member? Register' : 'Already a member? Login' }
+          </Muted>
+
+        </Button>
+
+        <Button
+          type='button'
+          className='w-full justify-center'
+
+          variant='ghost'
+          onClick={ () => setMode(mode === 'OTP' ? 'login' : 'OTP') }>
+          <Muted
+            className='text-base'>
+            { mode === 'OTP' ? 'Login using password' : 'Send OTP code' }
+          </Muted>
+        </Button>
+
       </CardFooter>
     </Card>
   )

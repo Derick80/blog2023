@@ -31,6 +31,7 @@ model User {
   commentsLiked CommentLike[]
   votes         Vote[]
   blocked       Block[]
+  sessions      Session[]
 }
 
 model Block {
@@ -308,4 +309,38 @@ model TaskCategory {
   tasks     Task[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id             String   @id @default(cuid())
+  expirationDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  // non-unique foreign key
+  @@index([userId])
+}
+
+model Totp {
+  // The encrypted data used to generate the OTP.
+  hash String @unique
+
+  // The status of the TOTP.
+  // Used internally / programmatically to invalidate TOTPs.
+  active Boolean
+
+  // The input attempts of the TOTP.
+  // Used internally to invalidate TOTPs after a certain amount of attempts.
+  attempts Int
+
+  // The expiration date of the TOTP.
+  // Used programmatically to invalidate unused TOTPs.
+  expiresAt DateTime
+
+  // Index for expiresAt
+  @@index([expiresAt])
 }

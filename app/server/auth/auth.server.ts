@@ -15,6 +15,7 @@ authenticator.use(loginStrategy, 'login')
 authenticator.use(discordStrategy, 'discord')
 export const isAuthenticated = async (request: Request) => {
   const userId = await authenticator.isAuthenticated(request)
+
   if (!userId) return null
   return getUser({ id: userId })
 }

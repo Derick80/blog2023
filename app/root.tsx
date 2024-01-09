@@ -30,8 +30,7 @@ import { MetronomeLinks } from '@metronome-sh/react'
 import { getEnv } from './server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { getThemeFromCookie } from './server/theme.server'
-import { useOptionalUser } from './utilities'
-import { getUserByEmail } from './server/user.server'
+
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -61,8 +60,9 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
 
+
   if (!toastMessage) {
-    return json({ toastMessage: null, categories, user, theme })
+    return json({ toastMessage: null, user, categories, theme })
   }
 
   if (!toastMessage.type) {
@@ -70,7 +70,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   }
 
   return json(
-    { toastMessage, categories, user, theme, ENV: getEnv() },
+    { toastMessage, categories, theme, user, ENV: getEnv() },
     {
       headers: {
         'Set-Cookie': await commitSession(session)
@@ -146,7 +146,6 @@ export default function App () {
                 <Outlet />
               </motion.div>
             </AnimatePresence>
-            {/* <ChatWidget /> */ }
             <Toaster
               position='bottom-right'
               toastOptions={ {
