@@ -67,7 +67,6 @@ export async function action ({ request }: ActionFunctionArgs) {
   }
 }
 export default function Login () {
-  const actionData = useActionData<{ errors: ActionInput }>()
   return (
     <div className='grid gap-5 items-center max-w-lg mx-auto'>
       <AuthForm />
