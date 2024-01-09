@@ -15,8 +15,6 @@ export interface DiscordUser {
   refreshToken: string
 }
 
-export const auth = new Authenticator(sessionStorage)
-
 const clientID = process.env.DISCORD_CLIENT_ID as string
 if (!clientID) throw new Error('DISCORD_CLIENT_ID is not defined')
 const clientSecret = process.env.DISCORD_CLIENT_SECRET as string
