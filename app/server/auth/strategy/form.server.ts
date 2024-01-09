@@ -1,6 +1,4 @@
 import { FormStrategy } from 'remix-auth-form'
-import invariant from 'tiny-invariant'
-
 import bcrypt from 'bcryptjs'
 import { getUser, createUser, getUserPasswordHash } from '../../user.server'
 import type { AuthInput } from '../auth-schema'

@@ -8,14 +8,17 @@ import { authenticator } from '~/server/auth/auth.server'
 export let loader = () => redirect('/login')
 
 
-export let action = ({ request, params }: ActionFunctionArgs) => {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const { provider } = zx.parseParams(params, {
     provider: z.string()
 
   })
 
+
   if (!provider) return redirect('/login')
 
-
-  return authenticator.authenticate(provider, request)
+  return authenticator.authenticate(provider, request, {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  })
 }

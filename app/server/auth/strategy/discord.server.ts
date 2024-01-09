@@ -39,7 +39,7 @@ export const discordStrategy = new DiscordStrategy(
       providerAccountId: profile.id
     })
 
-    if (account) return account.user.id
+    if (account) return account.userId
 
     const user = await createUser({
       email: profile.emails ? profile.emails[0].value : '',

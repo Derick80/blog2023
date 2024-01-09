@@ -16,5 +16,6 @@ export const getAccount = async ({
       user: true
     }
   })
+
   return account
 }
