@@ -68,8 +68,8 @@ const actionMap: Record<
       'You can login using your social media account and there is no need to register a new email and password.'
   },
   OTP: {
-    url: '/login-otp',
-    button: 'Confirm OTP',
+    url: '/totp',
+    button: 'Email me a OTP',
     emailCaption:
       'Enter your email address and we will send you a link to reset your password.',
     socialsCaption:
@@ -244,7 +244,7 @@ export const AuthForm = () => {
           onClick={ () => setMode(mode === 'OTP' ? 'login' : 'OTP') }>
           <Muted
             className='text-base'>
-            { mode === 'OTP' ? 'Login using password' : 'Send OTP code' }
+            { mode === 'OTP' ? 'Login using password' : 'Login or Register using OTP code' }
           </Muted>
         </Button>
 
