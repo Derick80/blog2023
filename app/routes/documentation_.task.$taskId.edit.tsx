@@ -11,14 +11,13 @@ import {
 } from '~/server/session.server'
 import type { Task } from '~/server/task.server'
 import { getTask, getTaskCategories, updateTask } from '~/server/task.server'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import Button from '~/components/button'
 import { FilePlusIcon } from '@radix-ui/react-icons'
 import { validateAction } from '~/utilities'
 import CustomSelectBox from '~/components/v2-components/custom-select'
-import { typedjson, useTypedLoaderData } from 'remix-typedjson'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')
@@ -40,7 +39,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const categoryArray = categories.map((category) => category.value)
   console.log(categoryArray, 'categoryArray')
 
-  return typedjson({ task, categories: categoryArray })
+  return json({ task, categories: categoryArray })
 }
 
 const statusOptions = [`📆 To Do`, `⏩ In Progress`, `✅ Completed`, `💡 Idea`]
@@ -69,7 +68,7 @@ const schema = z.object({
 })
 
 type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')
@@ -118,9 +117,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   //
 }
 
-export default function EditDocsIndex() {
+export default function EditDocsIndex () {
   // const data = useLoaderData<{ task: Task; categories: string[] }>()
-  const data = useTypedLoaderData<{ task: Task; categories: string[] }>()
+  const data = useLoaderData<{ task: Task; categories: string[] }>()
   const ActionData = useActionData<{ errors: ActionInput }>()
   console.log(data.task, 'data.task')
 
@@ -140,11 +139,11 @@ export default function EditDocsIndex() {
           type='text'
           name='title'
           id='title'
-          defaultValue={data.task.title}
+          defaultValue={ data.task.title }
         />
-        {ActionData?.errors?.title && (
-          <span className='text-red-500'>{ActionData.errors.title}</span>
-        )}
+        { ActionData?.errors?.title && (
+          <span className='text-red-500'>{ ActionData.errors.title }</span>
+        ) }
         <label className='text-slate-900' htmlFor='description'>
           Description
         </label>
@@ -153,22 +152,22 @@ export default function EditDocsIndex() {
           type='text'
           name='description'
           id='description'
-          defaultValue={data.task.description}
+          defaultValue={ data.task.description }
         />
-        {ActionData?.errors?.description && (
-          <span className='text-red-500'>{ActionData.errors.description}</span>
-        )}
+        { ActionData?.errors?.description && (
+          <span className='text-red-500'>{ ActionData.errors.description }</span>
+        ) }
         <label className='text-slate-900' htmlFor='status'>
           Status
         </label>
         <CustomSelectBox
           name='status'
-          options={statusOptions}
-          picked={[data.task.status]}
+          options={ statusOptions }
+          picked={ [data.task.status] }
         />
-        {ActionData?.errors?.status && (
-          <span className='text-red-500'>{ActionData.errors.status}</span>
-        )}
+        { ActionData?.errors?.status && (
+          <span className='text-red-500'>{ ActionData.errors.status }</span>
+        ) }
         <label className='text-slate-900' htmlFor='section'>
           Section
         </label>
@@ -177,25 +176,25 @@ export default function EditDocsIndex() {
           type='text'
           name='section'
           id='section'
-          defaultValue={data.task.section}
+          defaultValue={ data.task.section }
         />
-        {ActionData?.errors?.section && (
-          <span className='text-red-500'>{ActionData.errors.section}</span>
-        )}
+        { ActionData?.errors?.section && (
+          <span className='text-red-500'>{ ActionData.errors.section }</span>
+        ) }
         <label className='text-slate-900' htmlFor='taskCategory'>
           Task Category
         </label>
         <CustomSelectBox
           name='taskCategory'
-          picked={pickedCategories}
-          options={data.categories}
-          creatable={true}
+          picked={ pickedCategories }
+          options={ data.categories }
+          creatable={ true }
           actionPath='/documentation/task/taskCategory/new/'
         />
 
-        {ActionData?.errors?.taskCategory && (
-          <span className='text-red-500'>{ActionData.errors.taskCategory}</span>
-        )}
+        { ActionData?.errors?.taskCategory && (
+          <span className='text-red-500'>{ ActionData.errors.taskCategory }</span>
+        ) }
 
         <Button variant='primary' type='submit'>
           <FilePlusIcon />
