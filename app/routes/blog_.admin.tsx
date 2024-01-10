@@ -97,9 +97,10 @@ export async function action ({ request }: ActionFunctionArgs) {
 export default function BlogAdmin () {
     const { posts } = useLoaderData<typeof loader>()
     return (
-        <div
-            className='flex flex-col w-full items-center gap-10 md:gap-20 '>
+        <div className='grid gap-5 items-center max-w-xl mx-auto'>
+
             <h1>Manage Blog Posts</h1>
+            <h2>Create a new Post</h2>
             <Form method='POST' >
                 <Label htmlFor='title'>Title</Label>
                 <Input id='title' name='title' type='text' />

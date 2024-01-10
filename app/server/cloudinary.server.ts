@@ -6,6 +6,7 @@ import {
   unstable_createMemoryUploadHandler,
   writeAsyncIterableToWritable
 } from '@remix-run/node'
+import { prisma } from './prisma.server'
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -55,7 +56,7 @@ export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
 
 export async function cloudUpload(request: Request) {
   const formData = await unstable_parseMultipartFormData(request, uploadHandler)
-  const imageUrl = formData.get('imageUrl' || '')
+  const imageUrl = formData.getAll('imageUrl') as string[]
   return imageUrl
 }
 
@@ -72,4 +73,31 @@ export const fetchSecureUrls = async () => {
   )
 
   return secureUrls
+}
+
+// delete image from cloudinary using secure_url
+
+export const deleteImage = async ({
+  pId,
+  imageId
+}: {
+  pId: string
+  imageId: string
+}) => {
+  const publicId = pId
+  try {
+    const result = await cloudinary.v2.uploader.destroy(publicId)
+    if (result.result === 'ok') {
+      // delete image from db
+      const deleted = await prisma.postImage.delete({
+        where: {
+          id: imageId
+        }
+      })
+      return deleted
+    }
+  } catch (error) {
+    console.log('Error deleting image', error)
+    throw new Error(error)
+  }
 }

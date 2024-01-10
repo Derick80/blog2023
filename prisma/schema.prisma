@@ -32,6 +32,21 @@ model User {
   votes         Vote[]
   blocked       Block[]
   sessions      Session[]
+  userImages    UserImage[]
+}
+
+model UserImage {
+  id                 String   @id @default(uuid())
+  imageUrl           String
+  cloudinaryPublicId String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId             String
+
+  @@unique([userId, imageUrl])
+  @@index([userId])
+  @@index([imageUrl])
 }
 
 model Block {
@@ -71,12 +86,13 @@ model Post {
 }
 
 model PostImage {
-  id        String   @id @default(uuid())
-  imageUrl  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  postId    String
+  id                 String   @id @default(uuid())
+  imageUrl           String
+  cloudinaryPublicId String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  post               Post     @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postId             String
 
   @@unique([postId, imageUrl])
   @@index([postId])
