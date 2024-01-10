@@ -30,27 +30,35 @@ export const ImageController = (
 
     return (
 
-        <div
-            className='grid gap-5 items-center max-w-lg mx-auto'>
+        <div className='max-w-lg mx-auto p-4'>
             <h1>Image Controller</h1>
             { postImages?.length > 0 ? (
-                postImages?.map((image) => (
-                    <ImageWithPlaceholder key={ image.id }
-                        src={ image.imageUrl }
-                        placeholderSrc={
-                            'https://res.cloudinary.com/dch-photo/image/upload/v1662199076/samples/cloudinary-icon.png'
-                        }
+                <div className='grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4'>
+
+                    { postImages?.map((image) => (
+                        <ImageWithPlaceholder key={ image.id }
+                            postId={ image.postId }
+                            src={ image.imageUrl }
+                            publicId={ image.cloudinaryPublicId }
+                            imageId={ image.id }
+                            className='w-full h-auto object-cover'
+                            placeholderSrc={
+                                'https://res.cloudinary.com/dch-photo/image/upload/v1662199076/samples/cloudinary-icon.png'
+                            }
 
 
-                    />
-                ))
-            ) : null
+                        />
+                    ))
+                    }
+                </div>
+            ) : <p>No images available.</p>
 
             }
             <Separator />
             <Form method='POST'
                 action='/actions/cloudinary'
                 encType='multipart/form-data'
+                navigate={ false }
                 onChange={ onFileChange }
             >
                 <Label htmlFor='image'>Image</Label>
@@ -61,11 +69,14 @@ export const ImageController = (
                     accept='image/*'
                     multiple
                     onBlur={ onFileChange }
+                    className='block w-full text-sm text-gray-500'
+
                 />
                 <input type='hidden' name='postId'
                     value={ postId }
                 />
-                <button type='submit'>Upload</button>
+                <button
+                    type='submit'>Upload</button>
             </Form>
         </div>
     )

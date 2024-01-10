@@ -2,18 +2,26 @@ import type { ActionFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { cloudUpload } from '~/server/cloudinary.server'
 import { prisma } from '~/server/prisma.server'
-
+import cloudinary from 'cloudinary'
 // This is the ac tion that will be called when the form is submitted on the client from the image upload component that's likely in another route
 export const action: ActionFunction = async ({ request }) => {
   // const imageUrl = await cloudUpload(request)
   // console.log('imageUrl', imageUrl)
 
-  const images = await cloudUpload(request.clone())
+  const imagegResults = (await cloudUpload(request.clone())) as {
+    public_id: string
+    secure_url: string
+  }[]
 
-  console.log(images, 'images')
+  console.log('imagegResults', imagegResults)
 
-  const imageArray = images
-  console.log('imageArray', imageArray)
+  const imageData = imagegResults.map((image) => {
+    return {
+      imageUrl: image.secure_url,
+      cloudinaryPublicId: image.public_id
+    }
+  })
+  console.log(imageData, 'imageData')
 
   const formData = await request.clone().formData()
 
@@ -26,22 +34,15 @@ export const action: ActionFunction = async ({ request }) => {
     },
     data: {
       postImages: {
-        create: imageArray.map((image) => {
+        create: imageData.map((image) => {
           return {
-            imageUrl: image,
-            cloudinaryPublicId: getPublicId(image)
+            imageUrl: image.imageUrl,
+            cloudinaryPublicId: image.cloudinaryPublicId
           }
         })
       }
     }
   })
 
-  return json({ images })
-}
-
-export function getPublicId(url: string) {
-  // get the public id from the url of the image on cloudinary which is the last part of the url before the file extension
-  const urlSplit = url.split('/')
-  const publicId = urlSplit[urlSplit.length - 1].split('.')[0]
-  return publicId
+  return json({ imagegResults })
 }
