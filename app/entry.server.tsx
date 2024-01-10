@@ -9,7 +9,7 @@ import { PassThrough } from "node:stream";
 import type { AppLoadContext, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
-import isbot from "isbot";
+import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { getEnv, init } from "./server/env.server";
 
@@ -18,7 +18,7 @@ init()
 global.ENV = getEnv()
 const ABORT_DELAY = 5_000;
 
-export default function handleRequest(
+export default function handleRequest (
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
@@ -27,20 +27,20 @@ export default function handleRequest(
 ) {
   return isbot(request.headers.get("user-agent"))
     ? handleBotRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      )
+      request,
+      responseStatusCode,
+      responseHeaders,
+      remixContext
+    )
     : handleBrowserRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      );
+      request,
+      responseStatusCode,
+      responseHeaders,
+      remixContext
+    );
 }
 
-function handleBotRequest(
+function handleBotRequest (
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
@@ -50,12 +50,12 @@ function handleBotRequest(
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
       <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
+        context={ remixContext }
+        url={ request.url }
+        abortDelay={ ABORT_DELAY }
       />,
       {
-        onAllReady() {
+        onAllReady () {
           shellRendered = true;
           const body = new PassThrough();
           const stream = createReadableStreamFromReadable(body);
@@ -71,10 +71,10 @@ function handleBotRequest(
 
           pipe(body);
         },
-        onShellError(error: unknown) {
+        onShellError (error: unknown) {
           reject(error);
         },
-        onError(error: unknown) {
+        onError (error: unknown) {
           responseStatusCode = 500;
           // Log streaming rendering errors from inside the shell.  Don't log
           // errors encountered during initial shell rendering since they'll
@@ -90,7 +90,7 @@ function handleBotRequest(
   });
 }
 
-function handleBrowserRequest(
+function handleBrowserRequest (
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
@@ -100,12 +100,12 @@ function handleBrowserRequest(
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
       <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
+        context={ remixContext }
+        url={ request.url }
+        abortDelay={ ABORT_DELAY }
       />,
       {
-        onShellReady() {
+        onShellReady () {
           shellRendered = true;
           const body = new PassThrough();
           const stream = createReadableStreamFromReadable(body);
@@ -121,10 +121,10 @@ function handleBrowserRequest(
 
           pipe(body);
         },
-        onShellError(error: unknown) {
+        onShellError (error: unknown) {
           reject(error);
         },
-        onError(error: unknown) {
+        onError (error: unknown) {
           responseStatusCode = 500;
           // Log streaming rendering errors from inside the shell.  Don't log
           // errors encountered during initial shell rendering since they'll
