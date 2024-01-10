@@ -26,7 +26,6 @@ import React from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import { prisma } from './server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MetronomeLinks } from '@metronome-sh/react'
 import { getEnv } from './server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { getThemeFromCookie } from './server/theme.server'
@@ -120,7 +119,6 @@ export default function App () {
         <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />
         <Links />
-        <MetronomeLinks />
       </head>
       <body
         id='body'
