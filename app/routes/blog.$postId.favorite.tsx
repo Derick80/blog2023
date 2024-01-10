@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { Response, json } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { isAuthenticated } from '~/server/auth/auth.server'
@@ -13,11 +13,11 @@ import {
 
 // or cloudflare/deno
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  throw new Response("This page doesn't exists.", { status: 404 })
+export async function loader ({ request, params }: LoaderFunctionArgs) {
+  throw new Error("This page doesn't exists.")
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
 
   const user = await isAuthenticated(request)

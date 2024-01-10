@@ -14,11 +14,12 @@ export async function action ({ request, params }: ActionFunctionArgs) {
 
   })
 
+  const isCode = provider === 'totp'
 
   if (!provider) return redirect('/login')
 
   return authenticator.authenticate(provider, request, {
-    successRedirect: '/',
+    successRedirect: isCode ? '/verify' : '/',
     failureRedirect: '/login'
   })
 }

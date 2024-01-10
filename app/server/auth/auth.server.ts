@@ -5,14 +5,16 @@ import { loginStrategy, registerStrategy } from './strategy/form.server'
 import type { Session } from '@remix-run/node'
 import { discordStrategy } from './strategy/discord.server'
 import { getUser } from '../user.server'
-
+import { totpStrategy } from './strategy/totp-server'
 export const authenticator = new Authenticator<User['id']>(sessionStorage, {
-  throwOnError: true
+  throwOnError: true,
+  sessionErrorKey: 'authError'
 })
 
 authenticator.use(registerStrategy, 'register')
 authenticator.use(loginStrategy, 'login')
 authenticator.use(discordStrategy, 'discord')
+authenticator.use(totpStrategy, 'totp')
 export const isAuthenticated = async (request: Request) => {
   const userId = await authenticator.isAuthenticated(request)
 
