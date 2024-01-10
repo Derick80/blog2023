@@ -10,13 +10,11 @@ import { prisma } from '~/server/prisma.server'
 import { getSession, setErrorMessage } from '~/server/session.server'
 import type { User } from '~/server/schemas/schemas'
 import { useOptionalUser, validateAction } from '~/utilities'
+import { zx } from 'zodix'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  const username = params.username
-  if (!username) {
-    return { json: { message: 'No username provided' } }
-  }
-  const loggedInUser = await isAuthenticated(request)
+export async function loader ({ request, params }: LoaderFunctionArgs) {
+  const { username } = zx.parseParams(params, { username: z.string() })
+
   const user = await prisma.user.findUnique({
     where: {
       username
@@ -26,31 +24,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       username: true,
       email: true,
       avatarUrl: true,
-      chats: loggedInUser
-        ? {
-            where: {
-              users: {
-                some: {
-                  id: { equals: loggedInUser.id }
-                }
-              }
-            },
-            select: {
-              id: true,
-              users: {
-                select: {
-                  id: true,
-                  email: true,
-                  username: true,
-                  avatarUrl: true,
-                  chats: true
-                }
-              }
-            }
-          }
-        : false
+
+
     }
   })
+
 
   if (!user) {
     return { json: { message: 'No user found' } }
@@ -65,7 +43,7 @@ const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const username = params.username
   console.log(username, 'username')
@@ -145,31 +123,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function UserRoute() {
-  const data = useLoaderData<{
-    user: User & {
-      chats: (Chat & {
-        users: User
-      })[]
-    }
+export default function UserRoute () {
+  const { user } = useLoaderData<{
+    user: User
   }>()
 
   const loggedInUser = useOptionalUser()
 
-  const isOwnProfile = loggedInUser?.id === data?.user?.id
-
-  const oneOnOneChat = loggedInUser
-    ? data.user?.chats.find(
-        (c) =>
-          // @ts-ignore
-          c.users.length === 2 &&
-          // @ts-ignore
-          c.users.some(
-            // @ts-ignore
-            (u) => u.id === loggedInUser?.id || u.id === data?.user?.id
-          )
-      )
-    : null
+  const isOwnProfile = loggedInUser?.id === user?.id
 
   return (
     <div>
@@ -180,14 +141,14 @@ export default function UserRoute() {
           <div className='flex flex-row items-center gap-1 md:gap-2'>
             <img
               className='h-10 w-10 rounded-full'
-              src={data.user.avatarUrl || ''}
+              src={ user.avatarUrl || '' }
               alt='avatar'
             />
-            <h3 className='text-xl font-bold'>{data.user.username}</h3>
+            <h3 className='text-xl font-bold'>{ user.username }</h3>
           </div>
-          <p>{data.user.email}</p>
+          <p>{ user.email }</p>
           <div className='flex flex-row'>
-            <Link to={`/users/${data.user.id}`}>View User</Link>
+            <Link to={ `/users/${user.id}` }>View User</Link>
             <Form method='POST'>
               <Button
                 variant='primary_filled'
@@ -202,32 +163,7 @@ export default function UserRoute() {
           </div>
         </li>
       </ul>
-      <strong>Chats:</strong>
-      {isOwnProfile ? (
-        <div>
-          {data?.user?.chats.map((chat) => (
-            <Link key={chat.id} to={`/chats/${chat.id}`}>
-              Chat {chat.users.username}
-            </Link>
-          ))}
-        </div>
-      ) : oneOnOneChat ? (
-        <Link to={`/chats/${oneOnOneChat.id}`}>Chat </Link>
-      ) : (
-        <>
-          <Form method='POST'>
-            <Button
-              variant='primary_filled'
-              size='base'
-              type='submit'
-              name='action'
-              value='create-chat'
-            >
-              Create Chat
-            </Button>
-          </Form>
-        </>
-      )}
+
     </div>
   )
 }
