@@ -29,7 +29,7 @@ export type SendEmailOptions = {
 }
 
 export async function sendEmail(options: SendEmailOptions) {
-  const from = 'onboarding@resend.dev'
+  const from = 'derickchoskinson.com'
   const email = { from, ...options }
 
   const response = await fetch('https://api.resend.com/emails', {
