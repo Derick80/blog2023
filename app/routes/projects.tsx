@@ -6,7 +6,7 @@ import ProjectAccordian from '~/components/v2-components/project/project-accordi
 import TechnologiesContainer from '~/components/v2-components/project/project-tech-container'
 import { Separator } from '~/components/ui/separator'
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return null
@@ -22,28 +22,23 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-
 type Props = {
-  projects: Project[];
-};
+  projects: Project[]
+}
 
 export const ExtractUniqueCategories = ({ projects }: Props) => {
-
-
   // Extract categories from each project, flatten them into one array, and remove duplicates
-  const uniqueCategories = Array.from(new Set(projects.flatMap(p => p.categories.flatMap(c => c.label))));
+  const uniqueCategories = Array.from(
+    new Set(projects.flatMap((p) => p.categories.flatMap((c) => c.label)))
+  )
 
   return uniqueCategories
 }
 
-
-export default function ProjectIndex () {
-
-
+export default function ProjectIndex() {
   // Additional logic to handle the unique categories list
   // ...
-  const uniqueCategories = ExtractUniqueCategories({ projects });
-
+  const uniqueCategories = ExtractUniqueCategories({ projects })
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
@@ -57,13 +52,12 @@ export default function ProjectIndex () {
           S
         </div>
       </div>
-      <TechnologiesContainer categories={ uniqueCategories } />
+      <TechnologiesContainer categories={uniqueCategories} />
       <div className='w-full columns-1 md:columns-2 gap-5'>
-        { projects.map((project) => (
-          <ProjectAccordian key={ project.id } projects={ project } />
-        )) }
+        {projects.map((project) => (
+          <ProjectAccordian key={project.id} projects={project} />
+        ))}
       </div>
     </div>
   )
 }
-

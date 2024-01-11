@@ -30,7 +30,6 @@ import { getEnv } from './server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { getThemeFromCookie } from './server/theme.server'
 
-
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
 ]
@@ -58,7 +57,6 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   const categories = await prisma.category.findMany()
   const session = await getSession(request.headers.get('Cookie'))
   const toastMessage = (await session.get('toastMessage')) as ToastMessage
-
 
   if (!toastMessage) {
     return json({ toastMessage: null, user, categories, theme })
@@ -106,9 +104,9 @@ export default function App () {
     fetcher.submit(
       { theme },
       {
-        method: 'post',
+        method: 'POST',
         encType: 'application/json',
-        action: '/actions/set-theme',
+        action: '/actions/set-theme'
       }
     )
   }
@@ -120,14 +118,8 @@ export default function App () {
         <Meta />
         <Links />
       </head>
-      <body
-        id='body'
-        className='h-screen bg-background text-foreground'
-      >
-        <ThemeProvider
-          defaultTheme={ theme }
-          onThemeChange={ onThemeChange }
-        >
+      <body id='body' className='h-screen bg-background text-foreground'>
+        <ThemeProvider defaultTheme={ theme } onThemeChange={ onThemeChange }>
           <Layout>
             <AnimatePresence mode='wait' initial={ false }>
               <motion.div
@@ -211,7 +203,6 @@ export function ErrorBoundary () {
           <pre>{ errorMessage }</pre>
         </div>{ ' ' }
         <Scripts />
-
       </body>
     </html>
   )

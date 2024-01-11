@@ -13,7 +13,7 @@ import {
 
 // or cloudflare/deno
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader () {
   throw new Error("This page doesn't exists.")
 }
 

@@ -5,7 +5,7 @@ import {
 } from '@radix-ui/react-icons'
 import { Link } from '@remix-run/react'
 
-export default function ContactWidget () {
+export default function ContactWidget() {
   const socails = [
     {
       name: 'GitHub',
@@ -28,18 +28,18 @@ export default function ContactWidget () {
       <div className='flex w-full flex-col gap-2'>
         <h6 className='text-left'>Contact me via Socials</h6>
 
-        { socails.map((social) => (
+        {socails.map((social) => (
           <Link
-            key={ social.name }
-            to={ social.url }
+            key={social.name}
+            to={social.url}
             rel='noopener noreferrer'
             target='_blank'
             className='prose flex w-full flex-row items-center gap-2 dark:prose-invert'
           >
-            { social.icon }
-            <h6>{ social.name }</h6>
+            {social.icon}
+            <h6>{social.name}</h6>
           </Link>
-        )) }
+        ))}
       </div>
       <div className='flex w-full flex-col gap-2'>
         <h6 className='text-left'>Contact me via Email</h6>

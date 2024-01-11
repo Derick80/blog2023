@@ -83,7 +83,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <div
-      className='flex p-2 w-full min-w-max rounded-md bg-white text-violet12 shadow-[0_2px_10px] shadow-blackA7'
+      className='flex p-2 w-full min-w-max rounded-md border-2'
       aria-label='Editor toolbar'
     >
       <div className='flex flex-row  items-center gap-1'>
@@ -142,7 +142,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           </button>
         </MyTooltip>
       </div>
-      <div className='w-[1px] bg-violet6 mx-[10px]' />
+      <div className='' />
       <div className='flex flex-row items-center gap-1'>
         <button
           type='button'
@@ -290,8 +290,7 @@ const TipTap = ({ content }: { content?: string }) => {
       CustomSubscript,
       CodeBlock.configure({
         HTMLAttributes: {
-          class:
-            'text-sm text-gray-600 bg-gray-100 p-2 rounded-md mt-2 min-h-[500px]'
+          class: 'p-2 rounded-md mt-2 min-h-[500px]'
         }
       }),
       Underline,
@@ -315,7 +314,7 @@ const TipTap = ({ content }: { content?: string }) => {
     editorProps: {
       attributes: {
         class:
-          'rounded-md border min-h-[150px] border-input bg-white text-black',
+          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         spellcheck: 'true'
       }
     }
