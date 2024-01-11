@@ -106,21 +106,6 @@ export async function cloudUpload(request: Request) {
   return imageResults
 }
 
-export const fetchSecureUrls = async () => {
-  // Replace 'YOUR_BUCKET_NAME' with the name of your Cloudinary bucket
-  const result = await cloudinary.v2.api.resources({
-    type: 'upload',
-    prefix: 'Japan_2023',
-    max_results: 1000 // Adjust this number as per your needs
-  })
-
-  const secureUrls = result.resources.map(
-    (resource: { secure_url: string }) => resource.secure_url
-  )
-
-  return secureUrls
-}
-
 // delete image from cloudinary using secure_url
 
 export const deleteImage = async ({

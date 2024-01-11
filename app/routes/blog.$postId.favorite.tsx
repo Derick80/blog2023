@@ -13,11 +13,11 @@ import {
 
 // or cloudflare/deno
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader () {
   throw new Error("This page doesn't exists.")
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
 
   const user = await isAuthenticated(request)

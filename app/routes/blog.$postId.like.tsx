@@ -13,7 +13,7 @@ import {
 
 // or cloudflare/deno
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
 
   if (!user) {
@@ -34,7 +34,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (!user) {
     throw new Error('You need to be authenticated to like a post')
   }
-  const { postId } = zx.parseParams(params, { postId: z.string() })
+  const { postId } = zx.parseParams(params, {
+    postId: z.string(
+
+    )
+  })
 
   const userId = user.id
 
@@ -44,8 +48,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       { status: 400 }
     )
   }
-
-  console.log(request.method, 'request method')
 
   try {
     if (request.method === 'POST') {

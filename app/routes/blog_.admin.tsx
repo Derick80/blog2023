@@ -4,7 +4,7 @@ import {
   json,
   redirect
 } from '@remix-run/node'
-import { Form, NavLink, Outlet, useLoaderData } from '@remix-run/react'
+import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -20,7 +20,7 @@ import {
 } from '~/server/session.server'
 import { validateAction } from '~/utilities'
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader ({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   if (!user) {
@@ -49,7 +49,7 @@ const createPostSchema = z.object({
 })
 
 type ActionInput = z.infer<typeof createPostSchema>
-export async function action({ request }: ActionFunctionArgs) {
+export async function action ({ request }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   // check if the user is authenticated
@@ -100,7 +100,7 @@ export async function action({ request }: ActionFunctionArgs) {
   })
 }
 
-export default function BlogAdmin() {
+export default function BlogAdmin () {
   const { posts } = useLoaderData<typeof loader>()
   return (
     <div className='grid gap-5 items-center max-w-xl mx-auto'>
@@ -111,22 +111,22 @@ export default function BlogAdmin() {
         <Input id='title' name='title' type='text' />
         <Button type='submit'>Submit</Button>
       </Form>
-      {posts.map((post) => (
-        <div key={post.id} className='flex flex-col gap-10 border-2 w-full'>
-          <H2>{post.title}</H2>
+      { posts.map((post) => (
+        <div key={ post.id } className='flex flex-col gap-10 border-2 w-full'>
+          <H2>{ post.title }</H2>
           <div className='flex flex-row items-center gap-10'>
             <h3>Title:</h3>
             <h3>Action</h3>
           </div>
 
           <div className='flex flex-row items-center gap-10'>
-            <h2>{post.title}</h2>
+            <h2>{ post.title }</h2>
             <Button variant='destructive'>Delete</Button>
           </div>
 
-          <NavLink to={`/blog/admin/${post.id}`}>{post.title}</NavLink>
+          <Link to={ `/blog/admin/${post?.id}` }>{ post.title }</Link>
         </div>
-      ))}
+      )) }
 
       <Outlet />
     </div>
