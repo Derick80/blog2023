@@ -26,12 +26,13 @@ export const SetPrimaryPostImage = ({
             <input type='hidden' name='postId' value={ postId } />
             <Button
                 type='submit'
-                className='absolute top-0 left-0 bg-blue-500 text-white p-1 text-xs'
+                className='absolute top-0 left-0  p-1 text-xs'
+                variant='outline'
                 aria-label='Set as primary image'
                 name='intent'
                 value='setPrimaryImage'
             >
-                { isAlreadyPrimary ? 'Primary' : 'Set as primary' }
+                { isAlreadyPrimary ? ' ⭐️ Primary ' : 'Set as primary' }
             </Button>
         </updatePrimaryImageFetcher.Form>
     )
