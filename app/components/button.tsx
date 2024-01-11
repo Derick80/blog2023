@@ -23,7 +23,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
 }
 
-export default function Button ({
+export default function Button({
   size = 'base',
   variant = 'primary_filled',
   children,
@@ -67,15 +67,15 @@ export default function Button ({
   }
   return (
     <button
-      className={ clsx(
+      className={clsx(
         'disabled:hover:text-violet30 flex h-fit w-fit flex-row items-center gap-2 rounded-md text-xs font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-transparent disabled:hover:bg-transparent',
         sizeClasses[size],
         variantClasses[variant],
         className
-      ) }
-      { ...props }
+      )}
+      {...props}
     >
-      { children }
+      {children}
     </button>
   )
 }

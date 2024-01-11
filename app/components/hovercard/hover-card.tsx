@@ -9,45 +9,45 @@ export type HoverCardProps = {
   user: User
 }
 
-export default function HoverOverCard () {
+export default function HoverOverCard() {
   const user = useUser()
 
   return (
     <>
-      { user && (
-        <HoverCard.Root openDelay={ 200 } closeDelay={ 200 }>
+      {user && (
+        <HoverCard.Root openDelay={200} closeDelay={200}>
           <HoverCard.Trigger>
             <img
-              src={ user.avatarUrl || '' }
-              alt={ `${user.username}'s avatar` }
+              src={user.avatarUrl || ''}
+              alt={`${user.username}'s avatar`}
               className='h-8 w-8 rounded-full'
             />
           </HoverCard.Trigger>
-          <HoverCard.Content sideOffset={ 5 } align='center' side='top'>
+          <HoverCard.Content sideOffset={5} align='center' side='top'>
             <div className='w-50 rounded-md bg-violet1 p-5 shadow-md dark:bg-violet3_dark'>
               <div className='justify-cnter flex flex-col items-center'>
                 <img
-                  src={ user.avatarUrl || '' }
-                  alt={ `${user.username}'s avatar` }
+                  src={user.avatarUrl || ''}
+                  alt={`${user.username}'s avatar`}
                   className='h-8 w-8 rounded-full'
                 />
                 <Link
-                  title={ `Click here to view ${user.username}'s profile` }
-                  to={ `/users/${user.username}` }
+                  title={`Click here to view ${user.username}'s profile`}
+                  to={`/users/${user.username}`}
                   className='text-lg font-semibold text-gray-800 dark:text-gray-100'
                 >
-                  <h6>{ user.username }</h6>
+                  <h6>{user.username}</h6>
                 </Link>
 
                 <p className='text- text-violet12 dark:text-violet12_dark'>
-                  { user.email }
+                  {user.email}
                 </p>
-                { user.id && (
+                {user.id && (
                   <>
                     <Button size='small' variant='primary_filled'>
                       <Link
                         title='Click here to edit your user profile'
-                        to={ `/users/${user.username}/edit` }
+                        to={`/users/${user.username}/edit`}
                       >
                         Edit Profile
                       </Link>
@@ -66,12 +66,12 @@ export default function HoverOverCard () {
                       </Button>
                     </Form>
                   </>
-                ) }
+                )}
               </div>
             </div>
           </HoverCard.Content>
         </HoverCard.Root>
-      ) }
+      )}
     </>
   )
 }

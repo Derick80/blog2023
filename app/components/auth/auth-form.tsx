@@ -20,14 +20,13 @@ export const socialProviders = [
   {
     provider: 'discord',
     label: 'Login with Discord',
-    icon: <DiscordLogoIcon width={ 20 } height={ 20 } />
-  },
+    icon: <DiscordLogoIcon width={20} height={20} />
+  }
   // {
   //   provider: 'github',
   //   label: 'Login with Github',
   //   icon: <GitHubLogoIcon width={ 20 } height={ 20 } />
   // },
-
 ]
 type Props = {
   mode: 'register' | 'login' | 'request' | 'confirm' | 'OTP'
@@ -79,12 +78,10 @@ const actionMap: Record<
 
 export const AuthForm = () => {
   const actionData = useActionData<{
-    errors:
-    {
+    errors: {
       email: string
       password: string
       username?: string
-
     }
   }>()
 
@@ -97,27 +94,20 @@ export const AuthForm = () => {
     'Register a new account using your email and password.'
 
   return (
-    <Card
-
-    >
+    <Card>
       <CardHeader>
-        <CardTitle
-          className='text-center'
-        >Welcome back</CardTitle>
+        <CardTitle className='text-center'>Welcome back</CardTitle>
         <CardDescription>
-          { mode === 'login'
-            ? generalMemberLoginInstructions :
-
-            mode === 'register' ? notAMemberRegisterInstructions : 'Register or Login by sending me an OTP code'
-
-          }
+          {mode === 'login'
+            ? generalMemberLoginInstructions
+            : mode === 'register'
+              ? notAMemberRegisterInstructions
+              : 'Register or Login by sending me an OTP code'}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form method='POST' className='grid gap-3' action={ url }>
-          <Label htmlFor='email'>
-            Email address
-          </Label>
+        <Form method='POST' className='grid gap-3' action={url}>
+          <Label htmlFor='email'>Email address</Label>
           <Input
             type='email'
             name='email'
@@ -126,128 +116,117 @@ export const AuthForm = () => {
             autoComplete='email'
             required
           />
-          { actionData?.errors?.email && (
+          {actionData?.errors?.email && (
             <p id='title-error' className='text-red-500'>
-              { actionData?.errors?.email }
+              {actionData?.errors?.email}
             </p>
-          ) }
+          )}
 
-          {
-            mode === 'register' && (
-              <>
-                <Label className='sr-only' htmlFor='username'>
-                  Username
-                </Label>
-                <Input
-                  type='text'
-                  name='username'
-                  id='username'
-                  placeholder='Username'
-                  autoComplete='username'
-                  required
-                />
-                { actionData?.errors?.username && (
-                  <p id='title-error' className='text-red-500'>
-                    { actionData?.errors?.username }
-                  </p>
-                ) }
+          {mode === 'register' && (
+            <>
+              <Label className='sr-only' htmlFor='username'>
+                Username
+              </Label>
+              <Input
+                type='text'
+                name='username'
+                id='username'
+                placeholder='Username'
+                autoComplete='username'
+                required
+              />
+              {actionData?.errors?.username && (
+                <p id='title-error' className='text-red-500'>
+                  {actionData?.errors?.username}
+                </p>
+              )}
+            </>
+          )}
 
-              </>
-            )
-          }
-
-          {
-            mode !== 'OTP' && (
-              <>
-                <Label className='sr-only' htmlFor='password'>
-                  Password
-                </Label>
-                <Input
-                  type='password'
-                  name='password'
-                  id='password'
-                  placeholder='Password'
-                  autoComplete='current-password'
-                  required
-                />
-                { actionData?.errors?.password && (
-                  <p id='title-error' className='text-red-500'>
-                    { actionData?.errors?.password }
-                  </p>
-                ) }
-              </>
-            )
-          }
+          {mode !== 'OTP' && (
+            <>
+              <Label className='sr-only' htmlFor='password'>
+                Password
+              </Label>
+              <Input
+                type='password'
+                name='password'
+                id='password'
+                placeholder='Password'
+                autoComplete='current-password'
+                required
+              />
+              {actionData?.errors?.password && (
+                <p id='title-error' className='text-red-500'>
+                  {actionData?.errors?.password}
+                </p>
+              )}
+            </>
+          )}
 
           <Button
             className='w-full justify-center'
             variant='primary_filled'
             name='intent'
-            value={ mode }
-            type='submit'>
-            { button }
+            value={mode}
+            type='submit'
+          >
+            {button}
           </Button>
         </Form>
       </CardContent>
       <CardContent>
         <Separator />
-        <Muted
-          className='text-center text-base pt-2'
-        >or</Muted>
+        <Muted className='text-center text-base pt-2'>or</Muted>
       </CardContent>
-      <CardContent
-        className='items-center justify-center gap-2'
-      >
-        { socialProviders.map((item, index) => (
+      <CardContent className='items-center justify-center gap-2'>
+        {socialProviders.map((item, index) => (
           <Form
-            key={ index }
-            name={ `social-login-${item.provider}` }
-            action={ `/${item.provider}` }
+            key={index}
+            name={`social-login-${item.provider}`}
+            action={`/${item.provider}`}
             className='flex flex-col items-center gap-2'
-            method='POST' >
-
+            method='POST'
+          >
             <Button
               className='w-full text-center justify-center gap-2'
               // form={ `social-login-${item.provider}` }
-              value={ item.provider }
+              value={item.provider}
               variant='icon_text_filled'
             >
-              { item.icon }
+              {item.icon}
 
-              <p>{ item.label } </p>
+              <p>{item.label} </p>
             </Button>
           </Form>
-        )) }
+        ))}
       </CardContent>
-      <CardFooter
-        className='flex flex-row items-center mx-auto gap-2'
-
-      >
+      <CardFooter className='flex flex-row items-center mx-auto gap-2'>
         <Button
           type='button'
           className='w-full justify-center'
           variant='ghost'
-          onClick={ () => setMode(mode === 'login' ? 'register' : 'login') }>
-          <Muted
-            className='text-base'>
-
-            { mode === 'login' ? 'Not a member? Register' : 'Already a member? Login' }
+          onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+        >
+          <Muted className='text-base'>
+            {mode === 'login'
+              ? 'Not a member? Register'
+              : 'Already a member? Login'}
           </Muted>
-
         </Button>
 
         <Button
           type='button'
           className='w-full justify-center'
-
           variant='ghost'
-          onClick={ () => setMode(mode === 'OTP' ? 'login' : 'OTP') }>
-          <Muted
-            className='text-base'>
-            { mode === 'OTP' ? 'Login using password' : 'Login or Register using OTP code' }
+          onClick={() => setMode(mode === 'OTP' ? 'login' : 'OTP')}
+        >
+          <Muted className='text-base'>
+            {mode === 'OTP'
+              ? 'Login using password'
+              : 'Login or Register using OTP code'}
           </Muted>
         </Button>
-
       </CardFooter>
     </Card>
   )

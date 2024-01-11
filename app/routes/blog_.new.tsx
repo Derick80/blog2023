@@ -40,11 +40,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 // make title a 60 character limit as google has a 60 character limit for titles in search results
 
 export const schema = z.object({
-  title: z.string().min(5, 'Title should be at least 5 characters').max(60),
+  title: z.string().min(25, 'Title should be at least 25 characters').max(60),
   description: z
     .string()
-    .min(10, 'Description should be at least 10 characters')
-    .max(1000),
+    .min(25, 'Description should be at least 10 characters')
+    .max(160, 'Description should be less than 160 characters'),
   imageUrl: z.string().url('Image URL should be a valid URL'),
   featured: z.coerce.boolean(),
   content: z.string().min(1).max(50000),

@@ -27,4 +27,8 @@ coverage
 .markdownlint.json
 .gihub/workflows
 metronome.config.js
+components.json
+remix.config.ts
+./github
+*.mdx
 
