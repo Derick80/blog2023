@@ -21,14 +21,15 @@ export const CopyCloudinaryUrl = ({ imageUrl }: { imageUrl: string }) => {
 
   return (
     <div>
-      <input className='hidden' ref={ref} value={copiedImageUrl} readOnly />
+      <input className='hidden' ref={ ref } value={ copiedImageUrl } readOnly />
       <Button
-        className='absolute bottom-0 left-0 bg-green-500 text-white p-1 text-xs'
+        className='absolute bottom-0 left-0 p-2'
         type='button'
+        variant='ghost'
         aria-label='Copy image url'
-        onClick={copyLink}
+        onClick={ copyLink }
       >
-        Copy Image Url
+        <CopyIcon className='block h-3 w-3' />
       </Button>
     </div>
   )

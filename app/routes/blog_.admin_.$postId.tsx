@@ -112,7 +112,9 @@ export default function BlogPost () {
       {
         post && (
           <><ImageController postImages={ post?.postImages } postId={ post.id }
-            primaryImage={ post.imageUrl }
+            primaryImage={
+              post.imageUrl
+            }
 
 
           /><Form
@@ -140,7 +142,7 @@ export default function BlogPost () {
               <TipTap content={ post.content } />
 
               <Label htmlFor='primaryImage'>Primary Image</Label>
-              <input type='hidden' name='imageUrl' value={ post.imageUrl || primaryPostImage } />
+              <input type='hidden' name='imageUrl' value={ post.imageUrl } />
 
               { post.imageUrl ? (
                 <img src={ post.imageUrl } alt={ post.title } className='w-full h-auto object-cover' />

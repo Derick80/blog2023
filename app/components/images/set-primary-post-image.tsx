@@ -12,7 +12,7 @@ export const SetPrimaryPostImage = ({
     primaryPostImage?: string
 }) => {
 
-    const isAlreadyPrimary = primaryPostImage === imageUrl ? true : false
+    const isAlreadyPrimary = primaryPostImage === undefined || primaryPostImage !== imageUrl ? false : true
     const updatePrimaryImageFetcher = useFetcher()
 
 
@@ -27,12 +27,12 @@ export const SetPrimaryPostImage = ({
             <Button
                 type='submit'
                 className='absolute top-0 left-0  p-1 text-xs'
-                variant='outline'
+                variant='ghost'
                 aria-label='Set as primary image'
                 name='intent'
                 value='setPrimaryImage'
             >
-                { isAlreadyPrimary ? ' ⭐️ Primary ' : 'Set as primary' }
+                { isAlreadyPrimary ? ' ⭐️ ' : '⬆️' }
             </Button>
         </updatePrimaryImageFetcher.Form>
     )

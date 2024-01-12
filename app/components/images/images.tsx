@@ -9,6 +9,7 @@ import React, {
 import { Button } from '../ui/button'
 import { CopyCloudinaryUrl } from './copy-image-url'
 import { SetPrimaryPostImage } from './set-primary-post-image'
+import { TrashIcon } from '@radix-ui/react-icons'
 
 export const ImageWithPlaceholder = ({
   primaryPostImage,
@@ -52,8 +53,8 @@ export const ImageWithPlaceholder = ({
 
 
   return (
-    <div className='relative w-full h-auto'>
-      <img src={ imgSrc } { ...props } />
+    <div className="group relative mt-2 h-20 w-20 rounded-lg border border-purple-500 overflow-y-auto">
+      <img src={ imgSrc } { ...props } className='rounded-lg' />
       { imgSrc && <CopyCloudinaryUrl imageUrl={ imgSrc } /> }
       { imgSrc && (<SetPrimaryPostImage imageUrl={ imgSrc } postId={ postId }
         primaryPostImage={ primaryPostImage }
@@ -70,14 +71,45 @@ export const ImageWithPlaceholder = ({
         <input type='hidden' name='publicId' value={ publicId } />
         <Button
           type='submit'
-          className='absolute bottom-0 right-0 bg-red-500 text-white p-1 text-xs'
+          size='icon'
+          variant='ghost'
+          className='absolute bottom-0 right-0 '
           aria-label='Delete image'
         >
-          Delete
+          <TrashIcon className='block h-3 w-3 bg-red' />
         </Button>
       </deleteImageFetcher.Form>
     </div>
   )
 }
 
-export default ImageWithPlaceholder
+
+
+export function useObjectUrls () {
+  const mapRef = useRef<Map<File, string> | null>(null)
+  useEffect(() => {
+    const map = new Map()
+    mapRef.current = map
+    return () => {
+      for (let [file, url] of map) {
+        URL.revokeObjectURL(url)
+      }
+      mapRef.current = null
+    }
+  }, [])
+  return function getObjectUrl (file: File) {
+    const map = mapRef.current
+    if (!map) {
+      throw Error("Cannot getObjectUrl while unmounted")
+    }
+    if (!map.has(file)) {
+      const url = URL.createObjectURL(file)
+      map.set(file, url)
+    }
+    const url = map.get(file)
+    if (!url) {
+      throw Error("Object url not found")
+    }
+    return url
+  }
+}
