@@ -64,7 +64,7 @@ export const ImageWithPlaceholder = ({
       <deleteImageFetcher.Form
         method='POST'
         name='delete-image'
-        action='/actions/cloudinary-delete'
+        action='/actions/cloudinary_v2'
       >
         <input type='hidden' name='postId' value={ postId } />
         <input type='hidden' name='imageId' value={ imageId } />
@@ -73,6 +73,8 @@ export const ImageWithPlaceholder = ({
           type='submit'
           size='icon'
           variant='ghost'
+          name='intent'
+          value='deleteImage'
           className='absolute bottom-0 right-0 '
           aria-label='Delete image'
         >

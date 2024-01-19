@@ -36,6 +36,7 @@ model UserImage {
   imageUrl           String
   cloudinaryPublicId String
   filename           String?
+  isPrimary          Boolean? @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -157,7 +158,7 @@ model CommentLike {
 }
 
 model Profile {
-  id             String   @id @unique @default(uuid())
+  id             String         @id @unique @default(uuid())
   firstName      String
   lastName       String
   bio            String
@@ -165,13 +166,30 @@ model Profile {
   education      String
   occupation     String
   employer       String
-  profilePicture String   @default("https://res.cloudinary.com/dch-photo/image/upload/v1672092441/stock/image_FILL0_wght400_GRAD0_opsz48_loo0xo.png")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String   @unique
+  profilePicture String         @default("https://res.cloudinary.com/dch-photo/image/upload/v1672092441/stock/image_FILL0_wght400_GRAD0_opsz48_loo0xo.png")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now())
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String         @unique
   email          String
   socials        Socials?
+  profileImages  ProfileImage[]
+}
+
+model ProfileImage {
+  id                 String   @id @default(uuid())
+  imageUrl           String
+  cloudinaryPublicId String
+  filename           String?
+  isPrimary          Boolean? @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  profile            Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  profileId          String
+
+  @@unique([profileId, imageUrl])
+  @@index([profileId])
+  @@index([imageUrl])
 }
 
 model Socials {

@@ -2,7 +2,7 @@ import { PostImage } from '~/server/schemas/images.schema'
 import { ImageWithPlaceholder } from './images'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { Separator } from '../ui/separator'
-import { Form, useFetcher } from '@remix-run/react'
+import { Form, useFetcher, useSubmit } from '@remix-run/react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
@@ -29,9 +29,12 @@ export const ImageController = ({
   const onFileChange = async () => {
     ImageUploadFetcher.submit({
       imageUrl: 'imageUrl',
-      postId: postId,
+      intent: 'imageUpload',
+      modelDestination: 'post',
+      associatedId: postId,
       key: 'imageUrl',
-      action: '/actions/cloudinary'
+      action: '/actions/cloudinary_v2'
+
     })
     if (formRef.current) formRef.current.reset()
     setReadyToUpload(true)
@@ -67,7 +70,7 @@ export const ImageController = ({
       <div className='grid w-full max-w-sm items-center gap-1.5'>
         <Form
           method='POST'
-          action='/actions/cloudinary'
+          action='/actions/cloudinary_v2'
           encType='multipart/form-data'
           navigate={ false }
           onChange={ onFileChange }
@@ -75,7 +78,9 @@ export const ImageController = ({
         >
           <Label htmlFor='image'>Image</Label>
           <FakeUpload />
-          <input type='hidden' name='postId' value={ postId } />
+          <input type='hidden' name='associatedId' value={ postId } />
+          <input type='hidden' name='modelDestination' value='post' />
+
           <Button
             className='w-full relative bottom-0'
             disabled={ !readyToUpload } variant='default' type='submit'>
@@ -93,12 +98,26 @@ export function FakeUpload () {
 
   const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
 
+  const submit = useSubmit();
+  const onDrop = React.useCallback((acceptedFiles) => {
+    const formData = new FormData();
+
+    // Append each file to the form data
+    acceptedFiles.forEach((file, index) => {
+      formData.append(`file${index}`, file);
+      formData.append(`filename${index}`, file.name);
+    });
+
+    // Submit the form data
+    submit(formData, { method: 'post', action: '/actions/cloudinary_v2' });
+  }, [submit]);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    async onDrop (acceptedFiles) {
-      setPendingFiles((pendingFiles) => [...pendingFiles, ...acceptedFiles])
-    },
+    onDrop,
     noClick: true,
+
   })
+
 
   return (
     <div>
@@ -115,12 +134,12 @@ export function FakeUpload () {
 
           <Input
             { ...getInputProps() }
-            style={ { display: "block" } }
-            id="image-input"
+            id='imageUrl'
             name="imageUrl"
             multiple
             type="file"
             className="sr-only"
+            accept='image/*'
           />
         </Label>
 

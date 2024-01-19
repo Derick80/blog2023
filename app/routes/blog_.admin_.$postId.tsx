@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { zx } from 'zodix'
 import { z } from 'zod'
 import { prisma } from '~/server/prisma.server'
-import { Form, Outlet, useLoaderData, useParams } from '@remix-run/react'
+import { Form, Outlet, useFetcher, useLoaderData, useParams, useSubmit } from '@remix-run/react'
 import { Label } from '~/components/ui/label'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
@@ -22,6 +22,7 @@ import { useFileURLs } from '~/components/images/use-file-urls'
 import { useDropzone } from 'react-dropzone-esm'
 import { ImageIcon } from 'lucide-react'
 import { PostImage } from '~/server/schemas/images.schema'
+import { ImageWithPlaceholder } from '~/components/images/images'
 export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
 
@@ -35,15 +36,16 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
-
     include: {
       categories: true,
-      likes: true,
-      favorites: true,
+
       postImages: true,
 
     }
+
   })
+
+  if (!post) throw new Error('No post found')
 
   const images = post?.postImages.map((image) => {
     return {
@@ -63,21 +65,6 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
   return json({ post, images })
 }
 
-
-const editPostSchema = z.discriminatedUnion('intent', [
-  z.object({
-    intent: z.literal('setPrimaryImage'),
-    postId: z.string(),
-    imageUrl: z.string().url('Image URL should be a valid URL')
-  }),
-  z.object({
-    intent: z.literal('imageUpload'),
-    postId: z.string().optional()
-
-  })
-])
-
-type ActionInput = z.infer<typeof editPostSchema>
 export async function action ({ request, params }: ActionFunctionArgs) {
 
   const { postId } = zx.parseParams(params, { postId: z.string() })
@@ -92,302 +79,91 @@ export async function action ({ request, params }: ActionFunctionArgs) {
     })
   }
 
-  const cloned = request.clone()
-  const { formData, errors } = await validateAction({ request: cloned, schema: editPostSchema })
-
-  if (errors) {
-    return json({ errors }, { status: 422 })
-  }
-
-  const { intent } = formData as ActionInput
-
-  if (intent === 'setPrimaryImage') {
-    // this is cheating
-    const { imageUrl } = formData as ActionInput & { imageUrl: string }
-    const post = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        imageUrl
-      }
-    })
-    if (!post) {
-      setErrorMessage(session, 'Post not updated')
-    } else {
-      setSuccessMessage(session, `Post ${post.title} updated`)
-      return json({ post }, {
-        headers: {
-          'Set-Cookie': await commitSession(session)
-        }
-      })
-
-    }
-  } if (intent === 'imageUpload') {
-    const imagegResults = await cloudUpload(request.clone())
-    const post = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        postImages: {
-          create: imagegResults.map((image) => {
-            return {
-              cloudinaryPublicId: image.public_id,
-              imageUrl: image.secure_url,
-              filename: image.original_filename,
-              postId,
-            }
-          })
-        },
-      },
-      include: {
-        postImages: true
-      }
-    })
-
-    const images = post?.postImages.map((image) => {
-      return {
-        ...image,
-      }
-
-    }
-    )
-    console.log(images, 'images');
-
-    const directImages = await prisma.postImage.findMany({
-      where: {
-        postId: postId
-      }
-    })
-
-    console.log(directImages, 'directImages');
-
-    return json({ post, images })
-  }
 
 
 }
 
 export default function BlogPost () {
+  const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
   const params = useParams()
   const postId = params.postId
   const { post, images } = useLoaderData<typeof loader>()
   const categories = useCategories()
-
   const getFileUrl = useFileURLs()
+  const imageToUploadFetcher = useFetcher()
 
-  const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
-  const [uploadedImages, setUploadedImages] = React.useState<PostImage[]>([])
-  const displayPendingFiles = pendingFiles.filter(
-    (file) => !images?.some((draftFile) => draftFile.filename === file.name),
-  )
-  const [errorMessage, setErrorMessage] = React.useState("")
 
+  const onChange = async () => {
+    await imageToUploadFetcher.submit({
+      imageUrl: 'imageUrl',
+      action: '/actions/cloudinary_v2'
+    })
+  }
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
-    onFileDialogOpen () {
-      setErrorMessage("")
-    },
     async onDrop (acceptedFiles) {
-      try {
-        if (inputRef.current) {
-          inputRef.current.value = ""
+      imageToUploadFetcher.submit({
+        postId: post.id,
+        key: 'image',
+        actrion: '/actions/cloudinary_v2',
+      })
+      setPendingFiles((acceptedFiles) => [...acceptedFiles, ...acceptedFiles])
 
-        }
-        const fileAlreadyExists = acceptedFiles.some((file) => {
-          const currentFiles = [, ...pendingFiles]
-          return currentFiles.some((draftFile) => draftFile.filename === file.name)
-        })
-
-        if (fileAlreadyExists) {
-          throw new Error("Duplicate file")
-        }
-
-        setErrorMessage("")
-        setPendingFiles((pendingFiles) => [...pendingFiles, ...acceptedFiles])
-      }
-      catch (error) {
-        setErrorMessage(error.message)
-      }
     },
     noClick: true,
   })
 
   return (
-    <div className='flex flex-col items-center justify-center w-full h-full px-4 py-6'>
-      <H1>Edit Post</H1>
-      <div className='grid w-full max-w-sm items-center gap-1.5'>
-        <Form
-          method='POST'
-          encType='multipart/form-data'
-          action={ `/blog/admin/${postId}` }
-          navigate={ false }
-
-
+    <>
+      <imageToUploadFetcher.Form
+        method='POST'
+        action='/actions/cloudinary_v2'
+        encType='multipart/form-data'
+        onChange={ onChange }
+      >
+        <div
+          { ...getRootProps({
+            className: isDragActive ? "bg-neutral-50" : "",
+          }) }
         >
-          <Label htmlFor='image'>Image</Label>
-          <div
-            { ...getRootProps({
-              className: isDragActive ? "bg-neutral-50" : "",
-            }) }
-          >
-            <Label htmlFor="image-input" className="block">
-              <div className="grid cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800">
-                <ImageIcon name="image" className="h-8 w-8" />
-                <span> Drop images here </span>
-              </div>
+          <Label htmlFor="image-input" className="block">
+            <div className="grid cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800">
+              <ImageIcon name="image" className="h-8 w-8" />
+              <span> Drop images here </span>
+            </div>
 
-              <Input
-                { ...getInputProps() }
-                style={ { display: "block" } }
-                id="image-input"
-                name="imageUrl"
-                multiple
-                type="file"
-                className="sr-only"
-              />
-            </Label>
-
-          </div>
+            <Input
+              { ...getInputProps() }
+              id='imageUrl'
+              name="imageUrl"
+              multiple
+              type="file"
+              className="sr-only"
+              accept='image/*'
+            />
+          </Label>
           <input type='hidden' name='postId' value={ postId } />
-          <Button
-            className='w-full relative bottom-0'
-            name='intent'
-            value='imageUpload'
-            variant='default' type='submit'>
+          <Button type='submit' variant='default' className='mt-2'>
             Upload
           </Button>
-        </Form>
-        <div className="flex flex-row flex-wrap gap-2">
-          { images?.map((image) => {
-            const pendingFile = pendingFiles.find(
-              (file) => file.name === image.filename,
-            )
-
-            return (
-              <div
-                className="relative mt-2 h-20 w-20 overflow-hidden rounded-lg border border-neutral-100"
-                key={ image.id }
-              >
-                <img
-                  src={ getFileUrl(image.imageUrl) }
-                  alt="Uploaded file"
-                  className="opacity-50"
-                />
-                <div className="absolute inset-0 flex flex-col justify-center items-center gap-1.5 bg-neutral-900 bg-opacity-50">
-                  <Button
-                    variant="secondary"
-                    onClick={ () => {
-                      setPendingFiles((pendingFiles) =>
-                        pendingFiles.filter((file) => file.name !== image.name),
-                      )
-                    } }
-                  >
-                    Remove
-                  </Button>
-                  { pendingFile && (
-                    <div className="text-neutral-50">
-                      { Math.round(pendingFile.progress) }%
-                    </div>
-                  ) }
-                </div>
-              </div>
-            )
-          }
-          ) }
         </div>
-        <div className="flex flex-row flex-wrap gap-2">
+      </imageToUploadFetcher.Form>
+      { pendingFiles.map((blob, index) => (
+        <ImageWithPlaceholder
+          key={ index }
+          src={ getFileUrl(blob) }
+          alt={ blob.name }
+        />
 
-          {
-            displayPendingFiles.map((file) => (
-              <div
-                className="relative mt-2 h-20 w-20 overflow-hidden rounded-lg border border-neutral-100"
-                key={ file.name }
-              >
-                <img
-                  src={ getFileUrl(file) }
-                  alt="Uploaded file"
-                  className="opacity-50"
-                />
-              </div>
-            ))
-          }
-
-        </div>
-        {
-          post && (
-            <><Form
-              method='post'
-              action={ `/blog/${post.id}/edit` }
-              className='flex flex-col justify-center w-full max-w-2xl mx-auto my-6 gap-2 md:gap-5'
-            >
-              <Label htmlFor='title'>Title</Label>
-              <Input
-                type='text'
-                name='title'
-                id='title'
-                className='w-full p-2 m-2 border border-gray-300 rounded-md'
-                defaultValue={ post.title } />
-
-              <Label htmlFor='description'>Description</Label>
-              <Input
-                type='text'
-                name='description'
-                id='description'
-                placeholder='The descriptiong should be 25 to 160 characters long.'
-                className='w-full p-2 m-2 border border-gray-300 rounded-md'
-                defaultValue={ post.description } />
-              <Label htmlFor='content'>Content</Label>
-              <TipTap content={ post.content } />
-
-              <Label htmlFor='primaryImage'>Primary Image</Label>
-              <input type='hidden' name='imageUrl' value={ post.imageUrl } />
-
-              { post.imageUrl ? (
-                <img src={ post.imageUrl } alt={ post.title } className='w-full h-auto object-cover' />
-              ) : (
-                <div className='w-full h-48 bg-gray-300' />
-              ) }
-
-              <div className='flex flex-col justify-start w-full max-w-2xl mx-auto my-6'>
-                <div className='items-top flex space-x-2'>
-                  <Checkbox
-                    name='featured'
-                    id='featured'
-                    defaultChecked={ post.featured } />
-                  <div className='grid gap-1.5 leading-none'>
-                    <Label htmlFor='featured'>Featured</Label>
-                    <Muted>Featured posts will be displayed on the home page.</Muted>
-                  </div>
-                </div>
-                <div className='items-top flex space-x-2'>
-                  <Checkbox
-                    name='published'
-                    id='published'
-                    defaultChecked={ post.published } />
-                  <div className='grid gap-1.5 leading-none'>
-                    <Label htmlFor='published'>Published</Label>
-                    <Muted>Published posts will be visible to the public.</Muted>
-                  </div>
-                </div>
-              </div>
-              <div className='flex flex-col justify-start w-full max-w-2xl mx-auto my-6'>
-                <Label htmlFor='categories'>Categories</Label>
-                <CustomSelectBox
-                  name='categories'
-                  multiple
-                  creatable
-                  actionPath='/categories'
-                  options={ categories.map((cat) => cat.label) }
-                  picked={ post.categories.map((cat) => cat.label) } />
-              </div>
-              <Button variant='secondary' type='submit'>
-                Submit
-              </Button>
-            </Form></>
-          )
-        }
-
-        <Outlet />
-
-
-      </div>
-    </div>
+      )) }
+      {
+        images.map((image) => (
+          <ImageWithPlaceholder
+            key={ image.id }
+            src={ image.imageUrl }
+            alt={ image.filename }
+          />
+        ))
+      }
+    </>
   )
 }

@@ -8,11 +8,12 @@ export const action: ActionFunction = async ({ request }) => {
   // const imageUrl = await cloudUpload(request)
   // console.log('imageUrl', imageUrl)
 
-  const imagegResults = await cloudUpload(request.clone())
+  const imagegResults = await cloudUpload(request)
 
-  // console.log('imagegResults', imagegResults)
+  console.log('imagegResults', imagegResults)
 
   const formData = await request.clone().formData()
+  console.log(Object.fromEntries(formData.entries()))
 
   const postId = formData.get('postId') as string
   console.log('postId', postId)
