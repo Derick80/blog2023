@@ -31,7 +31,7 @@ const inputRegex = /(?:^|\s)(!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\))$/
 export const ResizableImage = Node.create<ImageOptions>({
   name: 'image',
 
-  addOptions() {
+  addOptions () {
     return {
       inline: false,
       allowBase64: false,
@@ -39,17 +39,17 @@ export const ResizableImage = Node.create<ImageOptions>({
     }
   },
 
-  inline() {
+  inline () {
     return this.options.inline
   },
 
-  group() {
+  group () {
     return this.options.inline ? 'inline' : 'block'
   },
 
   draggable: true,
 
-  addAttributes() {
+  addAttributes () {
     return {
       src: {
         default: null
@@ -77,7 +77,7 @@ export const ResizableImage = Node.create<ImageOptions>({
 
   selectable: true,
 
-  parseHTML() {
+  parseHTML () {
     return [
       {
         tag: 'img'
@@ -85,7 +85,7 @@ export const ResizableImage = Node.create<ImageOptions>({
     ]
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML ({ HTMLAttributes }) {
     const { height, width, marginLeft } = HTMLAttributes
     const attributes = {
       ...HTMLAttributes,
@@ -94,24 +94,24 @@ export const ResizableImage = Node.create<ImageOptions>({
     return ['img', mergeAttributes(this.options.HTMLAttributes, attributes)]
   },
 
-  addCommands() {
+  addCommands () {
     return {
       setImage:
         (options) =>
-        ({ commands }) => {
-          return commands.insertContent({
-            type: this.name,
-            attrs: options
-          })
-        }
+          ({ commands }) => {
+            return commands.insertContent({
+              type: this.name,
+              attrs: options
+            })
+          }
     }
   },
 
-  addNodeView() {
+  addNodeView () {
     return ReactNodeViewRenderer(ResizableImageWrapper)
   },
 
-  addInputRules() {
+  addInputRules () {
     return [
       nodeInputRule({
         find: inputRegex,

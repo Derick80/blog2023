@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { zx } from 'zodix'
 import { z } from 'zod'
 import { prisma } from '~/server/prisma.server'
-import { Form, Outlet, useLoaderData } from '@remix-run/react'
+import { Form, Outlet, useLoaderData, useParams } from '@remix-run/react'
 import { Label } from '~/components/ui/label'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
@@ -16,6 +16,12 @@ import CustomSelectBox from '~/components/v2-components/custom-select'
 import { useCategories, validateAction } from '~/utilities'
 import React from 'react'
 import { getSession, setErrorMessage, commitSession, setSuccessMessage } from '~/server/session.server'
+import { cloudUpload } from '~/server/cloudinary.server'
+import { file } from 'zod-form-data'
+import { useFileURLs } from '~/components/images/use-file-urls'
+import { useDropzone } from 'react-dropzone-esm'
+import { ImageIcon } from 'lucide-react'
+import { PostImage } from '~/server/schemas/images.schema'
 export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
 
@@ -29,21 +35,32 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
+
     include: {
       categories: true,
       likes: true,
       favorites: true,
       postImages: true,
-      _count: {
-        select: {
-          comments: true,
-          likes: true
-        }
-      }
+
     }
   })
 
-  return json({ post })
+  const images = post?.postImages.map((image) => {
+    return {
+      ...image,
+    }
+
+  }
+  )
+
+  const directImages = await prisma.postImage.findMany({
+    where: {
+      postId: postId
+    }
+  })
+
+
+  return json({ post, images })
 }
 
 
@@ -52,6 +69,11 @@ const editPostSchema = z.discriminatedUnion('intent', [
     intent: z.literal('setPrimaryImage'),
     postId: z.string(),
     imageUrl: z.string().url('Image URL should be a valid URL')
+  }),
+  z.object({
+    intent: z.literal('imageUpload'),
+    postId: z.string().optional()
+
   })
 ])
 
@@ -69,7 +91,9 @@ export async function action ({ request, params }: ActionFunctionArgs) {
       }
     })
   }
-  const { formData, errors } = await validateAction({ request, schema: editPostSchema })
+
+  const cloned = request.clone()
+  const { formData, errors } = await validateAction({ request: cloned, schema: editPostSchema })
 
   if (errors) {
     return json({ errors }, { status: 422 })
@@ -78,7 +102,8 @@ export async function action ({ request, params }: ActionFunctionArgs) {
   const { intent } = formData as ActionInput
 
   if (intent === 'setPrimaryImage') {
-    const { imageUrl } = formData as ActionInput
+    // this is cheating
+    const { imageUrl } = formData as ActionInput & { imageUrl: string }
     const post = await prisma.post.update({
       where: { id: postId },
       data: {
@@ -94,34 +119,204 @@ export async function action ({ request, params }: ActionFunctionArgs) {
           'Set-Cookie': await commitSession(session)
         }
       })
+
     }
+  } if (intent === 'imageUpload') {
+    const imagegResults = await cloudUpload(request.clone())
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        postImages: {
+          create: imagegResults.map((image) => {
+            return {
+              cloudinaryPublicId: image.public_id,
+              imageUrl: image.secure_url,
+              filename: image.original_filename,
+              postId,
+            }
+          })
+        },
+      },
+      include: {
+        postImages: true
+      }
+    })
+
+    const images = post?.postImages.map((image) => {
+      return {
+        ...image,
+      }
+
+    }
+    )
+    console.log(images, 'images');
+
+    const directImages = await prisma.postImage.findMany({
+      where: {
+        postId: postId
+      }
+    })
+
+    console.log(directImages, 'directImages');
+
+    return json({ post, images })
   }
 
 
 }
 
 export default function BlogPost () {
-
-  const { post } = useLoaderData<typeof loader>()
+  const params = useParams()
+  const postId = params.postId
+  const { post, images } = useLoaderData<typeof loader>()
   const categories = useCategories()
-  console.log(categories, 'categories')
+
+  const getFileUrl = useFileURLs()
+
+  const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
+  const [uploadedImages, setUploadedImages] = React.useState<PostImage[]>([])
+  const displayPendingFiles = pendingFiles.filter(
+    (file) => !images?.some((draftFile) => draftFile.filename === file.name),
+  )
+  const [errorMessage, setErrorMessage] = React.useState("")
+
+  const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
+    onFileDialogOpen () {
+      setErrorMessage("")
+    },
+    async onDrop (acceptedFiles) {
+      try {
+        if (inputRef.current) {
+          inputRef.current.value = ""
+
+        }
+        const fileAlreadyExists = acceptedFiles.some((file) => {
+          const currentFiles = [, ...pendingFiles]
+          return currentFiles.some((draftFile) => draftFile.filename === file.name)
+        })
+
+        if (fileAlreadyExists) {
+          throw new Error("Duplicate file")
+        }
+
+        setErrorMessage("")
+        setPendingFiles((pendingFiles) => [...pendingFiles, ...acceptedFiles])
+      }
+      catch (error) {
+        setErrorMessage(error.message)
+      }
+    },
+    noClick: true,
+  })
 
   return (
     <div className='flex flex-col items-center justify-center w-full h-full px-4 py-6'>
       <H1>Edit Post</H1>
-      {
-        post && (
-          <><ImageController postImages={ post?.postImages } postId={ post.id }
-            primaryImage={
-              post.imageUrl
-            }
+      <div className='grid w-full max-w-sm items-center gap-1.5'>
+        <Form
+          method='POST'
+          encType='multipart/form-data'
+          action={ `/blog/admin/${postId}` }
+          navigate={ false }
 
 
-          /><Form
-            method='post'
-            action={ `/blog/${post.id}/edit` }
-            className='flex flex-col justify-center w-full max-w-2xl mx-auto my-6 gap-2 md:gap-5'
+        >
+          <Label htmlFor='image'>Image</Label>
+          <div
+            { ...getRootProps({
+              className: isDragActive ? "bg-neutral-50" : "",
+            }) }
           >
+            <Label htmlFor="image-input" className="block">
+              <div className="grid cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800">
+                <ImageIcon name="image" className="h-8 w-8" />
+                <span> Drop images here </span>
+              </div>
+
+              <Input
+                { ...getInputProps() }
+                style={ { display: "block" } }
+                id="image-input"
+                name="imageUrl"
+                multiple
+                type="file"
+                className="sr-only"
+              />
+            </Label>
+
+          </div>
+          <input type='hidden' name='postId' value={ postId } />
+          <Button
+            className='w-full relative bottom-0'
+            name='intent'
+            value='imageUpload'
+            variant='default' type='submit'>
+            Upload
+          </Button>
+        </Form>
+        <div className="flex flex-row flex-wrap gap-2">
+          { images?.map((image) => {
+            const pendingFile = pendingFiles.find(
+              (file) => file.name === image.filename,
+            )
+
+            return (
+              <div
+                className="relative mt-2 h-20 w-20 overflow-hidden rounded-lg border border-neutral-100"
+                key={ image.id }
+              >
+                <img
+                  src={ getFileUrl(image.imageUrl) }
+                  alt="Uploaded file"
+                  className="opacity-50"
+                />
+                <div className="absolute inset-0 flex flex-col justify-center items-center gap-1.5 bg-neutral-900 bg-opacity-50">
+                  <Button
+                    variant="secondary"
+                    onClick={ () => {
+                      setPendingFiles((pendingFiles) =>
+                        pendingFiles.filter((file) => file.name !== image.name),
+                      )
+                    } }
+                  >
+                    Remove
+                  </Button>
+                  { pendingFile && (
+                    <div className="text-neutral-50">
+                      { Math.round(pendingFile.progress) }%
+                    </div>
+                  ) }
+                </div>
+              </div>
+            )
+          }
+          ) }
+        </div>
+        <div className="flex flex-row flex-wrap gap-2">
+
+          {
+            displayPendingFiles.map((file) => (
+              <div
+                className="relative mt-2 h-20 w-20 overflow-hidden rounded-lg border border-neutral-100"
+                key={ file.name }
+              >
+                <img
+                  src={ getFileUrl(file) }
+                  alt="Uploaded file"
+                  className="opacity-50"
+                />
+              </div>
+            ))
+          }
+
+        </div>
+        {
+          post && (
+            <><Form
+              method='post'
+              action={ `/blog/${post.id}/edit` }
+              className='flex flex-col justify-center w-full max-w-2xl mx-auto my-6 gap-2 md:gap-5'
+            >
               <Label htmlFor='title'>Title</Label>
               <Input
                 type='text'
@@ -186,12 +381,13 @@ export default function BlogPost () {
                 Submit
               </Button>
             </Form></>
-        )
-      }
+          )
+        }
 
-      <Outlet />
+        <Outlet />
 
 
+      </div>
     </div>
   )
 }

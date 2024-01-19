@@ -16,9 +16,9 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { validateAction } from '~/utilities'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 import { ArrowRightIcon } from '@radix-ui/react-icons'
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { username } = params
   const user = await isAuthenticated(request)
   if (!user) {
@@ -48,7 +48,7 @@ const schema = z.object({
   imageUrl: z.string().url().min(3).max(1000)
 })
 type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const { username } = zx.parseParams(params, { username: z.string() })
   if (!username) {
     return json({ error: 'No username provided' })
@@ -89,7 +89,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function UserEdit() {
+export default function UserEdit () {
   const actionData = useActionData<{
     errors?: {
       imageUrl?: string
@@ -102,19 +102,19 @@ export default function UserEdit() {
 
   return (
     <div className='flex h-full flex-col items-center gap-2 rounded-md border-2 p-2'>
-      <ImageUploader setUrl={setUrl} />
+      <ImageUploader setUrl={ setUrl } />
       <div className='flex items-center gap-1 md:gap-2'>
         <div className='h-12 w-12 p-1'>
-          <img src={data.currentUser.avatarUrl || ''} alt='avatar' />
+          <img src={ data.currentUser.avatarUrl || '' } alt='avatar' />
         </div>
-        {url ? (
+        { url ? (
           <>
             <ArrowRightIcon />
             <div className='h-12 w-12 p-1'>
-              <img src={url} alt='avatar' />
+              <img src={ url } alt='avatar' />
             </div>
           </>
-        ) : null}
+        ) : null }
       </div>
       <Form
         id='updateUser'
@@ -124,35 +124,35 @@ export default function UserEdit() {
         <input
           type='hidden'
           name='imageUrl'
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={ url }
+          onChange={ (e) => setUrl(e.target.value) }
         />
-        {actionData?.errors?.imageUrl && <p>{actionData?.errors?.imageUrl}</p>}
+        { actionData?.errors?.imageUrl && <p>{ actionData?.errors?.imageUrl }</p> }
       </Form>
 
-      {/* create a button to cancel the change and reload the page */}
-      {url ? (
+      {/* create a button to cancel the change and reload the page */ }
+      { url ? (
         <>
-          {' '}
+          { ' ' }
           <Button
             form='updateUser'
-            variant='primary_filled'
-            size='base'
+            variant='default'
+            size='default'
             type='submit'
           >
             Update
           </Button>
           <Button
-            variant='warning_filled'
-            size='base'
-            onClick={() => {
+            variant='destructive'
+            size='default'
+            onClick={ () => {
               window.location.reload()
-            }}
+            } }
           >
             Cancel
           </Button>
         </>
-      ) : null}
+      ) : null }
     </div>
   )
 }

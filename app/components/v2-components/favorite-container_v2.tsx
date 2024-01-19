@@ -4,14 +4,15 @@ import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import { useOptionalUser } from '~/utilities'
 import type { Favorite_v2 } from '~/server/schemas/schemas_v2'
-import Button from '../button'
+import { Button } from '../ui/button'
+
 
 export type FavoriteContainerProps = {
   postId: string
   favorites: Favorite_v2[]
 }
 
-export default function FavoriteContainer({
+export default function FavoriteContainer ({
   postId,
   favorites
 }: FavoriteContainerProps) {
@@ -46,17 +47,17 @@ export default function FavoriteContainer({
   return (
     <>
       <Button
-        variant='icon_unfilled'
-        size='tiny'
+        variant='ghost'
+        size='icon'
         className=''
-        onClick={toggleFavorite}
-        disabled={!isLogged}
+        onClick={ toggleFavorite }
+        disabled={ !isLogged }
       >
-        {isFavorite ? (
-          <BookmarkFilledIcon style={{ color: 'red', fill: 'red' }} />
+        { isFavorite ? (
+          <BookmarkFilledIcon style={ { color: 'red', fill: 'red' } } />
         ) : (
           <BookmarkIcon className='text-violet-900 dark:text-violet3' />
-        )}
+        ) }
       </Button>
     </>
   )

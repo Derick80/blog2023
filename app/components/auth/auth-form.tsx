@@ -1,5 +1,5 @@
 import { Form, useActionData } from '@remix-run/react'
-import Button from '../button'
+
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import {
@@ -15,12 +15,13 @@ import React from 'react'
 import { DiscordLogoIcon } from '@radix-ui/react-icons'
 import { Separator } from '../ui/separator'
 import { Muted } from '../ui/typography'
+import { Button } from '../ui/button'
 
 export const socialProviders = [
   {
     provider: 'discord',
     label: 'Login with Discord',
-    icon: <DiscordLogoIcon width={20} height={20} />
+    icon: <DiscordLogoIcon width={ 20 } height={ 20 } />
   }
   // {
   //   provider: 'github',
@@ -98,15 +99,15 @@ export const AuthForm = () => {
       <CardHeader>
         <CardTitle className='text-center'>Welcome back</CardTitle>
         <CardDescription>
-          {mode === 'login'
+          { mode === 'login'
             ? generalMemberLoginInstructions
             : mode === 'register'
               ? notAMemberRegisterInstructions
-              : 'Register or Login by sending me an OTP code'}
+              : 'Register or Login by sending me an OTP code' }
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form method='POST' className='grid gap-3' action={url}>
+        <Form method='POST' className='grid gap-3' action={ url }>
           <Label htmlFor='email'>Email address</Label>
           <Input
             type='email'
@@ -116,13 +117,13 @@ export const AuthForm = () => {
             autoComplete='email'
             required
           />
-          {actionData?.errors?.email && (
+          { actionData?.errors?.email && (
             <p id='title-error' className='text-red-500'>
-              {actionData?.errors?.email}
+              { actionData?.errors?.email }
             </p>
-          )}
+          ) }
 
-          {mode === 'register' && (
+          { mode === 'register' && (
             <>
               <Label className='sr-only' htmlFor='username'>
                 Username
@@ -135,15 +136,15 @@ export const AuthForm = () => {
                 autoComplete='username'
                 required
               />
-              {actionData?.errors?.username && (
+              { actionData?.errors?.username && (
                 <p id='title-error' className='text-red-500'>
-                  {actionData?.errors?.username}
+                  { actionData?.errors?.username }
                 </p>
-              )}
+              ) }
             </>
-          )}
+          ) }
 
-          {mode !== 'OTP' && (
+          { mode !== 'OTP' && (
             <>
               <Label className='sr-only' htmlFor='password'>
                 Password
@@ -156,22 +157,22 @@ export const AuthForm = () => {
                 autoComplete='current-password'
                 required
               />
-              {actionData?.errors?.password && (
+              { actionData?.errors?.password && (
                 <p id='title-error' className='text-red-500'>
-                  {actionData?.errors?.password}
+                  { actionData?.errors?.password }
                 </p>
-              )}
+              ) }
             </>
-          )}
+          ) }
 
           <Button
             className='w-full justify-center'
-            variant='primary_filled'
+            variant='default'
             name='intent'
-            value={mode}
+            value={ mode }
             type='submit'
           >
-            {button}
+            { button }
           </Button>
         </Form>
       </CardContent>
@@ -180,38 +181,39 @@ export const AuthForm = () => {
         <Muted className='text-center text-base pt-2'>or</Muted>
       </CardContent>
       <CardContent className='items-center justify-center gap-2'>
-        {socialProviders.map((item, index) => (
+        { socialProviders.map((item, index) => (
           <Form
-            key={index}
-            name={`social-login-${item.provider}`}
-            action={`/${item.provider}`}
+            key={ index }
+            name={ `social-login-${item.provider}` }
+            action={ `/${item.provider}` }
             className='flex flex-col items-center gap-2'
             method='POST'
           >
             <Button
               className='w-full text-center justify-center gap-2'
               // form={ `social-login-${item.provider}` }
-              value={item.provider}
-              variant='icon_text_filled'
+              value={ item.provider }
+              variant='ghost'
+              size='icon'
             >
-              {item.icon}
+              { item.icon }
 
-              <p>{item.label} </p>
+              <p>{ item.label } </p>
             </Button>
           </Form>
-        ))}
+        )) }
       </CardContent>
       <CardFooter className='flex flex-row items-center mx-auto gap-2'>
         <Button
           type='button'
           className='w-full justify-center'
           variant='ghost'
-          onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+          onClick={ () => setMode(mode === 'login' ? 'register' : 'login') }
         >
           <Muted className='text-base'>
-            {mode === 'login'
+            { mode === 'login'
               ? 'Not a member? Register'
-              : 'Already a member? Login'}
+              : 'Already a member? Login' }
           </Muted>
         </Button>
 
@@ -219,12 +221,12 @@ export const AuthForm = () => {
           type='button'
           className='w-full justify-center'
           variant='ghost'
-          onClick={() => setMode(mode === 'OTP' ? 'login' : 'OTP')}
+          onClick={ () => setMode(mode === 'OTP' ? 'login' : 'OTP') }
         >
           <Muted className='text-base'>
-            {mode === 'OTP'
+            { mode === 'OTP'
               ? 'Login using password'
-              : 'Login or Register using OTP code'}
+              : 'Login or Register using OTP code' }
           </Muted>
         </Button>
       </CardFooter>

@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link, Form, Outlet } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { prisma } from '~/server/prisma.server'
 import { getSession, setErrorMessage } from '~/server/session.server'
@@ -12,7 +12,7 @@ import type { User } from '~/server/schemas/schemas'
 import { useOptionalUser, validateAction } from '~/utilities'
 import { zx } from 'zodix'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { username } = zx.parseParams(params, { username: z.string() })
 
   const user = await prisma.user.findUnique({
@@ -40,7 +40,7 @@ const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const username = params.username
   console.log(username, 'username')
@@ -120,7 +120,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function UserRoute() {
+export default function UserRoute () {
   const { user } = useLoaderData<{
     user: User
   }>()
@@ -138,17 +138,17 @@ export default function UserRoute() {
           <div className='flex flex-row items-center gap-1 md:gap-2'>
             <img
               className='h-10 w-10 rounded-full'
-              src={user.avatarUrl || ''}
+              src={ user.avatarUrl || '' }
               alt='avatar'
             />
-            <h3 className='text-xl font-bold'>{user.username}</h3>
+            <h3 className='text-xl font-bold'>{ user.username }</h3>
           </div>
-          <p>{user.email}</p>
+          <p>{ user.email }</p>
           <div className='flex flex-row'>
-            <Link to={`/users/${user.id}`}>View User</Link>
+            <Link to={ `/users/${user.id}` }>View User</Link>
             <Form method='POST'>
               <Button
-                variant='primary_filled'
+                variant='default'
                 size='base'
                 type='submit'
                 name='action'

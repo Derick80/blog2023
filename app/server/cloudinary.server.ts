@@ -42,16 +42,24 @@ cloudinary.v2.config({
 })
 
 export async function uploadImage(
-  data: AsyncIterable<Uint8Array>
+  data: AsyncIterable<Uint8Array>,
+  filename: string
 ): Promise<cloudinary.UploadApiResponse> {
   const uploadPromise = new Promise(async (resolve, reject) => {
     const uploadStream = cloudinary.v2.uploader.upload_stream(
       {
         cloud_name: 'dch-photo',
+        folder: 'blog_testing_2024',
+        use_filename: true,
+        filename,
         transformation: [
           {
             format: 'webp',
-            fetch_format: 'webp'
+            fetch_format: 'webp',
+            width: 250,
+            height: 250,
+            gravity: 'faces',
+            crop: 'fill'
           }
         ]
       },
@@ -77,11 +85,11 @@ export async function uploadImage(
 
 // console.log('configs', cloudinary.v2.config())
 export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
-  async ({ name, data }) => {
+  async ({ name, data, filename }) => {
     if (name !== 'imageUrl') {
       return undefined
     }
-    const uploadedImage = await uploadImage(data)
+    const uploadedImage = await uploadImage(data, filename)
     // @ts-ignore
     // this ignore came from the source i followed.  I think I kinda solved this by adding the type to the uploadImage function
     console.log('uploadedImage', uploadedImage)

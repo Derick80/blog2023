@@ -8,20 +8,9 @@ export const action: ActionFunction = async ({ request }) => {
   // const imageUrl = await cloudUpload(request)
   // console.log('imageUrl', imageUrl)
 
-  const imagegResults = (await cloudUpload(request.clone())) as {
-    public_id: string
-    secure_url: string
-  }[]
+  const imagegResults = await cloudUpload(request.clone())
 
-  console.log('imagegResults', imagegResults)
-
-  const imageData = imagegResults.map((image) => {
-    return {
-      imageUrl: image.secure_url,
-      cloudinaryPublicId: image.public_id
-    }
-  })
-  console.log(imageData, 'imageData')
+  // console.log('imagegResults', imagegResults)
 
   const formData = await request.clone().formData()
 
@@ -34,10 +23,11 @@ export const action: ActionFunction = async ({ request }) => {
     },
     data: {
       postImages: {
-        create: imageData.map((image) => {
+        create: imagegResults.map((image) => {
           return {
-            imageUrl: image.imageUrl,
-            cloudinaryPublicId: image.cloudinaryPublicId
+            imageUrl: image.secure_url,
+            cloudinaryPublicId: image.public_id,
+            filename: image.original_filename
           }
         })
       }

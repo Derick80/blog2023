@@ -2,7 +2,7 @@ import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 import type { Like_v2 } from '~/server/schemas/schemas_v2'
 import { useOptionalUser } from '~/utilities'
 export type LikeContainerProps = {
@@ -10,7 +10,7 @@ export type LikeContainerProps = {
   likes: Like_v2[]
 }
 
-export default function LikeContainer({ postId, likes }: LikeContainerProps) {
+export default function LikeContainer ({ postId, likes }: LikeContainerProps) {
   const user = useOptionalUser()
   const currentUser = user?.id || ''
   const fetcher = useFetcher()
@@ -44,18 +44,18 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
   return (
     <>
       <Button
-        variant='icon_text_unfilled'
-        size='small'
-        disabled={!user}
-        onClick={toggleLike}
+        variant='ghost'
+        size='icon'
+        disabled={ !user }
+        onClick={ toggleLike }
       >
         <div className='flex flex-row items-center gap-1'>
-          {isLiked ? (
-            <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
+          { isLiked ? (
+            <HeartFilledIcon style={ { color: 'red', fill: 'red' } } />
           ) : (
             <HeartIcon className='text-black dark:text-violet3' />
-          )}
-          <p className='text-[15px] dark:text-violet3'>{likeCount}</p>
+          ) }
+          <p className='text-[15px] dark:text-violet3'>{ likeCount }</p>
         </div>
       </Button>
     </>

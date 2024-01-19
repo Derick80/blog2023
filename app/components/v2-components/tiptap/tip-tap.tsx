@@ -43,6 +43,7 @@ import SuperScriptIcon from './icons/superscript'
 import { ResizableImage } from './tiptap-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import { Button } from '~/components/ui/button'
 
 // implimeent redo/undo and blockquote
 const MenuBar = ({ editor }: { editor: Editor }) => {
@@ -88,65 +89,65 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     >
       <div className='flex flex-row  items-center gap-1'>
         <MyTooltip content='Bold'>
-          <button
+          <Button
             type='button'
-            className={editor.isActive('bold') ? 'border-2' : ''}
-            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={ editor.isActive('bold') ? 'border-2' : '' }
+            onClick={ () => editor.chain().focus().toggleBold().run() }
           >
             <FontBoldIcon />
-          </button>
+          </Button>
         </MyTooltip>
 
         <MyTooltip content='Italic'>
-          <button
+          <Button
             type='button'
-            onClick={() => editor.chain().focus().toggleItalic().run()}
+            onClick={ () => editor.chain().focus().toggleItalic().run() }
           >
             <FontItalicIcon />
-          </button>
+          </Button>
         </MyTooltip>
 
         <MyTooltip content='Strikethrough'>
-          <button
+          <Button
             type='button'
-            onClick={() => editor.chain().focus().toggleStrike().run()}
+            onClick={ () => editor.chain().focus().toggleStrike().run() }
           >
             <StrikethroughIcon />
-          </button>
+          </Button>
         </MyTooltip>
 
         <MyTooltip content='Underline'>
-          <button
+          <Button
             type='button'
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            onClick={ () => editor.chain().focus().toggleUnderline().run() }
           >
             <UnderlineIcon />
-          </button>
+          </Button>
         </MyTooltip>
 
         <MyTooltip content='Superscript'>
-          <button
+          <Button
             type='button'
-            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+            onClick={ () => editor.chain().focus().toggleSuperscript().run() }
           >
             <SuperScriptIcon />
-          </button>
+          </Button>
         </MyTooltip>
 
         <MyTooltip content='Subscript'>
-          <button
+          <Button
             type='button'
-            onClick={() => editor.chain().focus().toggleSubscript().run()}
+            onClick={ () => editor.chain().focus().toggleSubscript().run() }
           >
             <SubscriptIcon />
-          </button>
+          </Button>
         </MyTooltip>
       </div>
       <div className='' />
       <div className='flex flex-row items-center gap-1'>
-        <button
+        <Button
           type='button'
-          onClick={() =>
+          onClick={ () =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
           className={
@@ -157,10 +158,10 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         >
           <HeadingIcon />
           <p className='text-[15px]'>1</p>
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={() =>
+          onClick={ () =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
           className={
@@ -170,10 +171,10 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           }
         >
           <p className='text-[15px]'>H2</p>
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={() =>
+          onClick={ () =>
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
           className={
@@ -184,73 +185,73 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         >
           <HeadingIcon />
           <p className='text-[15px]'>3</p>
-        </button>
+        </Button>
       </div>
 
       <div className='flex flex-row items-center gap-1'>
-        <button
+        <Button
           type='button'
-          className={editor.isActive('bulletList') ? 'is-active' : ''}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={ editor.isActive('bulletList') ? 'is-active' : '' }
+          onClick={ () => editor.chain().focus().toggleBulletList().run() }
         >
           <ListBulletIcon />
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          className={editor.isActive('orderedList') ? 'is-active' : ''}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={ editor.isActive('orderedList') ? 'is-active' : '' }
+          onClick={ () => editor.chain().focus().toggleOrderedList().run() }
         >
           <ListBulletIcon />
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          onClick={ () => editor.chain().focus().toggleHighlight().run() }
         >
           <Pencil1Icon />
-        </button>
+        </Button>
       </div>
       <div className='flex flex-row items-center gap-1'>
-        <button
+        <Button
           type='button'
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          onClick={ () => editor.chain().focus().setHorizontalRule().run() }
         >
           <DividerHorizontalIcon />
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={setLink}
-          className={editor.isActive('link') ? 'is-active' : ''}
+          onClick={ setLink }
+          className={ editor.isActive('link') ? 'is-active' : '' }
         >
           <Link1Icon />
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={() => editor.chain().focus().unsetLink().run()}
-          disabled={!editor.isActive('link')}
+          onClick={ () => editor.chain().focus().unsetLink().run() }
+          disabled={ !editor.isActive('link') }
         >
           <LinkBreak1Icon />
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          className={editor.isActive('code') ? 'is-active' : ''}
+          onClick={ () => editor.chain().focus().toggleCode().run() }
+          className={ editor.isActive('code') ? 'is-active' : '' }
         >
           <CodeIcon />
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editor.isActive('codeBlock') ? 'is-active' : ''}
+          onClick={ () => editor.chain().focus().toggleCodeBlock().run() }
+          className={ editor.isActive('codeBlock') ? 'is-active' : '' }
         >
           <CodeIcon />
-        </button>
-        <button
-          className={editor.isActive('image') ? 'is-active' : ''}
+        </Button>
+        <Button
+          className={ editor.isActive('image') ? 'is-active' : '' }
           type='button'
-          onClick={addImage}
+          onClick={ addImage }
         >
           <ImageIcon />
-        </button>
+        </Button>
       </div>
     </div>
   )
@@ -327,15 +328,15 @@ const TipTap = ({ content }: { content?: string }) => {
 
   return (
     <>
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
-      <input type='hidden' name='content' value={editor?.getHTML()} />
+      <MenuBar editor={ editor } />
+      <EditorContent editor={ editor } />
+      <input type='hidden' name='content' value={ editor?.getHTML() } />
       <div className='flex items-center justify-end gap-1 text-xs'>
         <p className='text-gray-500'>
-          {editor.storage.characterCount.characters()}/{limit} characters
+          { editor.storage.characterCount.characters() }/{ limit } characters
         </p>
         <p className='text-gray-500'>
-          {editor.storage.characterCount.words()} words
+          { editor.storage.characterCount.words() } words
         </p>
       </div>
     </>

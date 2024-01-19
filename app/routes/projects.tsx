@@ -1,17 +1,26 @@
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import { json } from '@remix-run/node'
-import { Project, projects } from '~/resources/projects'
-import ProjectAccordian from '~/components/v2-components/project/project-accordian_v2'
-import TechnologiesContainer from '~/components/v2-components/project/project-tech-container'
-import { Separator } from '~/components/ui/separator'
+import { z } from 'zod'
+import CreateProject from '~/components/create-project'
+import { getProjects, getTechnologies } from '~/server/project.server'
+import { useLoaderData } from '@remix-run/react'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return null
   }
-  return json({ user })
+  const technologies = await getTechnologies()
+  if (!technologies) {
+    return null
+  }
+  const projects = await getProjects()
+  if (!projects) {
+    return null
+  }
+
+  return json({ technologies, projects })
 }
 
 export const meta: MetaFunction = () => {
@@ -22,42 +31,69 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-type Props = {
-  projects: Project[]
+const ProjectSchema = z.discriminatedUnion('intent', [
+  z.object({
+    intent: z.literal('create'),
+    title: z.string().min(5, 'Title should be at least 5 characters').max(60),
+    description: z.string().min(5, 'Description should be at least 5 characters').max(500),
+    primaryImage: z.string().url('Please enter a valid URL').optional(),
+    projectUrl: z.string().url('Please enter a valid URL'),
+    githubUrl: z.string().url('Please enter a valid URL'),
+    status: z.enum(['In Progress', 'Completed', 'Abandoned', 'To Do', 'Backlog']), features: z.array(z.string().min(5, 'Feature should be at least 5 characters').max(60)),
+  }),
+  z.object({
+    intent: z.literal('update'),
+    id: z.string(),
+    title: z.string().min(5, 'Title should be at least 5 characters').max(60),
+    description: z.string().min(5, 'Description should be at least 5 characters').max(500),
+    primaryImage: z.string().url('Please enter a valid URL').optional(),
+    projectUrl: z.string().url('Please enter a valid URL'),
+    githubUrl: z.string().url('Please enter a valid URL'),
+    status: z.enum(['In Progress', 'Completed', 'Abandoned', 'To Do', 'Backlog']),
+    features: z.array(z.string().min(5, 'Feature should be at least 5 characters').max(60)),
+  }),
+  z.object({
+    intent: z.literal('delete'),
+    id: z.string(),
+  }),
+  z.object({
+    intent: z.literal('update-status'),
+    projectId: z.string(),
+    status: z.enum(['In Progress', 'Completed', 'Abandoned', 'To Do', 'Backlog']),
+
+  }),
+  z.object({
+    intent: z.literal('new-tech'),
+    value: z.string().min(5, 'Technology should be at least 5 characters').max(60),
+    url: z.string().url('Please enter a valid URL'),
+    projectId: z.string(),
+  }),
+  z.object({
+    intent: z.literal('add-tech-to-project'),
+    id: z.string(),
+    projectId: z.string(),
+  }),
+])
+export async function action ({ request, params }: ActionFunctionArgs) {
+  const user = await isAuthenticated(request)
+  if (!user) {
+    return json({ message: 'Unauthorized' }, { status: 401 })
+  }
+
+
+
+  return json({ user })
+
 }
 
-export const ExtractUniqueCategories = ({ projects }: Props) => {
-  // Extract categories from each project, flatten them into one array, and remove duplicates
-  const uniqueCategories = Array.from(
-    new Set(projects.flatMap((p) => p.categories.flatMap((c) => c.label)))
-  )
 
-  return uniqueCategories
-}
+export default function ProjectIndex () {
+  const { technologies, projects } = useLoaderData<typeof loader>()
 
-export default function ProjectIndex() {
-  // Additional logic to handle the unique categories list
-  // ...
-  const uniqueCategories = ExtractUniqueCategories({ projects })
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
-      <div className='flex w-full flex-col gap-2'>
-        <h1>Welcome to the Projects Page</h1>
-        <Separator />
-        <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          <h6 className='text-left'>
-            Here are a number of coding Projects that I have completed
-          </h6>
-          S
-        </div>
-      </div>
-      <TechnologiesContainer categories={uniqueCategories} />
-      <div className='w-full columns-1 md:columns-2 gap-5'>
-        {projects.map((project) => (
-          <ProjectAccordian key={project.id} projects={project} />
-        ))}
-      </div>
+      <CreateProject />
     </div>
   )
 }

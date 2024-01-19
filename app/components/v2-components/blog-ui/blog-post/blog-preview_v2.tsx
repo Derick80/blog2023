@@ -18,9 +18,9 @@ import { ShareButton } from '../../share-button_v2'
 import type { User } from '~/server/schemas/schemas'
 import BlogPostOwnerAction from '../blog-post-owner-action-container'
 import FavoriteContainer from '../../favorite-container_v2'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 
-export default function BlogPreviewV2({ post }: { post: FullPost }) {
+export default function BlogPreviewV2 ({ post }: { post: FullPost }) {
   // I used w-[65ch] rather than max-w-prose because I wanted to have a uniform width for all cards
   const currentUser = useOptionalUser()
 
@@ -28,26 +28,26 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
   return (
     <article
       className=' flex flex-col shadow-[0_3px_10px_rgb(0,0,0,0.2)] gap-1 md:gap-2 lg:gap-3 bg-violet4 dark:bg-violet4_dark rounded-md  w-full max-w-prose '
-      key={post.slug}
+      key={ post.slug }
     >
-      <CardHeader title={post.title} postId={post.id} />
+      <CardHeader title={ post.title } postId={ post.id } />
 
       <CardUpperBody
-        postId={post.id}
-        imageUrl={post.imageUrl}
-        description={post.description}
-        content={post.content}
-        categories={post.categories}
+        postId={ post.id }
+        imageUrl={ post.imageUrl }
+        description={ post.description }
+        content={ post.content }
+        categories={ post.categories }
       />
 
       <CardFooter
-        isPostOwner={isPostOwner}
-        postId={post.id}
-        counts={post._count}
-        likes={post.likes}
-        user={post.user}
-        updatedAt={post.updatedAt}
-        favorites={post.favorites}
+        isPostOwner={ isPostOwner }
+        postId={ post.id }
+        counts={ post._count }
+        likes={ post.likes }
+        user={ post.user }
+        updatedAt={ post.updatedAt }
+        favorites={ post.favorites }
       />
     </article>
   )
@@ -55,14 +55,14 @@ export default function BlogPreviewV2({ post }: { post: FullPost }) {
 
 // card headers
 
-function CardHeader({ title, postId }: { title: string; postId: string }) {
+function CardHeader ({ title, postId }: { title: string; postId: string }) {
   return (
     <div className='flex flex-row items-center justify-between w-full gap-2 pl-1'>
       <Link
-        title={`Click here to view the full post of ${title}`}
-        to={`/blog/${postId}`}
+        title={ `Click here to view the full post of ${title}` }
+        to={ `/blog/${postId}` }
       >
-        <h3>{title}</h3>
+        <h3>{ title }</h3>
       </Link>
     </div>
   )
@@ -70,7 +70,7 @@ function CardHeader({ title, postId }: { title: string; postId: string }) {
 
 // card body
 
-function CardUpperBody({
+function CardUpperBody ({
   postId,
   imageUrl,
   description,
@@ -88,24 +88,24 @@ function CardUpperBody({
       <div className='w-1/3 flex-shrink-0'>
         <div
           className='h-full w-full bg-cover bg-center'
-          style={{ backgroundImage: `url('${imageUrl}')` }}
+          style={ { backgroundImage: `url('${imageUrl}')` } }
         ></div>
       </div>
       <div className='flex flex-col w-2/3 justify-start p-4'>
         <NavLink
           className='mb-2 flex items-center gap-1 text-lg font-bold italic leading-4 hover:underline'
-          to={`/blog/${postId}`}
+          to={ `/blog/${postId}` }
         >
-          {description} <OpenInNewWindowIcon />
+          { description } <OpenInNewWindowIcon />
         </NavLink>
         <div
           className=' line-clamp-2  leading-7 '
-          dangerouslySetInnerHTML={{ __html: content }}
+          dangerouslySetInnerHTML={ { __html: content } }
         />
 
-        {/* create a readmore link */}
+        {/* create a readmore link */ }
         <NavLink
-          to={`/blog/${postId}`}
+          to={ `/blog/${postId}` }
           className='flex gap-1 text-sm font-semibold leading-4 hover:underline'
         >
           Read More <OpenInNewWindowIcon />
@@ -117,7 +117,7 @@ function CardUpperBody({
 
 // card lower body  I might not use this
 
-function CardLowerBody({
+function CardLowerBody ({
   postId,
   categories,
   user
@@ -128,12 +128,12 @@ function CardLowerBody({
 }) {
   return (
     <div className='mt-1 flex flex-row gap-2 '>
-      <CategoryContainer categories={categories} />
+      <CategoryContainer categories={ categories } />
     </div>
   )
 }
 // category container
-export function CategoryContainer({
+export function CategoryContainer ({
   categories,
   className
 }: {
@@ -142,27 +142,27 @@ export function CategoryContainer({
 }) {
   return (
     <div className='flex flex-row flex-wrap items-center gap-1 p-1'>
-      {categories.map((category) => {
+      { categories.map((category) => {
         return (
           <Link
-            key={category.id}
-            to={`/blog/categories/${category.value}`}
-            className={clsx(
+            key={ category.id }
+            to={ `/blog/categories/${category.value}` }
+            className={ clsx(
               'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark mr- relative mb-2 block h-auto w-auto cursor-pointer rounded-full bg-violet3 px-4  py-2 text-violet12 no-underline opacity-100 transition dark:bg-violet3_dark dark:text-slate-50',
               className
-            )}
+            ) }
           >
-            {category.label}
+            { category.label }
           </Link>
         )
-      })}
+      }) }
     </div>
   )
 }
 
 // card footer
 
-function CardFooter({
+function CardFooter ({
   postId,
   updatedAt,
   counts,
@@ -187,23 +187,23 @@ function CardFooter({
     <div className='flex p-1  flex-row justify-between gap-2 '>
       <div className='flex flex-row items-center gap-1'>
         <p>Posted by</p>
-        <UserInfoHoverCard user={user} />
-        <p> {formatDateAgo(updatedAt)}</p>
+        <UserInfoHoverCard user={ user } />
+        <p> { formatDateAgo(updatedAt) }</p>
       </div>
       <div className='flex flex-row items-center gap-1'>
-        {isPostOwner && <BlogPostOwnerAction postId={postId} />}
+        { isPostOwner && <BlogPostOwnerAction postId={ postId } /> }
 
-        <ShareButton id={postId} />
-        <FavoriteContainer postId={postId} favorites={favorites} />
+        <ShareButton id={ postId } />
+        <FavoriteContainer postId={ postId } favorites={ favorites } />
       </div>
       <div className='flex flex-row items-center gap-1'>
-        <LikeContainer postId={postId} likes={likes} />
+        <LikeContainer postId={ postId } likes={ likes } />
         <NavLink
           className='flex flex-row items-center gap-1'
-          to={`/blog/${postId}`}
+          to={ `/blog/${postId}` }
         >
           <ChatBubbleIcon />
-          <p>{counts.comments}</p>
+          <p>{ counts.comments }</p>
         </NavLink>
       </div>
     </div>
@@ -215,47 +215,47 @@ export type HoverCardProps = {
   user: User
 }
 
-export function UserInfoHoverCard({ user }: HoverCardProps) {
+export function UserInfoHoverCard ({ user }: HoverCardProps) {
   const { avatarUrl, username, email, id } = user
   const currentUser = useOptionalUser()
   const isInfoOwner = currentUser?.id === id
 
   return (
     <>
-      <HoverCard.Root openDelay={200} closeDelay={200}>
+      <HoverCard.Root openDelay={ 200 } closeDelay={ 200 }>
         <HoverCard.Trigger>
           <img
-            src={avatarUrl || ''}
-            alt={`${username}'s avatar`}
+            src={ avatarUrl || '' }
+            alt={ `${username}'s avatar` }
             className='h-8 w-8 rounded-full'
           />
         </HoverCard.Trigger>
-        <HoverCard.Content sideOffset={5} align='center' side='top'>
+        <HoverCard.Content sideOffset={ 5 } align='center' side='top'>
           <div className='w-50 rounded-md bg-violet1 p-5 shadow-md dark:bg-violet3_dark'>
             <div className='justify-cnter flex flex-col items-center'>
               <img
-                src={avatarUrl || ''}
-                alt={`${username}'s avatar`}
+                src={ avatarUrl || '' }
+                alt={ `${username}'s avatar` }
                 className='h-8 w-8 rounded-full'
               />
               <Link
-                title={`Click here to view ${username}'s profile`}
-                to={`/users/${username}`}
+                title={ `Click here to view ${username}'s profile` }
+                to={ `/users/${username}` }
                 className='flex flex-row items-center gap-1'
               >
-                <h6>{username}</h6>
+                <h6>{ username }</h6>
                 <OpenInNewWindowIcon />
               </Link>
 
               <p className='text- text-violet12 dark:text-violet12_dark'>
-                {email}
+                { email }
               </p>
-              {isInfoOwner && (
+              { isInfoOwner && (
                 <>
-                  <Button size='small' variant='primary_filled'>
+                  <Button size='sm' variant='default'>
                     <Link
                       title='Click here to edit your user profile'
-                      to={`/users/${username}/edit`}
+                      to={ `/users/${username}/edit` }
                     >
                       Edit Profile
                     </Link>
@@ -267,14 +267,14 @@ export function UserInfoHoverCard({ user }: HoverCardProps) {
                   >
                     <Button
                       title='Click here to logout of your DerickcHoskinson.com account'
-                      variant='icon_unfilled'
-                      size='small'
+                      variant='ghost'
+                      size='icon'
                     >
                       <ExitIcon />
                     </Button>
                   </Form>
                 </>
-              )}
+              ) }
             </div>
           </div>
         </HoverCard.Content>

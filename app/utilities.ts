@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import type { ZodError, ZodSchema } from 'zod'
 import type { UserType } from './server/schemas/schemas'
 import type { Category_v2, FullPost } from './server/schemas/schemas_v2'
+import { TechnologyStack } from './server/project.server'
 
 const DEFAULT_REDIRECT = '/'
 
@@ -112,6 +113,12 @@ export function formatDateAgo(date: string) {
   } else {
     const days = Math.floor(hours / 24)
     return `${days} days ago`
+  }
+}
+
+export function useTechnologies() {
+  const { technologies } = useRouteLoaderData('projects') as {
+    technologies: TechnologyStack[]
   }
 }
 
