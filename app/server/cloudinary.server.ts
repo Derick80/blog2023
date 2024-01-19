@@ -8,7 +8,6 @@ import {
   json
 } from '@remix-run/node'
 import { prisma } from './prisma.server'
-import { file } from 'zod-form-data'
 
 export interface UploadResponse {
   asset_id: string
@@ -43,15 +42,19 @@ cloudinary.v2.config({
 })
 
 export async function uploadImage(
-  data: AsyncIterable<Uint8Array>
+  data: AsyncIterable<Uint8Array>,
+  filename: string
 ): Promise<cloudinary.UploadApiResponse> {
   const uploadPromise = new Promise(async (resolve, reject) => {
     const uploadStream = cloudinary.v2.uploader.upload_stream(
       {
         cloud_name: 'dch-photo',
         folder: 'blog_testing_2024',
+        filename_override: filename,
+        discard_original_filename: false,
         use_filename: true,
-        public_id: file.name,
+        unique_filename: false,
+        overwrite: true,
         transformation: [
           {
             format: 'webp',
@@ -93,7 +96,7 @@ export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
     //   throw new Error("Missing 'filename' in upload request")
     // }
 
-    const uploadedImage = await uploadImage(data)
+    const uploadedImage = await uploadImage(data, filename)
     // @ts-ignore
     // this ignore came from the source i followed.  I think I kinda solved this by adding the type to the uploadImage function
     console.log('uploadedImage', uploadedImage)
