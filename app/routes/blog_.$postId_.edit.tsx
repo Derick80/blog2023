@@ -20,8 +20,8 @@ import {
 } from '@remix-run/react'
 import type { Category } from '~/server/schemas/schemas'
 import React from 'react'
-import TipTap from '~/components/v2-components/tiptap/tip-tap'
-import ImageUploader from '~/components/v2-components/blog-ui/image-fetcher'
+import TipTap from '~/components/tiptap/tip-tap'
+import ImageUploader from '~/components/blog-ui/image-fetcher'
 import { Button } from '~/components/ui/button'
 import SelectBox from '~/components/select'
 import * as Switch from '@radix-ui/react-switch'
@@ -216,7 +216,7 @@ export default function PostEdit () {
           name='action'
           value='update'
           variant='default'
-          size='small'
+          size='sm'
         >
           Update
         </Button>

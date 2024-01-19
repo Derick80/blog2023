@@ -37,7 +37,6 @@ import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import CodeBlock from '@tiptap/extension-code-block'
-import { MyTooltip } from '../../radix-tooltip'
 import SubscriptIcon from './icons/subscript'
 import SuperScriptIcon from './icons/superscript'
 import { ResizableImage } from './tiptap-image'
@@ -88,60 +87,48 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       aria-label='Editor toolbar'
     >
       <div className='flex flex-row  items-center gap-1'>
-        <MyTooltip content='Bold'>
-          <Button
-            type='button'
-            className={ editor.isActive('bold') ? 'border-2' : '' }
-            onClick={ () => editor.chain().focus().toggleBold().run() }
-          >
-            <FontBoldIcon />
-          </Button>
-        </MyTooltip>
+        <Button
+          type='button'
+          className={ editor.isActive('bold') ? 'border-2' : '' }
+          onClick={ () => editor.chain().focus().toggleBold().run() }
+        >
+          <FontBoldIcon />
+        </Button>
 
-        <MyTooltip content='Italic'>
-          <Button
-            type='button'
-            onClick={ () => editor.chain().focus().toggleItalic().run() }
-          >
-            <FontItalicIcon />
-          </Button>
-        </MyTooltip>
+        <Button
+          type='button'
+          onClick={ () => editor.chain().focus().toggleItalic().run() }
+        >
+          <FontItalicIcon />
+        </Button>
 
-        <MyTooltip content='Strikethrough'>
-          <Button
-            type='button'
-            onClick={ () => editor.chain().focus().toggleStrike().run() }
-          >
-            <StrikethroughIcon />
-          </Button>
-        </MyTooltip>
+        <Button
+          type='button'
+          onClick={ () => editor.chain().focus().toggleStrike().run() }
+        >
+          <StrikethroughIcon />
+        </Button>
 
-        <MyTooltip content='Underline'>
-          <Button
-            type='button'
-            onClick={ () => editor.chain().focus().toggleUnderline().run() }
-          >
-            <UnderlineIcon />
-          </Button>
-        </MyTooltip>
+        <Button
+          type='button'
+          onClick={ () => editor.chain().focus().toggleUnderline().run() }
+        >
+          <UnderlineIcon />
+        </Button>
 
-        <MyTooltip content='Superscript'>
-          <Button
-            type='button'
-            onClick={ () => editor.chain().focus().toggleSuperscript().run() }
-          >
-            <SuperScriptIcon />
-          </Button>
-        </MyTooltip>
+        <Button
+          type='button'
+          onClick={ () => editor.chain().focus().toggleSuperscript().run() }
+        >
+          <SuperScriptIcon />
+        </Button>
 
-        <MyTooltip content='Subscript'>
-          <Button
-            type='button'
-            onClick={ () => editor.chain().focus().toggleSubscript().run() }
-          >
-            <SubscriptIcon />
-          </Button>
-        </MyTooltip>
+        <Button
+          type='button'
+          onClick={ () => editor.chain().focus().toggleSubscript().run() }
+        >
+          <SubscriptIcon />
+        </Button>
       </div>
       <div className='' />
       <div className='flex flex-row items-center gap-1'>

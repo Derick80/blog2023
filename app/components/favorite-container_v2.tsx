@@ -4,7 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import { useOptionalUser } from '~/utilities'
 import type { Favorite_v2 } from '~/server/schemas/schemas_v2'
-import { Button } from '../ui/button'
+import { Button } from './ui/button'
 
 
 export type FavoriteContainerProps = {

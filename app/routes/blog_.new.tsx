@@ -9,9 +9,9 @@ import {
 } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
-import ImageUploader from '~/components/v2-components/blog-ui/image-fetcher'
+import ImageUploader from '~/components/blog-ui/image-fetcher'
 import { Button } from '~/components/ui/button'
-import TipTap from '~/components/v2-components/tiptap/tip-tap'
+import TipTap from '~/components/tiptap/tip-tap'
 import { isAuthenticated } from '~/server/auth/auth.server'
 import {
   commitSession,
@@ -23,7 +23,7 @@ import { createPost } from '~/server/post.server'
 import { useCategories, validateAction } from '~/utilities'
 import * as Switch from '@radix-ui/react-switch'
 import SelectBox from '~/components/select'
-import CustomSelectBox from '~/components/v2-components/custom-select'
+import CustomSelectBox from '~/components/custom-select'
 export async function loader ({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)

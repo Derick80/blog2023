@@ -1,4 +1,4 @@
-import ScrollToTop from '../v2-components/scroll-to-top'
+import ScrollToTop from '../scroll-to-top'
 import NavigationBar from './navbar'
 
 export default function Layout ({ children }: { children: React.ReactNode }) {

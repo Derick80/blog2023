@@ -104,7 +104,8 @@ export async function action ({ request, params }: ActionFunctionArgs) {
     case 'block-user': {
       await prisma.block.update({
         where: {
-          username: params.username
+          userId: user.id
+
         },
         data: {
           blocked: true
@@ -149,7 +150,7 @@ export default function UserRoute () {
             <Form method='POST'>
               <Button
                 variant='default'
-                size='base'
+                size='default'
                 type='submit'
                 name='action'
                 value='block-user'

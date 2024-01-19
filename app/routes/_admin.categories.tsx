@@ -199,7 +199,7 @@ export default function CategoriesRoute () {
         <Button
           form='createCategory'
           variant='default'
-          size='base'
+          size='default'
           type='submit'
         >
           Save

@@ -11,7 +11,7 @@ import {
   useSearchParams
 } from '@remix-run/react'
 import { getAllPostsV1, getPosts } from '~/server/post.server'
-import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
+
 import {
   filterPosts,
   useCategories,
@@ -19,7 +19,7 @@ import {
   useUpdateQueryStringValueWithoutNavigation
 } from '~/utilities'
 import React from 'react'
-import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
+import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
 
 export const meta: MetaFunction = () => {
@@ -38,15 +38,14 @@ export async function loader ({ request }: LoaderFunctionArgs) {
 
   const comments = posts.map((post) => post.comments).flat()
 
-  const posts_v2 = await getAllPostsV1()
 
-  return json({ posts, comments, posts_v2 })
+  return json({ posts, comments })
 }
 
 export default function BlogRoute () {
   const user = useOptionalUser()
   const isAdmin = user?.role === 'ADMIN'
-  const { posts_v2 } = useLoaderData<typeof loader>()
+  const { posts } = useLoaderData<typeof loader>()
   const categories = useCategories()
 
   const [searchParams] = useSearchParams()
@@ -59,11 +58,11 @@ export default function BlogRoute () {
   useUpdateQueryStringValueWithoutNavigation('q', query)
 
   const matchingPosts = React.useMemo(() => {
-    if (!query) return posts_v2
+    if (!query) return posts
 
-    let filteredPosts = posts_v2
+    let filteredPosts = posts
     return filterPosts(filteredPosts, query)
-  }, [query, posts_v2])
+  }, [query, posts])
 
   const isSearching = query.length > 0
 
@@ -143,9 +142,9 @@ export default function BlogRoute () {
         </div>
 
         <div className='flex flex-col gap-5 w-full items-center'>
-          { matchingPosts?.map((post) => (
+          {/* { matchingPosts?.map((post) => (
             <BlogPreviewV2 key={ post.id } post={ post } />
-          )) }
+          )) } */}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { Form, Link } from '@remix-run/react'
 import { Pencil2Icon, TrashIcon } from '@radix-ui/react-icons'
 import React from 'react'
-import ConfirmationDialog from './blog-post/confirmation-dialog'
+import ConfirmationDialog from '../confirmation-dialog'
 import { Button } from '~/components/ui/button'
 
 export type BlogPostOwnerActionProps = {

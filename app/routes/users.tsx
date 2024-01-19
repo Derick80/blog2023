@@ -46,7 +46,7 @@ export default function UsersIndex () {
                   <img
                     className='h-10 w-10 rounded-full'
                     src={ user.avatarUrl }
-                    alt={ user.username }
+                    alt={ user.username || '' }
                   />
                 </>
               ) : (

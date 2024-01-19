@@ -11,7 +11,12 @@ export default function ImageUploader ({
 }) {
   // figure out a way to disable the button if the file is not selected
   const [readyToUpload, setReadyToUpload] = React.useState(false)
-  const fetcher = useFetcher()
+  const fetcher = useFetcher() as {
+    submit: (data: any) => void,
+    data: { imageUrl: string },
+    Form: React.FC<any>
+
+  }
 
   const onChange = async () => {
     fetcher.submit({

@@ -10,7 +10,6 @@ import React from 'react'
 import { useFileURLs } from './use-file-urls'
 import { useDropzone } from 'react-dropzone-esm'
 import { CircleBackslashIcon, ImageIcon } from '@radix-ui/react-icons'
-import { post } from '~/resources/fake-singlepost'
 export type ImageControllerProps = {
   postImages: PostImage[]
   postId: string

@@ -89,6 +89,10 @@ export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
     if (name !== 'imageUrl') {
       return undefined
     }
+    if (!filename) {
+      throw new Error("Missing 'filename' in upload request")
+    }
+
     const uploadedImage = await uploadImage(data, filename)
     // @ts-ignore
     // this ignore came from the source i followed.  I think I kinda solved this by adding the type to the uploadImage function

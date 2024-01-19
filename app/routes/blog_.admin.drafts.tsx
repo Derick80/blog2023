@@ -5,7 +5,7 @@ import { useLoaderData } from '@remix-run/react'
 import type { Post } from '~/server/schemas/schemas'
 import { getAllUserDraftsV1 } from '~/server/post.server'
 import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')
@@ -13,15 +13,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({ drafts: await getAllUserDraftsV1(user.id) })
 }
 
-export default function DraftsRoute() {
+export default function DraftsRoute () {
   const { drafts } = useLoaderData<{
     drafts: Post[]
   }>()
   return (
     <div className='flex w-full flex-col items-center gap-2'>
-      {drafts.map((post) => (
+      {/* {drafts.map((post) => (
         <BlogPreviewV2 key={post.id} post={post} />
-      ))}
+      ))} */}
     </div>
   )
 }
