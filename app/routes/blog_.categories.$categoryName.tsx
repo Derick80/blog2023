@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { zx } from 'zodix'
 import { getAllPostsV1WithFilter } from '~/server/post.server'
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { categoryName } = zx.parseParams(params, { categoryName: z.string() })
 
   if (!categoryName) {
@@ -17,17 +17,15 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
   return json({ posts })
 }
 
-export default function BlogRoute () {
+export default function BlogRoute() {
   const params = useParams()
   const { categoryName } = params
   const { posts } = useLoaderData<typeof loader>()
 
   return (
     <div className='flex h-full  w-full flex-col items-center gap-4'>
-      <h1>{ categoryName }</h1>
-      <div className='flex w-full flex-col items-center gap-2'>
-
-      </div>
+      <h1>{categoryName}</h1>
+      <div className='flex w-full flex-col items-center gap-2'></div>
     </div>
   )
 }

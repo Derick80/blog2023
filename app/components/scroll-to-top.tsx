@@ -6,7 +6,7 @@ import { Button } from './ui/button'
 // Used this resource to help build this component and replace the mantine component
 // https://stackabuse.com/how-to-scroll-to-top-in-react-with-a-button-component/
 
-export default function ScrollToTop () {
+export default function ScrollToTop() {
   const [showTopButton, setShowTopButton] = React.useState(false)
 
   React.useEffect(() => {
@@ -25,18 +25,16 @@ export default function ScrollToTop () {
 
   return (
     <div className='relative'>
-      { showTopButton && (
+      {showTopButton && (
         <Button
           className='fixed bottom-20 right-0 flex flex-col'
           variant='ghost'
           size='default'
-          onClick={ goToTop }
+          onClick={goToTop}
         >
-
           <ArrowUpIcon />
-
         </Button>
-      ) }
+      )}
     </div>
   )
 }

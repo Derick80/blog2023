@@ -6,7 +6,6 @@ import type {
   Favorite as PrismaFavorite,
   Category as PrismaCategory,
   Comment as PrismaComment,
-  TaskCategory as TaskCategoryImport,
   User
 } from '@prisma/client'
 

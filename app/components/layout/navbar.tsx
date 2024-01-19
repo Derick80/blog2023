@@ -4,7 +4,7 @@ import { useOptionalUser } from '~/utilities'
 import { ThemeToggle } from '../theme/theme-toggle'
 import MobileDropdown from './mobile-dropdown'
 // sticky top-0 z-50 flex w-full flex-row items-center justify-around bg-slate-50 dark:bg-slate-800
-export default function NavigationBar () {
+export default function NavigationBar() {
   const user = useOptionalUser()
 
   // fix w-4/s6 if I want to change the latout
@@ -17,19 +17,13 @@ export default function NavigationBar () {
   )
 }
 
-function LocationBar () {
-
+function LocationBar() {
   return (
-    <div className='flex flex-row items-center justify-center gap-2 w-full border border-red-300'>
-
-    </div>
+    <div className='flex flex-row items-center justify-center gap-2 w-full border border-red-300'></div>
   )
-
-
 }
 
-
-function DesktopBrandIcon () {
+function DesktopBrandIcon() {
   return (
     <NavLink
       title='Click on the Brand Icon to go to the home page'

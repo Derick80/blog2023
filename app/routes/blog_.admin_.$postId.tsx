@@ -4,7 +4,14 @@ import { json, redirect } from '@remix-run/node'
 import { zx } from 'zodix'
 import { z } from 'zod'
 import { prisma } from '~/server/prisma.server'
-import { Form, Outlet, useFetcher, useLoaderData, useParams, useSubmit } from '@remix-run/react'
+import {
+  Form,
+  Outlet,
+  useFetcher,
+  useLoaderData,
+  useParams,
+  useSubmit
+} from '@remix-run/react'
 import { Label } from '~/components/ui/label'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
@@ -15,7 +22,12 @@ import { Checkbox } from '~/components/ui/checkbox'
 import CustomSelectBox from '~/components/custom-select'
 import { useCategories, validateAction } from '~/utilities'
 import React from 'react'
-import { getSession, setErrorMessage, commitSession, setSuccessMessage } from '~/server/session.server'
+import {
+  getSession,
+  setErrorMessage,
+  commitSession,
+  setSuccessMessage
+} from '~/server/session.server'
 import { cloudUpload } from '~/server/cloudinary.server'
 import { file } from 'zod-form-data'
 import { useFileURLs } from '~/components/images/use-file-urls'
@@ -23,9 +35,8 @@ import { useDropzone } from 'react-dropzone-esm'
 import { ImageIcon } from 'lucide-react'
 import { PostImage } from '~/server/schemas/images.schema'
 import { ImageWithPlaceholder } from '~/components/images/images'
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
-
     postId: z.string()
   })
 
@@ -39,21 +50,17 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
     include: {
       categories: true,
 
-      postImages: true,
-
+      postImages: true
     }
-
   })
 
   if (!post) throw new Error('No post found')
 
   const images = post?.postImages.map((image) => {
     return {
-      ...image,
+      ...image
     }
-
-  }
-  )
+  })
 
   const directImages = await prisma.postImage.findMany({
     where: {
@@ -61,12 +68,10 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
     }
   })
 
-
   return json({ post, images })
 }
 
-export async function action ({ request, params }: ActionFunctionArgs) {
-
+export async function action({ request, params }: ActionFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -78,12 +83,9 @@ export async function action ({ request, params }: ActionFunctionArgs) {
       }
     })
   }
-
-
-
 }
 
-export default function BlogPost () {
+export default function BlogPost() {
   const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
   const params = useParams()
   const postId = params.postId
@@ -91,79 +93,73 @@ export default function BlogPost () {
   const categories = useCategories()
   const getFileUrl = useFileURLs()
   const imageToUploadFetcher = useFetcher()
+  const submit = useSubmit()
 
+  const onDrop = React.useCallback(
+    (acceptedFiles) => {
+      setPendingFiles((pendingFiles) => [...pendingFiles, ...acceptedFiles])
+
+      // Submit the form data
+      submit({ method: 'post', action: '/actions/cloudinary_v2' })
+    },
+    [submit]
+  )
 
   const onChange = async () => {
+    setPendingFiles((acceptedFiles) => [...acceptedFiles, ...acceptedFiles])
     await imageToUploadFetcher.submit({
       imageUrl: 'imageUrl',
       action: '/actions/cloudinary_v2'
     })
   }
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
-    async onDrop (acceptedFiles) {
-      imageToUploadFetcher.submit({
-        postId: post.id,
-        key: 'image',
-        actrion: '/actions/cloudinary_v2',
-      })
-      setPendingFiles((acceptedFiles) => [...acceptedFiles, ...acceptedFiles])
-
-    },
-    noClick: true,
+    onDrop,
+    noClick: true
   })
 
   return (
     <>
-      <imageToUploadFetcher.Form
-        method='POST'
-        action='/actions/cloudinary_v2'
-        encType='multipart/form-data'
-        onChange={ onChange }
+      <div
+        {...getRootProps({
+          className: isDragActive ? 'bg-neutral-50' : ''
+        })}
       >
-        <div
-          { ...getRootProps({
-            className: isDragActive ? "bg-neutral-50" : "",
-          }) }
-        >
-          <Label htmlFor="image-input" className="block">
-            <div className="grid cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800">
-              <ImageIcon name="image" className="h-8 w-8" />
-              <span> Drop images here </span>
-            </div>
+        <Label htmlFor='image-input' className='block'>
+          <div className='grid cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800'>
+            <ImageIcon name='image' className='h-8 w-8' />
+            <span> Drop images here </span>
+          </div>
 
-            <Input
-              { ...getInputProps() }
-              id='imageUrl'
-              name="imageUrl"
-              multiple
-              type="file"
-              className="sr-only"
-              accept='image/*'
-            />
-          </Label>
-          <input type='hidden' name='postId' value={ postId } />
-          <Button type='submit' variant='default' className='mt-2'>
-            Upload
-          </Button>
-        </div>
-      </imageToUploadFetcher.Form>
-      { pendingFiles.map((blob, index) => (
-        <ImageWithPlaceholder
-          key={ index }
-          src={ getFileUrl(blob) }
-          alt={ blob.name }
-        />
-
-      )) }
-      {
-        images.map((image) => (
-          <ImageWithPlaceholder
-            key={ image.id }
-            src={ image.imageUrl }
-            alt={ image.filename }
+          <Input
+            {...getInputProps()}
+            id='imageUrl'
+            name='imageUrl'
+            multiple
+            type='file'
+            className='sr-only'
+            accept='image/*'
           />
-        ))
-      }
+        </Label>
+        <input type='hidden' name='postId' value={postId} />
+        <Button type='submit' variant='default' className='mt-2'>
+          Upload
+        </Button>
+      </div>
+
+      {pendingFiles.map((blob, index) => (
+        <ImageWithPlaceholder
+          key={index}
+          src={getFileUrl(blob)}
+          alt={blob.name}
+        />
+      ))}
+      {images.map((image) => (
+        <ImageWithPlaceholder
+          key={image.id}
+          src={image.imageUrl}
+          alt={image.filename || ''}
+        />
+      ))}
     </>
   )
 }

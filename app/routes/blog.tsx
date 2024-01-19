@@ -30,7 +30,7 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   // I don't need to use the posts from the loader because I'm using the posts from the getAllPostsV1 function but at the moment I'm using the old getPosts function to get the comments
   // get all posts and comments
   const posts = await getPosts()
@@ -38,11 +38,10 @@ export async function loader ({ request }: LoaderFunctionArgs) {
 
   const comments = posts.map((post) => post.comments).flat()
 
-
   return json({ posts, comments })
 }
 
-export default function BlogRoute () {
+export default function BlogRoute() {
   const user = useOptionalUser()
   const isAdmin = user?.role === 'ADMIN'
   const { posts } = useLoaderData<typeof loader>()
@@ -68,13 +67,13 @@ export default function BlogRoute () {
 
   const visibleTags = isSearching
     ? new Set(
-      matchingPosts.flatMap((post) =>
-        post.categories.map((p) => p.value).filter(Boolean)
+        matchingPosts.flatMap((post) =>
+          post.categories.map((p) => p.value).filter(Boolean)
+        )
       )
-    )
     : new Set(categories.map((p) => p.value))
 
-  function toggleTag (tag: string) {
+  function toggleTag(tag: string) {
     setQuery((q) => {
       const expression = new RegExp(`\\b${tag}\\b`, 'ig')
 
@@ -88,7 +87,6 @@ export default function BlogRoute () {
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
-
       <div className='flex flex-col items-center gap-20 '>
         <h1>Welcome to the Blog for DerickCHoskinson.com </h1>
         <h4>
@@ -101,28 +99,28 @@ export default function BlogRoute () {
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <h6 className='text-left'>You can browse the Blog by </h6>
           <h1>Category</h1>
-        </div>{ ' ' }
+        </div>{' '}
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
-          { categories.map((category) => {
+          {categories.map((category) => {
             const selected = query.includes(category.value)
             return (
               <CustomCheckbox
-                key={ category.id }
+                key={category.id}
                 name='category'
-                tag={ category.value }
-                selected={ selected }
-                onClick={ () => toggleTag(category.value) }
-                disabled={ !visibleTags.has(category.value) }
+                tag={category.value}
+                selected={selected}
+                onClick={() => toggleTag(category.value)}
+                disabled={!visibleTags.has(category.value)}
               />
             )
-          }) }
+          })}
         </div>
       </div>
       <div className='bg-violet flex w-full flex-col items-center gap-2'>
         <Outlet />
         <Separator orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          { !queryValue ? (
+          {!queryValue ? (
             <>
               <h6 className='text-left'>Viewing all the </h6>
               <h1>Blog Posts</h1>
@@ -132,13 +130,13 @@ export default function BlogRoute () {
               <h6 className='text-left'>
                 Viewing Blog Posts with the category(ies)
               </h6>
-              { queryValue.split(' ').map((tag) => (
-                <h1 key={ tag } className='text-primary'>
-                  { tag }
+              {queryValue.split(' ').map((tag) => (
+                <h1 key={tag} className='text-primary'>
+                  {tag}
                 </h1>
-              )) }
+              ))}
             </div>
-          ) }
+          )}
         </div>
 
         <div className='flex flex-col gap-5 w-full items-center'>
@@ -151,14 +149,14 @@ export default function BlogRoute () {
   )
 }
 
-export function ErrorBoundary () {
+export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
         <h1>oops</h1>
-        <h1>Status:{ error.status }</h1>
-        <p>{ error.data.message }</p>
+        <h1>Status:{error.status}</h1>
+        <p>{error.data.message}</p>
       </div>
     )
   }
@@ -172,7 +170,7 @@ export function ErrorBoundary () {
     <div>
       <h1>uh Oh..</h1>
       <p>something went wrong</p>
-      <pre>{ errorMessage }</pre>
+      <pre>{errorMessage}</pre>
     </div>
   )
 }

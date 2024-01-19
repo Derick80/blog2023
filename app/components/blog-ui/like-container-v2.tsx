@@ -10,7 +10,7 @@ export type LikeContainerProps = {
   likes: Like_v2[]
 }
 
-export default function LikeContainer ({ postId, likes }: LikeContainerProps) {
+export default function LikeContainer({ postId, likes }: LikeContainerProps) {
   const user = useOptionalUser()
   const currentUser = user?.id || ''
   const fetcher = useFetcher()
@@ -43,19 +43,14 @@ export default function LikeContainer ({ postId, likes }: LikeContainerProps) {
 
   return (
     <>
-      <Button
-        variant='ghost'
-        size='icon'
-        disabled={ !user }
-        onClick={ toggleLike }
-      >
+      <Button variant='ghost' size='icon' disabled={!user} onClick={toggleLike}>
         <div className='flex flex-row items-center gap-1'>
-          { isLiked ? (
-            <HeartFilledIcon style={ { color: 'red', fill: 'red' } } />
+          {isLiked ? (
+            <HeartFilledIcon style={{ color: 'red', fill: 'red' }} />
           ) : (
             <HeartIcon className='text-black dark:text-violet3' />
-          ) }
-          <p className='text-[15px] dark:text-violet3'>{ likeCount }</p>
+          )}
+          <p className='text-[15px] dark:text-violet3'>{likeCount}</p>
         </div>
       </Button>
     </>

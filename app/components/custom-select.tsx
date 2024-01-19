@@ -18,7 +18,7 @@ type Props = {
   creatable?: boolean
   actionPath?: string
 }
-export default function CustomSelectBox ({
+export default function CustomSelectBox({
   options,
   picked,
   multiple = false,
@@ -82,58 +82,58 @@ export default function CustomSelectBox ({
   }, [])
 
   return (
-    <div className='relative inline-block w-full ' ref={ containerRef }>
-      <Button type='button' onClick={ () => setDropdown(!dropdown) }>
-        { selected.length > 0
+    <div className='relative inline-block w-full ' ref={containerRef}>
+      <Button type='button' onClick={() => setDropdown(!dropdown)}>
+        {selected.length > 0
           ? selected.map((item) => item).join(', ')
-          : 'Select an option' }
+          : 'Select an option'}
 
-        { dropdown ? (
+        {dropdown ? (
           <ChevronUpIcon className='h-5 w-5 ' />
         ) : (
           <ChevronDownIcon className='h-5 w-5 ' />
-        ) }
+        )}
       </Button>
 
-      { dropdown && (
+      {dropdown && (
         <div className='absolute left-0 right-0 z-10 mt-2 rounded-md border border-gray-300 bg-white shadow-lg'>
           <div className='absolute -top-3 right-[45%] h-6 w-6 rotate-45 border-l border-t border-gray-300 bg-white' />
 
           <ul className='m-0 list-none py-1'>
             <li className='list-none px-4 py-2'>
-              { creatable && actionPath && (
+              {creatable && actionPath && (
                 <CreateNewCategoryForm
-                  actionPath={ actionPath }
-                  setSelected={ setSelected }
-                  setDropdown={ setDropdown }
+                  actionPath={actionPath}
+                  setSelected={setSelected}
+                  setDropdown={setDropdown}
                 />
-              ) }
+              )}
             </li>
-            { options.map((option, index) => (
+            {options.map((option, index) => (
               <>
                 <li
-                  key={ option }
-                  onClick={ () => handleSelect(option) }
+                  key={option}
+                  onClick={() => handleSelect(option)}
                   className='list-none px-4 py-2 text-black hover:bg-gray-100'
                 >
-                  { option }
+                  {option}
                 </li>
               </>
-            )) }
+            ))}
           </ul>
         </div>
-      ) }
+      )}
 
       <input
         type='hidden'
-        name={ name }
-        value={ selected.map((item) => item).join(',') }
+        name={name}
+        value={selected.map((item) => item).join(',')}
       />
     </div>
   )
 }
 
-function CreateNewCategoryForm ({
+function CreateNewCategoryForm({
   actionPath,
   setSelected,
   setDropdown
@@ -166,39 +166,39 @@ function CreateNewCategoryForm ({
 
   return (
     <>
-      { expanded ? (
+      {expanded ? (
         <div className='flex w-full flex-row items-center gap-2'>
           <Input
-            ref={ inputRef }
+            ref={inputRef}
             type='text'
-            value={ category }
-            onChange={ (e) => {
+            value={category}
+            onChange={(e) => {
               setCategory(e.target.value)
-            } }
+            }}
             placeholder='enter a new task category...'
             className='m-0 w-3/4 rounded-md border-none text-black'
           />
           <Button
             type='button'
             name='intent'
-            onClick={ (e) => handleCategorySubmit(e) }
+            onClick={(e) => handleCategorySubmit(e)}
             className=''
           >
             <PlusCircledIcon />
           </Button>
-          <Button onClick={ () => setExpanded(false) }>
+          <Button onClick={() => setExpanded(false)}>
             <Cross1Icon />
           </Button>
         </div>
       ) : (
         <Button
-          onClick={ () => setExpanded(true) }
+          onClick={() => setExpanded(true)}
           className='inline-flex items-center gap-1 text-black md:gap-2  lg:gap-3'
         >
           <PlusIcon />
           <p className='text-xs text-black'>New Task Category</p>
         </Button>
-      ) }
+      )}
     </>
   )
 }

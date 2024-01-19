@@ -48,7 +48,7 @@ export const meta: MetaFunction = () => {
   ]
 }
 // long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const theme = await getThemeFromCookie(request)
   // const user = await getUserByEmail('wowbearwow80@gmail.com')
   // console.log(user, 'user');
@@ -76,7 +76,7 @@ export async function loader ({ request }: LoaderFunctionArgs) {
   )
 }
 
-export default function App () {
+export default function App() {
   const { theme = 'system' } = useLoaderData<typeof loader>()
 
   const data = useLoaderData<typeof loader>()
@@ -119,26 +119,26 @@ export default function App () {
         <Links />
       </head>
       <body id='body' className='h-screen bg-background text-foreground'>
-        <ThemeProvider defaultTheme={ theme } onThemeChange={ onThemeChange }>
+        <ThemeProvider defaultTheme={theme} onThemeChange={onThemeChange}>
           <Layout>
-            <AnimatePresence mode='wait' initial={ false }>
+            <AnimatePresence mode='wait' initial={false}>
               <motion.div
-                key={ useLocation().pathname }
-                animate={ { x: '90', opacity: 1 } }
-                transition={ {
+                key={useLocation().pathname}
+                animate={{ x: '90', opacity: 1 }}
+                transition={{
                   duration: 0.25,
                   type: 'spring',
                   stiffness: 150,
                   damping: 20
-                } }
-                exit={ { x: '-40%', opacity: 0 } }
+                }}
+                exit={{ x: '-40%', opacity: 0 }}
               >
                 <Outlet />
               </motion.div>
             </AnimatePresence>
             <Toaster
               position='bottom-right'
-              toastOptions={ {
+              toastOptions={{
                 success: {
                   style: {
                     background: 'green'
@@ -149,7 +149,7 @@ export default function App () {
                     background: 'red'
                   }
                 }
-              } }
+              }}
             />
 
             <ScrollRestoration />
@@ -162,7 +162,7 @@ export default function App () {
   )
 }
 
-export function ErrorBoundary () {
+export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
@@ -175,8 +175,8 @@ export function ErrorBoundary () {
         <body>
           <div className='flex h-full w-full flex-col items-center justify-center text-center'>
             <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
-            <h2 className='font-bold text-red-500'>Status:{ error.status }</h2>
-            <p>{ error.data.message }</p>
+            <h2 className='font-bold text-red-500'>Status:{error.status}</h2>
+            <p>{error.data.message}</p>
           </div>
           <Scripts />
         </body>
@@ -200,8 +200,8 @@ export function ErrorBoundary () {
         <div className='flex h-full w-full flex-col items-center justify-center text-center'>
           <h1 className='text-2xl font-bold'>uh Oh..</h1>
           <p className='text-xl'>something went wrong</p>
-          <pre>{ errorMessage }</pre>
-        </div>{ ' ' }
+          <pre>{errorMessage}</pre>
+        </div>{' '}
         <Scripts />
       </body>
     </html>

@@ -44,31 +44,31 @@ export const ImageWithPlaceholder = ({
       if (onLoadRef.current) {
         onLoadRef.current()
       }
-
     }
     img.src = src
   }, [src])
 
   const deleteImageFetcher = useFetcher()
 
-
   return (
-    <div className="group relative mt-2 h-20 w-20 rounded-lg border border-purple-500 overflow-y-auto">
-      <img src={ imgSrc } { ...props } className='rounded-lg' />
-      { imgSrc && <CopyCloudinaryUrl imageUrl={ imgSrc } /> }
-      { imgSrc && (<SetPrimaryPostImage imageUrl={ imgSrc } postId={ postId }
-        primaryPostImage={ primaryPostImage }
-      />
-
-      ) }
+    <div className='group relative mt-2 h-20 w-20 rounded-lg border border-purple-500 overflow-y-auto'>
+      <img src={imgSrc} {...props} className='rounded-lg' />
+      {imgSrc && <CopyCloudinaryUrl imageUrl={imgSrc} />}
+      {imgSrc && (
+        <SetPrimaryPostImage
+          imageUrl={imgSrc}
+          postId={postId}
+          primaryPostImage={primaryPostImage}
+        />
+      )}
       <deleteImageFetcher.Form
         method='POST'
         name='delete-image'
         action='/actions/cloudinary_v2'
       >
-        <input type='hidden' name='postId' value={ postId } />
-        <input type='hidden' name='imageId' value={ imageId } />
-        <input type='hidden' name='publicId' value={ publicId } />
+        <input type='hidden' name='postId' value={postId} />
+        <input type='hidden' name='imageId' value={imageId} />
+        <input type='hidden' name='publicId' value={publicId} />
         <Button
           type='submit'
           size='icon'
@@ -85,9 +85,7 @@ export const ImageWithPlaceholder = ({
   )
 }
 
-
-
-export function useObjectUrls () {
+export function useObjectUrls() {
   const mapRef = useRef<Map<File, string> | null>(null)
   useEffect(() => {
     const map = new Map()
@@ -99,10 +97,10 @@ export function useObjectUrls () {
       mapRef.current = null
     }
   }, [])
-  return function getObjectUrl (file: File) {
+  return function getObjectUrl(file: File) {
     const map = mapRef.current
     if (!map) {
-      throw Error("Cannot getObjectUrl while unmounted")
+      throw Error('Cannot getObjectUrl while unmounted')
     }
     if (!map.has(file)) {
       const url = URL.createObjectURL(file)
@@ -110,7 +108,7 @@ export function useObjectUrls () {
     }
     const url = map.get(file)
     if (!url) {
-      throw Error("Object url not found")
+      throw Error('Object url not found')
     }
     return url
   }

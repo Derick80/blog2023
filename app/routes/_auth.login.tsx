@@ -7,7 +7,6 @@ import { authenticator } from '~/server/auth/auth.server'
 import { validateAction } from '~/utilities'
 import { z } from 'zod'
 
-
 export const AuthSchema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('login'),
@@ -52,7 +51,7 @@ export const AuthSchema = z.discriminatedUnion('intent', [
 
 export type ActionInput = z.infer<typeof AuthSchema>
 
-export async function action ({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   // Clone the request so we can read the body twice
   const requested = await request.clone()
   const { formData, errors } = await validateAction({
@@ -85,7 +84,7 @@ export async function action ({ request }: ActionFunctionArgs) {
       })
   }
 }
-export default function Login () {
+export default function Login() {
   return (
     <div className='grid gap-5 items-center max-w-lg mx-auto'>
       <AuthForm />

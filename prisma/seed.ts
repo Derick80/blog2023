@@ -67,7 +67,7 @@ async function generateMe(numberofPosts: number) {
         slug: faker.lorem.slug(),
         description: faker.lorem.paragraph(2),
         content: faker.lorem.paragraph(4),
-        imageUrl: faker.image.imageUrl(),
+        imageUrl: faker.image.url(),
         published: true,
         user: {
           connect: {

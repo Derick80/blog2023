@@ -29,7 +29,7 @@ import {
   validateAction
 } from '~/utilities'
 // deleting a category doesn't work correctly it deletes the wrong category
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const categories = await prisma.category.findMany({
     orderBy: {
       value: 'asc'
@@ -57,7 +57,7 @@ export const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action ({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
@@ -121,7 +121,7 @@ export async function action ({ request, params }: ActionFunctionArgs) {
     }
   }
 }
-export default function CategoriesRoute () {
+export default function CategoriesRoute() {
   const user = useOptionalUser()
   const userRole = user?.role
 
@@ -150,22 +150,22 @@ export default function CategoriesRoute () {
           <h1>Categories</h1>
         </div>
         <div className='bg-violet flex w-full flex-row flex-wrap items-center gap-2'>
-          { data.categories.map((category) => (
+          {data.categories.map((category) => (
             <>
               <deleteFetcher.Form
-                key={ category.id }
+                key={category.id}
                 id='deleteCategory'
-                className={ clsx(
+                className={clsx(
                   'focus-ring dark:bg-violet3j_dark dark:hover:bg-violet4j_dark relative mb-4 mr-4 flex h-auto w-auto  cursor-auto rounded-full bg-violet3  px-6 py-3 text-violet12 opacity-100 transition dark:bg-violet3_dark dark:text-slate-50'
-                ) }
-                action={ `/categories/${category.id}/` }
+                )}
+                action={`/categories/${category.id}/`}
                 method='post'
               >
-                <p className='flex-1'>{ category.label }</p>
+                <p className='flex-1'>{category.label}</p>
 
-                <input type='hidden' name='categoryId' value={ category.id } />
+                <input type='hidden' name='categoryId' value={category.id} />
                 <Button
-                  disabled={ userRole !== 'ADMIN' }
+                  disabled={userRole !== 'ADMIN'}
                   variant='ghost'
                   size='icon'
                   type='submit'
@@ -176,13 +176,13 @@ export default function CategoriesRoute () {
                 </Button>
               </deleteFetcher.Form>
             </>
-          )) }
+          ))}
         </div>
       </div>
 
       <Form
         id='createCategory'
-        ref={ formRef }
+        ref={formRef}
         className='flex flex-col items-center gap-2'
         method='POST'
         action='/categories'
@@ -193,9 +193,9 @@ export default function CategoriesRoute () {
           className='rounded-md border text-sm text-black'
           name='categoryName'
         />
-        { actionData?.errors?.categoryName && (
-          <div>{ actionData.errors.categoryName }</div>
-        ) }
+        {actionData?.errors?.categoryName && (
+          <div>{actionData.errors.categoryName}</div>
+        )}
         <Button
           form='createCategory'
           variant='default'

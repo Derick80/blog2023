@@ -5,7 +5,7 @@ import React from 'react'
 import { Button } from '~/components/ui/button'
 import { useOptionalUser } from '~/utilities'
 
-export default function CommentBox ({
+export default function CommentBox({
   postId,
   parentId,
   setIsReplying
@@ -29,43 +29,43 @@ export default function CommentBox ({
   }, [isDone, setIsReplying])
   return (
     <div className='flex flex-col gap-4'>
-      { user ? (
+      {user ? (
         <Button
           className='ml-auto'
           variant='ghost'
           size='icon'
           type='submit'
-          onClick={ () => {
+          onClick={() => {
             setReply(!reply)
             setIsReplying?.(true)
-          } }
+          }}
         >
-          { parentId ? (
+          {parentId ? (
             <>
               <ChatBubbleIcon />
-              <span className='mr-2'>{ reply ? 'Cancel' : 'Reply' }</span>
+              <span className='mr-2'>{reply ? 'Cancel' : 'Reply'}</span>
             </>
           ) : (
             <>
               <ChatBubbleIcon />
               <span className='mr-2'>Comment</span>
             </>
-          ) }
+          )}
         </Button>
       ) : (
         <p className='ml-auto text-sm text-gray-600'>
           You must be logged in to comment.
         </p>
-      ) }
-      { reply && (
+      )}
+      {reply && (
         <commentFetcher.Form
-          ref={ formRef }
+          ref={formRef}
           className='flex items-center gap-4'
-          action={ `/blog/${postId}/comment` }
+          action={`/blog/${postId}/comment`}
           method='POST'
         >
-          <input type='hidden' name='postId' value={ postId } />
-          { parentId && <input type='hidden' name='parentId' value={ parentId } /> }
+          <input type='hidden' name='postId' value={postId} />
+          {parentId && <input type='hidden' name='parentId' value={parentId} />}
 
           <input
             id='message'
@@ -77,12 +77,12 @@ export default function CommentBox ({
             variant='ghost'
             size='icon'
             type='submit'
-            disabled={ commentFetcher.state === 'loading' }
+            disabled={commentFetcher.state === 'loading'}
           >
             <span className='mr-2'>Post</span>
           </Button>
         </commentFetcher.Form>
-      ) }
+      )}
     </div>
   )
 }

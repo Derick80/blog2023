@@ -2,7 +2,7 @@ import { useFetcher } from '@remix-run/react'
 import React from 'react'
 import { Button } from '~/components/ui/button'
 // Use this form to edit a specific comment
-export default function EditCommentForm ({
+export default function EditCommentForm({
   commentId,
   message,
   setEditing
@@ -29,15 +29,15 @@ export default function EditCommentForm ({
 
   return (
     <commentEditFetcher.Form
-      ref={ formRef }
+      ref={formRef}
       className='flex w-full flex-row items-center gap-1'
       method='POST'
-      action={ `/comment/${commentId}` }
+      action={`/comment/${commentId}`}
     >
       <input
         type='text'
         name='message'
-        defaultValue={ message }
+        defaultValue={message}
         className='w-full rounded-md p-1 text-black'
         autoFocus
       />
@@ -48,7 +48,7 @@ export default function EditCommentForm ({
         value='edit'
         type='submit'
       >
-        { commentEditFetcher.state === 'submitting' ? 'Saving' : 'Save' }
+        {commentEditFetcher.state === 'submitting' ? 'Saving' : 'Save'}
       </Button>
     </commentEditFetcher.Form>
   )
