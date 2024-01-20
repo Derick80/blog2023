@@ -22,6 +22,11 @@ export const isAuthenticated = async (request: Request) => {
   return getUser({ id: userId })
 }
 
+export const isAdminAndAuthenticated = async (request: Request) => {
+  const role = await authenticator.isAuthenticated(request)
+  if (!role) return null
+  return role
+}
 export const setUserSession = async (session: Session, userId: User['id']) => {
   session.set(authenticator.sessionKey, userId)
   return session

@@ -1,6 +1,8 @@
 import { prisma } from './prisma.server'
+import { PostImage } from './schemas/images.schema'
 import type { CategoryForm } from './schemas/schemas'
 
+// update and maybe use this type
 export type PostInput = {
   title: string
   slug: string
@@ -10,6 +12,7 @@ export type PostInput = {
   featured: boolean
   userId: string
   categories: CategoryForm
+  postImages: PostImage[]
 }
 export async function createPost(data: PostInput) {
   const post = await prisma.post.create({
@@ -64,75 +67,6 @@ export async function updatePost(data: PostInput & { postId: string }) {
   return post
 }
 
-export async function getInitialPosts() {
-  return await prisma.post.findMany({
-    where: {
-      published: true
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatarUrl: true,
-          password: false,
-          role: true
-        }
-      },
-      _count: {
-        select: {
-          comments: true,
-          likes: true
-        }
-      },
-
-      likes: false,
-      favorites: false,
-      categories: true,
-      comments: false
-    },
-
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
-}
-
-export async function getPostsVersionTwo() {
-  return await prisma.post.findMany({
-    where: {
-      published: true
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatarUrl: true,
-          password: false,
-          role: true
-        }
-      },
-      _count: {
-        select: {
-          comments: true,
-          likes: true
-        }
-      },
-
-      likes: false,
-      favorites: false,
-      categories: true,
-      comments: false
-    },
-
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
-}
 export async function getPosts() {
   const posts = await prisma.post.findMany({
     where: {
@@ -152,43 +86,12 @@ export async function getPosts() {
       likes: true,
       favorites: true,
       categories: true,
+      postImages: true,
       _count: {
         select: {
           comments: true,
           likes: true,
           favorites: true
-        }
-      },
-      comments: {
-        include: {
-          _count: true,
-          likes: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-              avatarUrl: true,
-              password: false,
-              role: true
-            }
-          },
-          children: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  email: true,
-                  avatarUrl: true,
-                  password: false,
-                  role: false
-                }
-              },
-              children: true,
-              likes: true
-            }
-          }
         }
       }
     },
@@ -219,9 +122,11 @@ export async function getUserPosts(username: string) {
           role: true
         }
       },
+
       likes: true,
       favorites: true,
       categories: true,
+      postImages: true,
       comments: {
         include: {
           _count: true,
@@ -307,6 +212,7 @@ export const DefaultAllPostSelect = {
     select: DefaultUserSelect
   },
   categories: true,
+  postImages: true,
   _count: {
     select: {
       comments: true,
@@ -394,13 +300,17 @@ export async function getAllPostsV1WithFilter(filter: string) {
   })
 }
 
+// updted this to use at blog.$postId
 export async function getSinglePostById(id: string) {
   return await prisma.post.findUnique({
     where: {
       id
     },
     select: {
-      ...DefaultAllPostSelect
+      ...DefaultAllPostSelect,
+      comments: {
+        select: DefaultCommentSelect
+      }
     }
   })
 }

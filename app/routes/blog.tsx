@@ -10,7 +10,7 @@ import {
   useRouteError,
   useSearchParams
 } from '@remix-run/react'
-import { getAllPostsV1, getPosts } from '~/server/post.server'
+import { getPosts } from '~/server/post.server'
 
 import {
   filterPosts,
@@ -21,6 +21,8 @@ import {
 import React from 'react'
 import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
+import { H2, H3, Large, Muted } from '~/components/ui/typography'
+import BlogPreviewCard from '~/components/blog-ui/post/blog-preview-card'
 
 export const meta: MetaFunction = () => {
   return [
@@ -30,18 +32,16 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  // I don't need to use the posts from the loader because I'm using the posts from the getAllPostsV1 function but at the moment I'm using the old getPosts function to get the comments
-  // get all posts and comments
+export async function loader ({ request }: LoaderFunctionArgs) {
+
   const posts = await getPosts()
   // isolate all comments from posts and flatten them into one array for use with useMatchesData
 
-  const comments = posts.map((post) => post.comments).flat()
 
-  return json({ posts, comments })
+  return json({ posts })
 }
 
-export default function BlogRoute() {
+export default function BlogRoute () {
   const user = useOptionalUser()
   const isAdmin = user?.role === 'ADMIN'
   const { posts } = useLoaderData<typeof loader>()
@@ -67,13 +67,13 @@ export default function BlogRoute() {
 
   const visibleTags = isSearching
     ? new Set(
-        matchingPosts.flatMap((post) =>
-          post.categories.map((p) => p.value).filter(Boolean)
-        )
+      matchingPosts.flatMap((post) =>
+        post.categories.map((p) => p.value).filter(Boolean)
       )
+    )
     : new Set(categories.map((p) => p.value))
 
-  function toggleTag(tag: string) {
+  function toggleTag (tag: string) {
     setQuery((q) => {
       const expression = new RegExp(`\\b${tag}\\b`, 'ig')
 
@@ -87,76 +87,77 @@ export default function BlogRoute() {
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
-      <div className='flex flex-col items-center gap-20 '>
-        <h1>Welcome to the Blog for DerickCHoskinson.com </h1>
-        <h4>
+      <div className='flex flex-col items-center gap-10 md:gap-20'>
+        <H2>Welcome to the Blog for DerickCHoskinson.com </H2>
+        <H3>
           <b>Writings</b> about my projects as a novice web developer but mostly
           fake posts used to test the blog
-        </h4>
+        </H3>
       </div>
       <div className='flex w-full flex-col gap-2'>
         <Separator orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          <h6 className='text-left'>You can browse the Blog by </h6>
-          <h1>Category</h1>
-        </div>{' '}
+          <Muted className='text-left'>You can browse the Blog by </Muted>
+          <Large>Category</Large>
+        </div>{ ' ' }
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
-          {categories.map((category) => {
+          { categories.map((category) => {
             const selected = query.includes(category.value)
             return (
               <CustomCheckbox
-                key={category.id}
+                key={ category.id }
                 name='category'
-                tag={category.value}
-                selected={selected}
-                onClick={() => toggleTag(category.value)}
-                disabled={!visibleTags.has(category.value)}
+                tag={ category.value }
+                selected={ selected }
+                onClick={ () => toggleTag(category.value) }
+                disabled={ !visibleTags.has(category.value) }
               />
             )
-          })}
+          }) }
         </div>
       </div>
-      <div className='bg-violet flex w-full flex-col items-center gap-2'>
+      <div className='flex w-full flex-col items-center gap-2'>
         <Outlet />
         <Separator orientation='horizontal' />
-        <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          {!queryValue ? (
-            <>
-              <h6 className='text-left'>Viewing all the </h6>
-              <h1>Blog Posts</h1>
-            </>
-          ) : (
-            <div className='flex flex-row items-center gap-2 flex-wrap'>
-              <h6 className='text-left'>
-                Viewing Blog Posts with the category(ies)
-              </h6>
-              {queryValue.split(' ').map((tag) => (
-                <h1 key={tag} className='text-primary'>
-                  {tag}
-                </h1>
-              ))}
-            </div>
-          )}
-        </div>
+        { !queryValue ? (
+          <>
+            <h6 className='text-left'>Viewing all the </h6>
+            <h1>Blog Posts</h1>
+          </>
+        ) : (
+          <div className='flex flex-row items-center gap-2 flex-wrap'>
+            <h6 className='text-left'>
+              Viewing Blog Posts with the category(ies)
+            </h6>
+            { queryValue.split(' ').map((tag) => (
+              <h1 key={ tag } className='text-primary'>
+                { tag }
+              </h1>
+            )) }
+          </div>
+        ) }
+      </div>
 
-        <div className='flex flex-col gap-5 w-full items-center'>
-          {/* { matchingPosts?.map((post) => (
-            <BlogPreviewV2 key={ post.id } post={ post } />
-          )) } */}
-        </div>
+      <div
+
+        className='flex flex-col md:flex-row md:flex-wrap gap-2'
+      >
+        { matchingPosts?.map((post) => (
+          <BlogPreviewCard key={ post.id } post={ post } />
+        )) }
       </div>
     </div>
   )
 }
 
-export function ErrorBoundary() {
+export function ErrorBoundary () {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
-        <h1>oops</h1>
-        <h1>Status:{error.status}</h1>
-        <p>{error.data.message}</p>
+        <h1>oops blog Error boundry</h1>
+        <h1>Status:{ error.status }</h1>
+        <p>{ error.data.message }</p>
       </div>
     )
   }
@@ -170,7 +171,7 @@ export function ErrorBoundary() {
     <div>
       <h1>uh Oh..</h1>
       <p>something went wrong</p>
-      <pre>{errorMessage}</pre>
+      <pre>{ errorMessage }</pre>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import type { ZodError, ZodSchema } from 'zod'
 import type { UserType } from './server/schemas/schemas'
 import type { Category_v2, FullPost } from './server/schemas/schemas_v2'
 import { TechnologyStack } from './server/project.server'
+import { isAuthenticated } from './server/auth/auth.server'
 
 const DEFAULT_REDIRECT = '/'
 
