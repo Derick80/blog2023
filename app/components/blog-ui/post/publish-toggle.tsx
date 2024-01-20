@@ -31,7 +31,7 @@ const PublishToggle = ({ isPublished, postId }: { isPublished: boolean, postId: 
     }
 
     return (
-        <>
+        <div className="flex items-center space-x-2">
             <Switch
                 onCheckedChange={ handlePublish }
                 className='w-8 h-4'
@@ -42,11 +42,11 @@ const PublishToggle = ({ isPublished, postId }: { isPublished: boolean, postId: 
                     actionData?.errors?.publish ? 'publish-error' : undefined
                 }
 
-            >
-                <Label>{
-                    isPublished ? 'UnPublish' : 'Publish'
-                }</Label>
-            </Switch></>
+            />
+            <Label>
+                Published
+            </Label>
+        </div>
     )
 }
 

@@ -85,12 +85,8 @@ export async function action ({ request, params }: ActionFunctionArgs) {
     }
     const formData = await request.clone().formData()
 
+
     const intent = formData.get('intent')
-    const published = formData.get('published')
-    console.log(published, 'published');
-
-
-    console.log(intent, 'intent');
 
 
 
