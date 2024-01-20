@@ -10,10 +10,36 @@ export type PostInput = {
   content: string
   imageUrl: string
   featured: boolean
-  userId: string
-  categories: CategoryForm
+  userId?: string
+  categories: string
   postImages: PostImage[]
 }
+
+export async function createMinimalPost({
+  userId,
+  title
+}: {
+  userId: string
+  title: string
+}) {
+  return await prisma.post.create({
+    data: {
+      title,
+      slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      description: '',
+      content: '',
+      imageUrl: '',
+      featured: false,
+      published: false,
+      user: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  })
+}
+
 export async function createPost(data: PostInput) {
   const post = await prisma.post.create({
     data: {
@@ -30,41 +56,76 @@ export async function createPost(data: PostInput) {
         }
       },
       categories: {
-        connect: data.categories.map((category) => ({
-          value: category.value
-        }))
+        connectOrCreate: data.categories.split(',').map((category) => {
+          return {
+            where: {
+              value: category
+            },
+            create: {
+              value: category,
+              label: category
+            }
+          }
+        })
       }
     }
   })
   return post
 }
 
-export async function updatePost(data: PostInput & { postId: string }) {
-  const post = await prisma.post.update({
+export async function updatePost(
+  data: Omit<PostInput, 'postImages'> & { postId: string }
+) {
+  const { title, slug, description, content, imageUrl, featured, categories } =
+    data
+  return await prisma.post.update({
     where: {
-      id: data.postId
+      id: data.postId,
+      userId: data.userId
     },
     data: {
-      title: data.title,
-      slug: data.slug,
-      description: data.description,
-      content: data.content,
-      imageUrl: data.imageUrl,
-      featured: data.featured,
-      user: {
-        connect: {
-          id: data.userId
-        }
-      },
+      title,
+      slug,
+      description,
+      content,
+      imageUrl,
+      featured,
+      published: true,
       categories: {
-        set: data.categories.map((category) => ({
-          value: category.value
-        }))
+        connectOrCreate: categories.split(',').map((category) => {
+          return {
+            where: {
+              value: category
+            },
+            create: {
+              value: category,
+              label: category
+            }
+          }
+        })
       }
     }
   })
+}
 
-  return post
+export async function changePostPublishStatus({
+  postId,
+  userId,
+  published
+}: {
+  postId: string
+  userId: string
+  published: boolean
+}) {
+  return await prisma.post.update({
+    where: {
+      id: postId,
+      userId
+    },
+    data: {
+      published
+    }
+  })
 }
 
 export async function getPosts() {
@@ -311,6 +372,25 @@ export async function getSinglePostById(id: string) {
       comments: {
         select: DefaultCommentSelect
       }
+    }
+  })
+}
+
+export async function getDraftOrPostToEditById({
+  id,
+  userId
+}: {
+  id: string
+  userId: string
+}) {
+  return await prisma.post.findUnique({
+    where: {
+      id,
+      userId
+    },
+    include: {
+      categories: true,
+      postImages: true
     }
   })
 }

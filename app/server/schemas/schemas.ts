@@ -71,6 +71,10 @@ export type Post = SerializeFrom<PrismaPost> & {
   }
 }
 
+export type DraftType = SerializeFrom<PrismaPost> & {
+  postImages: PostImage[]
+  categories: Category[]
+}
 export type CategoryForm = {
   value: string
 }[]

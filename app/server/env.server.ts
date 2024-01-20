@@ -15,8 +15,7 @@ const schema = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   GOOGLE_CALLBACK_URL: z.string().min(1),
-  GOOGLE_CALLBACK_URL_PROD: z.string().min(1),
-  METRONOME_API_KEY: z.string().min(1)
+  GOOGLE_CALLBACK_URL_PROD: z.string().min(1)
 })
 
 declare global {
@@ -50,8 +49,7 @@ export function init() {
 export function getEnv() {
   return {
     NODE_ENV: process.env.NODE_ENV,
-    PORT: process.env.PORT,
-    METRONOME_API_KEY: process.env.METRONOME_API_KEY
+    PORT: process.env.PORT
   }
 }
 

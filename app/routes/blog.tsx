@@ -1,28 +1,47 @@
 import {
   json,
+  redirect,
   type LoaderFunctionArgs,
   type MetaFunction
 } from '@remix-run/node'
 import {
+  Form,
   isRouteErrorResponse,
+  Link,
   Outlet,
   useLoaderData,
   useRouteError,
   useSearchParams
 } from '@remix-run/react'
-import { getPosts } from '~/server/post.server'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
+} from '~/components/ui/navigation-menu'
+import { createMinimalPost, getPosts } from '~/server/post.server'
 
 import {
   filterPosts,
   useCategories,
   useOptionalUser,
-  useUpdateQueryStringValueWithoutNavigation
+  useUpdateQueryStringValueWithoutNavigation,
+  validateAction
 } from '~/utilities'
 import React from 'react'
 import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
 import { H2, H3, Large, Muted } from '~/components/ui/typography'
 import BlogPreviewCard from '~/components/blog-ui/post/blog-preview-card'
+import { getUserAndAdminStatus, isAuthenticated } from '~/server/auth/auth.server'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
+import { z } from 'zod'
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,18 +52,52 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader ({ request }: LoaderFunctionArgs) {
+  const { user, isAdmin } = await getUserAndAdminStatus(request)
+  console.log(isAdmin, 'isAdmin from loader');
 
   const posts = await getPosts()
-  // isolate all comments from posts and flatten them into one array for use with useMatchesData
 
-
-  return json({ posts })
+  return json({ posts, isAdmin })
 }
 
+const schema = z.discriminatedUnion('intent', [
+  z.object({
+    intent: z.literal('create'),
+    title: z.string()
+
+  })
+])
+
+type ActionInput = z.infer<typeof schema>
+export async function action ({ request }: LoaderFunctionArgs) {
+  const user = await isAuthenticated(request)
+  if (!user) throw new Error("Unauthorized");
+
+  const { formData, errors } = await validateAction({
+    request,
+    schema
+  })
+  if (errors) {
+    return json({ errors }, { status: 400 })
+
+  }
+
+  const { intent, ...rest } = formData as ActionInput
+
+
+  if (intent === 'create') {
+    const post = await createMinimalPost({ userId: user.id, title: rest.title })
+    if (!post) throw new Error('Post not created')
+    return redirect(`/blog/drafts/${post.id}`)
+  }
+
+
+
+
+}
 export default function BlogRoute () {
   const user = useOptionalUser()
-  const isAdmin = user?.role === 'ADMIN'
-  const { posts } = useLoaderData<typeof loader>()
+  const { posts, isAdmin } = useLoaderData<typeof loader>()
   const categories = useCategories()
 
   const [searchParams] = useSearchParams()
@@ -89,6 +142,7 @@ export default function BlogRoute () {
     <div className='flex w-full flex-col items-center gap-2'>
       <div className='flex flex-col items-center gap-10 md:gap-20'>
         <H2>Welcome to the Blog for DerickCHoskinson.com </H2>
+        { isAdmin && (<BlogAdminMenu />) }
         <H3>
           <b>Writings</b> about my projects as a novice web developer but mostly
           fake posts used to test the blog
@@ -150,6 +204,44 @@ export default function BlogRoute () {
   )
 }
 
+
+const BlogAdminMenu = () => {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink className={ navigationMenuTriggerStyle() } asChild>
+            <Link to='/blog/new'>
+
+              New Post
+            </Link>
+          </NavigationMenuLink>
+
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink className={ navigationMenuTriggerStyle() } asChild>
+            <Link to='/blog/drafts'>
+
+              Drafts
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>New Post</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <Form method='post' >
+              <Input type='text' name='title' placeholder='title' />
+              <Button type='submit'
+                name='intent'
+                value='create'
+              >Submit</Button>
+            </Form>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  )
+}
 export function ErrorBoundary () {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {

@@ -6,6 +6,7 @@ import type { Session } from '@remix-run/node'
 import { discordStrategy } from './strategy/discord.server'
 import { getUser } from '../user.server'
 import { totpStrategy } from './strategy/totp-server'
+import { UserType } from '../schemas/schemas'
 export const authenticator = new Authenticator<User['id']>(sessionStorage, {
   throwOnError: true,
   sessionErrorKey: 'authError'
@@ -22,11 +23,13 @@ export const isAuthenticated = async (request: Request) => {
   return getUser({ id: userId })
 }
 
-export const isAdminAndAuthenticated = async (request: Request) => {
-  const role = await authenticator.isAuthenticated(request)
-  if (!role) return null
-  return role
+export const getUserAndAdminStatus = async (request: Request) => {
+  const user = await isAuthenticated(request)
+  const isAdmin = user?.role === 'ADMIN'
+
+  return { user, isAdmin }
 }
+
 export const setUserSession = async (session: Session, userId: User['id']) => {
   session.set(authenticator.sessionKey, userId)
   return session

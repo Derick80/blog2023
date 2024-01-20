@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { Outlet, useLoaderData } from '@remix-run/react';
 import BlogPreviewCard from '~/components/blog-ui/post/blog-preview-card';
 import { isAuthenticated } from '~/server/auth/auth.server';
 import { getAllUserDraftsV1 } from '~/server/post.server';
@@ -26,6 +26,7 @@ export default function BlogDraftsRoute () {
 
             className='flex flex-col md:flex-row md:flex-wrap gap-2'
         >
+            <Outlet />
             { drafts?.map((post: Omit<Post, "comments">) => (
                 <BlogPreviewCard key={ post.id } post={ post } />
             )) }
