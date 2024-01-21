@@ -1,23 +1,24 @@
 import { useActionData, useFetcher } from '@remix-run/react'
+import { InfoIcon } from 'lucide-react'
 import React from 'react'
 import { Label } from '~/components/ui/label'
 import { Switch } from '~/components/ui/switch'
-import { action } from '~/routes/actions.cloudinary-delete'
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '~/components/ui/tooltip'
 
 
 
 const PublishToggle = ({ isPublished, postId }: { isPublished: boolean, postId: string }) => {
     const [isChecked, setChecked] = React.useState(isPublished)
-    console.log(isChecked, 'isChecked from publish-component');
+
 
     const actionData = useActionData<{ errors: Record<string, string> }>()
     const publishFetcher = useFetcher()
 
     const handlePublish = () => {
-        console.log(isChecked, 'isChecked from publish-toggle');
+
 
         setChecked(!isChecked)
-        console.log(isChecked, 'isChecked from publish-toggle');
+
         publishFetcher.submit({
             intent: 'publish',
             postId,
@@ -31,7 +32,7 @@ const PublishToggle = ({ isPublished, postId }: { isPublished: boolean, postId: 
     }
 
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
             <Switch
                 onCheckedChange={ handlePublish }
                 className='w-8 h-4'
@@ -43,9 +44,26 @@ const PublishToggle = ({ isPublished, postId }: { isPublished: boolean, postId: 
                 }
 
             />
-            <Label>
-                Published
+            <Label
+
+            >
+                Publish Post
             </Label>
+            <TooltipProvider>
+
+                <Tooltip >
+                    <TooltipTrigger asChild>
+                        <InfoIcon className='w-4 h-4' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p className='text-sm'>
+                            Publishing a post will make it visible to the public and redirect you to the post page.
+
+                        </p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            <input type='hidden' name='published' value={ isChecked.toString() } />
         </div>
     )
 }

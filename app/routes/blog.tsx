@@ -42,6 +42,7 @@ import { getUserAndAdminStatus, isAuthenticated } from '~/server/auth/auth.serve
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import { z } from 'zod'
+import { AllPostsDisplayType, Post } from '~/server/schemas/schemas'
 
 export const meta: MetaFunction = () => {
   return [
@@ -53,7 +54,6 @@ export const meta: MetaFunction = () => {
 
 export async function loader ({ request }: LoaderFunctionArgs) {
   const { user, isAdmin } = await getUserAndAdminStatus(request)
-  console.log(isAdmin, 'isAdmin from loader');
 
   const posts = await getPosts()
 
@@ -112,7 +112,7 @@ export default function BlogRoute () {
   const matchingPosts = React.useMemo(() => {
     if (!query) return posts
 
-    let filteredPosts = posts
+    let filteredPosts: AllPostsDisplayType[] = posts
     return filterPosts(filteredPosts, query)
   }, [query, posts])
 
@@ -153,7 +153,7 @@ export default function BlogRoute () {
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
           <Muted className='text-left'>You can browse the Blog by </Muted>
           <Large>Category</Large>
-        </div>{ ' ' }
+        </div>
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
           { categories.map((category) => {
             const selected = query.includes(category.value)

@@ -3,11 +3,11 @@ import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
-import type { Like_v2 } from '~/server/schemas/schemas_v2'
+import { Like } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
 export type LikeContainerProps = {
   postId: string
-  likes: Like_v2[]
+  likes: Pick<Like, 'userId' | 'postId'>[]
 }
 
 export default function LikeContainer ({ postId, likes }: LikeContainerProps) {

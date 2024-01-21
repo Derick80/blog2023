@@ -8,7 +8,7 @@ import {
 
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { getAllPostsV1 } from '~/server/post.server'
+import { getAllPostsV1, getPosts } from '~/server/post.server'
 
 import ContactWidget from '~/components/contact-widget'
 import ScrollingBanner from '~/components/scroll-banner_v2'
@@ -26,7 +26,7 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader () {
-  const posts = await getAllPostsV1(5)
+  const posts = await getPosts()
   if (!posts) throw new Error('No posts found')
 
   return json({ posts })

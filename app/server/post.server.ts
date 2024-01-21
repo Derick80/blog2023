@@ -76,8 +76,7 @@ export async function createPost(data: PostInput) {
 export async function updatePost(
   data: Omit<PostInput, 'postImages'> & { postId: string }
 ) {
-  const { title, slug, description, content, imageUrl, featured, categories } =
-    data
+  const { title, slug, description, content, imageUrl, featured } = data
   return await prisma.post.update({
     where: {
       id: data.postId,
@@ -90,40 +89,47 @@ export async function updatePost(
       content,
       imageUrl,
       featured,
-      published: true,
-      categories: {
-        connectOrCreate: categories.split(',').map((category) => {
-          return {
-            where: {
-              value: category
-            },
-            create: {
-              value: category,
-              label: category
-            }
-          }
-        })
-      }
+      published: true
     }
   })
 }
 
 export async function changePostPublishStatus({
-  postId,
+  id,
   userId,
   published
 }: {
-  postId: string
+  id: string
   userId: string
   published: boolean
 }) {
   return await prisma.post.update({
     where: {
-      id: postId,
+      id,
       userId
     },
     data: {
       published
+    }
+  })
+}
+
+export async function changePostFeaturedStatus({
+  id,
+  userId,
+  featured
+}: {
+  id: string
+  userId: string
+  featured: boolean
+}) {
+  return await prisma.post.update({
+    where: {
+      id,
+      userId
+    },
+    data: {
+      featured
     }
   })
 }
@@ -152,7 +158,9 @@ export async function getPosts() {
         select: {
           comments: true,
           likes: true,
-          favorites: true
+          favorites: true,
+          postImages: true,
+          categories: true
         }
       }
     },
@@ -391,6 +399,21 @@ export async function getDraftOrPostToEditById({
     include: {
       categories: true,
       postImages: true
+    }
+  })
+}
+
+export async function deletePost({
+  id,
+  userId
+}: {
+  id: string
+  userId: string
+}) {
+  return await prisma.post.delete({
+    where: {
+      id,
+      userId
     }
   })
 }

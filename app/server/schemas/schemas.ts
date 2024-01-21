@@ -16,11 +16,7 @@ export type UserSelect_v2 = Pick<
   'id' | 'username' | 'email' | 'avatarUrl' | 'role'
 >
 
-export type Like_v2 = Pick<PrismaLike, 'userId' | 'postId'>
-
-export type Favorite_v2 = Pick<PrismaFavorite, 'userId' | 'postId'>
-
-export type Category_v2 = Pick<PrismaCategory, 'id' | 'label' | 'value'>
+export type CategoryMinimal = Pick<PrismaCategory, 'id' | 'label' | 'value'>
 
 // typings for postImages
 export type PostImage = SerializeFrom<PrismaPostImage>
@@ -60,16 +56,17 @@ export type Post = SerializeFrom<PrismaPost> & {
   user: User
   postImages: PostImage[]
   likes: Like[]
-  favorites: Like[]
+  favorites: Favorite[]
   categories: Category[]
   comments: CommentWithChildren[]
   _count: {
     likes: number
     favorites: number
     comments: number
-    commentsLikes: number
   }
 }
+
+export type AllPostsDisplayType = SerializeFrom<PrismaPost>
 
 export type DraftType = SerializeFrom<PrismaPost> & {
   postImages: PostImage[]

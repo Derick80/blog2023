@@ -18,7 +18,6 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
     const isOwner = user?.id === userId
 
     const canEdit = isAdmin ? true : isOwner ? true : false
-    console.log(canEdit, 'canEdit from blog-preview-card');
 
 
     return (

@@ -3,12 +3,12 @@ import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import { useOptionalUser } from '~/utilities'
-import type { Favorite_v2 } from '~/server/schemas/schemas_v2'
+import type { Favorite } from '~/server/schemas/schemas'
 import { Button } from './ui/button'
 
 export type FavoriteContainerProps = {
   postId: string
-  favorites: Favorite_v2[]
+  favorites: Pick<Favorite, 'userId' | 'postId'>[]
 }
 
 export default function FavoriteContainer ({

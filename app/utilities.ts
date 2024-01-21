@@ -1,8 +1,8 @@
-import { useMatches, useRouteLoaderData } from '@remix-run/react'
+import { Params, useMatches, useRouteLoaderData } from '@remix-run/react'
 import React, { useMemo } from 'react'
-import type { ZodError, ZodSchema } from 'zod'
-import type { UserType } from './server/schemas/schemas'
-import type { Category_v2, FullPost } from './server/schemas/schemas_v2'
+import type { ZodError, ZodSchema, ZodType } from 'zod'
+import type { CategoryMinimal, Post, UserType } from './server/schemas/schemas'
+
 import { TechnologyStack } from './server/project.server'
 import { isAuthenticated } from './server/auth/auth.server'
 
@@ -30,15 +30,20 @@ export function safeRedirect(
   return to
 }
 
+interface Match {
+  pathname: string
+  params: Params<string>
+  data: any
+  handle: any
+}
+
 /**
  * This base hook is used in other hooks to quickly search for specific data
  * across all loader data using useMatches.
  * @param {string} id The route id
  * @returns {JSON|undefined} The router data or undefined if not found
  */
-export function useMatchesData(
-  id: string
-): Record<string, unknown> | undefined {
+export function useMatchesData(id: string): Match['data'] | undefined {
   const matchingRoutes = useMatches()
   const route = useMemo(
     () => matchingRoutes.find((route) => route.id === id),
@@ -99,6 +104,42 @@ export async function validateAction<ActionInput>({
     }
   }
 }
+
+// I modified this function to work with Zod schemas and Remix actions that use intent to determine which action to take
+
+export async function validateAction2<T extends ZodType<any, any, any>>({
+  request,
+  schema
+}: {
+  request: Request
+  schema: T
+}): Promise<{
+  formData: T['_output']
+  errors: ActionErrors<T['_output']> | null
+}> {
+  const formDataEntries = await request.formData()
+  const body: any = {}
+  formDataEntries.forEach((value, key) => {
+    body[key] = value
+  })
+
+  try {
+    const formData = schema.parse(body)
+    return { formData, errors: null }
+  } catch (error) {
+    console.log(error)
+
+    const errors = error as ZodError<T>
+    const formattedErrors: ActionErrors<T> = {}
+    errors.issues.forEach((issue) => {
+      formattedErrors[issue.path[0] as keyof T] = issue.message
+    })
+    return {
+      formData: body as T,
+      errors: formattedErrors
+    }
+  }
+}
 // format date function to return data as X hours/days ago
 export function formatDateAgo(date: string) {
   const newDate = new Date(date)
@@ -121,21 +162,24 @@ export function useTechnologies() {
   const { technologies } = useRouteLoaderData('projects') as {
     technologies: TechnologyStack[]
   }
+  return technologies as TechnologyStack[]
 }
 
 export function useCategories() {
   const { categories } = useRouteLoaderData('root') as {
-    categories: Category_v2[]
+    categories: CategoryMinimal[]
   }
   // fetch categories from the server
 
-  return categories as Category_v2[]
+  return categories as CategoryMinimal[]
 }
 
 type CatInput = {
-  categories: Category_v2[]
+  categories: CategoryMinimal[]
 }
-export function getUniqueCategories({ categories }: CatInput): Category_v2[] {
+export function getUniqueCategories({
+  categories
+}: CatInput): CategoryMinimal[] {
   let uniqueCategories = Object.values(
     categories.reduce(
       (acc, curr) => {
@@ -144,7 +188,7 @@ export function getUniqueCategories({ categories }: CatInput): Category_v2[] {
         }
         return acc
       },
-      {} as Record<string, Category_v2>
+      {} as Record<string, CategoryMinimal>
     )
   )
 
@@ -184,7 +228,7 @@ export function useUpdateQueryStringValueWithoutNavigation(
   }, [queryKey, queryValue])
 }
 
-export function filterPosts(posts: Array<FullPost>, searchString: string) {
+export function filterPosts(posts: Array<Post>, searchString: string) {
   if (!searchString) return posts
 
   const searches = new Set(searchString.split(' '))

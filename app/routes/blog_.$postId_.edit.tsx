@@ -25,7 +25,7 @@ import ImageUploader from '~/components/blog-ui/image-fetcher'
 import { Button } from '~/components/ui/button'
 import SelectBox from '~/components/select'
 import * as Switch from '@radix-ui/react-switch'
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
   if (!user) {
     return redirect('/login')
@@ -59,7 +59,7 @@ const schema = z.object({
 
 type ActionInput = z.infer<typeof schema>
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
 
@@ -113,7 +113,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function PostEdit() {
+export default function PostEdit () {
   // use Navigate to go back to the previous page
   const navigate = useNavigate()
   const data = useLoaderData<typeof loader>()
@@ -129,7 +129,7 @@ export default function PostEdit() {
   return (
     <div className='mx-auto flex h-full w-fit flex-col p-1'>
       <div className='flex items-center justify-between'>
-        {data.post.content}
+        { data.post.content }
       </div>
       <Form
         id='post-edit'
@@ -141,50 +141,50 @@ export default function PostEdit() {
           type='text'
           name='title'
           className='rounded-md border text-sm text-black'
-          defaultValue={data.post.title}
-          aria-invalid={Boolean(actionData?.errors?.title) || undefined}
+          defaultValue={ data.post.title }
+          aria-invalid={ Boolean(actionData?.errors?.title) || undefined }
           aria-errormessage={
             actionData?.errors?.title ? 'title-error' : undefined
           }
         />
-        {actionData?.errors?.title && (
+        { actionData?.errors?.title && (
           <p id='title-error' className='text-red-500'>
-            {actionData?.errors?.title}
+            { actionData?.errors?.title }
           </p>
-        )}
+        ) }
         <label htmlFor='description'>Description</label>
         <input
           type='text'
           name='description'
           className='rounded-md border text-sm text-black'
-          defaultValue={data.post.description}
-          aria-invalid={Boolean(actionData?.errors?.description) || undefined}
+          defaultValue={ data.post.description }
+          aria-invalid={ Boolean(actionData?.errors?.description) || undefined }
           aria-errormessage={
             actionData?.errors?.description ? 'description-error' : undefined
           }
-          onChange={void 0}
+          onChange={ void 0 }
         />
-        {actionData?.errors?.description && (
+        { actionData?.errors?.description && (
           <p id='description-error' role='alert' className='text-red-500'>
-            {actionData?.errors?.description}
+            { actionData?.errors?.description }
           </p>
-        )}
+        ) }
 
         <label htmlFor='content'>Content</label>
-        <TipTap content={data.post.content} />
-        {actionData?.errors?.content && (
+        <TipTap content={ data.post.content } />
+        { actionData?.errors?.content && (
           <p id='content-error' role='alert' className='text-red-500'>
-            {actionData?.errors?.content}
+            { actionData?.errors?.content }
           </p>
-        )}
+        ) }
 
         <label htmlFor='categories'>Categories</label>
         <div className='p-1'>
           <SelectBox
             multiple
             name='categories'
-            options={parentData.categories}
-            picked={data.post.categories}
+            options={ parentData.categories }
+            picked={ data.post.categories }
           />
         </div>
 
@@ -203,13 +203,13 @@ export default function PostEdit() {
           className='text-slate12 rounded-xl'
           name='imageUrl'
           placeholder='Image URL'
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={ url }
+          onChange={ (e) => setUrl(e.target.value) }
         />
-        <img src={url} alt={data.post.title} className='w-1/2' />
+        <img src={ url } alt={ data.post.title } className='w-1/2' />
       </Form>
-      <ImageUploader setUrl={setUrl} />
-      <div className='text-slate12 flex flex-row items-center justify-end gap-2'>
+      <ImageUploader setUrl={ setUrl } />
+      <div className='flex flex-row items-center justify-end gap-2'>
         <Button
           form='post-edit'
           type='submit'
@@ -222,9 +222,9 @@ export default function PostEdit() {
         </Button>
         <Button
           type='button'
-          onClick={() => {
+          onClick={ () => {
             navigate(-1)
-          }}
+          } }
         >
           Cancel
         </Button>

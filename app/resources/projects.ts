@@ -1,6 +1,6 @@
 import { ProjectImage } from '@prisma/client'
 import type { User } from '~/server/schemas/schemas'
-import type { Category_v2 } from '~/server/schemas/schemas_v2'
+import type { CategoryMinimal } from '~/server/schemas/schemas'
 
 export type ProjectStatus = 'Active' | 'Completed' | 'Abandoned'
 export type Project = {
