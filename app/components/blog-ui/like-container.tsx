@@ -10,7 +10,7 @@ export type LikeContainerProps = {
   likes: Pick<Like, 'userId' | 'postId'>[]
 }
 
-export default function LikeContainer ({ postId, likes }: LikeContainerProps) {
+export default function LikeContainer({ postId, likes }: LikeContainerProps) {
   const user = useOptionalUser()
   const currentUser = user?.id || ''
   const fetcher = useFetcher()
@@ -42,20 +42,20 @@ export default function LikeContainer ({ postId, likes }: LikeContainerProps) {
   }
 
   return (
-
-    <Button variant='ghost' size='icon' disabled={ !user } onClick={ toggleLike }>
-      { isLiked ? (
-        <HeartFilledIcon className='border-2 border-muted bg-popover' style={ {
-          color: 'red',
-          fill: 'red'
-
-        } } />
+    <Button variant='ghost' size='icon' disabled={!user} onClick={toggleLike}>
+      {isLiked ? (
+        <HeartFilledIcon
+          className='border-2 border-muted bg-popover'
+          style={{
+            color: 'red',
+            fill: 'red'
+          }}
+        />
       ) : (
         <HeartIcon className='border-2 border-muted bg-popover' />
-      ) }
-      <span className="relative top-1 text-xs">{ likeCount }</span>
+      )}
+      <span className='relative top-1 text-xs'>{likeCount}</span>
     </Button>
-
   )
 }
 // had to change bottom-1 to top-1 because the icon was moving down instead of up

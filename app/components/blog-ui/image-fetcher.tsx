@@ -2,7 +2,7 @@ import { useFetcher, useParams } from '@remix-run/react'
 import React from 'react'
 import { Button } from '~/components/ui/button'
 
-export default function ImageUploader ({
+export default function ImageUploader({
   setUrl,
   preview = true
 }: {
@@ -10,15 +10,14 @@ export default function ImageUploader ({
   preview?: Boolean
 }) {
   const postId = useParams()
-  console.log(postId, 'postId');
-
+  console.log(postId, 'postId')
 
   // figure out a way to disable the button if the file is not selected
   const [readyToUpload, setReadyToUpload] = React.useState(false)
   const fetcher = useFetcher() as {
     submit: (data: any) => void
     data: {
-      imageUrl: string,
+      imageUrl: string
       postId: string
     }
     Form: React.FC<any>
@@ -38,7 +37,7 @@ export default function ImageUploader ({
         method='POST'
         encType='multipart/form-data'
         action='/actions/cloudinary'
-        onChange={ onChange }
+        onChange={onChange}
         className='flex flex-row items-center gap-2'
       >
         <label htmlFor='imageUrl' className='subtitle'></label>
@@ -49,26 +48,26 @@ export default function ImageUploader ({
           name='images'
           accept='image/*'
         />
-        <Button disabled={ !readyToUpload } variant='default' type='submit'>
+        <Button disabled={!readyToUpload} variant='default' type='submit'>
           Upload
         </Button>
       </fetcher.Form>
-      { preview && fetcher.data ? (
+      {preview && fetcher.data ? (
         <div className='mx-auto flex h-fit w-12 flex-row items-center '>
           <input
             type='hidden'
             name='imageUrl'
-            onChange={ void setUrl(fetcher?.data.imageUrl) }
+            onChange={void setUrl(fetcher?.data.imageUrl)}
           />
-          { fetcher.data.imageUrl && (
+          {fetcher.data.imageUrl && (
             <img
-              src={ fetcher?.data?.imageUrl }
-              alt={ 'no' }
+              src={fetcher?.data?.imageUrl}
+              alt={'no'}
               className='h-full w-full object-cover'
             />
-          ) }
+          )}
         </div>
-      ) : null }
+      ) : null}
     </>
   )
 }

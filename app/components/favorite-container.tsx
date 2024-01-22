@@ -11,13 +11,12 @@ export type FavoriteContainerProps = {
   favorites: Pick<Favorite, 'userId' | 'postId'>[]
 }
 
-export default function FavoriteContainer ({
+export default function FavoriteContainer({
   postId,
   favorites
 }: FavoriteContainerProps) {
   const user = useOptionalUser()
   const currentUser = user?.id || ''
-
 
   const fetcher = useFetcher()
   const userFavoritedPost = favorites?.find(
@@ -44,20 +43,18 @@ export default function FavoriteContainer ({
   }
 
   return (
-
     <Button
       variant='ghost'
       size='icon'
       className=''
-      onClick={ toggleFavorite }
-      disabled={ !user }
+      onClick={toggleFavorite}
+      disabled={!user}
     >
-      { isFavorite ? (
-        <BookmarkFilledIcon style={ { color: 'red', fill: 'red' } } />
+      {isFavorite ? (
+        <BookmarkFilledIcon style={{ color: 'red', fill: 'red' }} />
       ) : (
         <BookmarkIcon className='border-2 border-muted bg-popover' />
-      ) }
+      )}
     </Button>
-
   )
 }

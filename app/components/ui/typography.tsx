@@ -9,14 +9,14 @@ type HeaderProps = React.HTMLAttributes<HTMLHeadingElement> & {
 export const H1 = React.forwardRef<HTMLHeadingElement, HeaderProps>(
   ({ className, children, ...props }, ref) => (
     <h1
-      ref={ ref }
-      className={ cn(
+      ref={ref}
+      className={cn(
         'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
         className
-      ) }
-      { ...props }
+      )}
+      {...props}
     >
-      { children }
+      {children}
     </h1>
   )
 )
@@ -25,14 +25,14 @@ H1.displayName = 'H1'
 export const H2 = React.forwardRef<HTMLHeadingElement, HeaderProps>(
   ({ className, children, ...props }, ref) => (
     <h2
-      ref={ ref }
-      className={ cn(
+      ref={ref}
+      className={cn(
         'scroll-m-20 border-b border-primary pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0',
         className
-      ) }
-      { ...props }
+      )}
+      {...props}
     >
-      { children }
+      {children}
     </h2>
   )
 )
@@ -41,39 +41,72 @@ H2.displayName = 'H2'
 export const H3 = React.forwardRef<HTMLHeadingElement, HeaderProps>(
   ({ className, children, ...props }, ref) => (
     <h3
-      ref={ ref }
-      className={ cn(
+      ref={ref}
+      className={cn(
         'scroll-m-20 text-2xl font-semibold tracking-tight',
         className
-      ) }
-      { ...props }
+      )}
+      {...props}
     >
-      { children }
+      {children}
     </h3>
   )
 )
 
 H3.displayName = 'H3'
-export function P ({ children, className }: { children: ReactNode, className?: string }) {
-  return <p className={ cn('leading-7 [&:not(:first-child)]:mt-6', className) }>{ children }</p>
-}
-
-export function Large ({ children, className }: { children: ReactNode, className?: string }) {
-  return <div className={ cn('text-lg font-semibold', className) }>{ children }</div>
-}
-
-export function Medium ({ children,
+export function P({
+  children,
   className
-
-}: { children: ReactNode, className?: string }) {
-  return <div className={ cn('text-base font-semibold', className) }>{ children }</div>
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <p className={cn('leading-7 [&:not(:first-child)]:mt-6', className)}>
+      {children}
+    </p>
+  )
 }
 
-export function Small ({ children, className }: { children: ReactNode, className?: string }) {
-  return <small className={ cn('text-sm font-medium leading-none', className) }>{ children }</small>
+export function Large({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('text-lg font-semibold', className)}>{children}</div>
+  )
 }
 
-export function Muted ({
+export function Medium({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('text-base font-semibold', className)}>{children}</div>
+  )
+}
+
+export function Small({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <small className={cn('text-sm font-medium leading-none', className)}>
+      {children}
+    </small>
+  )
+}
+
+export function Muted({
   children,
   className
 }: {
@@ -81,6 +114,6 @@ export function Muted ({
   className?: string
 }) {
   return (
-    <p className={ cn('text-sm text-muted-foreground', className) }>{ children }</p>
+    <p className={cn('text-sm text-muted-foreground', className)}>{children}</p>
   )
 }

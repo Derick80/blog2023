@@ -22,7 +22,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   NavigationMenuViewport,
-  navigationMenuTriggerStyle,
+  navigationMenuTriggerStyle
 } from '~/components/ui/navigation-menu'
 import { createMinimalPost, getPosts } from '~/server/post.server'
 
@@ -38,7 +38,10 @@ import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
 import { H2, H3, Large, Muted } from '~/components/ui/typography'
 import BlogPreviewCard from '~/components/blog-ui/post/blog-preview-card'
-import { getUserAndAdminStatus, isAuthenticated } from '~/server/auth/auth.server'
+import {
+  getUserAndAdminStatus,
+  isAuthenticated
+} from '~/server/auth/auth.server'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import { z } from 'zod'
@@ -52,7 +55,7 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const { user, isAdmin } = await getUserAndAdminStatus(request)
 
   const posts = await getPosts()
@@ -64,14 +67,13 @@ const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('create'),
     title: z.string()
-
   })
 ])
 
 type ActionInput = z.infer<typeof schema>
-export async function action ({ request }: LoaderFunctionArgs) {
+export async function action({ request }: LoaderFunctionArgs) {
   const user = await isAuthenticated(request)
-  if (!user) throw new Error("Unauthorized");
+  if (!user) throw new Error('Unauthorized')
 
   const { formData, errors } = await validateAction({
     request,
@@ -79,23 +81,17 @@ export async function action ({ request }: LoaderFunctionArgs) {
   })
   if (errors) {
     return json({ errors }, { status: 400 })
-
   }
 
   const { intent, ...rest } = formData as ActionInput
-
 
   if (intent === 'create') {
     const post = await createMinimalPost({ userId: user.id, title: rest.title })
     if (!post) throw new Error('Post not created')
     return redirect(`/blog/drafts/${post.id}`)
   }
-
-
-
-
 }
-export default function BlogRoute () {
+export default function BlogRoute() {
   const user = useOptionalUser()
   const { posts, isAdmin } = useLoaderData<typeof loader>()
   const categories = useCategories()
@@ -120,13 +116,13 @@ export default function BlogRoute () {
 
   const visibleTags = isSearching
     ? new Set(
-      matchingPosts.flatMap((post) =>
-        post.categories.map((p) => p.value).filter(Boolean)
+        matchingPosts.flatMap((post) =>
+          post.categories.map((p) => p.value).filter(Boolean)
+        )
       )
-    )
     : new Set(categories.map((p) => p.value))
 
-  function toggleTag (tag: string) {
+  function toggleTag(tag: string) {
     setQuery((q) => {
       const expression = new RegExp(`\\b${tag}\\b`, 'ig')
 
@@ -142,7 +138,7 @@ export default function BlogRoute () {
     <div className='flex w-full flex-col items-center gap-2'>
       <div className='flex flex-col items-center gap-10 md:gap-20'>
         <H2>Welcome to the Blog for DerickCHoskinson.com </H2>
-        { isAdmin && (<BlogAdminMenu />) }
+        {isAdmin && <BlogAdminMenu />}
         <H3>
           <b>Writings</b> about my projects as a novice web developer but mostly
           fake posts used to test the blog
@@ -155,25 +151,25 @@ export default function BlogRoute () {
           <Large>Category</Large>
         </div>
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
-          { categories.map((category) => {
+          {categories.map((category) => {
             const selected = query.includes(category.value)
             return (
               <CustomCheckbox
-                key={ category.id }
+                key={category.id}
                 name='category'
-                tag={ category.value }
-                selected={ selected }
-                onClick={ () => toggleTag(category.value) }
-                disabled={ !visibleTags.has(category.value) }
+                tag={category.value}
+                selected={selected}
+                onClick={() => toggleTag(category.value)}
+                disabled={!visibleTags.has(category.value)}
               />
             )
-          }) }
+          })}
         </div>
       </div>
       <div className='flex w-full flex-col items-center gap-2'>
         <Outlet />
         <Separator orientation='horizontal' />
-        { !queryValue ? (
+        {!queryValue ? (
           <>
             <h6 className='text-left'>Viewing all the </h6>
             <h1>Blog Posts</h1>
@@ -183,58 +179,46 @@ export default function BlogRoute () {
             <h6 className='text-left'>
               Viewing Blog Posts with the category(ies)
             </h6>
-            { queryValue.split(' ').map((tag) => (
-              <h1 key={ tag } className='text-primary'>
-                { tag }
+            {queryValue.split(' ').map((tag) => (
+              <h1 key={tag} className='text-primary'>
+                {tag}
               </h1>
-            )) }
+            ))}
           </div>
-        ) }
+        )}
       </div>
 
-      <div
-
-        className='flex flex-col md:flex-row md:flex-wrap gap-2'
-      >
-        { matchingPosts?.map((post) => (
-          <BlogPreviewCard key={ post.id } post={ post } />
-        )) }
+      <div className='flex flex-col md:flex-row md:flex-wrap gap-2'>
+        {matchingPosts?.map((post) => (
+          <BlogPreviewCard key={post.id} post={post} />
+        ))}
       </div>
     </div>
   )
 }
-
 
 const BlogAdminMenu = () => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuLink className={ navigationMenuTriggerStyle() } asChild>
-            <Link to='/blog/new'>
-
-              New Post
-            </Link>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+            <Link to='/blog/new'>New Post</Link>
           </NavigationMenuLink>
-
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={ navigationMenuTriggerStyle() } asChild>
-            <Link to='/blog/drafts'>
-
-              Drafts
-            </Link>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+            <Link to='/blog/drafts'>Drafts</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger>New Post</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <Form method='post' >
+            <Form method='post'>
               <Input type='text' name='title' placeholder='title' />
-              <Button type='submit'
-                name='intent'
-                value='create'
-              >Submit</Button>
+              <Button type='submit' name='intent' value='create'>
+                Submit
+              </Button>
             </Form>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -242,14 +226,14 @@ const BlogAdminMenu = () => {
     </NavigationMenu>
   )
 }
-export function ErrorBoundary () {
+export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
         <h1>oops blog Error boundry</h1>
-        <h1>Status:{ error.status }</h1>
-        <p>{ error.data.message }</p>
+        <h1>Status:{error.status}</h1>
+        <p>{error.data.message}</p>
       </div>
     )
   }
@@ -263,7 +247,7 @@ export function ErrorBoundary () {
     <div>
       <h1>uh Oh..</h1>
       <p>something went wrong</p>
-      <pre>{ errorMessage }</pre>
+      <pre>{errorMessage}</pre>
     </div>
   )
 }

@@ -24,7 +24,7 @@ import { useCategories, validateAction } from '~/utilities'
 import * as Switch from '@radix-ui/react-switch'
 import SelectBox from '~/components/select'
 import CustomSelectBox from '~/components/custom-select'
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get('Cookie'))
   const user = await isAuthenticated(request)
   if (!user) {
@@ -52,7 +52,7 @@ export const schema = z.object({
 })
 
 type ActionInput = z.infer<typeof schema>
-export async function action ({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
   // check if the user is authenticated
@@ -104,7 +104,7 @@ export async function action ({ request }: ActionFunctionArgs) {
   })
 }
 
-export default function NewPostRoute () {
+export default function NewPostRoute() {
   const actionData = useActionData<{ errors: ActionInput }>()
   const [url, setUrl] = React.useState('')
 
@@ -121,14 +121,14 @@ export default function NewPostRoute () {
 
   return (
     <div className=' mx-auto flex h-full w-full flex-col p-1'>
-      <ImageUploader setUrl={ setUrl } />
+      <ImageUploader setUrl={setUrl} />
 
       <Form className='flex w-full  flex-col ' method='post'>
         <input
           type='hidden'
           className='rounded-xl text-black'
           name='imageUrl'
-          value={ url }
+          value={url}
         />
         <label htmlFor='title'>Title</label>
         <input
@@ -137,36 +137,36 @@ export default function NewPostRoute () {
           name='title'
           type='text'
           placeholder='Title'
-          defaultValue={ actionData?.errors?.title }
-          aria-invalid={ Boolean(actionData?.errors?.title) || undefined }
+          defaultValue={actionData?.errors?.title}
+          aria-invalid={Boolean(actionData?.errors?.title) || undefined}
           aria-errormessage={
             actionData?.errors?.title ? 'title-error' : undefined
           }
-          onChange={ (e) => console.log(e.target.value) }
+          onChange={(e) => console.log(e.target.value)}
         />
-        { actionData?.errors?.title && (
+        {actionData?.errors?.title && (
           <p id='title-error' className='text-red-500'>
-            { actionData?.errors?.title }
+            {actionData?.errors?.title}
           </p>
-        ) }
+        )}
         <label htmlFor='description'>Description</label>
         <input
           type='text'
           className='rounded-md border text-sm text-black'
           placeholder='Description...'
           name='description'
-          defaultValue={ actionData?.errors?.description }
-          aria-invalid={ Boolean(actionData?.errors?.description) || undefined }
+          defaultValue={actionData?.errors?.description}
+          aria-invalid={Boolean(actionData?.errors?.description) || undefined}
           aria-errormessage={
             actionData?.errors?.description ? 'description-error' : undefined
           }
-          onChange={ (e) => console.log(e.target.value) }
+          onChange={(e) => console.log(e.target.value)}
         />
-        { actionData?.errors?.description && (
+        {actionData?.errors?.description && (
           <p id='description-error' role='alert' className='text-red-500'>
-            { actionData?.errors?.description }
+            {actionData?.errors?.description}
           </p>
-        ) }
+        )}
 
         <label htmlFor='content'>Content</label>
 
@@ -181,30 +181,30 @@ export default function NewPostRoute () {
         /> */}
         <CustomSelectBox
           name='categories'
-          multiple={ true }
-          options={ categories.map((cat) => cat.value) }
-          picked={ [] }
-          creatable={ true }
+          multiple={true}
+          options={categories.map((cat) => cat.value)}
+          picked={[]}
+          creatable={true}
           actionPath='/categories'
         />
 
-        { actionData?.errors?.categories && (
+        {actionData?.errors?.categories && (
           <p id='categories-error' role='alert' className='text-red-500'>
-            { actionData?.errors?.categories }
+            {actionData?.errors?.categories}
           </p>
-        ) }
+        )}
         <label htmlFor='featured'>Featured</label>
         <Switch.Root
           className='bg-blackA9 shadow-blackA7 relative h-[25px] w-[42px] cursor-default rounded-full shadow-[0_2px_10px] outline-none focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-black'
           id='featured'
           name='featured'
-          style={ { WebkitTapHighlightColor: 'transparent' } }
+          style={{ WebkitTapHighlightColor: 'transparent' }}
         >
           <Switch.Thumb className='shadow-blackA7 block h-[21px] w-[21px] translate-x-0.5 rounded-full bg-white shadow-[0_2px_2px] transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]' />
         </Switch.Root>
         <div className='flex justify-center'>
           <Button variant='default' type='submit'>
-            { text }
+            {text}
           </Button>
         </div>
       </Form>
@@ -212,14 +212,14 @@ export default function NewPostRoute () {
   )
 }
 
-export function ErrorBoundary () {
+export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
         <h1>oops</h1>
-        <h1>Status:{ error.status }</h1>
-        <p>{ error.data.message }</p>
+        <h1>Status:{error.status}</h1>
+        <p>{error.data.message}</p>
       </div>
     )
   }
@@ -235,7 +235,7 @@ export function ErrorBoundary () {
       <p className='text-xl'>
         something went wrong This is the error boundry for a new blog post
       </p>
-      <pre>{ errorMessage }</pre>
+      <pre>{errorMessage}</pre>
     </div>
   )
 }

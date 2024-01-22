@@ -45,42 +45,42 @@ export const ImageController = ({
   return (
     <div className='max-w-lg mx-auto p-4'>
       <h1>Image Controller</h1>
-      { postImages?.length > 0 ? (
+      {postImages?.length > 0 ? (
         <div className='grid grid-cols-3 grid-rows-auto gap-4 md:grid-cols-3 lg:grid-cols-4'>
-          { postImages?.map((image) => (
+          {postImages?.map((image) => (
             <ImageWithPlaceholder
-              primaryPostImage={ primaryImage }
-              key={ image.id }
-              postId={ postId }
-              src={ image.imageUrl }
-              publicId={ image.cloudinaryPublicId }
-              imageId={ image.id }
+              primaryPostImage={primaryImage}
+              key={image.id}
+              postId={postId}
+              src={image.imageUrl}
+              publicId={image.cloudinaryPublicId}
+              imageId={image.id}
               placeholderSrc={
                 'https://res.cloudinary.com/dch-photo/image/upload/v1662199076/samples/cloudinary-icon.png'
               }
             />
-          )) }
+          ))}
         </div>
       ) : (
         <p>No images available.</p>
-      ) }
+      )}
       <Separator />
       <div className='grid w-full max-w-sm items-center gap-1.5'>
         <Form
           method='POST'
           action='/actions/cloudinary_v2'
           encType='multipart/form-data'
-          navigate={ false }
-          onChange={ onFileChange }
+          navigate={false}
+          onChange={onFileChange}
         >
           <Label htmlFor='image'>Image</Label>
           <FakeUpload />
-          <input type='hidden' name='associatedId' value={ postId } />
+          <input type='hidden' name='associatedId' value={postId} />
           <input type='hidden' name='modelDestination' value='post' />
 
           <Button
             className='w-full relative bottom-0'
-            disabled={ !readyToUpload }
+            disabled={!readyToUpload}
             variant='default'
             type='submit'
           >
@@ -92,7 +92,7 @@ export const ImageController = ({
   )
 }
 
-export function FakeUpload () {
+export function FakeUpload() {
   const getFileUrl = useFileURLs()
 
   const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
@@ -124,9 +124,9 @@ export function FakeUpload () {
   return (
     <div>
       <div
-        { ...getRootProps({
+        {...getRootProps({
           className: isDragActive ? 'bg-neutral-50' : ''
-        }) }
+        })}
       >
         <Label htmlFor='image-input' className='block'>
           <div className='grid cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800'>
@@ -135,7 +135,7 @@ export function FakeUpload () {
           </div>
 
           <Input
-            { ...getInputProps() }
+            {...getInputProps()}
             id='imageUrl'
             name='imageUrl'
             multiple
@@ -147,15 +147,15 @@ export function FakeUpload () {
       </div>
 
       <div className='flex flex-row flex-wrap gap-x-2'>
-        { pendingFiles.map((file, index) => (
-          <FakeUploadImage src={ getFileUrl(file) } key={ index } />
-        )) }
+        {pendingFiles.map((file, index) => (
+          <FakeUploadImage src={getFileUrl(file)} key={index} />
+        ))}
       </div>
     </div>
   )
 }
 
-function FakeUploadImage ({ src }: { src: string }) {
+function FakeUploadImage({ src }: { src: string }) {
   const [progress, setProgress] = React.useState(0)
   const [isHidden, setIsHidden] = React.useState(false)
 
@@ -177,20 +177,20 @@ function FakeUploadImage ({ src }: { src: string }) {
 
   return (
     <div className='group relative mt-2 h-20 w-20 rounded-lg border border-neutral-100'>
-      { progress <= 99 ? (
+      {progress <= 99 ? (
         <div
           className='absolute bottom-0 left-0 right-0 top-0 origin-top rounded-t-lg bg-black/50 transition-transform duration-300'
-          style={ { transform: `scaleY(${(99 - progress) / 100.0})` } }
+          style={{ transform: `scaleY(${(99 - progress) / 100.0})` }}
         />
-      ) : null }
+      ) : null}
 
-      <img src={ src } alt='Uploaded file' className='rounded-lg' />
+      <img src={src} alt='Uploaded file' className='rounded-lg' />
 
       <button
         type='button'
-        onClick={ () => {
+        onClick={() => {
           setIsHidden(true)
-        } }
+        }}
         className='absolute -right-[0.625rem] -top-2 hidden rounded-full bg-white text-black/50 hover:block hover:text-black group-hover:block'
       >
         <CircleBackslashIcon className='block h-6 w-6' />

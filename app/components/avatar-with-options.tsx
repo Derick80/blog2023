@@ -20,9 +20,9 @@ const AvatarWithOptions = ({ user }: AvatarWithOptionsProps) => {
       <HoverCardTrigger asChild>
         <Button variant='outline' size='icon'>
           <Avatar>
-            { avatarUrl && username ? (
-              <AvatarImage src={ avatarUrl } alt={ username } />
-            ) : null }
+            {avatarUrl && username ? (
+              <AvatarImage src={avatarUrl} alt={username} />
+            ) : null}
             <AvatarFallback>
               <UserPlaceHolder />
             </AvatarFallback>
@@ -44,18 +44,19 @@ const AvatarWithOptions = ({ user }: AvatarWithOptionsProps) => {
             <ExitIcon />
           </Button>
         </Form>
-        { !user ? (
+        {!user ? (
           <NavLink
             title='Follow this link to login to your account'
             to='/login'
-            className={ ({ isActive }) =>
-              `m-0 flex items-center justify-center p-1 ${isActive ? 'bg-gray-100 dark:bg-gray-800' : ''
+            className={({ isActive }) =>
+              `m-0 flex items-center justify-center p-1 ${
+                isActive ? 'bg-gray-100 dark:bg-gray-800' : ''
               }`
             }
           >
-            <P >Login</P>
+            <P>Login</P>
           </NavLink>
-        ) : null }
+        ) : null}
       </HoverCardContent>
     </HoverCard>
   )
