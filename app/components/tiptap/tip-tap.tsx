@@ -59,6 +59,9 @@ import { ResizableImage } from './tiptap-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import { Button } from '~/components/ui/button'
+import ToolBar from '../blog-ui/post/toolbar'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../ui/select'
+import { Muted } from '../ui/typography'
 
 // implimeent redo/undo and blockquote
 const MenuBar = ({ editor }: { editor: Editor }) => {
@@ -99,59 +102,59 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <div className=' p-2 rounded-md border-2' aria-label='Editor toolbar'>
-      <HeadingDropdown editor={editor} />
+
       <div className='flex flex-row flex-wrap w-fit  items-center gap-1'>
         <Button
           type='button'
-          variant='secondary'
-          size='icon'
-          className={editor.isActive('bold') ? 'border-2' : ''}
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          variant='ghost'
+          size='sm'
+          className={ editor.isActive('bold') ? 'border-2' : '' }
+          onClick={ () => editor.chain().focus().toggleBold().run() }
         >
           <FontBoldIcon />
         </Button>
 
         <Button
           type='button'
-          variant='secondary'
-          size='icon'
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          variant='ghost'
+          size='sm'
+          onClick={ () => editor.chain().focus().toggleItalic().run() }
         >
           <FontItalicIcon />
         </Button>
 
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleStrike().run()}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleStrike().run() }
         >
           <StrikethroughIcon />
         </Button>
 
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleUnderline().run() }
         >
           <UnderlineIcon />
         </Button>
 
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleSuperscript().run() }
         >
           <SuperScriptIcon />
         </Button>
 
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleSubscript().run() }
         >
           <SubscriptIcon />
         </Button>
@@ -160,9 +163,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       <div className='flex flex-row items-center gap-1'>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() =>
+          size='sm'
+          variant='ghost'
+          onClick={ () =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
           className={
@@ -176,9 +179,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() =>
+          size='sm'
+          variant='ghost'
+          onClick={ () =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
           className={
@@ -191,9 +194,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() =>
+          size='sm'
+          variant='ghost'
+          onClick={ () =>
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
           className={
@@ -210,27 +213,27 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       <div className='flex flex-row items-center gap-1'>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          className={editor.isActive('bulletList') ? 'is-active' : ''}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          size='sm'
+          variant='ghost'
+          className={ editor.isActive('bulletList') ? 'is-active' : '' }
+          onClick={ () => editor.chain().focus().toggleBulletList().run() }
         >
           <ListBulletIcon />
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          className={editor.isActive('orderedList') ? 'is-active' : ''}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          size='sm'
+          variant='ghost'
+          className={ editor.isActive('orderedList') ? 'is-active' : '' }
+          onClick={ () => editor.chain().focus().toggleOrderedList().run() }
         >
           <ListBulletIcon />
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleHighlight().run() }
         >
           <Pencil1Icon />
         </Button>
@@ -238,54 +241,54 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       <div className='flex flex-row items-center gap-1'>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().setHorizontalRule().run() }
         >
           <DividerHorizontalIcon />
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={setLink}
-          className={editor.isActive('link') ? 'is-active' : ''}
+          size='sm'
+          variant='ghost'
+          onClick={ setLink }
+          className={ editor.isActive('link') ? 'is-active' : '' }
         >
           <Link1Icon />
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().unsetLink().run()}
-          disabled={!editor.isActive('link')}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().unsetLink().run() }
+          disabled={ !editor.isActive('link') }
         >
           <LinkBreak1Icon />
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          className={editor.isActive('code') ? 'is-active' : ''}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleCode().run() }
+          className={ editor.isActive('code') ? 'is-active' : '' }
         >
           <CodeIcon />
         </Button>
         <Button
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editor.isActive('codeBlock') ? 'is-active' : ''}
+          size='sm'
+          variant='ghost'
+          onClick={ () => editor.chain().focus().toggleCodeBlock().run() }
+          className={ editor.isActive('codeBlock') ? 'is-active' : '' }
         >
           <CodeIcon />
         </Button>
         <Button
-          className={editor.isActive('image') ? 'is-active' : ''}
+          className={ editor.isActive('image') ? 'is-active' : '' }
           type='button'
-          size='icon'
-          variant='secondary'
-          onClick={addImage}
+          size='sm'
+          variant='ghost'
+          onClick={ addImage }
         >
           <ImageIcon />
         </Button>
@@ -312,7 +315,6 @@ const TipTap = ({ content }: { content?: string }) => {
       Italic,
       Strike,
       Code,
-      HorizontalRule,
       ResizableImage.configure({
         HTMLAttributes: {
           class: 'tip-tap-image'
@@ -348,10 +350,11 @@ const TipTap = ({ content }: { content?: string }) => {
     ],
     content: content,
 
+    // I simplified the editorProps object because some class I was using was interfering with the editor and causing linebreaks not to work
     editorProps: {
       attributes: {
         class:
-          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          'prose dark:prose-invert',
         spellcheck: 'true'
       }
     }
@@ -361,62 +364,22 @@ const TipTap = ({ content }: { content?: string }) => {
   }
 
   return (
-    <>
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
-      <input type='hidden' name='content' value={editor?.getHTML()} />
+    <div
+      className='flex flex-col gap-2 rounded-md bg-background shadow-[0_2px_10px] shadow-blackA4'
+    >
+      <ToolBar editor={ editor } />
+      <EditorContent editor={ editor } />
+      <input type='hidden' name='content' value={ editor?.getHTML() } />
       <div className='flex items-center justify-end gap-1 text-xs'>
-        <p className='text-gray-500'>
-          {editor.storage.characterCount.characters()}/{limit} characters
-        </p>
-        <p className='text-gray-500'>
-          {editor.storage.characterCount.words()} words
-        </p>
+        <Muted>
+          { editor.storage.characterCount.characters() }/{ limit } characters
+        </Muted>
+        <Muted>
+          { editor.storage.characterCount.words() } words
+        </Muted>
       </div>
-    </>
+    </div>
   )
 }
 
 export default TipTap
-
-const HeadingDropdown = ({ editor }: { editor: Editor }) => {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button type='button' size='icon' variant='secondary'>
-          <HeadingIcon />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuRadioGroup value='1'>
-          <DropdownMenuRadioItem value='1'>
-            <Button
-              type='button'
-              size='icon'
-              variant='secondary'
-              onClick={() =>
-                editor.chain().focus().toggleHeading({ level: 1 }).run()
-              }
-              className={
-                editor.isActive('heading', { level: 1 })
-                  ? 'is-active flex items-center'
-                  : 'flex items-center'
-              }
-            >
-              <HeadingIcon />
-              <p className='text-[15px]'>1</p>
-            </Button>
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value='2'>
-            <DropdownMenuLabel>Heading 2</DropdownMenuLabel>
-            <DropdownMenuShortcut>⌘2</DropdownMenuShortcut>
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value='3'>
-            <DropdownMenuLabel>Heading 3</DropdownMenuLabel>
-            <DropdownMenuShortcut>⌘3</DropdownMenuShortcut>
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}

@@ -48,19 +48,14 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
   }
 
   return (
-    <Card className='border-2 border-red-500 w-full'>
-      <CardHeader>
+    <Card className='w-full'>
+      <CardHeader  >
         <CardTitle>Edit this post</CardTitle>
-      </CardHeader>
+      </CardHeader >
       <CardContent>
         <Form method='POST' className='flex flex-col gap-5 w-full'>
           <input type='hidden' name='postId' value={ id } />
 
-          <CheckSelect
-            options={ allcategories }
-            picked={ categories }
-            postId={ id }
-          />
 
           <Label htmlFor='title'>Title</Label>
           <Input
@@ -100,7 +95,16 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
               { actionData?.errors?.content }
             </p>
           ) }
-
+          { actionData?.errors?.categories && (
+            <p id='categories-error' role='alert' className='text-red-500'>
+              { actionData?.errors?.categories }
+            </p>
+          ) }
+          <CheckSelect
+            options={ allcategories }
+            picked={ categories }
+            postId={ id }
+          />
           <FeaturedToggle isFeatured={ post.featured } postId={ id } />
           <Button
             type='button'
@@ -130,7 +134,7 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
           <PublishToggle isPublished={ published } postId={ id } />
         </Form>
       </CardContent>
-    </Card>
+    </Card >
   )
 }
 

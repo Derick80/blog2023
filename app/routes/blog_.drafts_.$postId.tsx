@@ -31,7 +31,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
     postId: z.string()
   })
@@ -99,7 +99,8 @@ const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('submit-categories'),
     postId: z.string(),
-    categories: z.string()
+    categories: z.string(),
+    method: z.enum(['POST', 'DELETE'])
   }),
   z.object({
     intent: z.literal('single-category-submit'),
@@ -109,7 +110,7 @@ const schema = z.discriminatedUnion('intent', [
 ])
 
 export type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
 
@@ -219,17 +220,34 @@ export async function action({ request, params }: ActionFunctionArgs) {
       if (!newCategory) throw new Error('Category not created')
       return json({ newCategory })
     case 'submit-categories':
-      const categories = await prisma.post.update({
-        where: { id: formData.postId },
-        data: {
-          categories: {
-            set: formData.categories.split(',').map((id) => ({ id }))
-          }
-        },
-        include: { categories: true }
-      })
-      if (!categories) throw new Error('Categories not updated')
-      return json({ categories })
+      if (formData.method === 'POST') {
+        const categories = await prisma.post.update({
+          where: { id: formData.postId },
+          data: {
+            categories: {
+              connect: formData.categories.split(',').map((id) => ({ id }))
+            }
+          },
+          include: { categories: true }
+        })
+        if (!categories) throw new Error('Categories not updated')
+      } else if (formData.method === 'DELETE') {
+        const categories = await prisma.post.update({
+          where: { id: formData.postId },
+          data: {
+            categories: {
+              disconnect: formData.categories.split(',').map((id) => ({ id }))
+            }
+          },
+          include: { categories: true }
+        })
+        if (!categories) throw new Error('Categories not updated')
+        return json({ categories })
+      } else {
+        throw new Error('Invalid method')
+      }
+
+
     case 'single-category-submit':
       const singleCategory = await prisma.post.update({
         where: { id: formData.postId },
@@ -248,13 +266,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function DraftsRoute() {
+export default function DraftsRoute () {
   const { post } = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: ActionInput }>()
 
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
-      <BlogEditCard post={post} />
+      <BlogEditCard post={ post } />
     </div>
   )
 }

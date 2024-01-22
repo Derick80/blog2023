@@ -71,7 +71,26 @@ export default  {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+       keyframes: {
+        slideDownAndFade: {
+          from: { opacity: 0, transform: 'translateY(-2px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
+        slideLeftAndFade: {
+          from: { opacity: 0, transform: 'translateX(2px)' },
+          to: { opacity: 1, transform: 'translateX(0)' },
+        },
+        slideUpAndFade: {
+          from: { opacity: 0, transform: 'translateY(2px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
+        slideRightAndFade: {
+          from: { opacity: 0, transform: 'translateX(-2px)' },
+          to: { opacity: 1, transform: 'translateX(0)' },
+        },
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [ require( "tailwindcss-animate" ),
+  require("@tailwindcss/typography")],
 }

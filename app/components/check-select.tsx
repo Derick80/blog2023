@@ -75,21 +75,22 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
   return (
     <div className='relative flex flex-col items-start justify-start h-full p-2 overflow-y-auto bg-background text-foreground rounded-md shadow-sm'>
       <Label htmlFor='selected-categories'>Selected Categories</Label>
-      <div className='flex flex-row w-full gap-2 border-2 rounded h-24 md:h-12 flex-wrap overflow-auto p-1'>
-        {selected.map((item) => (
-          <Badge key={item.id}>
-            <span className='mr-2'>{item.label}</span>
+      <div className='flex flex-row w-full gap-2 rounded flex-wrap overflow-auto p-1'>
+        { selected.map((item) => (
+          <Badge key={ item.id }>
+            <span className='mr-2'>{ item.label }</span>
             <Button
               variant='default'
               size='sm'
               type='button'
-              onClick={() => [
+              onClick={ () => [
                 categorySubmitFetcher.submit(
                   {
                     intent: 'submit-categories',
+                    method: 'DELETE',
                     postId: postId,
                     categories: selected
-                      .filter((selectedItem) => selectedItem.id !== item.id)
+                      .filter((selectedItem) => selectedItem.id === item.id)
                       .map((item) => item.id)
                       .join(',')
                   },
@@ -101,26 +102,26 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
                 setSelected(
                   selected.filter((selectedItem) => selectedItem.id !== item.id)
                 )
-              ]}
+              ] }
             >
               <DeleteIcon className='w-4 h-4' />
             </Button>
           </Badge>
-        ))}
+        )) }
       </div>
       <DropdownMenu
-        onOpenChange={() => {
+        onOpenChange={ () => {
           setOpen(!open)
           handleOpenChange(open)
-        }}
+        } }
       >
         <DropdownMenuTrigger className='mt-2 border-2 w-full'>
           Select Categories
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className='w-full md:w-100 max-h-48 overflow-y-auto'
-          // onInteractOutside={ () => setShowPanel(false) }
-          // onFocusOutside={ () => setShowPanel(false) }
+        // onInteractOutside={ () => setShowPanel(false) }
+        // onFocusOutside={ () => setShowPanel(false) }
         >
           <DropdownMenuLabel> Create a new category</DropdownMenuLabel>
           <Input
@@ -129,9 +130,9 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
             type='text'
             name='new-category'
             id='new-category'
-            onBlur={(e) => {
+            onBlur={ (e) => {
               createNewCategory(e)
-            }}
+            } }
           />
           <Button variant='default' size='sm' type='button'>
             Create
@@ -140,17 +141,17 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Categories</DropdownMenuLabel>
 
-          {options.map((option, index) => (
+          { options.map((option, index) => (
             <div
-              key={option.id}
+              key={ option.id }
               className='flex flex-row items-center justify-start w-full h-8'
             >
               <Checkbox
-                id={option.id}
+                id={ option.id }
                 name='category-select'
-                value={option.id}
-                checked={selected.some((item) => item.id === option.id)}
-                onCheckedChange={(checked) => {
+                value={ option.id }
+                checked={ selected.some((item) => item.id === option.id) }
+                onCheckedChange={ (checked) => {
                   const isSelected = selected.some(
                     (item) => item.id === option.id
                   )
@@ -162,9 +163,10 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
                         {
                           intent: 'submit-categories',
                           postId: postId,
+                          method: 'DELETE',
                           categories: selected
                             .filter(
-                              (selectedItem) => selectedItem.id !== option.id
+                              (selectedItem) => selectedItem.id === option.id
                             )
                             .map((item) => item.id)
                             .join(',')
@@ -193,17 +195,17 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
                   }
 
                   return checked
-                }}
-                onChange={() => [console.log('changed')]}
+                } }
+                onChange={ () => [console.log('changed')] }
               />
               <label
-                htmlFor={option.label}
+                htmlFor={ option.label }
                 className='ml-2 text-sm font-medium text-gray-700'
               >
-                {option.label}
+                { option.label }
               </label>
             </div>
-          ))}
+          )) }
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
