@@ -100,6 +100,11 @@ const schema = z.discriminatedUnion('intent', [
     intent: z.literal('submit-categories'),
     postId: z.string(),
     categories: z.string()
+  }),
+  z.object({
+    intent: z.literal('single-category-submit'),
+    postId: z.string(),
+    category: z.string()
   })
 ])
 
@@ -225,7 +230,18 @@ export async function action ({ request, params }: ActionFunctionArgs) {
       })
       if (!categories) throw new Error('Categories not updated')
       return json({ categories })
-
+    case 'single-category-submit':
+      const singleCategory = await prisma.post.update({
+        where: { id: formData.postId },
+        data: {
+          categories: {
+            connect: { id: formData.category }
+          }
+        },
+        include: { categories: true }
+      })
+      if (!singleCategory) throw new Error('Category not updated')
+      return json({ singleCategory })
 
     default:
       throw new Error('Invalid intent')

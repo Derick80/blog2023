@@ -37,6 +37,7 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
     const [selected, setSelected] = React.useState(picked)
     const [open, setOpen] = React.useState(false)
     const [selectedCategories, setSelectedCategories] = React.useState<string>()
+    const [hasBeenOpened, setHasBeenOpened] = React.useState(false);
 
     React.useEffect(() => {
         setSelectedCategories(selected.map((item) => item.id).join(',') || '')
@@ -84,6 +85,17 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
 
     }
 
+
+    const handleOpenChange = (open: boolean) => {
+        if (open) {
+            setHasBeenOpened(true)
+        } else if (hasBeenOpened) {
+            console.log('closed', selected);
+
+        }
+    }
+
+
     return (
         <div className='relative flex flex-col items-start justify-start h-full p-2 overflow-y-auto bg-background text-foreground rounded-md shadow-sm'>
             <Label htmlFor='selected-categories'>Selected Categories</Label>
@@ -91,32 +103,40 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
                 { selected.map((item) => (
                     <Badge
                         key={ item.id }
-                        className='flex flex-row items-center justify-start px-2 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-md'
+
                     >
                         <span className='mr-2'>{ item.label }</span>
                         <Button
                             variant='default'
                             size='sm'
                             type='button'
-                            onClick={ () => submitCategories(item.id) }
+                            onClick={ () => [categorySubmitFetcher.submit({
+                                intent: 'submit-categories',
+                                postId: postId,
+                                categories: selected.filter((selectedItem) => selectedItem.id !== item.id).map((item) => item.id).join(',')
+                            },
+                                {
+                                    method: 'POST',
+                                    action: `/blog/drafts/${postId}`
+                                }),
+                            setSelected(selected.filter((selectedItem) => selectedItem.id !== item.id)),
+                            ]
+
+                            }
+
                         >
+
+
                             <DeleteIcon className='w-4 h-4' />
                         </Button>
                     </Badge>
                 )) }
             </div>
             <DropdownMenu
-                open={ open }
                 onOpenChange={
                     () => {
-                        // determine if the dropdown is being close or opened
-                        // if it's being closed we want to set the open state to false and then send the selected categories to the server
-                        if (open === true) {
-                            setOpen(false)
-                            console.log(selected, 'slected onopenchange')
-                        } else {
-                            setOpen(true)
-                        }
+                        setOpen(!open)
+                        handleOpenChange(open)
                     }
                 }
 
@@ -164,16 +184,40 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
                                     if (isSelected) {
                                         setSelected((prevSelected) =>
                                             prevSelected.filter((item) => item.id !== option.id)
-                                        )
+                                        ),
+                                            categorySubmitFetcher.submit({
+                                                intent: 'submit-categories',
+                                                postId: postId,
+                                                categories: selected.filter((selectedItem) => selectedItem.id !== option.id).map((item) => item.id).join(',')
+                                            },
+                                                {
+                                                    method: 'POST',
+                                                    action: `/blog/drafts/${postId}`
+                                                })
+
                                     } else {
                                         const item = options.find((item) => item.id === option.id)
                                         if (item) {
-                                            setSelected((prevSelected) => [...prevSelected, item])
+                                            setSelected((prevSelected) => [...prevSelected, item]),
+                                                categorySubmitFetcher.submit({
+                                                    intent:
+                                                        'single-category-submit',
+                                                    postId: postId,
+                                                    category: item.id
+
+                                                },
+                                                    {
+                                                        method: 'POST',
+                                                        action: `/blog/drafts/${postId}`
+                                                    })
+
                                         }
                                     }
+
                                     return checked
                                 } }
-                                onChange={ () => console.log('changed') }
+                                onChange={ () => [console.log('changed'),
+                                ] }
                             />
                             <label
                                 htmlFor={ option.label }
