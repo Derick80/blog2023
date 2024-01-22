@@ -14,13 +14,11 @@ import {
   TooltipTrigger
 } from '~/components/ui/tooltip'
 import { useCategories } from '~/utilities'
-import CustomSelectBox from '~/components/custom-select'
 import CheckSelect from '~/components/check-select'
 
 const BlogEditCard = ({ post }: { post: DraftType }) => {
   const actionData = useActionData<{ errors: Record<string, string> }>()
   const allcategories = useCategories()
-  console.log(actionData, 'actiondata from blog-editcard');
   const {
     title,
     description,

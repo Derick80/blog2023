@@ -100,6 +100,11 @@ const schema = z.discriminatedUnion('intent', [
     postId: z.string(),
     categories: z.string(),
     refinedAction: z.enum(['add', 'remove'])
+  }),
+  z.object({
+    intent: z.literal('removeCategoryFromDataBase'),
+    postId: z.string(),
+    categoryId: z.string()
   })
 ])
 
@@ -210,9 +215,15 @@ export async function action ({ request, params }: ActionFunctionArgs) {
         if (!categories) throw new Error('Categories not updated')
         return json({ categories })
       }
-
       return json({ message: 'Categories stalled' })
-
+    case 'removeCategoryFromDataBase':
+      const removeCategoryFromDataBase = await prisma.category.delete({
+        where: {
+          id: formData.categoryId
+        }
+      })
+      if (!removeCategoryFromDataBase) throw new Error('Category not removed')
+      return json({ removeCategoryFromDataBase })
     default:
       throw new Error('Invalid intent')
   }
@@ -225,14 +236,7 @@ export default function DraftsRoute () {
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
       <BlogEditCard post={ post } />
-      {
-        actionData?.errors && (
-          <div className='flex flex-col items-center gap-2'>
-            <h2 className='text-2xl'>Errors</h2>
-            <pre>{ JSON.stringify(actionData.errors, null, 2) }</pre>
-          </div>
-        )
-      }
+
     </div>
   )
 }

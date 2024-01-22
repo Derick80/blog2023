@@ -37,11 +37,7 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
   const [open, setOpen] = React.useState(false)
   const newCategoryInputRef = React.useRef<HTMLInputElement>(null)
 
-
-
   const categorySubmitFetcher = useFetcher()
-
-
 
   const handleCategoryToggle = (optionId: string) => {
     setSelected((prevSelected) => {
@@ -109,16 +105,6 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
       }
     )
   }
-  {
-    createNewCategoryFetcher.data ? console.log(
-
-      (JSON.stringify(createNewCategoryFetcher?.data?.errors, null, 2))
-
-    ) : null
-
-  }
-
-
 
 
   React.useEffect(function resetInputOnSuccess () {
@@ -140,6 +126,21 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
   //     console.log('closed', selected)
   //   }
   // }
+  const removeCategoryFromDataBaseFetcher = useFetcher()
+
+  const handleRemoveCategoryFromDataBase = (categoryId: string) => {
+    removeCategoryFromDataBaseFetcher.submit(
+      {
+        intent: 'removeCategoryFromDataBase',
+        postId: postId,
+        categoryId: categoryId
+      },
+      {
+        method: 'POST',
+        action: `/blog/drafts/${postId}`
+      }
+    )
+  }
 
   return (
     <div className='relative flex flex-col items-start justify-start h-full p-2 overflow-y-auto bg-background text-foreground rounded-md shadow-sm'>
@@ -228,6 +229,16 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
               >
                 { option.label }
               </label>
+              <Button
+                variant='default'
+                size='sm'
+                type='button'
+                onClick={ () => {
+                  handleRemoveCategoryFromDataBase(option.id)
+                } }
+              >
+                <DeleteIcon className='w-4 h-4' />
+              </Button>
             </div>
           )) }
         </DropdownMenuContent>
