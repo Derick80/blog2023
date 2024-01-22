@@ -74,9 +74,11 @@ export async function createPost(data: PostInput) {
 }
 
 export async function updatePost(
-  data: Omit<PostInput, 'postImages'> & { postId: string }
+  data: Omit<PostInput, 'postImages' | 'imageUrl' | 'categories'> & {
+    postId: string
+  }
 ) {
-  const { title, slug, description, content, imageUrl, featured } = data
+  const { title, slug, description, content, featured } = data
   return await prisma.post.update({
     where: {
       id: data.postId,
@@ -87,7 +89,6 @@ export async function updatePost(
       slug,
       description,
       content,
-      imageUrl,
       featured,
       published: true
     }

@@ -2,7 +2,8 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-r
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import { BlogEditCard } from '~/components/blog-ui/post/blog-edit-card'
+import BlogEditCard from '~/components/blog-ui/post/blog-edit-card'
+import BlogEditContextProvider, { BlogEditContext } from '~/components/blog-ui/post/creation-context'
 import PublishToggle from '~/components/blog-ui/post/publish-toggle'
 import { getUserAndAdminStatus, isAuthenticated } from '~/server/auth/auth.server'
 import { changePostFeaturedStatus, changePostPublishStatus, deletePost, updatePost } from '~/server/post.server'
@@ -39,47 +40,6 @@ const intentSchema = z.object({
     intent: z.enum(['delete', 'publish', 'update', 'featured'])
 })
 
-type IntentInput = z.infer<typeof intentSchema>
-
-const deleteSchema = z.object({
-    intent: z.literal('delete'),
-    postId: z.string()
-})
-
-type DeleteInput = z.infer<typeof deleteSchema>
-
-const publishSchema = z.object({
-    intent: z.literal('publish'),
-    published: z.string().transform((val) => val === 'true' ? true : false),
-    postId: z.string()
-
-})
-
-type PublishInput = z.infer<typeof publishSchema>
-
-const toggleFeaturedSchema = z.object({
-    intent: z.literal('featured'),
-    featured: z.string().transform((val) => val === 'true' ? true : false),
-    postId: z.string()
-
-})
-
-
-type ToggleFeaturedInput = z.infer<typeof toggleFeaturedSchema>
-
-const updateSchema = z.object({
-    intent: z.literal('update'),
-    postId: z.string(),
-    title: z.string().min(25, 'Title should be at least 25 characters').max(60),
-    description: z
-        .string()
-        .min(25, 'Description should be at least 10 characters')
-        .max(160, 'Description should be less than 160 characters'),
-    imageUrl: z.string().url('Image URL should be a valid URL'),
-    featured: z.string().transform((val) => val === 'true' ? true : false),
-    content: z.string().min(1).max(50000),
-    categories: z.string(),
-})
 
 
 const schema = z.discriminatedUnion('intent', [
@@ -98,6 +58,11 @@ const schema = z.discriminatedUnion('intent', [
         featured: z.string().transform((val) => val === 'true' ? true : false)
     }),
     z.object({
+        intent: z.literal('updateCategories'),
+        postId: z.string(),
+        categories: z.string()
+    }),
+    z.object({
         postId: z.string(),
         intent: z.literal('update'),
         title: z.string().min(25, 'Title should be at least 25 characters').max(60),
@@ -105,11 +70,16 @@ const schema = z.discriminatedUnion('intent', [
             .string()
             .min(25, 'Description should be at least 10 characters')
             .max(160, 'Description should be less than 160 characters'),
-        imageUrl: z.string().url('Image URL should be a valid URL').optional(),
+
         published: z.string().transform((val) => val === 'true' ? true : false),
         featured: z.string().transform((val) => val === 'true' ? true : false),
         content: z.string().min(1).max(50000),
-        categories: z.string().optional()
+    }),
+    z.object({
+        intent: z.literal('new-category'),
+        postId: z.string(),
+        newCategory: z.string().min(3).max(20)
+
     })
 ])
 
@@ -131,20 +101,6 @@ export async function action ({ request, params }: ActionFunctionArgs) {
             }
         })
     }
-
-    // const cloned = request.clone()
-
-    // const { formData, errors } = await validateAction({
-    //     request: cloned,
-    //     schema: intentSchema
-    // })
-    // if (errors) {
-    //     return json({ errors }, { status: 400 })
-    // }
-
-    // const { intent } = formData as IntentInput
-
-
     const { formData, errors } = await validateAction({
         request,
         schema
@@ -204,6 +160,35 @@ export async function action ({ request, params }: ActionFunctionArgs) {
 
             if (!featured) throw new Error('Post not featured')
             return json({ featured })
+        case 'new-category':
+            const newValue = formData.newCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+            // check if the category already exists
+            const categoryExists = await prisma.category.findUnique({
+                where: { value: newValue }
+            })
+            if (categoryExists) throw new Error('Category already exists')
+
+            const newCategory = await prisma.post.update({
+                where: { id: formData.postId },
+                data: {
+                    categories: {
+                        connectOrCreate: {
+                            where: {
+                                value: formData.newCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                            },
+                            create: {
+                                value: formData.newCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                                label: formData.newCategory
+                            }
+                        }
+                    }
+
+                }
+
+            })
+            if (!newCategory) throw new Error('Category not created')
+            return json({ newCategory })
+
         default:
             throw new Error('Invalid intent')
 
@@ -219,7 +204,8 @@ export default function DraftsRoute () {
     const actionData = useActionData<{ errors: ActionInput }>()
 
     return (
-        <div className='flex w-full flex-col items-center gap-2'>
+
+        <div className='flex flex-col items-center gap-2 border-2'>
 
             <BlogEditCard post={ post } />
         </div>
