@@ -35,7 +35,14 @@ type Props = {
 type Checked = CheckboxProps['checked']
 export const CheckSelect = ({ options, picked, postId }: Props) => {
     const [selected, setSelected] = React.useState(picked)
-    const [showPanel, setShowPanel] = React.useState(false)
+    const [open, setOpen] = React.useState(false)
+    const [selectedCategories, setSelectedCategories] = React.useState<string>()
+
+    React.useEffect(() => {
+        setSelectedCategories(selected.map((item) => item.id).join(',') || '')
+
+    }
+        , [selected])
 
     console.log(selected, 'selected')
 
@@ -56,33 +63,64 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
             }
         )
     }
+    const categorySubmitFetcher = useFetcher()
+    const submitCategories = (id: string) => {
+        setSelected(selected.filter((selectedItem) => selectedItem.id !== id)),
+            console.log(id, selected, 'clicked'),
+
+            categorySubmitFetcher.submit(
+                {
+                    intent: 'submit-categories',
+                    postId: postId,
+                    categories: selected.filter((selectedItem) => selectedItem.id !== id).map((item) => item.id).join(',')
+                },
+                {
+                    method: 'POST',
+                    action: `/blog/drafts/${postId}`
+                }
+            )
+
+
+
+    }
 
     return (
         <div className='relative flex flex-col items-start justify-start h-full p-2 overflow-y-auto bg-background text-foreground rounded-md shadow-sm'>
             <Label htmlFor='selected-categories'>Selected Categories</Label>
             <div className='flex flex-row w-full gap-2 border-2 rounded h-24 md:h-12 flex-wrap overflow-auto p-1'>
-                { selected?.map((item) => (
-                    <Button
+                { selected.map((item) => (
+                    <Badge
                         key={ item.id }
-                        onClick={
-                            () => [console.log(item.id, selected, 'clicked'),
-
-                            setSelected(selected.filter((selectedItem) => selectedItem.id !== item.id))
-
-                            ]
-
-                        }
-
-                        variant='secondary'
-                        size='sm'
-                        type='button'
-                        className='px-1'
+                        className='flex flex-row items-center justify-start px-2 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-md'
                     >
-                        { item.label } <Cross2Icon className='w-4 h-4 ml-1' />
-                    </Button>
+                        <span className='mr-2'>{ item.label }</span>
+                        <Button
+                            variant='default'
+                            size='sm'
+                            type='button'
+                            onClick={ () => submitCategories(item.id) }
+                        >
+                            <DeleteIcon className='w-4 h-4' />
+                        </Button>
+                    </Badge>
                 )) }
             </div>
-            <DropdownMenu>
+            <DropdownMenu
+                open={ open }
+                onOpenChange={
+                    () => {
+                        // determine if the dropdown is being close or opened
+                        // if it's being closed we want to set the open state to false and then send the selected categories to the server
+                        if (open === true) {
+                            setOpen(false)
+                            console.log(selected, 'slected onopenchange')
+                        } else {
+                            setOpen(true)
+                        }
+                    }
+                }
+
+            >
                 <DropdownMenuTrigger className='mt-2 border-2 w-full'>
                     Select Categories
                 </DropdownMenuTrigger>
