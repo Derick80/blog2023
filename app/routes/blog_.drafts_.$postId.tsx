@@ -31,7 +31,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
     postId: z.string()
   })
@@ -109,7 +109,7 @@ const schema = z.discriminatedUnion('intent', [
 ])
 
 export type ActionInput = z.infer<typeof schema>
-export async function action ({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
 
@@ -248,13 +248,13 @@ export async function action ({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function DraftsRoute () {
+export default function DraftsRoute() {
   const { post } = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: ActionInput }>()
 
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
-      <BlogEditCard post={ post } />
+      <BlogEditCard post={post} />
     </div>
   )
 }
