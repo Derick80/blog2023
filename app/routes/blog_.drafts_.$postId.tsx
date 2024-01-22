@@ -4,18 +4,19 @@ import {
   json,
   redirect
 } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogEditCard from '~/components/blog-ui/post/blog-edit-card'
-import BlogEditContextProvider, {
-  BlogEditContext
-} from '~/components/blog-ui/post/creation-context'
-import PublishToggle from '~/components/blog-ui/post/publish-toggle'
 import {
   getUserAndAdminStatus,
   isAuthenticated
 } from '~/server/auth/auth.server'
+import {
+  addCategoryToPost,
+  createCategory,
+  removeCategoryFromBlogPost
+} from '~/server/categories.server'
 import {
   changePostFeaturedStatus,
   changePostPublishStatus,
@@ -31,7 +32,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
     postId: z.string()
   })
@@ -53,10 +54,6 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
 
   return json({ post })
 }
-
-const intentSchema = z.object({
-  intent: z.enum(['delete', 'publish', 'update', 'featured'])
-})
 
 const schema = z.discriminatedUnion('intent', [
   z.object({
@@ -100,17 +97,12 @@ const schema = z.discriminatedUnion('intent', [
     intent: z.literal('submit-categories'),
     postId: z.string(),
     categories: z.string(),
-    method: z.enum(['POST', 'DELETE'])
-  }),
-  z.object({
-    intent: z.literal('single-category-submit'),
-    postId: z.string(),
-    category: z.string()
+    refinedAction: z.enum(['POST', 'DELETE'])
   })
 ])
 
 export type ActionInput = z.infer<typeof schema>
-export async function action ({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
 
@@ -188,91 +180,49 @@ export async function action ({ request, params }: ActionFunctionArgs) {
       if (!featured) throw new Error('Post not featured')
       return json({ featured })
     case 'new-category':
-      const newValue = formData.newCategory
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-      // check if the category already exists
-      const categoryExists = await prisma.category.findUnique({
-        where: { value: newValue }
-      })
-      if (categoryExists) throw new Error('Category already exists')
-
-      const newCategory = await prisma.post.update({
-        where: { id: formData.postId },
-        data: {
-          categories: {
-            connectOrCreate: {
-              where: {
-                value: formData.newCategory
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, '-')
-              },
-              create: {
-                value: formData.newCategory
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, '-'),
-                label: formData.newCategory
-              }
-            }
-          }
-        }
+      const newCategory = await createCategory({
+        title: formData.newCategory,
+        postId: formData.postId,
+        userId: user.id
       })
       if (!newCategory) throw new Error('Category not created')
       return json({ newCategory })
     case 'submit-categories':
-      if (formData.method === 'POST') {
-        const categories = await prisma.post.update({
-          where: { id: formData.postId },
-          data: {
-            categories: {
-              connect: formData.categories.split(',').map((id) => ({ id }))
-            }
-          },
-          include: { categories: true }
+      // This is used to update the categories on a post when the user selects a category from the dropdown OR when the user clicks the X on a category chip
+      if (formData.refinedAction === 'POST') {
+        const categories = await addCategoryToPost({
+          postId: formData.postId,
+          categoryId: formData.categories,
+          userId: user.id
         })
         if (!categories) throw new Error('Categories not updated')
-      } else if (formData.method === 'DELETE') {
-        const categories = await prisma.post.update({
-          where: { id: formData.postId },
-          data: {
-            categories: {
-              disconnect: formData.categories.split(',').map((id) => ({ id }))
-            }
-          },
-          include: { categories: true }
+      }
+      // This is used to update the categories on a post when the user clicks the X on a category chip OR when the user checks a category from the dropdown
+      if (formData.refinedAction === 'DELETE') {
+        const categories = await removeCategoryFromBlogPost({
+          postId: formData.postId,
+          categoryId: formData.categories,
+          userId: user.id
         })
+
         if (!categories) throw new Error('Categories not updated')
         return json({ categories })
-      } else {
-        throw new Error('Invalid method')
       }
 
-
-    case 'single-category-submit':
-      const singleCategory = await prisma.post.update({
-        where: { id: formData.postId },
-        data: {
-          categories: {
-            connect: { id: formData.category }
-          }
-        },
-        include: { categories: true }
-      })
-      if (!singleCategory) throw new Error('Category not updated')
-      return json({ singleCategory })
+      return json({ message: 'Categories stalled' })
 
     default:
       throw new Error('Invalid intent')
   }
 }
 
-export default function DraftsRoute () {
+export default function DraftsRoute() {
   const { post } = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: ActionInput }>()
 
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
-      <BlogEditCard post={ post } />
+      <BlogEditCard post={post} />
     </div>
   )
 }

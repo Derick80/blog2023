@@ -3,15 +3,12 @@ import { Checkbox } from '../components/ui/checkbox'
 import { Label } from './ui/label'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
-import { Cross1Icon, Cross2Icon } from '@radix-ui/react-icons'
 import { DeleteIcon } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { CheckboxProps } from '@radix-ui/react-checkbox'
@@ -33,17 +30,69 @@ type Props = {
 }
 
 type Checked = CheckboxProps['checked']
-export const CheckSelect = ({ options, picked, postId }: Props) => {
+const CheckSelect = ({ options, picked, postId }: Props) => {
   const [selected, setSelected] = React.useState(picked)
   const [open, setOpen] = React.useState(false)
   const [selectedCategories, setSelectedCategories] = React.useState<string>()
   const [hasBeenOpened, setHasBeenOpened] = React.useState(false)
+  const categorySubmitFetcher = useFetcher()
 
-  React.useEffect(() => {
-    setSelectedCategories(selected.map((item) => item.id).join(',') || '')
-  }, [selected])
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open)
+    if (!open && selected.length > 0) {
+      console.log('Dropdown closed with selected categories:', selected)
+    }
+  }
 
-  console.log(selected, 'selected')
+  const handleCategoryToggle = (optionId: string) => {
+    setSelected((prevSelected) => {
+      const isSelected = prevSelected.some((item) => item.id === optionId)
+      if (isSelected) {
+        // Filter out the item and return the new array
+        const remainingItems = prevSelected.filter(
+          (item) => item.id !== optionId
+        )
+        console.log(remainingItems, 'remainingItems') // Log the remaining items
+        const idToRemove = prevSelected
+          .filter((item) => item.id === optionId)
+          .map((item) => item.id)
+          .join(',')
+
+        categorySubmitFetcher.submit(
+          {
+            intent: 'submit-categories',
+            postId: postId,
+            refinedAction: 'DELETE',
+            categories: idToRemove
+          },
+          {
+            method: 'POST',
+            action: `/blog/drafts/${postId}`
+          }
+        )
+        return remainingItems // Return the new state as an array
+      } else {
+        // Add the new item to the array and return it
+        const newItem = options.find((item) => item.id === optionId)
+
+        if (newItem) {
+          categorySubmitFetcher.submit(
+            {
+              intent: 'submit-categories',
+              postId: postId,
+              refinedAction: 'POST',
+              categories: newItem.id
+            },
+            {
+              method: 'POST',
+              action: `/blog/drafts/${postId}`
+            }
+          )
+        }
+        return newItem ? [...prevSelected, newItem] : prevSelected
+      }
+    })
+  }
 
   const createNewCategoryFetcher = useFetcher()
 
@@ -62,67 +111,45 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
       }
     )
   }
-  const categorySubmitFetcher = useFetcher()
 
-  const handleOpenChange = (open: boolean) => {
-    if (open) {
-      setHasBeenOpened(true)
-    } else if (hasBeenOpened) {
-      console.log('closed', selected)
-    }
-  }
+  // const handleOpenChange = (open: boolean) => {
+  //   if (open) {
+  //     setHasBeenOpened(true)
+  //   } else if (hasBeenOpened) {
+  //     console.log('closed', selected)
+  //   }
+  // }
 
   return (
     <div className='relative flex flex-col items-start justify-start h-full p-2 overflow-y-auto bg-background text-foreground rounded-md shadow-sm'>
       <Label htmlFor='selected-categories'>Selected Categories</Label>
       <div className='flex flex-row w-full gap-2 rounded flex-wrap overflow-auto p-1'>
-        { selected.map((item) => (
-          <Badge key={ item.id }>
-            <span className='mr-2'>{ item.label }</span>
+        {selected.map((item) => (
+          <Badge key={item.id}>
+            <span className='mr-2'>{item.label}</span>
             <Button
               variant='default'
               size='sm'
               type='button'
-              onClick={ () => [
-                categorySubmitFetcher.submit(
-                  {
-                    intent: 'submit-categories',
-                    method: 'DELETE',
-                    postId: postId,
-                    categories: selected
-                      .filter((selectedItem) => selectedItem.id === item.id)
-                      .map((item) => item.id)
-                      .join(',')
-                  },
-                  {
-                    method: 'POST',
-                    action: `/blog/drafts/${postId}`
-                  }
-                ),
-                setSelected(
-                  selected.filter((selectedItem) => selectedItem.id !== item.id)
-                )
-              ] }
+              onClick={() => {
+                handleCategoryToggle(item.id)
+              }}
             >
               <DeleteIcon className='w-4 h-4' />
             </Button>
           </Badge>
-        )) }
+        ))}
       </div>
       <DropdownMenu
-        onOpenChange={ () => {
+        onOpenChange={() => {
           setOpen(!open)
           handleOpenChange(open)
-        } }
+        }}
       >
         <DropdownMenuTrigger className='mt-2 border-2 w-full'>
           Select Categories
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className='w-full md:w-100 max-h-48 overflow-y-auto'
-        // onInteractOutside={ () => setShowPanel(false) }
-        // onFocusOutside={ () => setShowPanel(false) }
-        >
+        <DropdownMenuContent className='w-full md:w-100 max-h-48 overflow-y-auto'>
           <DropdownMenuLabel> Create a new category</DropdownMenuLabel>
           <Input
             className='w-full'
@@ -130,9 +157,9 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
             type='text'
             name='new-category'
             id='new-category'
-            onBlur={ (e) => {
+            onBlur={(e) => {
               createNewCategory(e)
-            } }
+            }}
           />
           <Button variant='default' size='sm' type='button'>
             Create
@@ -141,71 +168,31 @@ export const CheckSelect = ({ options, picked, postId }: Props) => {
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Categories</DropdownMenuLabel>
 
-          { options.map((option, index) => (
+          {options.map((option, index) => (
             <div
-              key={ option.id }
+              key={option.id}
               className='flex flex-row items-center justify-start w-full h-8'
             >
               <Checkbox
-                id={ option.id }
+                id={option.id}
                 name='category-select'
-                value={ option.id }
-                checked={ selected.some((item) => item.id === option.id) }
-                onCheckedChange={ (checked) => {
-                  const isSelected = selected.some(
-                    (item) => item.id === option.id
-                  )
-                  if (isSelected) {
-                    setSelected((prevSelected) =>
-                      prevSelected.filter((item) => item.id !== option.id)
-                    ),
-                      categorySubmitFetcher.submit(
-                        {
-                          intent: 'submit-categories',
-                          postId: postId,
-                          method: 'DELETE',
-                          categories: selected
-                            .filter(
-                              (selectedItem) => selectedItem.id === option.id
-                            )
-                            .map((item) => item.id)
-                            .join(',')
-                        },
-                        {
-                          method: 'POST',
-                          action: `/blog/drafts/${postId}`
-                        }
-                      )
-                  } else {
-                    const item = options.find((item) => item.id === option.id)
-                    if (item) {
-                      setSelected((prevSelected) => [...prevSelected, item]),
-                        categorySubmitFetcher.submit(
-                          {
-                            intent: 'single-category-submit',
-                            postId: postId,
-                            category: item.id
-                          },
-                          {
-                            method: 'POST',
-                            action: `/blog/drafts/${postId}`
-                          }
-                        )
-                    }
-                  }
+                value={option.id}
+                checked={selected.some((item) => item.id === option.id)}
+                onCheckedChange={(checked) => {
+                  handleCategoryToggle(option.id)
 
                   return checked
-                } }
-                onChange={ () => [console.log('changed')] }
+                }}
+                onChange={() => [console.log('changed')]}
               />
               <label
-                htmlFor={ option.label }
+                htmlFor={option.label}
                 className='ml-2 text-sm font-medium text-gray-700'
               >
-                { option.label }
+                {option.label}
               </label>
             </div>
-          )) }
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
