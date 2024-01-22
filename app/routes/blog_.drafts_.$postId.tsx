@@ -32,7 +32,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
     postId: z.string()
   })
@@ -89,20 +89,22 @@ const schema = z.discriminatedUnion('intent', [
     content: z.string().min(1).max(50000)
   }),
   z.object({
-    intent: z.literal('new-category'),
+    intent: z.literal('newCategory'),
     postId: z.string(),
-    newCategory: z.string().min(3).max(20)
+    newCategory: z.string().min(3,
+      'Category name should be at least 3 characters'
+    ).max(20)
   }),
   z.object({
     intent: z.literal('submit-categories'),
     postId: z.string(),
     categories: z.string(),
-    refinedAction: z.enum(['POST', 'DELETE'])
+    refinedAction: z.enum(['add', 'remove'])
   })
 ])
 
 export type ActionInput = z.infer<typeof schema>
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action ({ request, params }: ActionFunctionArgs) {
   // get the session from the request for toast messages
   const session = await getSession(request.headers.get('Cookie'))
 
@@ -179,17 +181,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
       if (!featured) throw new Error('Post not featured')
       return json({ featured })
-    case 'new-category':
+    case 'newCategory':
       const newCategory = await createCategory({
         title: formData.newCategory,
         postId: formData.postId,
         userId: user.id
       })
-      if (!newCategory) throw new Error('Category not created')
-      return json({ newCategory })
+      if (!newCategory) return json({ success: false })
+      return json({ success: true })
     case 'submit-categories':
       // This is used to update the categories on a post when the user selects a category from the dropdown OR when the user clicks the X on a category chip
-      if (formData.refinedAction === 'POST') {
+      if (formData.refinedAction === 'add') {
         const categories = await addCategoryToPost({
           postId: formData.postId,
           categoryId: formData.categories,
@@ -198,7 +200,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         if (!categories) throw new Error('Categories not updated')
       }
       // This is used to update the categories on a post when the user clicks the X on a category chip OR when the user checks a category from the dropdown
-      if (formData.refinedAction === 'DELETE') {
+      if (formData.refinedAction === 'remove') {
         const categories = await removeCategoryFromBlogPost({
           postId: formData.postId,
           categoryId: formData.categories,
@@ -216,13 +218,21 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
-export default function DraftsRoute() {
+export default function DraftsRoute () {
   const { post } = useLoaderData<typeof loader>()
   const actionData = useActionData<{ errors: ActionInput }>()
 
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
-      <BlogEditCard post={post} />
+      <BlogEditCard post={ post } />
+      {
+        actionData?.errors && (
+          <div className='flex flex-col items-center gap-2'>
+            <h2 className='text-2xl'>Errors</h2>
+            <pre>{ JSON.stringify(actionData.errors, null, 2) }</pre>
+          </div>
+        )
+      }
     </div>
   )
 }
