@@ -8,13 +8,12 @@ import {
 
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { getAllPostsV1 } from '~/server/post.server'
-import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
-import ContactWidget from '~/components/v2-components/contact-widget'
-import ScrollingBanner from '~/components/v2-components/scroll-banner_v2'
+import { getAllPostsV1, getPosts } from '~/server/post.server'
+
+import ContactWidget from '~/components/contact-widget'
+import ScrollingBanner from '~/components/scroll-banner_v2'
 import React from 'react'
-import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
-import { MyTooltip } from '~/components/radix-tooltip'
+import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
 export const meta: MetaFunction = () => {
   return [
@@ -26,8 +25,8 @@ export const meta: MetaFunction = () => {
   ]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const posts = await getAllPostsV1(5)
+export async function loader() {
+  const posts = await getPosts()
   if (!posts) throw new Error('No posts found')
 
   return json({ posts })
@@ -90,11 +89,9 @@ export default function Index() {
         <div className='flex w-full flex-col gap-2'>
           <Separator orientation='horizontal' />
           <div className='mb-4 flex w-full flex-row items-center gap-2'>
-            <MyTooltip content='This only filters the 5 latest posts go to the blog page to see all the posts!'>
-              <h6 className='text-left'>
-                Filter the 5 most Recent Blog Posts by
-              </h6>
-            </MyTooltip>
+            <h6 className='text-left'>
+              Filter the 5 most Recent Blog Posts by
+            </h6>
 
             <h1>Category</h1>
           </div>
@@ -125,9 +122,9 @@ export default function Index() {
           <h1>Latest Posts</h1>
         </div>
         <div className='flex w-full flex-col items-center gap-5'>
-          {matchingPosts.map((post) => (
+          {/* {matchingPosts.map((post) => (
             <BlogPreviewV2 key={post.id} post={post} />
-          ))}
+          ))} */}
         </div>
         <div className='flex w-full flex-col gap-2'>
           <Separator />{' '}

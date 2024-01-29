@@ -1,15 +1,11 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
 import { AuthForm } from '~/components/auth/auth-form'
 
 import { authenticator } from '~/server/auth/auth.server'
 
 import { validateAction } from '~/utilities'
 import { z } from 'zod'
-import { Label } from '~/components/ui/label'
-import { Input } from '~/components/ui/input'
-import { Button } from '~/components/ui/button'
 
 export const AuthSchema = z.discriminatedUnion('intent', [
   z.object({

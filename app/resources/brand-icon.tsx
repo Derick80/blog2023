@@ -1,10 +1,13 @@
-export function BrandIcon() {
+import { cn } from '~/lib/utils'
+
+export function BrandIcon({ className }: { className?: string }) {
   return (
     <svg
       version='1.1'
       id='Layer_1'
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 5000 4034.8'
+      className={cn('w-8 h-8', className)}
     >
       <g transform='rotate(0 1018.5 493.6827)'>
         <g transform='matrix(1 0 0 -1 0 64)'>

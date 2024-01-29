@@ -1,6 +1,8 @@
 import { prisma } from './prisma.server'
+import { PostImage } from './schemas/images.schema'
 import type { CategoryForm } from './schemas/schemas'
 
+// update and maybe use this type
 export type PostInput = {
   title: string
   slug: string
@@ -8,9 +10,36 @@ export type PostInput = {
   content: string
   imageUrl: string
   featured: boolean
-  userId: string
-  categories: CategoryForm
+  userId?: string
+  categories: string
+  postImages: PostImage[]
 }
+
+export async function createMinimalPost({
+  userId,
+  title
+}: {
+  userId: string
+  title: string
+}) {
+  return await prisma.post.create({
+    data: {
+      title,
+      slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      description: '',
+      content: '',
+      imageUrl: '',
+      featured: false,
+      published: false,
+      user: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  })
+}
+
 export async function createPost(data: PostInput) {
   const post = await prisma.post.create({
     data: {
@@ -27,112 +56,85 @@ export async function createPost(data: PostInput) {
         }
       },
       categories: {
-        connect: data.categories.map((category) => ({
-          value: category.value
-        }))
+        connectOrCreate: data.categories.split(',').map((category) => {
+          return {
+            where: {
+              value: category
+            },
+            create: {
+              value: category,
+              label: category
+            }
+          }
+        })
       }
     }
   })
   return post
 }
 
-export async function updatePost(data: PostInput & { postId: string }) {
-  const post = await prisma.post.update({
+export async function updatePost(
+  data: Omit<PostInput, 'postImages' | 'imageUrl' | 'categories'> & {
+    postId: string
+  }
+) {
+  const { title, slug, description, content, featured } = data
+  return await prisma.post.update({
     where: {
-      id: data.postId
+      id: data.postId,
+      userId: data.userId
     },
     data: {
-      title: data.title,
-      slug: data.slug,
-      description: data.description,
-      content: data.content,
-      imageUrl: data.imageUrl,
-      featured: data.featured,
-      user: {
-        connect: {
-          id: data.userId
-        }
-      },
-      categories: {
-        set: data.categories.map((category) => ({
-          value: category.value
-        }))
-      }
-    }
-  })
-
-  return post
-}
-
-export async function getInitialPosts() {
-  return await prisma.post.findMany({
-    where: {
+      title,
+      slug,
+      description,
+      content,
+      featured,
       published: true
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatarUrl: true,
-          password: false,
-          role: true
-        }
-      },
-      _count: {
-        select: {
-          comments: true,
-          likes: true
-        }
-      },
-
-      likes: false,
-      favorites: false,
-      categories: true,
-      comments: false
-    },
-
-    orderBy: {
-      createdAt: 'desc'
     }
   })
 }
 
-export async function getPostsVersionTwo() {
-  return await prisma.post.findMany({
+export async function changePostPublishStatus({
+  id,
+  userId,
+  published
+}: {
+  id: string
+  userId: string
+  published: boolean
+}) {
+  return await prisma.post.update({
     where: {
-      published: true
+      id,
+      userId
     },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatarUrl: true,
-          password: false,
-          role: true
-        }
-      },
-      _count: {
-        select: {
-          comments: true,
-          likes: true
-        }
-      },
-
-      likes: false,
-      favorites: false,
-      categories: true,
-      comments: false
-    },
-
-    orderBy: {
-      createdAt: 'desc'
+    data: {
+      published
     }
   })
 }
+
+export async function changePostFeaturedStatus({
+  id,
+  userId,
+  featured
+}: {
+  id: string
+  userId: string
+  featured: boolean
+}) {
+  return await prisma.post.update({
+    where: {
+      id,
+      userId
+    },
+    data: {
+      featured
+    }
+  })
+}
+
 export async function getPosts() {
   const posts = await prisma.post.findMany({
     where: {
@@ -152,43 +154,14 @@ export async function getPosts() {
       likes: true,
       favorites: true,
       categories: true,
+      postImages: true,
       _count: {
         select: {
           comments: true,
           likes: true,
-          favorites: true
-        }
-      },
-      comments: {
-        include: {
-          _count: true,
-          likes: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-              avatarUrl: true,
-              password: false,
-              role: true
-            }
-          },
-          children: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  email: true,
-                  avatarUrl: true,
-                  password: false,
-                  role: false
-                }
-              },
-              children: true,
-              likes: true
-            }
-          }
+          favorites: true,
+          postImages: true,
+          categories: true
         }
       }
     },
@@ -219,9 +192,11 @@ export async function getUserPosts(username: string) {
           role: true
         }
       },
+
       likes: true,
       favorites: true,
       categories: true,
+      postImages: true,
       comments: {
         include: {
           _count: true,
@@ -307,6 +282,7 @@ export const DefaultAllPostSelect = {
     select: DefaultUserSelect
   },
   categories: true,
+  postImages: true,
   _count: {
     select: {
       comments: true,
@@ -394,13 +370,51 @@ export async function getAllPostsV1WithFilter(filter: string) {
   })
 }
 
+// updted this to use at blog.$postId
 export async function getSinglePostById(id: string) {
   return await prisma.post.findUnique({
     where: {
       id
     },
     select: {
-      ...DefaultAllPostSelect
+      ...DefaultAllPostSelect,
+      comments: {
+        select: DefaultCommentSelect
+      }
+    }
+  })
+}
+
+export async function getDraftOrPostToEditById({
+  id,
+  userId
+}: {
+  id: string
+  userId: string
+}) {
+  return await prisma.post.findUnique({
+    where: {
+      id,
+      userId
+    },
+    include: {
+      categories: true,
+      postImages: true
+    }
+  })
+}
+
+export async function deletePost({
+  id,
+  userId
+}: {
+  id: string
+  userId: string
+}) {
+  return await prisma.post.delete({
+    where: {
+      id,
+      userId
     }
   })
 }

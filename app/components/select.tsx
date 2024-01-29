@@ -2,7 +2,6 @@ import React from 'react'
 import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons'
 
 type Props = {
-  testOptions?: string[]
   options: { id: string; value: string; label: string }[]
   picked: { id: string; value: string; label: string }[]
   multiple?: boolean
@@ -12,17 +11,9 @@ export default function SelectBox({
   options,
   picked,
   multiple = false,
-  name = 'selection',
-  testOptions
+  name = 'selection'
 }: Props) {
   // convert testOptions to options
-  if (testOptions) {
-    options = testOptions.map((item) => ({
-      id: item,
-      value: item,
-      label: item
-    }))
-  }
 
   const containerRef = React.useRef<HTMLDivElement>(null)
   const [selected, setSelected] = React.useState(picked)
@@ -100,15 +91,13 @@ export default function SelectBox({
 
             <ul className=''>
               {options.map((option, index) => (
-                <>
-                  <li
-                    key={option.id}
-                    onClick={() => handleSelect(option.value)}
-                    className='list-none px-4 py-2 text-black hover:bg-gray-100'
-                  >
-                    {option.label}
-                  </li>
-                </>
+                <li
+                  key={option.id}
+                  onClick={() => handleSelect(option.value)}
+                  className='list-none px-4 py-2 text-black hover:bg-gray-100'
+                >
+                  {option.label}
+                </li>
               ))}
             </ul>
           </div>

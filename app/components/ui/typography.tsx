@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 
 type HeaderProps = React.HTMLAttributes<HTMLHeadingElement> & {
@@ -54,20 +54,56 @@ export const H3 = React.forwardRef<HTMLHeadingElement, HeaderProps>(
 )
 
 H3.displayName = 'H3'
-export function P({ text }: { text: string }) {
-  return <p className='leading-7 [&:not(:first-child)]:mt-6'>{text}</p>
+export function P({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <p className={cn('leading-7 [&:not(:first-child)]:mt-6', className)}>
+      {children}
+    </p>
+  )
 }
 
-export function Large({ text }: { text: string }) {
-  return <div className='text-lg font-semibold'>{text}</div>
+export function Large({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('text-lg font-semibold', className)}>{children}</div>
+  )
 }
 
-export function Medium({ text }: { text: string }) {
-  return <div className='text-base font-semibold'>{text}</div>
+export function Medium({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('text-base font-semibold', className)}>{children}</div>
+  )
 }
 
-export function Small({ text }: { text: string }) {
-  return <small className='text-sm font-medium leading-none'>{text}</small>
+export function Small({
+  children,
+  className
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <small className={cn('text-sm font-medium leading-none', className)}>
+      {children}
+    </small>
+  )
 }
 
 export function Muted({

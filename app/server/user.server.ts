@@ -1,13 +1,14 @@
 import type { Prisma } from '@prisma/client'
 import { prisma } from './prisma.server'
 import { createPasswordHash } from './auth/auth-service.server'
-
+import type { UserImage as userImg } from '@prisma/client'
 export type UserProps = {
   id: string
   email: string
   username: string
   avatarUrl: string | null
   role: string | null
+  userImages: userImg[]
   _count: {
     accounts: number
     tokens: number
@@ -23,17 +24,32 @@ const defaultUserSelect = {
   username: true,
   avatarUrl: true,
   role: true,
+  userImages: true,
   _count: true
 }
 
-// using this for selecting just MY posts
-const defaultPersonalSelect = {
-  id: true,
-  email: true,
-  username: true,
-  avatarUrl: true,
-  posts: true,
-  _count: true
+export async function getUsers() {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      avatarUrl: true,
+      role: true,
+      userImages: true,
+      _count: {
+        select: {
+          posts: true,
+          favorites: true,
+          comments: true,
+          likes: true,
+          projects: true,
+          userImages: true
+        }
+      }
+    }
+  })
+  return users
 }
 
 export async function getUserByUsername(username: string) {
@@ -41,7 +57,7 @@ export async function getUserByUsername(username: string) {
     where: {
       username: username
     },
-    select: defaultPersonalSelect
+    select: defaultUserSelect
   })
 }
 
@@ -113,23 +129,13 @@ export const getUserPasswordHash = async (
   return { user: null, passwordHash: null }
 }
 
-export async function getUsers() {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      avatarUrl: true,
-      role: true,
-      _count: {
-        select: {
-          posts: true,
-          favorites: true,
-          comments: true,
-          likes: true
-        }
-      }
+export async function getUserProfile({ userId }: { userId: string }) {
+  return await prisma.profile.findUnique({
+    where: {
+      id: userId
+    },
+    include: {
+      socials: true
     }
   })
-  return users
 }

@@ -8,41 +8,7 @@ export const action: ActionFunction = async ({ request }) => {
   // const imageUrl = await cloudUpload(request)
   // console.log('imageUrl', imageUrl)
 
-  const imagegResults = (await cloudUpload(request.clone())) as {
-    public_id: string
-    secure_url: string
-  }[]
+  const imageResults = await cloudUpload(request)
 
-  console.log('imagegResults', imagegResults)
-
-  const imageData = imagegResults.map((image) => {
-    return {
-      imageUrl: image.secure_url,
-      cloudinaryPublicId: image.public_id
-    }
-  })
-  console.log(imageData, 'imageData')
-
-  const formData = await request.clone().formData()
-
-  const postId = formData.get('postId') as string
-  console.log('postId', postId)
-
-  const updated = await prisma.post.update({
-    where: {
-      id: postId
-    },
-    data: {
-      postImages: {
-        create: imageData.map((image) => {
-          return {
-            imageUrl: image.imageUrl,
-            cloudinaryPublicId: image.cloudinaryPublicId
-          }
-        })
-      }
-    }
-  })
-
-  return json({ imagegResults })
+  return json({ imageResults })
 }

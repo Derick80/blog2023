@@ -13,7 +13,7 @@ import {
 import clsx from 'clsx'
 import React from 'react'
 import { z } from 'zod'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import { isAuthenticated } from '~/server/auth/auth.server'
 
@@ -166,8 +166,8 @@ export default function CategoriesRoute() {
                 <input type='hidden' name='categoryId' value={category.id} />
                 <Button
                   disabled={userRole !== 'ADMIN'}
-                  variant='icon_unfilled'
-                  size='small'
+                  variant='ghost'
+                  size='icon'
                   type='submit'
                   name='intent'
                   value='delete'
@@ -198,8 +198,8 @@ export default function CategoriesRoute() {
         )}
         <Button
           form='createCategory'
-          variant='success_filled'
-          size='base'
+          variant='default'
+          size='default'
           type='submit'
         >
           Save

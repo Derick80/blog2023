@@ -6,11 +6,20 @@ import type {
   Favorite as PrismaFavorite,
   Category as PrismaCategory,
   Comment as PrismaComment,
-  TaskCategory as TaskCategoryImport
+  PostImage as PrismaPostImage
 } from '@prisma/client'
 
 import type { SerializeFrom } from '@remix-run/node'
 
+export type UserSelect_v2 = Pick<
+  User,
+  'id' | 'username' | 'email' | 'avatarUrl' | 'role'
+>
+
+export type CategoryMinimal = Pick<PrismaCategory, 'id' | 'label' | 'value'>
+
+// typings for postImages
+export type PostImage = SerializeFrom<PrismaPostImage>
 export type User = Omit<PrismaUser, 'password' | 'createdAt' | 'updatedAt'>
 
 export type UserType = User & {
@@ -45,30 +54,24 @@ export type CommentWithChildren = Comment & {
 export type Category = SerializeFrom<PrismaCategory>
 export type Post = SerializeFrom<PrismaPost> & {
   user: User
+  postImages: PostImage[]
   likes: Like[]
-  favorites: Like[]
+  favorites: Favorite[]
   categories: Category[]
   comments: CommentWithChildren[]
   _count: {
     likes: number
     favorites: number
     comments: number
-    commentsLikes: number
   }
 }
 
+export type AllPostsDisplayType = SerializeFrom<PrismaPost>
+
+export type DraftType = SerializeFrom<PrismaPost> & {
+  postImages: PostImage[]
+  categories: Category[]
+}
 export type CategoryForm = {
   value: string
 }[]
-
-export type TaskCategory = SerializeFrom<TaskCategoryImport>
-export type GetPostsVersionTwoType = {
-  posts: Post & {
-    _count: {
-      comments: number
-      likes: number
-    }
-    user: User
-    categories: Category[]
-  }
-}

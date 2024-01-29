@@ -1,26 +1,51 @@
 import {
   json,
+  redirect,
   type LoaderFunctionArgs,
   type MetaFunction
 } from '@remix-run/node'
 import {
+  Form,
   isRouteErrorResponse,
+  Link,
   Outlet,
   useLoaderData,
   useRouteError,
   useSearchParams
 } from '@remix-run/react'
-import { getAllPostsV1, getPosts } from '~/server/post.server'
-import BlogPreviewV2 from '~/components/v2-components/blog-ui/blog-post/blog-preview_v2'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle
+} from '~/components/ui/navigation-menu'
+import { createMinimalPost, getPosts } from '~/server/post.server'
+
 import {
   filterPosts,
   useCategories,
   useOptionalUser,
-  useUpdateQueryStringValueWithoutNavigation
+  useUpdateQueryStringValueWithoutNavigation,
+  validateAction
 } from '~/utilities'
 import React from 'react'
-import CustomCheckbox from '~/components/v2-components/custom-checkbox_v2'
+import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
+import { H2, H3, Large, Muted } from '~/components/ui/typography'
+import BlogPreviewCard from '~/components/blog-ui/post/blog-preview-card'
+import {
+  getUserAndAdminStatus,
+  isAuthenticated
+} from '~/server/auth/auth.server'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
+import { z } from 'zod'
+import { AllPostsDisplayType, Post } from '~/server/schemas/schemas'
 
 export const meta: MetaFunction = () => {
   return [
@@ -31,22 +56,44 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  // I don't need to use the posts from the loader because I'm using the posts from the getAllPostsV1 function but at the moment I'm using the old getPosts function to get the comments
-  // get all posts and comments
+  const { user, isAdmin } = await getUserAndAdminStatus(request)
+
   const posts = await getPosts()
-  // isolate all comments from posts and flatten them into one array for use with useMatchesData
 
-  const comments = posts.map((post) => post.comments).flat()
-
-  const posts_v2 = await getAllPostsV1()
-
-  return json({ posts, comments, posts_v2 })
+  return json({ posts, isAdmin })
 }
 
+const schema = z.discriminatedUnion('intent', [
+  z.object({
+    intent: z.literal('create'),
+    title: z.string()
+  })
+])
+
+type ActionInput = z.infer<typeof schema>
+export async function action({ request }: LoaderFunctionArgs) {
+  const user = await isAuthenticated(request)
+  if (!user) throw new Error('Unauthorized')
+
+  const { formData, errors } = await validateAction({
+    request,
+    schema
+  })
+  if (errors) {
+    return json({ errors }, { status: 400 })
+  }
+
+  const { intent, ...rest } = formData as ActionInput
+
+  if (intent === 'create') {
+    const post = await createMinimalPost({ userId: user.id, title: rest.title })
+    if (!post) throw new Error('Post not created')
+    return redirect(`/blog/drafts/${post.id}`)
+  }
+}
 export default function BlogRoute() {
   const user = useOptionalUser()
-  const isAdmin = user?.role === 'ADMIN'
-  const { posts_v2 } = useLoaderData<typeof loader>()
+  const { posts, isAdmin } = useLoaderData<typeof loader>()
   const categories = useCategories()
 
   const [searchParams] = useSearchParams()
@@ -59,11 +106,11 @@ export default function BlogRoute() {
   useUpdateQueryStringValueWithoutNavigation('q', query)
 
   const matchingPosts = React.useMemo(() => {
-    if (!query) return posts_v2
+    if (!query) return posts
 
-    let filteredPosts = posts_v2
+    let filteredPosts: AllPostsDisplayType[] = posts
     return filterPosts(filteredPosts, query)
-  }, [query, posts_v2])
+  }, [query, posts])
 
   const isSearching = query.length > 0
 
@@ -89,24 +136,20 @@ export default function BlogRoute() {
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
-      {isAdmin && (
-        <div className='flex flex-col items-center gap-2'>
-          <h1>Admin Controls</h1>
-        </div>
-      )}
-      <div className='flex flex-col items-center gap-20 '>
-        <h1>Welcome to the Blog for DerickCHoskinson.com </h1>
-        <h4>
+      <div className='flex flex-col items-center gap-10 md:gap-20'>
+        <H2>Welcome to the Blog for DerickCHoskinson.com </H2>
+        {isAdmin && <BlogAdminMenu />}
+        <H3>
           <b>Writings</b> about my projects as a novice web developer but mostly
           fake posts used to test the blog
-        </h4>
+        </H3>
       </div>
       <div className='flex w-full flex-col gap-2'>
         <Separator orientation='horizontal' />
         <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          <h6 className='text-left'>You can browse the Blog by </h6>
-          <h1>Category</h1>
-        </div>{' '}
+          <Muted className='text-left'>You can browse the Blog by </Muted>
+          <Large>Category</Large>
+        </div>
         <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
           {categories.map((category) => {
             const selected = query.includes(category.value)
@@ -123,45 +166,72 @@ export default function BlogRoute() {
           })}
         </div>
       </div>
-      <div className='bg-violet flex w-full flex-col items-center gap-2'>
+      <div className='flex w-full flex-col items-center gap-2'>
         <Outlet />
         <Separator orientation='horizontal' />
-        <div className='mb-4 flex w-full flex-row items-center gap-2'>
-          {!queryValue ? (
-            <>
-              <h6 className='text-left'>Viewing all the </h6>
-              <h1>Blog Posts</h1>
-            </>
-          ) : (
-            <div className='flex flex-row items-center gap-2 flex-wrap'>
-              <h6 className='text-left'>
-                Viewing Blog Posts with the category(ies)
-              </h6>
-              {queryValue.split(' ').map((tag) => (
-                <h1 key={tag} className='text-primary'>
-                  {tag}
-                </h1>
-              ))}
-            </div>
-          )}
-        </div>
+        {!queryValue ? (
+          <>
+            <h6 className='text-left'>Viewing all the </h6>
+            <h1>Blog Posts</h1>
+          </>
+        ) : (
+          <div className='flex flex-row items-center gap-2 flex-wrap'>
+            <h6 className='text-left'>
+              Viewing Blog Posts with the category(ies)
+            </h6>
+            {queryValue.split(' ').map((tag) => (
+              <h1 key={tag} className='text-primary'>
+                {tag}
+              </h1>
+            ))}
+          </div>
+        )}
+      </div>
 
-        <div className='flex flex-col gap-5 w-full items-center'>
-          {matchingPosts?.map((post) => (
-            <BlogPreviewV2 key={post.id} post={post} />
-          ))}
-        </div>
+      <div className='flex flex-col md:flex-row md:flex-wrap gap-2'>
+        {matchingPosts?.map((post) => (
+          <BlogPreviewCard key={post.id} post={post} />
+        ))}
       </div>
     </div>
   )
 }
 
+const BlogAdminMenu = () => {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+            <Link to='/blog/new'>New Post</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+            <Link to='/blog/drafts'>Drafts</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>New Post</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <Form method='post'>
+              <Input type='text' name='title' placeholder='title' />
+              <Button type='submit' name='intent' value='create'>
+                Submit
+              </Button>
+            </Form>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  )
+}
 export function ErrorBoundary() {
   const error = useRouteError()
   if (isRouteErrorResponse(error)) {
     return (
       <div>
-        <h1>oops</h1>
+        <h1>oops blog Error boundry</h1>
         <h1>Status:{error.status}</h1>
         <p>{error.data.message}</p>
       </div>

@@ -9,31 +9,19 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import BlogCard from '~/components/v2-components/blog-ui/blog-post/blog-post-v2'
-import { DefaultUserSelect } from '~/server/post.server'
+import { DefaultUserSelect, getSinglePostById } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-    include: {
-      categories: true,
-      likes: true,
-      favorites: true,
-      _count: {
-        select: {
-          comments: true,
-          likes: true
-        }
-      }
-    }
-  })
+  const post = await getSinglePostById(postId)
 
   if (!post) {
     throw new Error('Post not found')
   }
+
+  console.log(post, 'post from loader')
 
   const comments = await prisma.comment.findMany({
     where: {
@@ -49,7 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       createdAt: 'asc'
     }
   })
-  console.log(comments, 'comments from loader')
+  // console.log(comments, 'comments from loader')
 
   return json({ post, comments })
 }
@@ -80,7 +68,7 @@ export default function BlogPostRoute() {
         Back
       </NavLink>
       <div className='flex flex-col items-center gap-4'>
-        <BlogCard post={data.post} comments={data.comments} />
+        {/* <BlogCard post={data.post} comments={data.comments} /> */}
       </div>
     </div>
   )

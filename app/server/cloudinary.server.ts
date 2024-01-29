@@ -42,16 +42,27 @@ cloudinary.v2.config({
 })
 
 export async function uploadImage(
-  data: AsyncIterable<Uint8Array>
+  data: AsyncIterable<Uint8Array>,
+  filename?: string
 ): Promise<cloudinary.UploadApiResponse> {
   const uploadPromise = new Promise(async (resolve, reject) => {
     const uploadStream = cloudinary.v2.uploader.upload_stream(
       {
         cloud_name: 'dch-photo',
+        folder: 'blog_testing_2024',
+        filename_override: filename,
+        discard_original_filename: false,
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true,
         transformation: [
           {
             format: 'webp',
-            fetch_format: 'webp'
+            fetch_format: 'webp',
+            width: 250,
+            height: 250,
+            gravity: 'faces',
+            crop: 'fill'
           }
         ]
       },
@@ -77,14 +88,18 @@ export async function uploadImage(
 
 // console.log('configs', cloudinary.v2.config())
 export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
-  async ({ name, data }) => {
-    if (name !== 'imageUrl') {
+  async ({ name, data, filename }) => {
+    if (name !== 'images') {
       return undefined
     }
-    const uploadedImage = await uploadImage(data)
+    // if (!filename) {
+    //   throw new Error("Missing 'filename' in upload request")
+    // }
+
+    const uploadedImage = await uploadImage(data, filename)
     // @ts-ignore
     // this ignore came from the source i followed.  I think I kinda solved this by adding the type to the uploadImage function
-    console.log('uploadedImage', uploadedImage)
+    console.log('uploadedImage', JSON.stringify(uploadedImage))
 
     return JSON.stringify(uploadedImage)
   },
@@ -93,8 +108,9 @@ export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
 
 export async function cloudUpload(request: Request) {
   const formData = await unstable_parseMultipartFormData(request, uploadHandler)
+
   const imageResults = formData
-    .getAll('imageUrl')
+    .getAll('images')
     .map((image) => {
       if (typeof image === 'string') {
         return JSON.parse(image)
@@ -103,7 +119,7 @@ export async function cloudUpload(request: Request) {
     })
     .filter((image) => image !== null)
 
-  return imageResults
+  return json({ imageResults })
 }
 
 // delete image from cloudinary using secure_url

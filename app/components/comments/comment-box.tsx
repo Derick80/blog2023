@@ -2,7 +2,7 @@ import type { Post } from '@prisma/client'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 import { useOptionalUser } from '~/utilities'
 
 export default function CommentBox({
@@ -32,8 +32,8 @@ export default function CommentBox({
       {user ? (
         <Button
           className='ml-auto'
-          variant='icon_text_unfilled'
-          size='tiny'
+          variant='ghost'
+          size='icon'
           type='submit'
           onClick={() => {
             setReply(!reply)
@@ -74,8 +74,8 @@ export default function CommentBox({
             className='w-full rounded-md border-2 border-gray-300 p-2 text-sm text-black'
           />
           <Button
-            variant='icon_text_filled'
-            size='tiny'
+            variant='ghost'
+            size='icon'
             type='submit'
             disabled={commentFetcher.state === 'loading'}
           >

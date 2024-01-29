@@ -2,7 +2,7 @@ import { useFetcher } from '@remix-run/react'
 import React from 'react'
 import type { CommentWithChildren } from '~/server/schemas/schemas'
 import CommentBox from './comment-box'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 import { formatDateAgo, useOptionalUser } from '~/utilities'
 import { Cross2Icon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -223,8 +223,8 @@ function CommentCardUserOptions({
         {user?.id === userId && (
           <div className='flex flex-row gap-1'>
             <Button
-              variant='icon_unfilled'
-              size='tiny'
+              variant='ghost'
+              size='icon'
               onClick={() => {
                 setEditing(!editing)
                 setOpen(false)
@@ -232,7 +232,7 @@ function CommentCardUserOptions({
             >
               {editing ? <Cross2Icon /> : <Pencil1Icon />}
             </Button>
-            <Button variant='icon_unfilled' size='tiny' onClick={onClick}>
+            <Button variant='ghost' size='icon' onClick={onClick}>
               <TrashIcon />
             </Button>
           </div>

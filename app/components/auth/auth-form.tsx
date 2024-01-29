@@ -1,5 +1,5 @@
 import { Form, useActionData } from '@remix-run/react'
-import Button from '../button'
+
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import {
@@ -15,6 +15,7 @@ import React from 'react'
 import { DiscordLogoIcon } from '@radix-ui/react-icons'
 import { Separator } from '../ui/separator'
 import { Muted } from '../ui/typography'
+import { Button } from '../ui/button'
 
 export const socialProviders = [
   {
@@ -166,7 +167,7 @@ export const AuthForm = () => {
 
           <Button
             className='w-full justify-center'
-            variant='primary_filled'
+            variant='default'
             name='intent'
             value={mode}
             type='submit'
@@ -192,7 +193,8 @@ export const AuthForm = () => {
               className='w-full text-center justify-center gap-2'
               // form={ `social-login-${item.provider}` }
               value={item.provider}
-              variant='icon_text_filled'
+              variant='ghost'
+              size='icon'
             >
               {item.icon}
 

@@ -1,6 +1,6 @@
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
-import Button from '~/components/button'
+import { Button } from '~/components/ui/button'
 // Use this form to edit a specific comment
 export default function EditCommentForm({
   commentId,
@@ -42,8 +42,8 @@ export default function EditCommentForm({
         autoFocus
       />
       <Button
-        variant='success_filled'
-        size='small'
+        variant='default'
+        size='sm'
         name='action'
         value='edit'
         type='submit'
