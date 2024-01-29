@@ -30,9 +30,9 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='bold'
         variant='outline'
         size='sm'
-        className={editor.isActive('bold') ? '' : 'accent-ring'}
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        asChild
+        className={ editor.isActive('bold') ? '' : 'text-primary' }
+        onClick={ () => editor.chain().focus().toggleBold().run() }
+
       >
         <FontBoldIcon />
       </ToggleGroupItem>
@@ -40,9 +40,9 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='italic'
         size='sm'
         variant='outline'
-        className={editor.isActive('bold') ? 'border-2' : ''}
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        asChild
+        className={ editor.isActive('bold') ? 'border-2' : '' }
+        onClick={ () => editor.chain().focus().toggleItalic().run() }
+
       >
         <FontItalicIcon />
       </ToggleGroupItem>
@@ -50,35 +50,32 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='underline'
         size='sm'
         variant='outline'
-        className={editor.isActive('bold') ? 'border-2' : ''}
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        asChild
+        className={ editor.isActive('bold') ? 'border-2' : '' }
+        onClick={ () => editor.chain().focus().toggleUnderline().run() }
       >
         <UnderlineIcon />
       </ToggleGroupItem>
-      <ToggleGroupItem value='strikethrough' asChild>
-        <Button
-          type='button'
-          size='sm'
-          variant='outline'
-          className={editor.isActive('bold') ? 'border-2' : ''}
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          asChild
-        >
-          <StrikethroughIcon />
-        </Button>
+      <ToggleGroupItem
+        value='underline'
+        size='sm'
+        variant='outline'
+        className={ editor.isActive('bold') ? 'border-2' : '' }
+        onClick={ () => editor.chain().focus().toggleStrike().run() }
+
+      >
+        <StrikethroughIcon />
+
       </ToggleGroupItem>
-      <ToggleGroupItem value='code'>
-        <Button
-          type='button'
-          size='sm'
-          variant='outline'
-          className={editor.isActive('bold') ? 'border-2' : ''}
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          asChild
-        >
-          <CodeIcon />
-        </Button>
+      <ToggleGroupItem value='code'
+
+        type='button'
+        size='sm'
+        variant='outline'
+        className={ editor.isActive('bold') ? 'border-2' : '' }
+        onClick={ () => editor.chain().focus().toggleCode().run() }
+
+      >
+        <CodeIcon />
       </ToggleGroupItem>
     </ToggleGroup>
   )

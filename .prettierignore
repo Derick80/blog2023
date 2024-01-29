@@ -9,6 +9,7 @@ node_modules
 .env
 styles/app.css
 tailwind.config.js
+tailwind.config.ts
 readMe.md
 .eslintrc.js
 .prettierrc.js
