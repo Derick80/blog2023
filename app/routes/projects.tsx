@@ -119,7 +119,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function ProjectIndex() {
-  const { technologies, projects } = useLoaderData<typeof loader>()
+  // const { technologies, projects } = useLoaderData<typeof loader>()
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
