@@ -52,67 +52,67 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
       </CardHeader>
       <CardContent>
         <Form method='POST' className='flex flex-col gap-5 w-full'>
-          <input type='hidden' name='postId' value={ id } />
+          <input type='hidden' name='postId' value={id} />
 
           <Label htmlFor='title'>Title</Label>
           <Input
             id='title'
             name='title'
-            defaultValue={ title }
-            aria-invalid={ Boolean(actionData?.errors?.title) || undefined }
+            defaultValue={title}
+            aria-invalid={Boolean(actionData?.errors?.title) || undefined}
             aria-errormessage={
               actionData?.errors?.title ? 'title-error' : undefined
             }
           />
-          { actionData?.errors?.title && (
+          {actionData?.errors?.title && (
             <p id='title-error' className='text-red-500'>
-              { actionData?.errors?.title }
+              {actionData?.errors?.title}
             </p>
-          ) }
+          )}
 
           <Label htmlFor='description'>Description</Label>
           <Input
             id='description'
             name='description'
-            defaultValue={ description }
-            aria-invalid={ Boolean(actionData?.errors?.description) || undefined }
+            defaultValue={description}
+            aria-invalid={Boolean(actionData?.errors?.description) || undefined}
             aria-errormessage={
               actionData?.errors?.description ? 'description-error' : undefined
             }
           />
-          { actionData?.errors?.description && (
+          {actionData?.errors?.description && (
             <p id='description-error' role='alert' className='text-red-500'>
-              { actionData?.errors?.description }
+              {actionData?.errors?.description}
             </p>
-          ) }
-          { actionData?.errors?.newCategory && (
+          )}
+          {actionData?.errors?.newCategory && (
             <p id='title-error' className='text-red-500'>
-              { actionData?.errors?.newCategory }
+              {actionData?.errors?.newCategory}
             </p>
-          ) }
+          )}
           <Label htmlFor='content'>Content</Label>
-          <TipTap content={ content } />
-          { actionData?.errors?.content && (
+          <TipTap content={content} />
+          {actionData?.errors?.content && (
             <p id='content-error' role='alert' className='text-red-500'>
-              { actionData?.errors?.content }
+              {actionData?.errors?.content}
             </p>
-          ) }
-          { actionData?.errors?.newCategory && (
+          )}
+          {actionData?.errors?.newCategory && (
             <p id='categories-error' role='alert' className='text-red-500'>
-              { actionData?.errors?.newCategory }
+              {actionData?.errors?.newCategory}
             </p>
-          ) }
+          )}
           <CheckSelect
-            options={ allcategories }
-            picked={ categories }
-            postId={ id }
+            options={allcategories}
+            picked={categories}
+            postId={id}
           />
-          <FeaturedToggle isFeatured={ post.featured } postId={ id } />
+          <FeaturedToggle isFeatured={post.featured} postId={id} />
           <Button
             type='button'
             name='intent'
             value='delete'
-            onClick={ handleDelete }
+            onClick={handleDelete}
             variant='destructive'
           >
             Delete
@@ -133,7 +133,7 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
             </Tooltip>
           </TooltipProvider>
 
-          <PublishToggle isPublished={ published } postId={ id } />
+          <PublishToggle isPublished={published} postId={id} />
         </Form>
       </CardContent>
     </Card>

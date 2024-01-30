@@ -30,9 +30,8 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='bold'
         variant='outline'
         size='sm'
-        className={ editor.isActive('bold') ? '' : 'text-primary' }
-        onClick={ () => editor.chain().focus().toggleBold().run() }
-
+        className={editor.isActive('bold') ? '' : 'text-primary'}
+        onClick={() => editor.chain().focus().toggleBold().run()}
       >
         <FontBoldIcon />
       </ToggleGroupItem>
@@ -40,9 +39,8 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='italic'
         size='sm'
         variant='outline'
-        className={ editor.isActive('bold') ? 'border-2' : '' }
-        onClick={ () => editor.chain().focus().toggleItalic().run() }
-
+        className={editor.isActive('bold') ? 'border-2' : ''}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
       >
         <FontItalicIcon />
       </ToggleGroupItem>
@@ -50,8 +48,8 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='underline'
         size='sm'
         variant='outline'
-        className={ editor.isActive('bold') ? 'border-2' : '' }
-        onClick={ () => editor.chain().focus().toggleUnderline().run() }
+        className={editor.isActive('bold') ? 'border-2' : ''}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
       >
         <UnderlineIcon />
       </ToggleGroupItem>
@@ -59,21 +57,18 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         value='underline'
         size='sm'
         variant='outline'
-        className={ editor.isActive('bold') ? 'border-2' : '' }
-        onClick={ () => editor.chain().focus().toggleStrike().run() }
-
+        className={editor.isActive('bold') ? 'border-2' : ''}
+        onClick={() => editor.chain().focus().toggleStrike().run()}
       >
         <StrikethroughIcon />
-
       </ToggleGroupItem>
-      <ToggleGroupItem value='code'
-
+      <ToggleGroupItem
+        value='code'
         type='button'
         size='sm'
         variant='outline'
-        className={ editor.isActive('bold') ? 'border-2' : '' }
-        onClick={ () => editor.chain().focus().toggleCode().run() }
-
+        className={editor.isActive('bold') ? 'border-2' : ''}
+        onClick={() => editor.chain().focus().toggleCode().run()}
       >
         <CodeIcon />
       </ToggleGroupItem>

@@ -17,10 +17,10 @@ const NavLinks = ({
       to={path}
       title={title}
       className={({ isActive, isPending }) => {
-        return cn`text-xl font-bold ${isActive ? 'underline' : ''} ${className}`
+        return cn`font-semibold ${isActive ? 'underline' : ''} ${className}`
       }}
     >
-      <span className='text-xl font-bold'>{label}</span>
+      <span className='font-semibold'>{label}</span>
     </NavLink>
   )
 }
