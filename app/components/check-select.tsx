@@ -106,12 +106,17 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
     )
   }
 
-
-  React.useEffect(function resetInputOnSuccess () {
-    if (createNewCategoryFetcher.state === "idle" && createNewCategoryFetcher.data?.success) {
-      newCategoryInputRef.current!.value = ''
-    }
-  }, [createNewCategoryFetcher.state, createNewCategoryFetcher.data])
+  React.useEffect(
+    function resetInputOnSuccess() {
+      if (
+        createNewCategoryFetcher.state === 'idle' &&
+        createNewCategoryFetcher.data?.success
+      ) {
+        newCategoryInputRef.current!.value = ''
+      }
+    },
+    [createNewCategoryFetcher.state, createNewCategoryFetcher.data]
+  )
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open)
@@ -146,27 +151,27 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
     <div className='relative flex flex-col items-start justify-start h-full p-2 overflow-y-auto bg-background text-foreground rounded-md shadow-sm'>
       <Label htmlFor='selected-categories'>Selected Categories</Label>
       <div className='flex flex-row w-full gap-2 rounded flex-wrap overflow-auto p-1'>
-        { selected.map((item) => (
-          <Badge key={ item.id }>
-            <span className='mr-2'>{ item.label }</span>
+        {selected.map((item) => (
+          <Badge key={item.id}>
+            <span className='mr-2'>{item.label}</span>
             <Button
               variant='default'
               size='sm'
               type='button'
-              onClick={ () => {
+              onClick={() => {
                 handleCategoryToggle(item.id)
-              } }
+              }}
             >
               <DeleteIcon className='w-4 h-4' />
             </Button>
           </Badge>
-        )) }
+        ))}
       </div>
       <DropdownMenu
-        onOpenChange={ () => {
+        onOpenChange={() => {
           setOpen(!open)
           handleOpenChange(open)
-        } }
+        }}
       >
         <DropdownMenuTrigger className='mt-2 border-2 w-full'>
           Select Categories
@@ -175,75 +180,72 @@ const CheckSelect = ({ options, picked, postId }: Props) => {
           <DropdownMenuLabel> Create a new category</DropdownMenuLabel>
           <Input
             className='w-full'
-            ref={ newCategoryInputRef }
+            ref={newCategoryInputRef}
             placeholder='New Category'
             type='text'
             name='newCategory'
             id='newCategory'
-            onBlur={ (e) => {
+            onBlur={(e) => {
               createNewCategory(e)
-            } }
+            }}
           />
           <Button variant='default' size='sm' type='button'>
             Create
           </Button>
-          { createNewCategoryFetcher?.data?.errors && (
+          {createNewCategoryFetcher?.data?.errors && (
             <p id='title-error' className='text-red-500'>
-              { actionData?.errors?.newCategory }
+              {actionData?.errors?.newCategory}
             </p>
-          ) }
-          {
-            createNewCategoryFetcher?.data && (
-              <p id='title-error' className='text-green-500'>
-                { (
-                  JSON.stringify(createNewCategoryFetcher?.data?.errors?.newCategory, null, 2)
-
-                ) }
-              </p>
-            )
-          }
+          )}
+          {createNewCategoryFetcher?.data && (
+            <p id='title-error' className='text-green-500'>
+              {JSON.stringify(
+                createNewCategoryFetcher?.data?.errors?.newCategory,
+                null,
+                2
+              )}
+            </p>
+          )}
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Categories</DropdownMenuLabel>
 
-          { options.map((option, index) => (
+          {options.map((option, index) => (
             <div
-              key={ option.id }
+              key={option.id}
               className='flex flex-row items-center justify-start w-full h-8'
             >
               <Checkbox
-                id={ option.id }
+                id={option.id}
                 name='category-select'
-                value={ option.id }
-                checked={ selected.some((item) => item.id === option.id) }
-                onCheckedChange={ (checked) => {
+                value={option.id}
+                checked={selected.some((item) => item.id === option.id)}
+                onCheckedChange={(checked) => {
                   handleCategoryToggle(option.id)
 
                   return checked
-                } }
-
+                }}
               />
               <label
-                htmlFor={ option.label }
+                htmlFor={option.label}
                 className='ml-2 text-sm font-medium text-gray-700'
               >
-                { option.label }
+                {option.label}
               </label>
               <Button
                 variant='default'
                 size='sm'
                 type='button'
-                onClick={ () => {
+                onClick={() => {
                   handleRemoveCategoryFromDataBase(option.id)
-                } }
+                }}
               >
                 <DeleteIcon className='w-4 h-4' />
               </Button>
             </div>
-          )) }
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
-
     </div>
   )
 }

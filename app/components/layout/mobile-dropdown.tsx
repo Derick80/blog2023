@@ -1,80 +1,45 @@
-import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '../ui/dropdown-menu'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
-import { Button } from '../ui/button'
-import React from 'react'
-import { XSquareIcon } from 'lucide-react'
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuLink} from '../ui/navigation-menu'
 import { BrandIcon } from '~/resources/brand-icon'
 import { NavLink } from '@remix-run/react'
-import { ThemeToggle } from '../theme/theme-toggle'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { useOptionalUser } from '~/utilities'
-import { UserPlaceHolder } from '~/resources/user-placeholder'
-import AvatarWithOptions from '../avatar-with-options'
+import { menuItems } from './desktop-menu'
 
 const MobileDropdown = () => {
-  const user = useOptionalUser()
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='icon'>
-          <BrandIcon className='w-12 h-12' />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className='flex flex-col items-center justify-center gap-2'
-        align='end'
-      >
-        <NavLink
-          title='Navigate to the blog page to see all the blog posts'
-          className={({ isActive, isPending }) => {
-            return isActive ? 'underline' : ''
-          }}
-          to='/blog'
-        >
-          Blog
-        </NavLink>
-        <NavLink
-          title='Navigate to the about page to learn more about me'
-          className={({ isActive, isPending }) => {
-            return isActive ? 'underline' : ''
-          }}
-          to='/about'
-        >
-          About
-        </NavLink>
-        <NavLink
-          title='Navigate to the CV page to see my CV'
-          className={({ isActive, isPending }) => {
-            return isActive ? 'underline' : ''
-          }}
-          to='/cv'
-        >
-          CV
-        </NavLink>
-        <NavLink
-          title='Navigate to the projects page to see my projects'
-          className={({ isActive, isPending }) => {
-            return isActive ? 'underline' : ''
-          }}
-          to='/projects'
-        >
-          Projects
-        </NavLink>
-
-        <div className='flex flex-row items-center justify-center gap-2'>
-          <ThemeToggle />
-          {user ? <AvatarWithOptions user={user} /> : null}
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <NavigationMenu className='flex md:hidden'>
+      <NavigationMenuList className='flex justify-between'>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <NavLink to='/' title='Click to go to the home page'>
+              <BrandIcon />
+            </NavLink>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Browse</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className='m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[600px] sm:grid-flow-col sm:grid-rows-3'>
+              {menuItems.map((item, index) => {
+                return (
+                  <li key={index}>
+                    <NavigationMenuLink asChild>
+                      <NavLink to={item.path} title={item.title}>
+                        {item.label}
+                      </NavLink>
+                    </NavigationMenuLink>
+                  </li>
+                )
+              })}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   )
 }
 
