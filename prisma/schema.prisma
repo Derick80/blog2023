@@ -27,8 +27,20 @@ model User {
   projects      Project[]
   commentsLiked CommentLike[]
   blocked       Block[]
+  followers     Follow[]      @relation("UserFollowers")
+  following     Follow[]      @relation("UserFollowing")
   sessions      Session[]
   userImages    UserImage[]
+}
+
+model Follow {
+  id          String @id @default(cuid())
+  followerId  String // ID of the user who follows
+  followingId String // ID of the user being followed
+  follower    User   @relation("UserFollowers", fields: [followerId], references: [id])
+  following   User   @relation("UserFollowing", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
 }
 
 model UserImage {
