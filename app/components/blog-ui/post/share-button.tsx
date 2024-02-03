@@ -43,11 +43,7 @@ export function SharePostButton({ id }: Props) {
     <Popover>
       <PopoverTrigger asChild>
         <Button type='button' variant='ghost' size='default'>
-          <Share1Icon
-                            className='text-primary md:size-6 size-4'
-
-
-          />
+          <Share1Icon className='text-primary md:size-6 size-4' />
         </Button>
       </PopoverTrigger>
       <PopoverContent align='end' className='w-[250px] md:w-[520px]'>

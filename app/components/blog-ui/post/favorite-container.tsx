@@ -55,11 +55,7 @@ export default function FavoriteContainer({
           style={{ fill: 'currentColor' }}
         />
       ) : (
-          <BookmarkIcon
-                  className='text-primary md:size-6 size-4'
-
-
-          />
+        <BookmarkIcon className='text-primary md:size-6 size-4' />
       )}
     </Button>
   )

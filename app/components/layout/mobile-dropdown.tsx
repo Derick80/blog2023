@@ -13,7 +13,7 @@ import { menuItems } from './desktop-menu'
 const MobileDropdown = () => {
   return (
     <NavigationMenu className='flex md:hidden'>
-      <NavigationMenuList className='flex justify-between'>
+      <NavigationMenuList className='flex w-full justify-between'>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <NavLink to='/' title='Click to go to the home page'>
