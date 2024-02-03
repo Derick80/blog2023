@@ -43,7 +43,7 @@ export const H3 = React.forwardRef<HTMLHeadingElement, HeaderProps>(
     <h3
       ref={ref}
       className={cn(
-        'scroll-m-20 text-2xl font-semibold tracking-tight',
+        'scroll-m-20 text-xl font-semibold tracking-tight',
         className
       )}
       {...props}
@@ -54,6 +54,7 @@ export const H3 = React.forwardRef<HTMLHeadingElement, HeaderProps>(
 )
 
 H3.displayName = 'H3'
+
 export function P({
   children,
   className
@@ -114,6 +115,22 @@ export function Muted({
   className?: string
 }) {
   return (
-    <p className={cn('text-sm text-muted-foreground', className)}>{children}</p>
+    <div className={cn('text-sm text-muted-foreground', className)}>
+      {children}
+    </div>
+  )
+}
+
+export function Caption({
+  children,
+  className
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('text-xs text-muted-foreground', className)}>
+      {children}
+    </div>
   )
 }

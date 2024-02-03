@@ -5,16 +5,21 @@ import {
   useCategories,
   useUpdateQueryStringValueWithoutNavigation
 } from '~/utilities'
-
-import type { LoaderFunctionArgs } from '@remix-run/node'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
 import { json } from '@remix-run/node'
-import { getAllPostsV1, getPosts } from '~/server/post.server'
+import { getPosts } from '~/server/post.server'
 
 import ContactWidget from '~/components/contact-widget'
 import ScrollingBanner from '~/components/scroll-banner_v2'
 import React from 'react'
 import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
+import { Category } from '~/server/schemas/schemas'
 export const meta: MetaFunction = () => {
   return [
     { title: `Derick C Hoskinson's Blog` },
@@ -96,7 +101,7 @@ export default function Index() {
             <h1>Category</h1>
           </div>
           <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
-            {categories
+            {/* {categories
               ? categories.map((category) => {
                   const selected = query.includes(category.value)
                   return (
@@ -110,7 +115,13 @@ export default function Index() {
                     />
                   )
                 })
-              : null}
+              : null} */}
+            <MobileAccordianCategoryContainer
+              categories={categories}
+              toggleTag={toggleTag}
+              visibleTags={visibleTags}
+              query={query}
+            />
           </div>
         </div>
       </div>
@@ -136,5 +147,48 @@ export default function Index() {
         <ContactWidget />
       </div>
     </div>
+  )
+}
+
+type MobileAccordianCategoryContainerProps = {
+  categories: Category[]
+  toggleTag: (tag: string) => void
+  visibleTags: Set<string>
+  query: string
+}
+
+function MobileAccordianCategoryContainer({
+  categories,
+  toggleTag,
+  visibleTags,
+  query
+}: MobileAccordianCategoryContainerProps) {
+  return (
+    <Accordion type='single' collapsible className='block md:hidden w-full'>
+      <AccordionItem value='categories'>
+        <AccordionTrigger>
+          <h1>Categories</h1>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
+            {categories
+              ? categories.map((category) => {
+                  const selected = query.includes(category.value)
+                  return (
+                    <CustomCheckbox
+                      key={category.id}
+                      name='category'
+                      tag={category.value}
+                      selected={selected}
+                      onClick={() => toggleTag(category.value)}
+                      disabled={!visibleTags.has(category.value)}
+                    />
+                  )
+                })
+              : null}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   )
 }

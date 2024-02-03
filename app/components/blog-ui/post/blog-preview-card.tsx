@@ -1,6 +1,5 @@
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
-import FavoriteContainer from '~/components/favorite-container'
-import { PresetShare } from '~/components/share-button'
+import FavoriteContainer from '~/components/blog-ui/post/favorite-container'
+import { SharePostButton } from '~/components/blog-ui/post/share-button'
 import {
   Card,
   CardHeader,
@@ -8,17 +7,19 @@ import {
   CardDescription,
   CardFooter
 } from '~/components/ui/card'
-import { Small } from '~/components/ui/typography'
+import { Caption } from '~/components/ui/typography'
 import { Post } from '~/server/schemas/schemas'
 import LikeContainer from '../like-container'
 import { Link } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
+import { LucideArrowUpRightSquare } from 'lucide-react'
+import { CommentPreview } from './blog-comments-count-container'
 
 const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
   const user = useOptionalUser()
   const isAdmin = user?.role !== 'ADMIN'
 
-  const { title, description, content, published, id, userId } = post
+  const { title, description, content, published, id, userId, _count } = post
   const { likes, favorites } = post
 
   const isOwner = user?.id === userId
@@ -32,12 +33,12 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
-      <CardFooter className='pb-2 justify-between'>
-        <div className='flex flex-row items-center gap-2'>
-          <LikeContainer postId={id} likes={likes} />
-          <FavoriteContainer postId={id} favorites={favorites} />
-          <PresetShare id={id} />
-        </div>
+      <CardFooter className='items-center  flex justify-between p-2'>
+        <LikeContainer postId={id} likes={likes} />
+        <CommentPreview commentLength={_count?.comments} postId={id} />
+
+        <FavoriteContainer postId={id} favorites={favorites} />
+        <SharePostButton id={id} />
         <div className='flex flex-row items-center gap-2'></div>
 
         <div className='flex flex-row items-end gap-2'>
@@ -55,8 +56,9 @@ function ReadMore({ postId }: { postId: string }) {
       to={`/blog/${postId}`}
       prefetch='intent'
     >
-      <Small>Read More</Small>
-      <DoubleArrowRightIcon className='w-4 h-4 stroke-current' />
+      <Caption className='hidden md:block'>Read More</Caption>
+      <LucideArrowUpRightSquare                  className='text-primary md:size-6 size-4'
+ />
     </Link>
   )
 }

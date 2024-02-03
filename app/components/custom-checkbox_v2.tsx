@@ -26,7 +26,7 @@ export default function CustomCheckbox({
       name={name}
       value={tag}
       className={clsx(
-        'relative mb-4 mr-4  h-auto w-auto cursor-pointer rounded-full px-6 py-3 transition',
+        'relative mb-2 md:mb-4 mr-2 md:mr-4 text-xs md:text-base w-auto cursor-pointer rounded-full px-4 py-2 transition',
         {
           'text-primary  bg-secondary': !selected,
           'text-inverse bg-inverse': selected,

@@ -1,10 +1,12 @@
 import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import type { FormMethod } from '@remix-run/react'
 import { useFetcher } from '@remix-run/react'
+import { ThumbsUpIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Like } from '~/server/schemas/schemas'
 import { useOptionalUser } from '~/utilities'
+import { Muted } from '../ui/typography'
 export type LikeContainerProps = {
   postId: string
   likes: Pick<Like, 'userId' | 'postId'>[]
@@ -42,19 +44,21 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
   }
 
   return (
-    <Button variant='ghost' size='icon' disabled={!user} onClick={toggleLike}>
+    <Button
+      variant='ghost'
+      size='default'
+      disabled={!user}
+      onClick={toggleLike}
+    >
       {isLiked ? (
-        <HeartFilledIcon
-          className='border-2 border-muted bg-popover'
-          style={{
-            color: 'red',
-            fill: 'red'
-          }}
+        <ThumbsUpIcon
+          className='text-primary md:size-6 size-4'
+          style={{ fill: 'currentColor' }}
         />
       ) : (
-        <HeartIcon className='border-2 border-muted bg-popover' />
+        <ThumbsUpIcon className='text-primary md:size-6 size-4' />
       )}
-      <span className='relative top-1 text-xs'>{likeCount}</span>
+      <Muted className='relative top-1'>{likeCount}</Muted>
     </Button>
   )
 }
