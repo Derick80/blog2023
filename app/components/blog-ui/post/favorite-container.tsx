@@ -4,7 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { useState } from 'react'
 import { useOptionalUser } from '~/utilities'
 import type { Favorite } from '~/server/schemas/schemas'
-import { Button } from './ui/button'
+import { Button } from '../../ui/button'
 
 export type FavoriteContainerProps = {
   postId: string
@@ -45,15 +45,17 @@ export default function FavoriteContainer({
   return (
     <Button
       variant='ghost'
-      size='icon'
-      className=''
+      size='default'
       onClick={toggleFavorite}
       disabled={!user}
     >
       {isFavorite ? (
-        <BookmarkFilledIcon style={{ color: 'red', fill: 'red' }} />
+        <BookmarkFilledIcon
+          className='text-primary md:size-6 size-4'
+          style={{ fill: 'currentColor' }}
+        />
       ) : (
-        <BookmarkIcon className='border-2 border-muted bg-popover' />
+        <BookmarkIcon className='text-primary md:size-6 size-4' />
       )}
     </Button>
   )

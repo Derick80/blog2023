@@ -4,7 +4,8 @@ import {
   NavigationMenuItem,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  NavigationMenuLink} from '../ui/navigation-menu'
+  NavigationMenuLink
+} from '../ui/navigation-menu'
 import { BrandIcon } from '~/resources/brand-icon'
 import { NavLink } from '@remix-run/react'
 import { menuItems } from './desktop-menu'
@@ -12,7 +13,7 @@ import { menuItems } from './desktop-menu'
 const MobileDropdown = () => {
   return (
     <NavigationMenu className='flex md:hidden'>
-      <NavigationMenuList className='flex justify-between'>
+      <NavigationMenuList className='flex w-full justify-between'>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <NavLink to='/' title='Click to go to the home page'>

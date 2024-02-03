@@ -13,17 +13,17 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverAnchor
-} from './ui/popover'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { H3 } from './ui/typography'
+} from '../../ui/popover'
+import { Button } from '../../ui/button'
+import { Input } from '../../ui/input'
+import { Label } from '../../ui/label'
+import { H3 } from '../../ui/typography'
 
 type Props = {
   id: string
 }
 
-export function PresetShare({ id }: Props) {
+export function SharePostButton({ id }: Props) {
   const postUrl = `https://derickchoskinson.com/blog/${id}`
   const encodedPostUrl = encodeURIComponent(postUrl)
 
@@ -42,15 +42,15 @@ export function PresetShare({ id }: Props) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button type='button' variant='ghost'>
-          <Share1Icon />
+        <Button type='button' variant='ghost' size='default'>
+          <Share1Icon className='text-primary md:size-6 size-4' />
         </Button>
       </PopoverTrigger>
       <PopoverContent align='end' className='w-[250px] md:w-[520px]'>
         <div className='flex flex-col space-y-2 text-center sm:text-left'>
           <H3>Share Blog Post</H3>
           <div className='flex flex-row items-center justify-around'>
-            <Button type='button' size='icon' asChild>
+            <Button type='button' variant='default' size='sm' asChild>
               <a
                 href={`https://www.instagram.com/sharer/sharer.php?u=${encodedPostUrl}`}
                 target='_blank'
@@ -59,7 +59,7 @@ export function PresetShare({ id }: Props) {
                 <InstagramLogoIcon />
               </a>
             </Button>
-            <Button type='button' size='icon' asChild>
+            <Button type='button' variant='default' size='sm' asChild>
               <a
                 href={`http://twitter.com/share?url=${encodedPostUrl}`}
                 target='_blank'
@@ -68,7 +68,7 @@ export function PresetShare({ id }: Props) {
                 <TwitterLogoIcon />
               </a>
             </Button>
-            <Button type='button' size='icon' asChild>
+            <Button type='button' variant='default' size='sm' asChild>
               <a
                 href={`https://discord.me/share/url?url=${encodedPostUrl}`}
                 target='_blank'

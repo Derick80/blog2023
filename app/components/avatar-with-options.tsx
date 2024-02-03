@@ -1,6 +1,6 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { UserType } from '~/server/schemas/schemas'
+import { User } from '~/server/schemas/schemas'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { P } from './ui/typography'
 import { Form, NavLink } from '@remix-run/react'
@@ -8,7 +8,7 @@ import { ExitIcon } from '@radix-ui/react-icons'
 import { Button } from './ui/button'
 
 export type AvatarWithOptionsProps = {
-  user: UserType
+  user: User
 }
 
 const AvatarWithOptions = ({ user }: AvatarWithOptionsProps) => {
@@ -29,7 +29,7 @@ const AvatarWithOptions = ({ user }: AvatarWithOptionsProps) => {
       </HoverCardTrigger>
       <HoverCardContent>
         <Form
-          className='m-0 flex items-center justify-center p-1'
+          className='m-0 flex flex-col items-center justify-center p-1'
           method='POST'
           action='/logout'
         >

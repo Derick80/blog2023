@@ -1,47 +1,71 @@
-import { DoubleArrowRightIcon } from '@radix-ui/react-icons'
-import FavoriteContainer from '~/components/favorite-container'
-import { PresetShare } from '~/components/share-button'
+import FavoriteContainer from '~/components/blog-ui/post/favorite-container'
+import { SharePostButton } from '~/components/blog-ui/post/share-button'
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter
+  CardFooter,
+  CardContent
 } from '~/components/ui/card'
-import { Small } from '~/components/ui/typography'
+import { Caption } from '~/components/ui/typography'
 import { Post } from '~/server/schemas/schemas'
 import LikeContainer from '../like-container'
-import { Link } from '@remix-run/react'
+import { Link, NavLink } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
+import { LucideArrowUpRightSquare } from 'lucide-react'
+import { CommentPreview } from './blog-comments-count-container'
+import { Badge } from '~/components/ui/badge'
+import AvatarWithOptions from '~/components/avatar-with-options'
 
 const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
-  const user = useOptionalUser()
-  const isAdmin = user?.role !== 'ADMIN'
-
-  const { title, description, content, published, id, userId } = post
-  const { likes, favorites } = post
-
-  const isOwner = user?.id === userId
-
-  const canEdit = isAdmin ? true : isOwner ? true : false
+  const {
+    title,
+    description,
+    content,
+    published,
+    id,
+    userId,
+    _count,
+    categories
+  } = post
+  const { likes, favorites, user } = post
 
   return (
-    <Card className=''>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-
-      <CardFooter className='pb-2 justify-between'>
-        <div className='flex flex-row items-center gap-2'>
-          <LikeContainer postId={id} likes={likes} />
-          <FavoriteContainer postId={id} favorites={favorites} />
-          <PresetShare id={id} />
+    <Card>
+      <CardHeader className='p-4'>
+        <div className='flex flex-row items-center justify-between w-full gap-2'>
+          <CardTitle>{title}</CardTitle>
+          <AvatarWithOptions user={user} />
         </div>
-        <div className='flex flex-row items-center gap-2'></div>
+        <CardDescription className='indent-4'>{description}</CardDescription>
+      </CardHeader>
+      <CardContent
+        className='w-full h-auto line-clamp-3 bg-secondary text-primary'
+        dangerouslySetInnerHTML={{ __html: content }}
+      ></CardContent>
 
-        <div className='flex flex-row items-end gap-2'>
-          <ReadMore postId={id} />
+      <CardFooter className='flex  flex-col items-start p-2'>
+        <div className='flex flex-row flex-wrap gap-2'>
+          {categories?.map((category) => (
+            <Badge key={category.id} className='shrink' variant='default'>
+              <NavLink to={`/blog?category=${category.value}`}>
+                {category.label}
+              </NavLink>
+            </Badge>
+          ))}
+        </div>
+        <div className='flex items-center justify-between w-full gap-2'>
+          <LikeContainer postId={id} likes={likes} />
+          <CommentPreview commentLength={_count?.comments} postId={id} />
+
+          <FavoriteContainer postId={id} favorites={favorites} />
+          <SharePostButton id={id} />
+          <div className='flex flex-row items-center gap-2'></div>
+
+          <div className='flex flex-row items-end gap-2'>
+            <ReadMore postId={id} />
+          </div>
         </div>
       </CardFooter>
     </Card>
@@ -55,8 +79,8 @@ function ReadMore({ postId }: { postId: string }) {
       to={`/blog/${postId}`}
       prefetch='intent'
     >
-      <Small>Read More</Small>
-      <DoubleArrowRightIcon className='w-4 h-4 stroke-current' />
+      <Caption className='hidden md:block'>Read More</Caption>
+      <LucideArrowUpRightSquare className='text-primary md:size-6 size-4' />
     </Link>
   )
 }

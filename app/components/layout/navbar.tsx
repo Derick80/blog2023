@@ -15,9 +15,9 @@ import {
 // sticky top-0 z-50 flex w-full flex-row items-center justify-around bg-slate-50 dark:bg-slate-800
 export default function NavigationBar() {
   return (
-    <nav className='bg-background relative w-full border-b md:border-0 flex flex-col md:flex-row items-center justify-between'>
+    <nav className='bg-background relative w-full border-b md:border-0 flex flex-col md:flex-row items justify-between'>
       <DesktopBrandIcon />
-      <div className='flex flex-row items-center justify-center md:justify-around gap-2 w-full '>
+      <div className='flex flex-row items- justify-between gap-2 w-full '>
         <DesktopMenu />
         <MobileDropdown />
         <UserMenu />
@@ -67,7 +67,7 @@ function DesktopBrandIcon() {
     <NavLink
       title='Click on the Brand Icon to go to the home page'
       to='/'
-      className='flex md:flex flex-row items-center justify-center gap-2'
+      className='hidden md:flex flex-row items-center justify-center gap-2'
     >
       <BrandIcon className='hidden md:block' />
       <span className='text-xl font-bold'>DerickCHoskinson.com</span>

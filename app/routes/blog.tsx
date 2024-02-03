@@ -16,12 +16,10 @@ import {
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
   navigationMenuTriggerStyle
 } from '~/components/ui/navigation-menu'
 import { createMinimalPost, getPosts } from '~/server/post.server'
@@ -45,7 +43,13 @@ import {
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import { z } from 'zod'
-import { AllPostsDisplayType, Post } from '~/server/schemas/schemas'
+import { AllPostsDisplayType, Category, Post } from '~/server/schemas/schemas'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
 
 export const meta: MetaFunction = () => {
   return [
@@ -108,7 +112,7 @@ export default function BlogRoute() {
   const matchingPosts = React.useMemo(() => {
     if (!query) return posts
 
-    let filteredPosts: AllPostsDisplayType[] = posts
+    let filteredPosts: Omit<Post, 'comments'>[] = posts
     return filterPosts(filteredPosts, query)
   }, [query, posts])
 
@@ -150,7 +154,7 @@ export default function BlogRoute() {
           <Muted className='text-left'>You can browse the Blog by </Muted>
           <Large>Category</Large>
         </div>
-        <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
+        <div className='hidden md:flex col-span-full -mb-4 -mr-4  flex-wrap lg:col-span-10'>
           {categories.map((category) => {
             const selected = query.includes(category.value)
             return (
@@ -165,15 +169,20 @@ export default function BlogRoute() {
             )
           })}
         </div>
+        <MobileAccordianCategoryContainer
+          categories={categories}
+          toggleTag={toggleTag}
+          visibleTags={visibleTags}
+          query={query}
+        />
       </div>
-      <div className='flex w-full flex-col items-center gap-2'>
+      <div className='flex w-full flex-col items-start gap-2'>
         <Outlet />
-        <Separator orientation='horizontal' />
         {!queryValue ? (
-          <>
-            <h6 className='text-left'>Viewing all the </h6>
-            <h1>Blog Posts</h1>
-          </>
+          <div className='flex flex-row items-center gap-2 mb-5'>
+            <H3 className='text-left'>Viewing all the </H3>
+            <Large>Blog Posts</Large>
+          </div>
         ) : (
           <div className='flex flex-row items-center gap-2 flex-wrap'>
             <h6 className='text-left'>
@@ -188,7 +197,7 @@ export default function BlogRoute() {
         )}
       </div>
 
-      <div className='flex flex-col md:flex-row md:flex-wrap gap-2'>
+      <div className='flex flex-col md:flex-row md:flex-wrap w-full gap-6'>
         {matchingPosts?.map((post) => (
           <BlogPreviewCard key={post.id} post={post} />
         ))}
@@ -249,5 +258,48 @@ export function ErrorBoundary() {
       <p>something went wrong</p>
       <pre>{errorMessage}</pre>
     </div>
+  )
+}
+
+type MobileAccordianCategoryContainerProps = {
+  categories: Category[]
+  toggleTag: (tag: string) => void
+  visibleTags: Set<string>
+  query: string
+}
+
+function MobileAccordianCategoryContainer({
+  categories,
+  toggleTag,
+  visibleTags,
+  query
+}: MobileAccordianCategoryContainerProps) {
+  return (
+    <Accordion type='single' collapsible className='block lg:hidden w-full'>
+      <AccordionItem className='border-none' value='categories'>
+        <AccordionTrigger>
+          <h1>Categories</h1>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className='col-span-full -mb-4 -mr-4 flex flex-wrap lg:col-span-10'>
+            {categories
+              ? categories.map((category) => {
+                  const selected = query.includes(category.value)
+                  return (
+                    <CustomCheckbox
+                      key={category.id}
+                      name='category'
+                      tag={category.value}
+                      selected={selected}
+                      onClick={() => toggleTag(category.value)}
+                      disabled={!visibleTags.has(category.value)}
+                    />
+                  )
+                })
+              : null}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   )
 }

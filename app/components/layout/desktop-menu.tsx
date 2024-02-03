@@ -1,7 +1,8 @@
 import {
   NavigationMenu,
   NavigationMenuList,
-  NavigationMenuItem} from '../ui/navigation-menu'
+  NavigationMenuItem
+} from '../ui/navigation-menu'
 import NavLinks from './nav-links'
 
 const DesktopMenu = () => {

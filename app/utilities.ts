@@ -228,7 +228,10 @@ export function useUpdateQueryStringValueWithoutNavigation(
   }, [queryKey, queryValue])
 }
 
-export function filterPosts(posts: Array<Post>, searchString: string) {
+export function filterPosts(
+  posts: Omit<Post, 'comments'>[],
+  searchString: string
+) {
   if (!searchString) return posts
 
   const searches = new Set(searchString.split(' '))
