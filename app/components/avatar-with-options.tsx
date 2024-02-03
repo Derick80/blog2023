@@ -1,7 +1,5 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
-
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-
 import { UserType } from '~/server/schemas/schemas'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { P } from './ui/typography'
