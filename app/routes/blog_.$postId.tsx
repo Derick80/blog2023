@@ -118,7 +118,10 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 }
 export default function BlogPostRoute() {
-const {post, comments} = useLoaderData<typeof loader>()
+  const data = useLoaderData<{
+    post: Post
+    comments: Comment[]
+  }>()
 
   return (
     <div className='mx-auto h-full  w-full items-center gap-4'>
@@ -132,7 +135,7 @@ const {post, comments} = useLoaderData<typeof loader>()
         Back
       </NavLink>
       <div className='flex flex-col h-full min-h-full items-center gap-4'>
-        <BlogFullView post={post} />
+        <BlogFullView post={data.post} />
       </div>
     </div>
   )

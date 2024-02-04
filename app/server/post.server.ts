@@ -236,15 +236,7 @@ export async function getUserPosts(username: string) {
     }
   })
 }
-export const DefaultLikeSelect = {
-  userId: true,
-  postId: true
-}
 
-export const DefaultFavoriteSelect = {
-  userId: true,
-  postId: true
-}
 export const DefaultUserSelect = {
   id: true,
   username: true,
@@ -263,9 +255,7 @@ export const DefaultCommentSelect = {
   parentId: true,
   userId: true,
   createdBy: true,
-  likes: {
-    select: DefaultLikeSelect
-  },
+  likes: true,
   children: {
     select: {
       id: true,
@@ -274,6 +264,8 @@ export const DefaultCommentSelect = {
       updatedAt: true,
       parentId: true,
       userId: true,
+      postId: true,
+      createdBy: true,
       user: {
         select: DefaultUserSelect
       },
@@ -283,6 +275,16 @@ export const DefaultCommentSelect = {
   user: {
     select: DefaultUserSelect
   }
+}
+
+export const DefaultLikeSelect = {
+  userId: true,
+  postId: true
+}
+
+export const DefaultFavoriteSelect = {
+  userId: true,
+  postId: true
 }
 
 export const DefaultAllPostSelect = {
@@ -398,7 +400,11 @@ export async function getSinglePostById(id: string) {
     select: {
       ...DefaultAllPostSelect,
       comments: {
-        select: DefaultCommentSelect
+        include: {
+          user: {
+            select: DefaultUserSelect
+          }
+        }
       }
     }
   })

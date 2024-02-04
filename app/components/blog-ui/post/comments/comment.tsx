@@ -5,8 +5,9 @@ import { cn } from '~/lib/utils'
 import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
 import { formatDateAgo } from '~/utilities'
 import CommentList from './list-comments'
-import { useFetcher, useMatches, useRouteLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData, useMatches, useRouteLoaderData } from '@remix-run/react'
 import { loader } from '~/routes/blog_.$postId'
+import { SerializeFrom } from '@remix-run/node'
 
 const CommentBox = ({
   comment,
@@ -23,18 +24,12 @@ const CommentBox = ({
     parentId,
     children
   } = comment
-
-  console.log(id,'id');
+  const  comments = useLoaderData() as Comment[]
 
   const [showReplies, setShowReplies] = React.useState(true)
-  const commentFetcher = useFetcher<typeof loader>()
-
-  const data = useRouteLoaderData<typeof loader>('routes/blog_.$postId')
-
-  const postComments = data?.comments
 
 
-  const childComments = postComments?.filter((c) => c.parentId === id)
+  const childComments =comments?.filter((c) => c.parentId === id)
 
   console.log(childComments, 'child comments');
 
@@ -91,9 +86,11 @@ const CommentBox = ({
       {
 
         childComments &&
-        childComments.map((comment) => (
-          <CommentList commentList={ comment }
-            key={ comment.id } />
+        childComments.map((child) => (
+          <CommentList commentList={
+            child
+           }
+            key={ child.id } />
         ))
       }
       </>
