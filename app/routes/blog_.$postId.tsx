@@ -28,12 +28,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Error('Post not found')
   }
 
-  console.log(post.comments, 'post from loader')
+  // Isolate the comments from the post object for later use in a fetcher
+  const postComments = post.comments
 
-  return json({
-    post,
-    comments: post.comments
-  })
+  // remove the comments with parentId from the post object
+  post.comments = post.comments.filter((comment) => !comment.parentId)
+
+  return json({ post, comments: postComments})
+
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -116,13 +118,10 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 }
 export default function BlogPostRoute() {
-  const data = useLoaderData<{
-    post: Post
-    comments: Comment[]
-  }>()
+const {post, comments} = useLoaderData<typeof loader>()
 
   return (
-    <div className='mx-auto h-full  w-full items-center border-2 border-yellow-500 gap-4'>
+    <div className='mx-auto h-full  w-full items-center gap-4'>
       {/* create a back button */}
       <NavLink
         title='Go Back'
@@ -133,7 +132,7 @@ export default function BlogPostRoute() {
         Back
       </NavLink>
       <div className='flex flex-col h-full min-h-full items-center gap-4'>
-        <BlogFullView post={data.post} />
+        <BlogFullView post={post} />
       </div>
     </div>
   )

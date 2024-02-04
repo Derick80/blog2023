@@ -395,10 +395,7 @@ export async function getSinglePostById(id: string) {
     select: {
       ...DefaultAllPostSelect,
       comments: {
-        select: DefaultCommentSelect,
-        orderBy: {
-          createdAt: 'desc'
-        }
+        select: DefaultCommentSelect
       }
     }
   })

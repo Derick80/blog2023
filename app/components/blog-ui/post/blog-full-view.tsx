@@ -14,9 +14,9 @@ import { CommentPreview } from './blog-comments-count-container'
 import FavoriteContainer from './favorite-container'
 import { SharePostButton } from './share-button'
 import { ReadMore } from './blog-preview-card'
-import CommentForm from '../comment/comment-form_v2'
 import CreateCommentForm from './comments/create-comment-form'
 import CommentList from './comments/list-comments'
+import { ScrollArea } from '~/components/ui/scroll-area'
 
 type BlogFullViewProps = {
   post: Post
@@ -39,8 +39,6 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
     postImages,
     comments
   } = post
-
-  console.log(comments, 'comments from blog full view')
 
   return (
     <Card className='w-full h-auto  '>
@@ -76,9 +74,16 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
         </div>
         <CreateCommentForm postId={id} intent='create-comment' />
 
-        {post.comments && post.comments.length > 0 && (
-          <CommentList comments={post.comments} />
-        )}
+
+        <ScrollArea>
+           { comments ? (
+
+            comments.map((comment) => (
+            <CommentList commentList={ comment } key={ comment.id } />
+            ))
+        ) : null }
+
+       </ScrollArea>
       </CardFooter>
     </Card>
   )
