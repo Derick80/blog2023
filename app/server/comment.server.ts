@@ -34,3 +34,68 @@ export async function createComment({
     }
   })
 }
+
+export async function replyToComment({
+  postId,
+  userId,
+  message,
+  parentId
+}: {
+  postId: string
+  userId: string
+  message: string
+  parentId: string
+}) {
+  return await prisma.comment.update({
+    where: {
+      id: parentId
+    },
+    data: {
+      parent: {
+        connect: {
+          id: parentId
+        }
+      },
+      children: {
+        create: {
+          message,
+
+          user: {
+            connect: {
+              id: userId
+            }
+          },
+          post: {
+            connect: {
+              id: postId
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
+export async function editCommentMessage({
+  commentId,
+  message,
+  userId
+}: {
+  commentId: string
+  message: string
+  userId: string
+}) {
+  return await prisma.comment.update({
+    where: {
+      id: commentId
+    },
+    data: {
+      message,
+      user: {
+        connect: {
+          id: userId
+        }
+      }
+    }
+  })
+}

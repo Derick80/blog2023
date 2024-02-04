@@ -252,6 +252,7 @@ export const DefaultCommentSelect = {
   createdAt: true,
   updatedAt: true,
   postId: true,
+  parentId: true,
   children: {
     select: {
       id: true,
@@ -394,7 +395,10 @@ export async function getSinglePostById(id: string) {
     select: {
       ...DefaultAllPostSelect,
       comments: {
-        select: DefaultCommentSelect
+        select: DefaultCommentSelect,
+        orderBy: {
+          createdAt: 'desc'
+        }
       }
     }
   })

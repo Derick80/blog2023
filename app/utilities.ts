@@ -1,4 +1,9 @@
-import { Params, useMatches, useRouteLoaderData } from '@remix-run/react'
+import {
+  Params,
+  useFetcher,
+  useMatches,
+  useRouteLoaderData
+} from '@remix-run/react'
 import React, { useMemo } from 'react'
 import type { ZodError, ZodSchema, ZodType } from 'zod'
 import type { CategoryMinimal, Post, UserType } from './server/schemas/schemas'
@@ -271,4 +276,7 @@ export function filterPosts(
   }
 
   return Array.from(new Set([...allResults, ...individualWordResults]))
+}
+export function useClosePositionFetcher() {
+  return useFetcher<typeof action>()
 }

@@ -11,7 +11,11 @@ import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogFullView from '~/components/blog-ui/post/blog-full-view'
 import { isAuthenticated } from '~/server/auth/auth.server'
-import { createComment } from '~/server/comment.server'
+import {
+  createComment,
+  editCommentMessage,
+  replyToComment
+} from '~/server/comment.server'
 import { getSinglePostById } from '~/server/post.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
 import { getSession } from '~/server/session.server'
@@ -24,12 +28,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Error('Post not found')
   }
 
-  console.log(post, 'post from loader')
+  console.log(post.comments, 'post from loader')
 
   return json({
-    post, comments:
-    post.comments
-
+    post,
+    comments: post.comments
   })
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -42,27 +45,34 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   ]
 }
 
-
 const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('create-comment'),
     parentId: z.string().optional(),
     message: z.string().min(1).max(250)
   }),
-
+  z.object({
+    intent: z.literal('edit-comment'),
+    message: z.string().min(1).max(250),
+    commentId: z.string()
+  }),
+  z.object({
+    intent: z.literal('reply-comment'),
+    commentId: z.string(),
+    message: z.string().min(1).max(250)
+  })
 ])
 
 export type ActionInput = z.infer<typeof schema>
 
-
-export async function action ({ request, params }: LoaderFunctionArgs) {
-   const { postId } = zx.parseParams(params, { postId: z.string() })
+export async function action({ request, params }: LoaderFunctionArgs) {
+  const { postId } = zx.parseParams(params, { postId: z.string() })
   const user = await isAuthenticated(request)
   if (!user) {
     return json({ error: 'Not authenticated' })
   }
   const session = await getSession(request.headers.get('Cookie'))
- const { formData, errors } = await validateAction({
+  const { formData, errors } = await validateAction({
     request,
     schema
   })
@@ -73,21 +83,37 @@ export async function action ({ request, params }: LoaderFunctionArgs) {
 
   switch (formData.intent) {
     case 'create-comment':
-      const { message, parentId } = formData  as ActionInput
       const comment = await createComment({
         postId,
-        message,
-        parentId,
+        message: formData.message,
+        parentId: formData?.parentId,
         userId: user.id
       })
-      if(!comment)
-        throw new Error('Comment not created')
+      if (!comment) throw new Error('Comment not created')
 
-      return json({comment})
+      return json({ comment })
+
+    case 'edit-comment':
+      const updatedComment = await editCommentMessage({
+        message: formData.message,
+        commentId: formData.commentId,
+        userId: user.id
+      })
+      if (!updatedComment) throw new Error('Comment not updated')
+
+      return json({ message: 'ok' })
+
+    case 'reply-comment':
+      const replyComment = await replyToComment({
+        postId,
+        message: formData.message,
+        parentId: formData.commentId,
+        userId: user.id
+      })
+      if (!replyComment) throw new Error('Comment not created')
+
+      return json({ message: 'ok' })
   }
-
-
-
 }
 export default function BlogPostRoute() {
   const data = useLoaderData<{
@@ -107,9 +133,7 @@ export default function BlogPostRoute() {
         Back
       </NavLink>
       <div className='flex flex-col h-full min-h-full items-center gap-4'>
-        <BlogFullView
-          post={ data.post }
-        />
+        <BlogFullView post={data.post} />
       </div>
     </div>
   )
