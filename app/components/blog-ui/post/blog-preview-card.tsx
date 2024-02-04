@@ -72,7 +72,7 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
   )
 }
 
-function ReadMore({ postId }: { postId: string }) {
+export function ReadMore({ postId }: { postId: string }) {
   return (
     <Link
       className='flex items-center gap-2'

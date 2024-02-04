@@ -9,10 +9,13 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import { DefaultUserSelect, getSinglePostById } from '~/server/post.server'
-import { prisma } from '~/server/prisma.server'
+import BlogFullView from '~/components/blog-ui/post/blog-full-view'
+import { isAuthenticated } from '~/server/auth/auth.server'
+import { createComment } from '~/server/comment.server'
+import { getSinglePostById } from '~/server/post.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
-
+import { getSession } from '~/server/session.server'
+import { validateAction2 as validateAction } from '~/utilities'
 export async function loader({ params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   const post = await getSinglePostById(postId)
@@ -23,23 +26,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   console.log(post, 'post from loader')
 
-  const comments = await prisma.comment.findMany({
-    where: {
-      postId
-    },
-    include: {
-      user: {
-        select: DefaultUserSelect
-      },
-      likes: true
-    },
-    orderBy: {
-      createdAt: 'asc'
-    }
-  })
-  // console.log(comments, 'comments from loader')
+  return json({
+    post, comments:
+    post.comments
 
-  return json({ post, comments })
+  })
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -50,6 +41,54 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     }
   ]
 }
+
+
+const schema = z.discriminatedUnion('intent', [
+  z.object({
+    intent: z.literal('create-comment'),
+    parentId: z.string().optional(),
+    message: z.string().min(1).max(250)
+  }),
+
+])
+
+export type ActionInput = z.infer<typeof schema>
+
+
+export async function action ({ request, params }: LoaderFunctionArgs) {
+   const { postId } = zx.parseParams(params, { postId: z.string() })
+  const user = await isAuthenticated(request)
+  if (!user) {
+    return json({ error: 'Not authenticated' })
+  }
+  const session = await getSession(request.headers.get('Cookie'))
+ const { formData, errors } = await validateAction({
+    request,
+    schema
+  })
+
+  if (errors) {
+    return json({ errors }, { status: 400 })
+  }
+
+  switch (formData.intent) {
+    case 'create-comment':
+      const { message, parentId } = formData  as ActionInput
+      const comment = await createComment({
+        postId,
+        message,
+        parentId,
+        userId: user.id
+      })
+      if(!comment)
+        throw new Error('Comment not created')
+
+      return json({comment})
+  }
+
+
+
+}
 export default function BlogPostRoute() {
   const data = useLoaderData<{
     post: Post
@@ -57,18 +96,20 @@ export default function BlogPostRoute() {
   }>()
 
   return (
-    <div className='mx-auto h-full w-full items-center gap-4 overflow-auto'>
+    <div className='mx-auto h-full  w-full items-center border-2 border-yellow-500 gap-4'>
       {/* create a back button */}
       <NavLink
         title='Go Back'
         className='flex flex-row items-center gap-1'
         to='/blog'
       >
-        <ChevronLeftIcon className='text-violet-400' />
+        <ChevronLeftIcon className='text-primary' />
         Back
       </NavLink>
-      <div className='flex flex-col items-center gap-4'>
-        {/* <BlogCard post={data.post} comments={data.comments} /> */}
+      <div className='flex flex-col h-full min-h-full items-center gap-4'>
+        <BlogFullView
+          post={ data.post }
+        />
       </div>
     </div>
   )

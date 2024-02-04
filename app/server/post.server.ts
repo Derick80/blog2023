@@ -251,6 +251,21 @@ export const DefaultCommentSelect = {
   message: true,
   createdAt: true,
   updatedAt: true,
+  postId: true,
+  children: {
+    select: {
+      id: true,
+      message: true,
+      createdAt: true,
+      updatedAt: true,
+      parentId: true,
+      userId: true,
+      user: {
+        select: DefaultUserSelect
+      },
+      likes: true
+    }
+  },
   user: {
     select: DefaultUserSelect
   }
