@@ -28,17 +28,13 @@ const CommentBox = ({
 
   const [showReplies, setShowReplies] = React.useState(true)
   const commentFetcher = useFetcher<typeof loader>()
-  // use matches to get the comments array from the current route
 
-  const matches = useMatches()
-  console.log(matches, 'matches');
   const data = useRouteLoaderData<typeof loader>('routes/blog_.$postId')
 
-  console.log(data, 'comments');
+  const postComments = data?.comments
 
 
-
-  const childComments = data?.comments.filter((c) => c.parentId === id)
+  const childComments = postComments?.filter((c) => c.parentId === id)
 
   console.log(childComments, 'child comments');
 

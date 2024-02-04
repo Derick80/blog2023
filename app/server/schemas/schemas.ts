@@ -41,7 +41,7 @@ export type Favorite = SerializeFrom<PrismaFavorite>
 
 export type Comment = SerializeFrom<PrismaComment> & {
   user: User
-  children: Comment[]
+  children: Omit<Comment, 'createdBy'>[]
   likes: SerializeFrom<CommentLike>[]
 }
 

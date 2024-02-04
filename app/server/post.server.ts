@@ -236,7 +236,15 @@ export async function getUserPosts(username: string) {
     }
   })
 }
+export const DefaultLikeSelect = {
+  userId: true,
+  postId: true
+}
 
+export const DefaultFavoriteSelect = {
+  userId: true,
+  postId: true
+}
 export const DefaultUserSelect = {
   id: true,
   username: true,
@@ -253,6 +261,11 @@ export const DefaultCommentSelect = {
   updatedAt: true,
   postId: true,
   parentId: true,
+  userId: true,
+  createdBy: true,
+  likes: {
+    select: DefaultLikeSelect
+  },
   children: {
     select: {
       id: true,
@@ -270,16 +283,6 @@ export const DefaultCommentSelect = {
   user: {
     select: DefaultUserSelect
   }
-}
-
-export const DefaultLikeSelect = {
-  userId: true,
-  postId: true
-}
-
-export const DefaultFavoriteSelect = {
-  userId: true,
-  postId: true
 }
 
 export const DefaultAllPostSelect = {
