@@ -24,7 +24,8 @@ const CommentBox = ({
     parentId,
     children
   } = comment
-  const  comments = useLoaderData() as Comment[]
+  const  {comments} = useLoaderData<typeof loader>()
+console.log(comments, 'comments from comment box');
 
   const [showReplies, setShowReplies] = React.useState(true)
 
@@ -32,9 +33,6 @@ const CommentBox = ({
   const childComments =comments?.filter((c) => c.parentId === id)
 
   console.log(childComments, 'child comments');
-
-
-
 
   return (
       <>
