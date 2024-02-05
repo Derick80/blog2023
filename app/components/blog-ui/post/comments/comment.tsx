@@ -22,6 +22,7 @@ import {
   Save,
   ThumbsUpIcon,
   Trash2,
+  Trash2Icon,
   XIcon
 } from 'lucide-react'
 import CreateCommentForm from './create-comment-form'
@@ -73,7 +74,15 @@ const CommentBox = ({
       setEditComment(false)
     }
 
-  },[isDoneEditing])
+  }, [isDoneEditing])
+
+
+  const deleteFetcher = useFetcher({
+    key: 'delete-comment'
+  })
+  const isSubmitting = deleteFetcher.state !== 'idle'
+
+
   return (
     <>
       <li className='list-none'>
@@ -213,13 +222,33 @@ const CommentBox = ({
                 variant='ghost'
                 size='default'
                 value='delete-comment'
-                name='intent'
+                      name='intent'
+                      disabled={ !isOwner }
+                      onClick={ () => {
+                        deleteFetcher.submit({
+                          intent: 'delete-comment',
+                          commentId: comment.id
+                        },
+                          {
+                            method: 'DELETE'
+                          }
+                        )
+                      } }
+
               >
-                <Trash2 className='text-primary md:size-6 size-4' />
-                    </Button>
+                      {
+                        isSubmitting ? (
+                          <Trash2Icon className='text-primary md:size-6 size-4 animate-spin' />
+                        ) : (
+                            <Trash2 className='text-primary md:size-6 size-4' />
+
+                          )
+
+}                    </Button>
                     </div>
                 )
-}
+              }
+
             </div>
           </CommentFooter>
         </div>

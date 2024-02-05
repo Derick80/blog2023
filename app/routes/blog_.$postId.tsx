@@ -1,6 +1,6 @@
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 import {
   NavLink,
   isRouteErrorResponse,
@@ -69,6 +69,10 @@ const schema = z.discriminatedUnion('intent', [
     message: z.string().min(1).max(250)
   }),
   z.object({
+    intent: z.literal('delete-comment'),
+    commentId: z.string()
+  }),
+  z.object({
     intent: z.literal('like'),
     method: z.enum(['post', 'delete'])
   })
@@ -100,7 +104,8 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         parentId: formData?.parentId,
         userId: user.id
       })
-      if (!comment) throw new Error('Comment not created')
+      if (!comment) setErrorMessage(session, 'errorMessage createComment')
+      if (comment) setSuccessMessage(session, 'successMessage createComment')
 
       return json({ comment })
 
@@ -131,9 +136,39 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         parentId: formData.commentId,
         userId: user.id
       })
-      if (!replyComment) throw new Error('Comment not created')
+      if (!replyComment) {
+        setErrorMessage(session, 'errorMessage replyComment')
+
+      }
+      if (replyComment) {
+        setSuccessMessage(session, 'successMessage replyComment')
+
+      }
 
       return json({ message: 'ok' })
+
+    case 'delete-comment':
+      try {
+        const deleted = await prisma.comment.delete({
+          where: {
+            id: formData.commentId
+          }
+        })
+        if (!deleted) throw new Error('could not delete comment')
+        if (deleted) {
+          setSuccessMessage(session, 'successMessage deleteComment')
+        }
+        return redirect(
+          `/blog/${postId}`,
+          {
+            headers: {
+              'Set-Cookie': await commitSession(session)
+            }
+          }
+        )
+      } catch (error) {
+        return json({ error: 'invalid delete data' }, { status: 500 })
+      }
 
     case 'like':
       try {
