@@ -283,6 +283,9 @@ export async function getSinglePostById(id: string) {
           children: true,
           user: {
             select: DefaultUserSelect
+          },
+          likes: {
+            select: DefaultCommentLikeSelect
           }
         }
       }

@@ -22,35 +22,34 @@ import {
   Trash2
 } from 'lucide-react'
 import CreateCommentForm from './create-comment-form'
+import { editCommentMessage } from '~/server/comment.server'
 
 const CommentBox = ({
   comment,
   depth = 1
 }: {
-  comment: Comment
+  comment: Omit<Comment, 'children'>
   depth?: number
   }) => {
-  const actionData = useActionData<typeof action>()
 
-  const { id, user, message, createdAt, parentId, children } = comment
+
+  const { id, user, message, createdAt, parentId, } = comment
   const [optMessage, setOptMessage] = React.useState(message)
   const { comments } = useLoaderData<typeof loader>()
 
+
 const [editComment, setEditComment] = React.useState(false)
   const [showReplies, setShowReplies] = React.useState(true)
-console.log(optMessage, 'optMessage');
 
   const childComments = comments?.filter((c) => c.parentId === id)
-  const fetcher = useFetcher({ key: 'create-comment' })
-  // trying out named fetchers
-  // I want to use the fetcher to edit the comment and reset the form
-  React.useEffect(() => {
 
-    if ( actionData?.data?.updatedComment.id === id) {
-      setOptMessage(actionData.data?.updatedComment.message)
-    }
-  }, [fetcher.state, fetcher.data])
+  console.log({ childComments });
 
+  const fetcher = useFetcher<{
+    updatedComment: Comment
+  }>({
+    key: 'edit-comment'
+  })
 
   return (
     <>
@@ -74,9 +73,12 @@ console.log(optMessage, 'optMessage');
 
                   <div
 
-                  >{ message ||
+                >{
 
-                optMessage
+
+                    fetcher?.data?.updatedComment?.message
+
+                    || message
                   }</div>
               )
           }
@@ -133,7 +135,8 @@ console.log(optMessage, 'optMessage');
       stuff here
       {childComments &&
         childComments.map((child) => (
-          <CommentList commentList={child} key={child.id} />
+          <CommentList commentList={ child } key={ child.id }
+          />
         ))}
     </>
   )

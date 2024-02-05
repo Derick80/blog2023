@@ -44,14 +44,15 @@ export type Favorite = Omit<
 
 export type Comment = SerializeFrom<PrismaComment> & {
   user: User
-  children: Comment[]
-  likes: SerializeFrom<CommentLike>[]
+  likes: CommentLikeMinimal[]
 }
+
+export type CommentLikeMinimal = Pick<CommentLike, 'userId' | 'commentId'>
 
 export type CommentWithChildren = Comment & {
   user: User
   children: CommentWithChildren[]
-  likes: Omit<SerializeFrom<CommentLike>, 'createdAt' | 'updatedAt'>[]
+  likes: CommentLikeMinimal[]
 }
 
 export type Category = SerializeFrom<PrismaCategory>

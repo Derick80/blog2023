@@ -2,7 +2,9 @@ import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
 import { useParams } from '@remix-run/react'
 import CommentBox from './comment'
 
-const CommentList = ({ commentList }: { commentList: Comment }) => {
+const CommentList = ({ commentList }: {
+  commentList: Comment
+}) => {
   const postId = useParams().postId
   if (!postId) return null
 
