@@ -77,11 +77,30 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
         <ScrollArea
           className='w-full h-96 overflow-y-auto'
         >
-          {comments
-            ? comments.map((comment) => (
-                <CommentList commentList={comment} key={comment.id} />
+
+          {
+            comments && (
+              comments.map((comment) => (
+                <ul className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'
+                  key={ comment.id }
+                >
+                  <CommentList comment={ comment } />
+
+                </ul>
               ))
-            : null}
+            )
+          }
+
+          {
+            post.comments.length > 0 && (
+              post.comments.map((comment) => (<CommentList key={ comment.id } comment={ comment } />)
+              )
+            )
+          }
+
+
+
+
         </ScrollArea>
       </CardFooter>
     </Card>

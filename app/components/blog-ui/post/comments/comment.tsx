@@ -28,28 +28,16 @@ const CommentBox = ({
   comment,
   depth = 1
 }: {
-  comment: Omit<Comment, 'children'>
+    comment: Comment & {
+      children?: Comment[]
+  }
+
   depth?: number
   }) => {
 
 
   const { id, user, message, createdAt, parentId, } = comment
-  const [optMessage, setOptMessage] = React.useState(message)
-  const { comments } = useLoaderData<typeof loader>()
 
-
-const [editComment, setEditComment] = React.useState(false)
-  const [showReplies, setShowReplies] = React.useState(true)
-
-  const childComments = comments?.filter((c) => c.parentId === id)
-
-  console.log({ childComments });
-
-  const fetcher = useFetcher<{
-    updatedComment: Comment
-  }>({
-    key: 'edit-comment'
-  })
 
   return (
     <>
@@ -60,30 +48,7 @@ const [editComment, setEditComment] = React.useState(false)
             <Small>{formatDateAgo(comment.createdAt)}</Small>
           </CommentHeader>
 
-            {
-              editComment ? (
-              <CreateCommentForm
-                editComment={editComment}
-                  postId={comment.postId}
-                  intent='edit-comment'
-                  commentId={id}
-                  message={ message  }
-                />
-              ):(
-
-                  <div
-
-                >{
-
-
-                    fetcher?.data?.updatedComment?.message
-
-                    || message
-                  }</div>
-              )
-          }
-
-
+          <P>{comment.message}</P>
           <CommentFooter>
             <div className='flex flex-row items-center gap-2'>
               <Button variant='ghost' size='default'>
@@ -107,7 +72,7 @@ const [editComment, setEditComment] = React.useState(false)
                 size='default'
                 value='edit-comment'
                 name='intent'
-                onClick={() => setEditComment(!editComment)}
+
               >
                 <Edit2Icon className='text-primary md:size-6 size-4' />
               </Button>
@@ -133,9 +98,9 @@ const [editComment, setEditComment] = React.useState(false)
         Show Replies
       </Button>
       stuff here
-      {childComments &&
-        childComments.map((child) => (
-          <CommentList commentList={ child } key={ child.id }
+      {comment.children &&
+        comment.children.map((child) => (
+          <CommentList comment={ child } key={ child.id }
           />
         ))}
     </>
