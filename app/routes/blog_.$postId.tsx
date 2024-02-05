@@ -22,6 +22,7 @@ import type { Comment, Post } from '~/server/schemas/schemas'
 import {
   commitSession,
   getSession,
+  setErrorMessage,
   setSuccessMessage
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
@@ -109,9 +110,19 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         commentId: formData.commentId,
         userId: user.id
       })
-      if (!updatedComment) throw new Error('Comment not updated')
+      if (!updatedComment) {
+        setErrorMessage(session, 'errorMessage editComment')
 
-      return json({ message: 'ok', updatedComment })
+      }
+      if (updatedComment) {
+        setSuccessMessage(session, 'successMessage editComment')
+      }
+
+      return json({ message: 'ok', updatedComment }, {
+        headers: {
+          'Set-Cookie': await commitSession(session)
+        }
+      })
 
     case 'reply-comment':
       const replyComment = await replyToComment({

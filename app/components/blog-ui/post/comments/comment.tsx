@@ -3,7 +3,7 @@ import { Button } from '~/components/ui/button'
 import { Muted, P, Small } from '~/components/ui/typography'
 import { cn } from '~/lib/utils'
 import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
-import { formatDateAgo } from '~/utilities'
+import { formatDateAgo, useOptionalUser } from '~/utilities'
 import CommentList from './list-comments'
 import {
   useActionData,
@@ -38,6 +38,12 @@ const CommentBox = ({
 
   depth?: number
   }) => {
+  const currentUser = useOptionalUser()
+
+  // use the data to determine if the user is authenticated and logged in or not
+  const commentUser = comment.userId
+
+  const isOwner = currentUser?.id === commentUser
 
   const [editComment, setEditComment] = React.useState(false)
   const [commentMessage, setCommentMessage] = React.useState(comment.message)
@@ -67,7 +73,7 @@ const CommentBox = ({
       setEditComment(false)
     }
 
-  })
+  },[isDoneEditing])
   return (
     <>
       <li className='list-none'>
@@ -123,12 +129,18 @@ const CommentBox = ({
 
           <CommentFooter>
             <div className='flex flex-row items-center gap-2'>
-              <Button variant='ghost' size='default'>
+              <Button variant='ghost' size='default'
+                disabled={!currentUser}
+
+
+              >
                 <ThumbsUpIcon className='text-primary md:size-6 size-4' />
 
                 {comment?.likes?.length}
               </Button>
-              <Button variant='ghost' size='default'>
+              <Button variant='ghost' size='default'
+                disabled={!currentUser}
+              >
                 <BookmarkIcon className='text-primary md:size-6 size-4' />
               </Button>
               <Button
@@ -136,9 +148,14 @@ const CommentBox = ({
                 size='default'
                 value='create-comment'
                 name='intent'
+                disabled={!currentUser}
               >
                 <ReplyIcon className='text-primary md:size-6 size-4' />
               </Button>
+              {
+                isOwner && (
+                  <div
+                    className='flex flex-row items-center gap-2'>
 
               {
                 editComment === true ? (
@@ -199,7 +216,10 @@ const CommentBox = ({
                 name='intent'
               >
                 <Trash2 className='text-primary md:size-6 size-4' />
-              </Button>
+                    </Button>
+                    </div>
+                )
+}
             </div>
           </CommentFooter>
         </div>
