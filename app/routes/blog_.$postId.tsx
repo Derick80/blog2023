@@ -111,7 +111,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       })
       if (!updatedComment) throw new Error('Comment not updated')
 
-      return json({ message: 'ok' })
+      return json({ message: 'ok', updatedComment })
 
     case 'reply-comment':
       const replyComment = await replyToComment({

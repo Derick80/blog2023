@@ -85,7 +85,7 @@ export async function editCommentMessage({
   message: string
   userId: string
 }) {
-  return await prisma.comment.update({
+  const updated = await prisma.comment.update({
     where: {
       id: commentId
     },
@@ -98,4 +98,5 @@ export async function editCommentMessage({
       }
     }
   })
+  return updated
 }

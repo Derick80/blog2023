@@ -1,9 +1,11 @@
 import { useActionData, useFetcher } from '@remix-run/react'
+import { SaveIcon } from 'lucide-react'
 import React from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
+import { cn } from '~/lib/utils'
 import { action } from '~/routes/blog_.$postId'
 
 type CreateCommentFormProps = {
@@ -12,6 +14,7 @@ type CreateCommentFormProps = {
   message?: string
   intent: string
   commentId?: string
+  editComment?: boolean
   setShowReply?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -21,18 +24,20 @@ const CreateCommentForm = ({
   parentId,
   intent,
   commentId,
-  setShowReply
+  editComment,
 }: CreateCommentFormProps) => {
   const actionData = useActionData<{
     intent: 'edit-comment'
     commentId: string
     message: string
-    setShowReply?: React.Dispatch<React.SetStateAction<boolean>>
+
   }>()
 
   const [isMessage, setIsMessage] = React.useState(message)
 
-  const createCommentFetcher = useFetcher<typeof action>()
+  const createCommentFetcher = useFetcher<typeof action>({
+    key:'create-comment'
+  })
 
   const formRef = React.useRef<HTMLFormElement>(null)
   let isDone =
@@ -45,13 +50,18 @@ const CreateCommentForm = ({
   }, [isDone])
   return (
     <createCommentFetcher.Form
+
       ref={formRef}
       method='POST'
-      className='flex flex-col gap-1 md:gap-2 w-full mt-2'
+ className={cn(
+    "transition-opacity duration-500",
+    { "opacity-0": !editComment },
+    { "opacity-100": editComment }
+  )}
     >
-      {commentId && <Input type='text' name='commentId' value={commentId} />}
-      {parentId && <Input type='text' name='parentId' value={parentId} />}
-      <Label htmlFor='message'>Comment Message</Label>
+      {commentId && <Input type='hidden' name='commentId' value={commentId} />}
+      {parentId && <Input type='hidden' name='parentId' value={parentId} />}
+      <Label htmlFor='message' aria-label='message' className='sr-only' />
       <Textarea
         id='message'
         name='message'
@@ -61,18 +71,18 @@ const CreateCommentForm = ({
       />
 
       <Button
+
         type='submit'
-        variant='default'
+        variant='ghost'
         size='default'
         value={intent}
         name='intent'
         onClick={() => {
-          intent === 'edit-comment' &&
-            setShowReply &&
-            setShowReply(!setShowReply)
+          intent === 'edit-comment'
+
         }}
       >
-        Save Comment
+       <SaveIcon className='text-primary md:size-6 size-4' />
       </Button>
     </createCommentFetcher.Form>
   )

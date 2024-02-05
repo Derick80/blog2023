@@ -6,12 +6,13 @@ import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
 import { formatDateAgo } from '~/utilities'
 import CommentList from './list-comments'
 import {
+  useActionData,
   useFetcher,
   useLoaderData,
   useMatches,
   useRouteLoaderData
 } from '@remix-run/react'
-import { loader } from '~/routes/blog_.$postId'
+import { action, loader } from '~/routes/blog_.$postId'
 import { SerializeFrom } from '@remix-run/node'
 import {
   BookmarkIcon,
@@ -20,6 +21,7 @@ import {
   ThumbsUpIcon,
   Trash2
 } from 'lucide-react'
+import CreateCommentForm from './create-comment-form'
 
 const CommentBox = ({
   comment,
@@ -27,14 +29,28 @@ const CommentBox = ({
 }: {
   comment: Comment
   depth?: number
-}) => {
-  const { id, user, message, createdAt, parentId, children } = comment
-  const { comments } = useLoaderData<typeof loader>()
-  console.log(comments[0], 'comments from comment box')
+  }) => {
+  const actionData = useActionData<typeof action>()
 
+  const { id, user, message, createdAt, parentId, children } = comment
+  const [optMessage, setOptMessage] = React.useState(message)
+  const { comments } = useLoaderData<typeof loader>()
+
+const [editComment, setEditComment] = React.useState(false)
   const [showReplies, setShowReplies] = React.useState(true)
+console.log(optMessage, 'optMessage');
 
   const childComments = comments?.filter((c) => c.parentId === id)
+  const fetcher = useFetcher({ key: 'create-comment' })
+  // trying out named fetchers
+  // I want to use the fetcher to edit the comment and reset the form
+  React.useEffect(() => {
+
+    if ( actionData?.data?.updatedComment.id === id) {
+      setOptMessage(actionData.data?.updatedComment.message)
+    }
+  }, [fetcher.state, fetcher.data])
+
 
   return (
     <>
@@ -44,13 +60,27 @@ const CommentBox = ({
             <Small>{comment?.user?.username}</Small>
             <Small>{formatDateAgo(comment.createdAt)}</Small>
           </CommentHeader>
-          <div
-            className={cn(
-              'flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
-            )}
-          >
-            {comment?.message}
-          </div>
+
+            {
+              editComment ? (
+              <CreateCommentForm
+                editComment={editComment}
+                  postId={comment.postId}
+                  intent='edit-comment'
+                  commentId={id}
+                  message={ message  }
+                />
+              ):(
+
+                  <div
+
+                  >{ message ||
+
+                optMessage
+                  }</div>
+              )
+          }
+
 
           <CommentFooter>
             <div className='flex flex-row items-center gap-2'>
@@ -75,6 +105,7 @@ const CommentBox = ({
                 size='default'
                 value='edit-comment'
                 name='intent'
+                onClick={() => setEditComment(!editComment)}
               >
                 <Edit2Icon className='text-primary md:size-6 size-4' />
               </Button>
@@ -107,6 +138,9 @@ const CommentBox = ({
     </>
   )
 }
+
+
+
 
 type CommentFooterProps = {
   children?: React.ReactNode
