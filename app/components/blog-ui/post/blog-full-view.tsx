@@ -74,22 +74,11 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
         </div>
         <CreateCommentForm postId={id} intent='create-comment' />
 
-        <ScrollArea
-          className='w-full h-96 overflow-y-auto'
-        >
-
-
-
-          {
-            post.comments.length > 0 && (
-              post.comments.map((comment) => (<CommentList key={ comment.id } comment={ comment } />)
-              )
-            )
-          }
-
-
-
-
+        <ScrollArea className='w-full h-96 overflow-y-auto'>
+          {post.comments.length > 0 &&
+            post.comments.map((comment) => (
+              <CommentList key={comment.id} comment={comment} />
+            ))}
         </ScrollArea>
       </CardFooter>
     </Card>

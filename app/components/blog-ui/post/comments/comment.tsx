@@ -22,6 +22,7 @@ import {
   ReplyAll,
   ReplyIcon,
   Save,
+  SaveIcon,
   ThumbsUpIcon,
   Trash2,
   Trash2Icon,
@@ -31,6 +32,7 @@ import CreateCommentForm from './create-comment-form'
 import { editCommentMessage } from '~/server/comment.server'
 import { Input } from '~/components/ui/input'
 import { flushSync } from 'react-dom'
+import { Textarea } from '~/components/ui/textarea'
 
 const CommentBox = ({
   comment,
@@ -58,39 +60,10 @@ const CommentBox = ({
 
   const isDoneEditing = editFetcher.state === 'idle' && editFetcher.data != null
 
-  const handleEditComment = async ({
-    event,
-    target
-  }: {
-
-      event: React.FormEvent<HTMLFormElement>,
-      target: string
-    }) => {
-
-    const { value } = event.target as HTMLInputElement
-    console.log('value', value);
-
-    event.preventDefault()
-    setMyMessage(value)
-
-
-    editFetcher.submit(
-      {
-        intent: 'edit-comment',
-        commentId: comment.id,
-        message: myMessage
-      },
-      {
-        method: 'POST'
-      }
-    )
-  }
-
   React.useEffect(() => {
     if (isDoneEditing) {
       setEditComment(false)
     }
-
   }, [isDoneEditing])
 
   const deleteFetcher = useFetcher({
@@ -98,9 +71,12 @@ const CommentBox = ({
   })
   const isSubmitting = deleteFetcher.state !== 'idle'
 
+  const submit = useSubmit()
+  let inputRef = React.useRef<HTMLInputElement>(null)
+  let buttonRef = React.useRef<HTMLButtonElement>(null)
   return (
     <>
-      <li className='list-none'>
+      <li className='list-none space-y-9'>
         <div className='flex flex-col bg-muted hover:bg-accent p-2 rounded-md'>
           <CommentHeader>
             <Small>{comment?.user?.username}</Small>
@@ -108,27 +84,97 @@ const CommentBox = ({
           </CommentHeader>
 
           {editComment === true ? (
-            <editFetcher.Form
+            <Form
               name='edit-form'
-              method='post'
+              method='POST'
+              navigate={false}
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                  flushSync(() => {
+                    setEditComment(false)
+                  })
+                  buttonRef.current?.focus()
+                }
+              }}
               className={cn(
-                'transition-opacity duration-500 w-full',
+                'transition-opacity duration-500 flex  gap-2 items-center text-sm border rounded-md w-full ',
                 { 'opacity-0': !editComment },
                 { 'opacity-100': editComment }
-              ) }
+              )}
+              onSubmit={(e) => {
+                e.preventDefault()
+                flushSync(() => {
+                  setEditComment(!editComment)
+                })
+
+                let formData = new FormData(e.currentTarget)
+                console.log(Object.fromEntries(formData))
+                submit(formData, {
+                  method: 'POST'
+                })
+              }}
             >
-              <Input type='hidden' name='commentId' value={ comment.id } />
+              <Input type='hidden' name='commentId' value={comment.id} />
               <Input type='hidden' name='intent' value='edit-comment' />
 
-              <Input
-                type='text'
+              <Textarea
                 name='message'
                 defaultValue={myMessage}
                 onChange={(e) => setMyMessage(e.target.value)}
               />
-            </editFetcher.Form>
+              <Button
+                variant='ghost'
+                size='default'
+                type='submit'
+                value='edit-comment'
+                name='intent'
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
+                ) : (
+                  <SaveIcon className='text-primary md:size-6 size-4' />
+                )}
+              </Button>
+            </Form>
           ) : (
-            <P> {myMessage}</P>
+            <div
+              onKeyDown={(event) => {
+                if (event.key === 'ESCAPE' && isOwner) {
+                  flushSync(() => {
+                    setEditComment(false)
+                  })
+                  buttonRef.current?.focus()
+                }
+              }}
+              onClick={() => {
+                if (isOwner) {
+                  setEditComment(!editComment)
+                }
+              }}
+              className={cn(
+                'flex gap-2 h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm justify-between placeHolder:text-muted-foreground transition-colors hover:accent-primary items-center',
+                { 'opacity-0': editComment },
+                { 'opacity-100': !editComment }
+              )}
+            >
+              {myMessage}
+              <Button
+                variant='ghost'
+                size='default'
+                type='submit'
+                value='edit-comment'
+                name='intent'
+                disabled={isSubmitting}
+                className='h-12'
+              >
+                {isSubmitting ? (
+                  <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
+                ) : (
+                  <SaveIcon className='text-primary md:size-6 size-4' />
+                )}
+              </Button>
+            </div>
           )}
 
           <CommentFooter>
@@ -154,40 +200,10 @@ const CommentBox = ({
                 <div className='flex flex-row items-center gap-2'>
                   {editComment === true ? (
                     <div className='border-1 border-brown-500'>
-                      <Button variant='ghost' size='default'
-                        type='submit'
-                        name='intent'
-                        form='edit-form'
-                        value='edit-comment'
-
-                    onClick={
-                (event) =>
-                {
-                  event.preventDefault()
-                  let formData = editFetcher.formData as FormData
-                  setMyMessage(myMessage)
-
-                  editFetcher.submit(
-                 formData,
-                    {
-                      method: 'POST'
-                    }
-                  )
-                }
-
-              }
-
-                      >
-                        <Muted className='text-primary md:size-6 size-4 hidden md:block'>
-                          save
-                        </Muted>
-                        <Save className='text-primary md:size-6 size-4' />
-                      </Button>
                       <Button
                         variant='ghost'
                         size='default'
-                        value='edit-comment'
-                        name='intent'
+                        type='button'
                         onClick={() => setEditComment(!editComment)}
                       >
                         <Muted className='text-primary md:size-6 size-4 hidden md:block'>
@@ -201,7 +217,7 @@ const CommentBox = ({
                       variant='ghost'
                       size='default'
                       value='edit-comment'
-                        name='intent'
+                      name='intent'
                       onClick={() => setEditComment(!editComment)}
                     >
                       <Muted className='text-primary md:size-6 size-4 hidden md:block'>

@@ -117,17 +117,19 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       })
       if (!updatedComment) {
         setErrorMessage(session, 'errorMessage editComment')
-
       }
       if (updatedComment) {
         setSuccessMessage(session, 'successMessage editComment')
       }
 
-      return json({ message: 'ok', updatedComment }, {
-        headers: {
-          'Set-Cookie': await commitSession(session)
+      return json(
+        { message: 'ok', updatedComment },
+        {
+          headers: {
+            'Set-Cookie': await commitSession(session)
+          }
         }
-      })
+      )
 
     case 'reply-comment':
       const replyComment = await replyToComment({
@@ -138,11 +140,9 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       })
       if (!replyComment) {
         setErrorMessage(session, 'errorMessage replyComment')
-
       }
       if (replyComment) {
         setSuccessMessage(session, 'successMessage replyComment')
-
       }
 
       return json({ message: 'ok' })
@@ -158,14 +158,11 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         if (deleted) {
           setSuccessMessage(session, 'successMessage deleteComment')
         }
-        return redirect(
-          `/blog/${postId}`,
-          {
-            headers: {
-              'Set-Cookie': await commitSession(session)
-            }
+        return redirect(`/blog/${postId}`, {
+          headers: {
+            'Set-Cookie': await commitSession(session)
           }
-        )
+        })
       } catch (error) {
         return json({ error: 'invalid delete data' }, { status: 500 })
       }

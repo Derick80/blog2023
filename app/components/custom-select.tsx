@@ -65,6 +65,7 @@ export default function CustomSelectBox({
 
   //   Allow user to close dropdown by pressing the escape key
   //  I was guided by this article https://github.com/WebDevSimplified/react-select
+
   React.useEffect(() => {
     const handleKeyboardEvent = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {

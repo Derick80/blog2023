@@ -15,19 +15,16 @@ type CreateCommentFormProps = {
   commentId?: string
   editComment?: boolean
   setEditComment?: (value: boolean) => void
-
 }
 
 const CreateCommentForm = ({
   message = '',
   parentId,
-  intent='create-comment',
+  intent = 'create-comment',
   commentId,
   editComment,
   setEditComment
 }: CreateCommentFormProps) => {
-
-
   const [isMessage, setIsMessage] = React.useState(message)
 
   const createCommentFetcher = useFetcher<typeof action>({
@@ -36,27 +33,25 @@ const CreateCommentForm = ({
 
   const isSubmitting = createCommentFetcher.state !== 'idle'
 
-
   const formRef = React.useRef<HTMLFormElement>(null)
   let isDone =
     createCommentFetcher.state === 'idle' && createCommentFetcher.data != null
 
   React.useEffect(() => {
     if (isDone) {
-      formRef.current?.reset();
+      formRef.current?.reset()
       setIsMessage('')
     }
   }, [isDone])
   return (
     <createCommentFetcher.Form
-
       ref={formRef}
       method='POST'
- className={cn(
-    "transition-opacity duration-500 w-full",
-    { "opacity-0": !editComment || intent !== 'create-comment'},
-    { "opacity-100": editComment || intent   ==='create-comment'}
-  )}
+      className={cn(
+        'transition-opacity duration-500 w-full',
+        { 'opacity-0': !editComment || intent !== 'create-comment' },
+        { 'opacity-100': editComment || intent === 'create-comment' }
+      )}
     >
       {commentId && <Input type='hidden' name='commentId' value={commentId} />}
       {parentId && <Input type='hidden' name='parentId' value={parentId} />}
@@ -76,22 +71,13 @@ const CreateCommentForm = ({
         size='default'
         value={intent}
         name='intent'
-        onClick={
-          (e) => {
-            if(intent === 'edit-comment' && setEditComment && isDone){
-              setEditComment(!editComment)
-
+        onClick={(e) => {
+          if (intent === 'edit-comment' && setEditComment && isDone) {
+            setEditComment(!editComment)
           }
-          }
-        }
+        }}
       >
-        {
-          isSubmitting ? (
-            <SaveIcon className='animate-spin' />
-          ) : (
-            'Submit'
-          )
-     }
+        {isSubmitting ? <SaveIcon className='animate-spin' /> : 'Submit'}
       </Button>
     </createCommentFetcher.Form>
   )

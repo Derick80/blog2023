@@ -10,8 +10,7 @@ type CommentListProps = {
   }
 }
 
-
-const CommentList = ({comment}:CommentListProps) => {
+const CommentList = ({ comment }: CommentListProps) => {
   const postId = useParams().postId
   if (!postId) return null
 
@@ -19,13 +18,11 @@ const CommentList = ({comment}:CommentListProps) => {
 
   const commentList = comments?.filter((c) => !c.parentId)
 
-
   return (
     <>
       <ul className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'>
         <CommentBox comment={comment} />
       </ul>
-
     </>
   )
 }
