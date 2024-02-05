@@ -78,18 +78,7 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
           className='w-full h-96 overflow-y-auto'
         >
 
-          {
-            comments && (
-              comments.map((comment) => (
-                <ul className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'
-                  key={ comment.id }
-                >
-                  <CommentList comment={ comment } />
 
-                </ul>
-              ))
-            )
-          }
 
           {
             post.comments.length > 0 && (

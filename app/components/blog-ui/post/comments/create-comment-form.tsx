@@ -9,35 +9,33 @@ import { cn } from '~/lib/utils'
 import { action } from '~/routes/blog_.$postId'
 
 type CreateCommentFormProps = {
-  postId: string
   parentId?: string | null
   message?: string
-  intent: string
+  intent: 'create-comment' | 'edit-comment' | 'reply-comment'
   commentId?: string
   editComment?: boolean
-  setShowReply?: React.Dispatch<React.SetStateAction<boolean>>
+  setEditComment?: (value: boolean) => void
+
 }
 
 const CreateCommentForm = ({
-  postId,
-  message,
+  message = '',
   parentId,
-  intent,
+  intent='create-comment',
   commentId,
   editComment,
+  setEditComment
 }: CreateCommentFormProps) => {
-  const actionData = useActionData<{
-    intent: 'edit-comment'
-    commentId: string
-    message: string
 
-  }>()
 
   const [isMessage, setIsMessage] = React.useState(message)
 
   const createCommentFetcher = useFetcher<typeof action>({
-    key:'create-comment'
+    key: intent
   })
+
+  const isSubmitting = createCommentFetcher.state !== 'idle'
+
 
   const formRef = React.useRef<HTMLFormElement>(null)
   let isDone =
@@ -45,7 +43,8 @@ const CreateCommentForm = ({
 
   React.useEffect(() => {
     if (isDone) {
-      formRef.current?.reset()
+      formRef.current?.reset();
+      setIsMessage('')
     }
   }, [isDone])
   return (
@@ -54,9 +53,9 @@ const CreateCommentForm = ({
       ref={formRef}
       method='POST'
  className={cn(
-    "transition-opacity duration-500",
-    { "opacity-0": !editComment },
-    { "opacity-100": editComment }
+    "transition-opacity duration-500 w-full",
+    { "opacity-0": !editComment || intent !== 'create-comment'},
+    { "opacity-100": editComment || intent   ==='create-comment'}
   )}
     >
       {commentId && <Input type='hidden' name='commentId' value={commentId} />}
@@ -71,18 +70,28 @@ const CreateCommentForm = ({
       />
 
       <Button
-
+        disabled={isSubmitting}
         type='submit'
         variant='ghost'
         size='default'
         value={intent}
         name='intent'
-        onClick={() => {
-          intent === 'edit-comment'
+        onClick={
+          (e) => {
+            if(intent === 'edit-comment' && setEditComment && isDone){
+              setEditComment(!editComment)
 
-        }}
+          }
+          }
+        }
       >
-       <SaveIcon className='text-primary md:size-6 size-4' />
+        {
+          isSubmitting ? (
+            <SaveIcon className='animate-spin' />
+          ) : (
+            'Submit'
+          )
+     }
       </Button>
     </createCommentFetcher.Form>
   )

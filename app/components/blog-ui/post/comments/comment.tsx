@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '~/components/ui/button'
-import { P, Small } from '~/components/ui/typography'
+import { Muted, P, Small } from '~/components/ui/typography'
 import { cn } from '~/lib/utils'
 import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
 import { formatDateAgo } from '~/utilities'
@@ -18,11 +18,15 @@ import {
   BookmarkIcon,
   Edit2Icon,
   ReplyAll,
+  ReplyIcon,
+  Save,
   ThumbsUpIcon,
-  Trash2
+  Trash2,
+  XIcon
 } from 'lucide-react'
 import CreateCommentForm from './create-comment-form'
 import { editCommentMessage } from '~/server/comment.server'
+import { Input } from '~/components/ui/input'
 
 const CommentBox = ({
   comment,
@@ -35,10 +39,35 @@ const CommentBox = ({
   depth?: number
   }) => {
 
+  const [editComment, setEditComment] = React.useState(false)
+  const [commentMessage, setCommentMessage] = React.useState(comment.message)
 
-  const { id, user, message, createdAt, parentId, } = comment
+  const editFetcher = useFetcher({
+    key: 'edit-comment'
+  })
 
+  const isDoneEditing = editFetcher.state === 'idle' && editFetcher.data !=  null
 
+  const handleEditComment = async () => {
+        editFetcher.submit({
+
+      intent: 'edit-comment',
+      commentId: comment.id,
+      message: commentMessage
+
+    },
+      {
+       method: 'POST',
+    })
+
+  }
+
+  React.useEffect(() => {
+    if (isDoneEditing) {
+      setEditComment(false)
+    }
+
+  })
   return (
     <>
       <li className='list-none'>
@@ -48,7 +77,50 @@ const CommentBox = ({
             <Small>{formatDateAgo(comment.createdAt)}</Small>
           </CommentHeader>
 
-          <P>{comment.message}</P>
+
+          {
+            editComment === true ? (
+              <editFetcher.Form
+                name='edit-comment'
+                method='post'
+                className={cn(
+                  'transition-opacity duration-500 w-full',
+                  { 'opacity-0': !editComment },
+                  { 'opacity-100': editComment }
+                ) }
+              >
+                <Input
+                  type='hidden'
+                  name='commentId'
+                  value={ comment.id }
+                />
+                <Input
+                  type='hidden'
+                  name='message'
+                  value={ commentMessage }
+                  onChange={
+                    handleEditComment
+                  }
+                  required
+                />
+
+                <Input
+                  type='text'
+                  name='message'
+                  defaultValue={ comment.message }
+                  onChange={ (e) => setCommentMessage(e.target.value) }
+                  required
+                />
+
+                </editFetcher.Form>
+            ) : (
+                <P
+
+                > { comment.message }</P>
+            )
+          }
+
+
           <CommentFooter>
             <div className='flex flex-row items-center gap-2'>
               <Button variant='ghost' size='default'>
@@ -65,17 +137,61 @@ const CommentBox = ({
                 value='create-comment'
                 name='intent'
               >
-                <ReplyAll className='text-primary md:size-6 size-4' />
+                <ReplyIcon className='text-primary md:size-6 size-4' />
               </Button>
-              <Button
-                variant='ghost'
-                size='default'
-                value='edit-comment'
-                name='intent'
 
-              >
-                <Edit2Icon className='text-primary md:size-6 size-4' />
-              </Button>
+              {
+                editComment === true ? (
+                  <div
+                    className='border-1 border-brown-500'
+                  >
+                    <Button
+                    variant='ghost'
+                    size='default'
+
+                      onClick={ handleEditComment}
+
+                  >
+                      <Muted
+                        className='text-primary md:size-6 size-4 hidden md:block'
+                      >
+
+                        save</Muted>
+                      <Save
+                        className='text-primary md:size-6 size-4'/>
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      size='default'
+                      value='edit-comment'
+                      name='intent'
+                      onClick={ () => setEditComment(!editComment) }
+                    >
+                      <Muted
+                        className='text-primary md:size-6 size-4 hidden md:block'
+                      >
+                        cancel
+                      </Muted>
+                      <XIcon className='text-primary md:size-6 size-4' />
+                    </Button>
+                  </div>
+                ) : (
+                    <Button
+                      variant='ghost'
+                      size='default'
+                      value='edit-comment'
+                      name='intent'
+                      onClick={() => setEditComment(!editComment)}
+                    >
+                      <Muted
+                        className='text-primary md:size-6 size-4 hidden md:block'
+                      >
+                        edit
+                      </Muted>
+                      <Edit2Icon className='text-primary md:size-6 size-4' />
+                    </Button>
+                )
+              }
               <Button
                 variant='ghost'
                 size='default'
@@ -134,3 +250,5 @@ const CommentHeader = ({ children }: CommentHeaderProps) => {
     </div>
   )
 }
+
+
