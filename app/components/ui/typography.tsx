@@ -57,13 +57,18 @@ H3.displayName = 'H3'
 
 export function P({
   children,
-  className
+  className,
+  ...props
 }: {
   children: ReactNode
   className?: string
+  props?: React.HTMLAttributes<HTMLDivElement>
 }) {
   return (
-    <p className={cn('leading-7 [&:not(:first-child)]:mt-6', className)}>
+    <p
+      className={cn('leading-7 [&:not(:first-child)]:mt-6', className)}
+      {...props}
+    >
       {children}
     </p>
   )

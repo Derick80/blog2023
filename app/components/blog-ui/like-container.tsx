@@ -38,8 +38,13 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
     }
 
     fetcher.submit(
-      { userId: currentUser, postId },
-      { method, action: `/blog/${postId}/like` }
+      {
+        userId: currentUser,
+        postId,
+        intent: 'like',
+        method
+      },
+      { method, action: `/blog/${postId}` }
     )
   }
 
@@ -49,6 +54,8 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
       size='default'
       disabled={!user}
       onClick={toggleLike}
+      name='intent'
+      value='like'
     >
       {isLiked ? (
         <ThumbsUpIcon
