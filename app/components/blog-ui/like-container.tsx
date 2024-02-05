@@ -39,7 +39,8 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
 
     fetcher.submit(
       {
-        userId: currentUser, postId,
+        userId: currentUser,
+        postId,
         intent: 'like',
         method
       },
@@ -52,7 +53,7 @@ export default function LikeContainer({ postId, likes }: LikeContainerProps) {
       variant='ghost'
       size='default'
       disabled={!user}
-      onClick={ toggleLike }
+      onClick={toggleLike}
       name='intent'
       value='like'
     >

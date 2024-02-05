@@ -19,7 +19,11 @@ import {
 import { getSinglePostById } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
-import { commitSession, getSession, setSuccessMessage } from '~/server/session.server'
+import {
+  commitSession,
+  getSession,
+  setSuccessMessage
+} from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 export async function loader({ params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
@@ -35,8 +39,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   // remove the comments with parentId from the post object
   post.comments = post.comments.filter((comment) => !comment.parentId)
 
-  return json({ post, comments: postComments})
-
+  return json({ post, comments: postComments })
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -67,7 +70,6 @@ const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('like'),
     method: z.enum(['post', 'delete'])
-
   })
 ])
 
@@ -123,7 +125,6 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       return json({ message: 'ok' })
 
     case 'like':
-
       try {
         if (formData.method === 'post') {
           // like the post
@@ -154,7 +155,8 @@ export async function action({ request, params }: LoaderFunctionArgs) {
           }
         }
 
-        return json({ message: 'ok' },
+        return json(
+          { message: 'ok' },
           {
             headers: {
               'Set-Cookie': await commitSession(session)
@@ -163,10 +165,8 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         )
       } catch (error) {
         return json({ error: 'invalid like data' }, { status: 500 })
-
-  }
       }
-
+  }
 }
 export default function BlogPostRoute() {
   const data = useLoaderData<{

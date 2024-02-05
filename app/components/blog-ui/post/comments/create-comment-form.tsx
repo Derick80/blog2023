@@ -38,10 +38,6 @@ const CreateCommentForm = ({
   let isDone =
     createCommentFetcher.state === 'idle' && createCommentFetcher.data != null
 
-  console.log(
-    createCommentFetcher?.data,
-    'createCommentFetcher.data from create comment form'
-  )
   React.useEffect(() => {
     if (isDone) {
       formRef.current?.reset()
