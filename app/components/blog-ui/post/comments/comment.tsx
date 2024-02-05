@@ -6,11 +6,13 @@ import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
 import { formatDateAgo, useOptionalUser } from '~/utilities'
 import CommentList from './list-comments'
 import {
+  Form,
   useActionData,
   useFetcher,
   useLoaderData,
   useMatches,
-  useRouteLoaderData
+  useRouteLoaderData,
+  useSubmit
 } from '@remix-run/react'
 import { action, loader } from '~/routes/blog_.$postId'
 import { SerializeFrom } from '@remix-run/node'
@@ -28,17 +30,19 @@ import {
 import CreateCommentForm from './create-comment-form'
 import { editCommentMessage } from '~/server/comment.server'
 import { Input } from '~/components/ui/input'
+import { flushSync } from 'react-dom'
 
 const CommentBox = ({
   comment,
   depth = 1
 }: {
-    comment: Comment & {
-      children?: Comment[]
+  comment: Comment & {
+    children?: Comment[]
   }
 
   depth?: number
-  }) => {
+}) => {
+  const [myMessage, setMyMessage] = React.useState(comment.message)
   const currentUser = useOptionalUser()
 
   // use the data to determine if the user is authenticated and logged in or not
@@ -47,26 +51,39 @@ const CommentBox = ({
   const isOwner = currentUser?.id === commentUser
 
   const [editComment, setEditComment] = React.useState(false)
-  const [commentMessage, setCommentMessage] = React.useState(comment.message)
 
   const editFetcher = useFetcher({
     key: 'edit-comment'
   })
 
-  const isDoneEditing = editFetcher.state === 'idle' && editFetcher.data !=  null
+  const isDoneEditing = editFetcher.state === 'idle' && editFetcher.data != null
 
-  const handleEditComment = async () => {
-        editFetcher.submit({
+  const handleEditComment = async ({
+    event,
+    target
+  }: {
 
-      intent: 'edit-comment',
-      commentId: comment.id,
-      message: commentMessage
+      event: React.FormEvent<HTMLFormElement>,
+      target: string
+    }) => {
 
-    },
+    const { value } = event.target as HTMLInputElement
+    console.log('value', value);
+
+    event.preventDefault()
+    setMyMessage(value)
+
+
+    editFetcher.submit(
       {
-       method: 'POST',
-    })
-
+        intent: 'edit-comment',
+        commentId: comment.id,
+        message: myMessage
+      },
+      {
+        method: 'POST'
+      }
+    )
   }
 
   React.useEffect(() => {
@@ -76,12 +93,10 @@ const CommentBox = ({
 
   }, [isDoneEditing])
 
-
   const deleteFetcher = useFetcher({
     key: 'delete-comment'
   })
   const isSubmitting = deleteFetcher.state !== 'idle'
-
 
   return (
     <>
@@ -92,64 +107,38 @@ const CommentBox = ({
             <Small>{formatDateAgo(comment.createdAt)}</Small>
           </CommentHeader>
 
+          {editComment === true ? (
+            <editFetcher.Form
+              name='edit-form'
+              method='post'
+              className={cn(
+                'transition-opacity duration-500 w-full',
+                { 'opacity-0': !editComment },
+                { 'opacity-100': editComment }
+              ) }
+            >
+              <Input type='hidden' name='commentId' value={ comment.id } />
+              <Input type='hidden' name='intent' value='edit-comment' />
 
-          {
-            editComment === true ? (
-              <editFetcher.Form
-                name='edit-comment'
-                method='post'
-                className={cn(
-                  'transition-opacity duration-500 w-full',
-                  { 'opacity-0': !editComment },
-                  { 'opacity-100': editComment }
-                ) }
-              >
-                <Input
-                  type='hidden'
-                  name='commentId'
-                  value={ comment.id }
-                />
-                <Input
-                  type='hidden'
-                  name='message'
-                  value={ commentMessage }
-                  onChange={
-                    handleEditComment
-                  }
-                  required
-                />
-
-                <Input
-                  type='text'
-                  name='message'
-                  defaultValue={ comment.message }
-                  onChange={ (e) => setCommentMessage(e.target.value) }
-                  required
-                />
-
-                </editFetcher.Form>
-            ) : (
-                <P
-
-                > { comment.message }</P>
-            )
-          }
-
+              <Input
+                type='text'
+                name='message'
+                defaultValue={myMessage}
+                onChange={(e) => setMyMessage(e.target.value)}
+              />
+            </editFetcher.Form>
+          ) : (
+            <P> {myMessage}</P>
+          )}
 
           <CommentFooter>
             <div className='flex flex-row items-center gap-2'>
-              <Button variant='ghost' size='default'
-                disabled={!currentUser}
-
-
-              >
+              <Button variant='ghost' size='default' disabled={!currentUser}>
                 <ThumbsUpIcon className='text-primary md:size-6 size-4' />
 
                 {comment?.likes?.length}
               </Button>
-              <Button variant='ghost' size='default'
-                disabled={!currentUser}
-              >
+              <Button variant='ghost' size='default' disabled={!currentUser}>
                 <BookmarkIcon className='text-primary md:size-6 size-4' />
               </Button>
               <Button
@@ -161,94 +150,92 @@ const CommentBox = ({
               >
                 <ReplyIcon className='text-primary md:size-6 size-4' />
               </Button>
-              {
-                isOwner && (
-                  <div
-                    className='flex flex-row items-center gap-2'>
+              {isOwner && (
+                <div className='flex flex-row items-center gap-2'>
+                  {editComment === true ? (
+                    <div className='border-1 border-brown-500'>
+                      <Button variant='ghost' size='default'
+                        type='submit'
+                        name='intent'
+                        form='edit-form'
+                        value='edit-comment'
 
-              {
-                editComment === true ? (
-                  <div
-                    className='border-1 border-brown-500'
-                  >
-                    <Button
-                    variant='ghost'
-                    size='default'
+                    onClick={
+                (event) =>
+                {
+                  event.preventDefault()
+                  let formData = editFetcher.formData as FormData
+                  setMyMessage(myMessage)
 
-                      onClick={ handleEditComment}
+                  editFetcher.submit(
+                 formData,
+                    {
+                      method: 'POST'
+                    }
+                  )
+                }
 
-                  >
-                      <Muted
-                        className='text-primary md:size-6 size-4 hidden md:block'
+              }
+
                       >
-
-                        save</Muted>
-                      <Save
-                        className='text-primary md:size-6 size-4'/>
-                    </Button>
+                        <Muted className='text-primary md:size-6 size-4 hidden md:block'>
+                          save
+                        </Muted>
+                        <Save className='text-primary md:size-6 size-4' />
+                      </Button>
+                      <Button
+                        variant='ghost'
+                        size='default'
+                        value='edit-comment'
+                        name='intent'
+                        onClick={() => setEditComment(!editComment)}
+                      >
+                        <Muted className='text-primary md:size-6 size-4 hidden md:block'>
+                          cancel
+                        </Muted>
+                        <XIcon className='text-primary md:size-6 size-4' />
+                      </Button>
+                    </div>
+                  ) : (
                     <Button
                       variant='ghost'
                       size='default'
                       value='edit-comment'
-                      name='intent'
-                      onClick={ () => setEditComment(!editComment) }
-                    >
-                      <Muted
-                        className='text-primary md:size-6 size-4 hidden md:block'
-                      >
-                        cancel
-                      </Muted>
-                      <XIcon className='text-primary md:size-6 size-4' />
-                    </Button>
-                  </div>
-                ) : (
-                    <Button
-                      variant='ghost'
-                      size='default'
-                      value='edit-comment'
-                      name='intent'
+                        name='intent'
                       onClick={() => setEditComment(!editComment)}
                     >
-                      <Muted
-                        className='text-primary md:size-6 size-4 hidden md:block'
-                      >
+                      <Muted className='text-primary md:size-6 size-4 hidden md:block'>
                         edit
                       </Muted>
                       <Edit2Icon className='text-primary md:size-6 size-4' />
                     </Button>
-                )
-              }
-              <Button
-                variant='ghost'
-                size='default'
-                value='delete-comment'
-                      name='intent'
-                      disabled={ !isOwner }
-                      onClick={ () => {
-                        deleteFetcher.submit({
+                  )}
+                  <Button
+                    variant='ghost'
+                    size='default'
+                    value='delete-comment'
+                    name='intent'
+                    disabled={!isOwner}
+                    onClick={() => {
+                      deleteFetcher.submit(
+                        {
                           intent: 'delete-comment',
                           commentId: comment.id
                         },
-                          {
-                            method: 'DELETE'
-                          }
-                        )
-                      } }
-
-              >
-                      {
-                        isSubmitting ? (
-                          <Trash2Icon className='text-primary md:size-6 size-4 animate-spin' />
-                        ) : (
-                            <Trash2 className='text-primary md:size-6 size-4' />
-
-                          )
-
-}                    </Button>
-                    </div>
-                )
-              }
-
+                        {
+                          method: 'DELETE'
+                        }
+                      )
+                    }}
+                  >
+                    {isSubmitting ? (
+                      <Trash2Icon className='text-primary md:size-6 size-4 animate-spin' />
+                    ) : (
+                      <Trash2 className='text-primary md:size-6 size-4' />
+                    )}{' '}
+                  </Button>
+                </div>
+              )}
             </div>
           </CommentFooter>
         </div>
@@ -262,18 +249,13 @@ const CommentBox = ({
       >
         Show Replies
       </Button>
-      stuff here
       {comment.children &&
         comment.children.map((child) => (
-          <CommentList comment={ child } key={ child.id }
-          />
+          <CommentList comment={child} key={child.id} />
         ))}
     </>
   )
 }
-
-
-
 
 type CommentFooterProps = {
   children?: React.ReactNode
@@ -299,5 +281,3 @@ const CommentHeader = ({ children }: CommentHeaderProps) => {
     </div>
   )
 }
-
-

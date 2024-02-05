@@ -19,7 +19,6 @@ const CommentList = ({comment}:CommentListProps) => {
 
   const commentList = comments?.filter((c) => !c.parentId)
 
-  console.log(commentList.length, 'commentList');
 
   return (
     <>
