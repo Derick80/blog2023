@@ -17,8 +17,9 @@ import {
   replyToComment
 } from '~/server/comment.server'
 import { getSinglePostById } from '~/server/post.server'
+import { prisma } from '~/server/prisma.server'
 import type { Comment, Post } from '~/server/schemas/schemas'
-import { getSession } from '~/server/session.server'
+import { commitSession, getSession, setSuccessMessage } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 export async function loader({ params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
@@ -62,6 +63,11 @@ const schema = z.discriminatedUnion('intent', [
     intent: z.literal('reply-comment'),
     commentId: z.string(),
     message: z.string().min(1).max(250)
+  }),
+  z.object({
+    intent: z.literal('like'),
+    method: z.enum(['post', 'delete'])
+
   })
 ])
 
@@ -115,7 +121,52 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       if (!replyComment) throw new Error('Comment not created')
 
       return json({ message: 'ok' })
+
+    case 'like':
+
+      try {
+        if (formData.method === 'post') {
+          // like the post
+          const liked = await prisma.like.create({
+            data: {
+              postId,
+              userId: user.id
+            }
+          })
+          if (!liked) throw new Error('could not like post')
+          if (liked) {
+            setSuccessMessage(session, 'successMessage liked')
+          }
+        }
+        if (formData.method === 'delete') {
+          // unlike the post
+          const unliked = await prisma.like.delete({
+            where: {
+              postId_userId: {
+                postId,
+                userId: user.id
+              }
+            }
+          })
+          if (!unliked) throw new Error('could not delete like')
+          if (unliked) {
+            setSuccessMessage(session, 'successMessage unliked')
+          }
+        }
+
+        return json({ message: 'ok' },
+          {
+            headers: {
+              'Set-Cookie': await commitSession(session)
+            }
+          }
+        )
+      } catch (error) {
+        return json({ error: 'invalid like data' }, { status: 500 })
+
   }
+      }
+
 }
 export default function BlogPostRoute() {
   const data = useLoaderData<{
