@@ -19,6 +19,8 @@ import { SerializeFrom } from '@remix-run/node'
 import {
   BookmarkIcon,
   Edit2Icon,
+  MessageCircleReply,
+  MessageSquareQuoteIcon,
   ReplyAll,
   ReplyIcon,
   Save,
@@ -36,14 +38,14 @@ import { Textarea } from '~/components/ui/textarea'
 
 const CommentBox = ({
   comment,
-  depth = 1
+  depth = 1,
+  replyComment = false
 }: {
-  comment: Comment & {
-    children?: Comment[]
-  }
-
-  depth?: number
-}) => {
+  comment: CommentWithChildren
+    depth?: number
+    replyComment?: boolean
+  }) => {
+  const ActionData = useActionData<typeof action>()
   const [myMessage, setMyMessage] = React.useState(comment.message)
   const currentUser = useOptionalUser()
 
@@ -53,6 +55,8 @@ const CommentBox = ({
   const isOwner = currentUser?.id === commentUser
 
   const [editComment, setEditComment] = React.useState(false)
+  const [showReplies, setShowReplies] = React.useState(false)
+  const [replying, setReplying] = React.useState(false)
 
   const editFetcher = useFetcher({
     key: 'edit-comment'
@@ -66,10 +70,12 @@ const CommentBox = ({
     }
   }, [isDoneEditing])
 
-  const deleteFetcher = useFetcher({
-    key: 'delete-comment'
-  })
-  const isSubmitting = deleteFetcher.state !== 'idle'
+  const deleteFetcher = useFetcher()
+
+  const isDeleting =
+    deleteFetcher.state === 'idle' && deleteFetcher.data != null
+
+
 
   const submit = useSubmit()
   let inputRef = React.useRef<HTMLInputElement>(null)
@@ -122,22 +128,57 @@ const CommentBox = ({
                 defaultValue={myMessage}
                 onChange={(e) => setMyMessage(e.target.value)}
               />
-              <Button
-                variant='ghost'
-                size='default'
-                type='submit'
-                value='edit-comment'
-                name='intent'
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
-                ) : (
-                  <SaveIcon className='text-primary md:size-6 size-4' />
-                )}
-              </Button>
+              <div className='flex flex-col items-center gap-2'>
+                <Button
+                  variant='ghost'
+                  size='default'
+                  type='submit'
+                  value='edit-comment'
+                  name='intent'
+                  disabled={isDoneEditing}
+                >
+                  {isDoneEditing ? (
+                    <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
+                  ) : (
+                    <SaveIcon className='text-primary md:size-6 size-4' />
+                  )}
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='default'
+                  type='button'
+                  onClick={() => setEditComment(false)}
+                >
+                  <Muted className='text-primary md:size-6 size-4 hidden md:block'>
+                    cancel
+                  </Muted>
+                  <XIcon className='text-primary md:size-6 size-4' />
+                </Button>
+              </div>
             </Form>
-          ) : (
+          ) : replying === true ? (<div
+            className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'
+
+            >
+
+
+
+              <CreateCommentForm
+                parentId={comment.id}
+                  intent='reply-comment'
+                  setReplying={setReplying}
+                  replying={replying}
+
+                />
+
+
+
+
+
+            </div>) :
+
+
+              (
             <div
               onKeyDown={(event) => {
                 if (event.key === 'ESCAPE' && isOwner) {
@@ -153,122 +194,111 @@ const CommentBox = ({
                 }
               }}
               className={cn(
-                'flex gap-2 h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm justify-between placeHolder:text-muted-foreground transition-colors hover:accent-primary items-center',
+                'flex gap-2 items-center text-sm border rounded-md w-full justify-between',
                 { 'opacity-0': editComment },
                 { 'opacity-100': !editComment }
               )}
             >
-              {myMessage}
-              <Button
-                variant='ghost'
-                size='default'
-                type='submit'
-                value='edit-comment'
-                name='intent'
-                disabled={isSubmitting}
-                className='h-12'
-              >
-                {isSubmitting ? (
-                  <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
-                ) : (
-                  <SaveIcon className='text-primary md:size-6 size-4' />
-                )}
-              </Button>
+              <Small>{comment?.message}</Small>
+
+              <div className='flex flex-col items-center gap-2'>
+                <Button
+                  variant='ghost'
+                  size='default'
+                  type='button'
+                  onClick={() => setEditComment(false)}
+                >
+                  <Muted className='text-primary md:size-6 size-4 hidden md:block'>
+                    Edit
+                  </Muted>
+                  <Edit2Icon className='text-primary md:size-6 size-4' />
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='default'
+                  value='delete-comment'
+                  name='intent'
+                  disabled={!isOwner}
+                  onClick={() => {
+                    deleteFetcher.submit(
+                      {
+                        intent: 'delete-comment',
+                        commentId: comment.id
+                      },
+                      {
+                        method: 'DELETE'
+                      }
+                    )
+                  }}
+                >
+                  {isDeleting ? (
+                    <Trash2Icon className='text-primary md:size-6 size-4 animate-spin' />
+                  ) : (
+                    <Trash2 className='text-primary md:size-6 size-4' />
+                  )}{' '}
+                </Button>
+              </div>
             </div>
           )}
 
-          <CommentFooter>
-            <div className='flex flex-row items-center gap-2'>
-              <Button variant='ghost' size='default' disabled={!currentUser}>
-                <ThumbsUpIcon className='text-primary md:size-6 size-4' />
 
-                {comment?.likes?.length}
-              </Button>
-              <Button variant='ghost' size='default' disabled={!currentUser}>
-                <BookmarkIcon className='text-primary md:size-6 size-4' />
-              </Button>
+          <CommentFooter>
+            <div className='flex flex-row gap-2 justify-between w-full items-center'>
               <Button
-                variant='ghost'
-                size='default'
-                value='create-comment'
-                name='intent'
+                size='xs'
+                type='button'
                 disabled={!currentUser}
+                onClick={() => setReplying(!replying)}
               >
-                <ReplyIcon className='text-primary md:size-6 size-4' />
+                <MessageCircleReply className='mr-2 h-4 w-4' />
+                Reply?
               </Button>
-              {isOwner && (
-                <div className='flex flex-row items-center gap-2'>
-                  {editComment === true ? (
-                    <div className='border-1 border-brown-500'>
-                      <Button
-                        variant='ghost'
-                        size='default'
-                        type='button'
-                        onClick={() => setEditComment(!editComment)}
-                      >
-                        <Muted className='text-primary md:size-6 size-4 hidden md:block'>
-                          cancel
-                        </Muted>
-                        <XIcon className='text-primary md:size-6 size-4' />
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant='ghost'
-                      size='default'
-                      value='edit-comment'
-                      name='intent'
-                      onClick={() => setEditComment(!editComment)}
-                    >
-                      <Muted className='text-primary md:size-6 size-4 hidden md:block'>
-                        edit
-                      </Muted>
-                      <Edit2Icon className='text-primary md:size-6 size-4' />
-                    </Button>
-                  )}
+
+              {comment.children && (
+                <>
                   <Button
                     variant='ghost'
                     size='default'
-                    value='delete-comment'
+                    value='reply-comment'
                     name='intent'
-                    disabled={!isOwner}
-                    onClick={() => {
-                      deleteFetcher.submit(
-                        {
-                          intent: 'delete-comment',
-                          commentId: comment.id
-                        },
-                        {
-                          method: 'DELETE'
-                        }
-                      )
-                    }}
+                    disabled={comment.children.length > 0 ? false : true}
+                    onClick={() => setShowReplies(!showReplies)}
                   >
-                    {isSubmitting ? (
-                      <Trash2Icon className='text-primary md:size-6 size-4 animate-spin' />
-                    ) : (
-                      <Trash2 className='text-primary md:size-6 size-4' />
-                    )}{' '}
+                    <MessageSquareQuoteIcon className='text-primary md:size-6 size-4' />
+                    <Muted className='text-primary text-[10px]'>
+                      {comment.children.length === 0
+                        ? 'No Replies'
+                        : comment.children.length === 1
+                          ? '1 Reply'
+                          : `${comment.children.length} Replies`}
+                    </Muted>
                   </Button>
-                </div>
+                </>
               )}
+
+              {isOwner && (
+                <div className='flex flex-row items-center gap-2'></div>
+              )}
+              <div className='flex flex-row items-center gap-2'>
+                <Button variant='ghost' size='default' disabled={!currentUser}>
+                  <ThumbsUpIcon className='text-primary md:size-6 size-4' />
+
+                  {comment?.likes?.length}
+                </Button>
+              </div>
             </div>
           </CommentFooter>
         </div>
       </li>
-      <Button
-        type='button'
-        variant='default'
-        size='default'
-        value='show-replies'
-        name='intent'
-      >
-        Show Replies
-      </Button>
-      {comment.children &&
-        comment.children.map((child) => (
-          <CommentList comment={child} key={child.id} />
-        ))}
+      <div className='flex flex-col gap-2'>
+        {showReplies && (
+          <ul  className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'>
+            {comment.children?.map((child) => (
+              <CommentBox key={child.id} comment={child} depth={depth + 1} />
+            ))}
+          </ul>
+        )}
+      </div>
     </>
   )
 }
@@ -278,7 +308,7 @@ type CommentFooterProps = {
 }
 const CommentFooter = ({ children }: CommentFooterProps) => {
   return (
-    <div className='flex flex-col items-center gap-2 border border-teal-500'>
+    <div className='flex flex-col items-center gap-2 border border-teal-500 justify-between min-w-full'>
       {children}
     </div>
   )

@@ -66,19 +66,14 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
 
           <FavoriteContainer postId={id} favorites={favorites} />
           <SharePostButton id={id} />
-          <div className='flex flex-row items-center gap-2'></div>
-
-          <div className='flex flex-row items-end gap-2'>
-            <ReadMore postId={id} />
-          </div>
         </div>
-        <CreateCommentForm postId={id} intent='create-comment' />
+        <CreateCommentForm intent='create-comment' />
 
-        <ScrollArea className='w-full h-96 overflow-y-auto'>
-          {post.comments.length > 0 &&
-            post.comments.map((comment) => (
-              <CommentList key={comment.id} comment={comment} />
-            ))}
+        <ScrollArea className='w-full '>
+          {post._count.comments > 0 &&(
+
+            <CommentList />
+          )}
         </ScrollArea>
       </CardFooter>
     </Card>
