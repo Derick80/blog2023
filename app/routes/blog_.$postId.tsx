@@ -18,7 +18,6 @@ import {
 } from '~/server/comment.server'
 import { getSinglePostById } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
-import type { Comment, CommentWithChildren, Post } from '~/server/schemas/schemas'
 import {
   commitSession,
   getSession,
@@ -37,9 +36,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   // isolate the root comments from the rest of the comments. Root comments are comments that have no parent
   const rootComments = post.comments.filter((comment) => !comment.parentId)
 
-
-
-  return json({ post,  rootComments })
+  return json({ post, rootComments })
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -64,7 +61,7 @@ const schema = z.discriminatedUnion('intent', [
   }),
   z.object({
     intent: z.literal('reply-comment'),
-    parentId: z.string(),
+    id: z.string(),
     message: z.string().min(1).max(250)
   }),
   z.object({
@@ -134,7 +131,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       const replyComment = await replyToComment({
         postId,
         message: formData.message,
-        parentId: formData.parentId,
+        parentId: formData.id,
         userId: user.id
       })
       if (!replyComment) {
@@ -211,7 +208,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 }
 export default function BlogPostRoute() {
-const {post, rootComments} = useLoaderData<typeof loader>()
+  const { post, rootComments } = useLoaderData<typeof loader>()
 
   return (
     <div className='mx-auto h-full  w-full items-center gap-4'>

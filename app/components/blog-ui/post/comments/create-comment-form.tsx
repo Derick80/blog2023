@@ -1,149 +1,84 @@
-import { useActionData, useFetcher } from '@remix-run/react'
-import { SaveIcon, XIcon } from 'lucide-react'
+import { Form, useNavigation } from '@remix-run/react'
+import { MessageCircleReply, SaveIcon } from 'lucide-react'
 import React from 'react'
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
-import { Muted } from '~/components/ui/typography'
-import { cn } from '~/lib/utils'
-import { action } from '~/routes/blog_.$postId'
+import { useOptionalUser, useUser } from '~/utilities'
+import { useToggle } from './comment'
 
 type CreateCommentFormProps = {
-  parentId?: string | null
-  message?: string
-  intent: 'create-comment' | 'edit-comment' | 'reply-comment'
-  commentId?: string
-  editComment?: boolean
-  setEditComment?: (value: boolean) => void
-  setReplying?: (value: boolean) => void
-  replying?: boolean
+  parentId?: string
+setState: React.Dispatch<React.SetStateAction<boolean>>
+
+
 }
 
-const CreateCommentForm = ({
-  message = '',
-  parentId,
-  intent = 'create-comment',
-  commentId,
-  editComment,
-  setEditComment,
-  setReplying,
-  replying
-}: CreateCommentFormProps) => {
-  const [isMessage, setIsMessage] = React.useState(message)
-
-
-  const createCommentFetcher = useFetcher<typeof action>({
-    key: intent
-  })
-
-  const isSubmitting = createCommentFetcher.state !== 'idle'
+const CreateCommentForm = ({ parentId ,setState}: CreateCommentFormProps) => {
+  const [commenting, setIsCommenting] = React.useState(false)
+  const user = useOptionalUser()
 
   const formRef = React.useRef<HTMLFormElement>(null)
+
+  let navigation = useNavigation()
+  // transition.type === "actionSubmission"
+  const isActionSubmission = navigation.state === 'submitting'
+
   let isDone =
-    createCommentFetcher.state === 'idle' && createCommentFetcher.data != null
+    navigation.formData &&
+    navigation.formData.get('intent') === 'create-comment' &&
+    navigation.state === 'submitting'
 
   React.useEffect(() => {
-    if (isDone) {
+    if (!isDone) {
       formRef.current?.reset()
-      setIsMessage('')
+
+    }
+    if (!isDone && parentId) {
+      formRef.current?.reset()
+      setState((prev) => !prev)
+
     }
   }, [isDone])
 
-  React.useEffect(() => {
-    if (isDone) {
-      if (intent === 'edit-comment' && setEditComment) {
-        setEditComment(!editComment)
-      }
-      if (intent === 'reply-comment' && setReplying) {
-        setReplying(!replying)
-      }
-    }
-
-  })
-
   return (
-    <div
-      className={cn(
-        'transition-opacity duration-500 w-full flex',
-        { 'opacity-0': !editComment || intent !== 'create-comment'  && intent !== 'reply-comment'},
-        { 'opacity-100': editComment || intent === 'create-comment' || intent === 'reply-comment'}
-      )}
-    >
 
-    <createCommentFetcher.Form
-      ref={formRef}
-      method='POST'
-        className='flex flex-row justify-between w-full gap-2'
-    >
-      {commentId && <Input type='hidden' name='commentId' value={commentId} />}
-      {parentId && <Input type='hidden' name='parentId' value={parentId} />}
-      <Label htmlFor='message' aria-label='message' className='sr-only' />
-      <Textarea
-        id='message'
-        name='message'
-        value={isMessage}
-        onChange={(e) => setIsMessage(e.target.value)}
-        placeholder='Enter your comment here...'
-      />
-    <div className='flex flex-col items-center gap-2'>
-      <Button
-        disabled={isSubmitting}
-        type='submit'
-        variant='ghost'
-        size='default'
-        value={intent}
-        name='intent'
-        onClick={(e) => {
-          if (intent === 'edit-comment' && setEditComment && isDone) {
-            setEditComment(!editComment)
-          }
-          if (intent === 'reply-comment' && setReplying && isDone) {
-            setReplying(!replying)
-          }
-        }}
-      >
+        <>
+          <div className='text-[8px] text-primary'>replying...</div>
+          <Form
+            ref={formRef}
+            method='POST'
+            className='w-full h-auto flex flex-col items-end  '
+          >
+            <input type='hidden' name='parentId' value={parentId} />
+            {!parentId && (
+              <Label htmlFor='message' className='w-full'>
+                Comment
+              </Label>
+            )}
+            <Textarea
+              placeholder='comment here'
+              name='message'
+              id='message'
+              className='w-full '
+            />
 
-        </Button>
-         <Button
-                  variant='ghost'
-                  size='default'
-                  type='submit'
-                  value='reply-comment'
-                  name='intent'
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
-                  ) : (
-                    <SaveIcon className='text-primary md:size-6 size-4' />
-                  )}
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='default'
-                  type='button'
-          onClick={ () => {
-            if (intent === 'edit-comment' && setEditComment) {
-              setEditComment(!editComment)
+        <Button
+          size='xs'
+
+              type='submit'
+              name='intent'
+              value='create-comment'
+              disabled={isActionSubmission}
+            >
+            <SaveIcon className='mr-2 h-4 w-4' />
+          {
+            parentId ? 'Send' : 'Comment'
             }
-            if (intent === 'reply-comment' && setReplying) {
-              setReplying(!replying)
-            }
-          }
-          }
+            </Button>
+          </Form>
 
-                >
-
-
-                  <Muted className='text-primary md:size-6 size-4 hidden md:block'>
-                    cancel
-                  </Muted>
-                  <XIcon className='text-primary md:size-6 size-4' />
-                </Button>
-        </div>
-      </createCommentFetcher.Form>
-      </div>
+    </>
   )
 }
 

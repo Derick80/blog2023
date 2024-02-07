@@ -1,40 +1,20 @@
-import React from 'react'
+import React, { Key } from 'react'
 import { Button } from '~/components/ui/button'
-import { Muted, P, Small } from '~/components/ui/typography'
-import { cn } from '~/lib/utils'
-import { Comment, CommentWithChildren } from '~/server/schemas/schemas'
+import { Muted, Small } from '~/components/ui/typography'
+import { CommentWithChildren } from '~/server/schemas/schemas'
 import { formatDateAgo, useOptionalUser } from '~/utilities'
-import CommentList from './list-comments'
+import { Form, useActionData, useFetcher, useSubmit } from '@remix-run/react'
+import { action } from '~/routes/blog_.$postId'
 import {
-  Form,
-  useActionData,
-  useFetcher,
-  useLoaderData,
-  useMatches,
-  useRouteLoaderData,
-  useSubmit
-} from '@remix-run/react'
-import { action, loader } from '~/routes/blog_.$postId'
-import { SerializeFrom } from '@remix-run/node'
-import {
-  BookmarkIcon,
-  Edit2Icon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Edit,
   MessageCircleReply,
-  MessageSquareQuoteIcon,
-  ReplyAll,
-  ReplyIcon,
-  Save,
-  SaveIcon,
-  ThumbsUpIcon,
-  Trash2,
-  Trash2Icon,
-  XIcon
+  ThumbsUpIcon
 } from 'lucide-react'
-import CreateCommentForm from './create-comment-form'
-import { editCommentMessage } from '~/server/comment.server'
-import { Input } from '~/components/ui/input'
-import { flushSync } from 'react-dom'
+import EditableElement from '~/components/editable-element'
 import { Textarea } from '~/components/ui/textarea'
+import CreateCommentForm from './create-comment-form'
 
 const CommentBox = ({
   comment,
@@ -42,18 +22,19 @@ const CommentBox = ({
   replyComment = false
 }: {
   comment: CommentWithChildren
-    depth?: number
-    replyComment?: boolean
-  }) => {
-  const ActionData = useActionData<typeof action>()
+  depth?: number
+  replyComment?: boolean
+}) => {
+  const replyRef = React.useRef<HTMLTextAreaElement>(null)
   const [myMessage, setMyMessage] = React.useState(comment.message)
+  const [makeComment, setMakeComment] = React.useState('')
   const currentUser = useOptionalUser()
 
   // use the data to determine if the user is authenticated and logged in or not
   const commentUser = comment.userId
 
   const isOwner = currentUser?.id === commentUser
-
+  const [commenting, setCommenting] = React.useState(false)
   const [editComment, setEditComment] = React.useState(false)
   const [showReplies, setShowReplies] = React.useState(false)
   const [replying, setReplying] = React.useState(false)
@@ -77,9 +58,52 @@ const CommentBox = ({
 
 
 
-  const submit = useSubmit()
-  let inputRef = React.useRef<HTMLInputElement>(null)
-  let buttonRef = React.useRef<HTMLButtonElement>(null)
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Escape') {
+      setReplying(!replying)
+    }
+    if(e.key === 'Enter' && e.shiftKey === false && replying && makeComment) {
+createCommentFetcher.submit({
+      message: makeComment,
+      parentId: comment.id,
+      intent: 'create-comment'
+    }, {
+      method: 'POST',
+
+      })
+    }
+
+  }
+
+  // handle focus on the reply button
+
+  const handleReplyButton = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    setReplying(!replying)
+    setTimeout(() => {
+      replyRef.current?.focus()
+    }, 0)
+  }
+
+
+
+
+  const createCommentFetcher = useFetcher<typeof action>({
+    key: 'create-comment'
+  })
+
+
+  const doneCommenting = createCommentFetcher.state === 'idle' && createCommentFetcher.data != null
+
+
+  React.useEffect(() => {
+    if (doneCommenting) {
+      setReplying(false)
+      setMakeComment('')
+    }
+  }, [doneCommenting])
+
+
   return (
     <>
       <li className='list-none space-y-9'>
@@ -88,172 +112,32 @@ const CommentBox = ({
             <Small>{comment?.user?.username}</Small>
             <Small>{formatDateAgo(comment.createdAt)}</Small>
           </CommentHeader>
-
-          {editComment === true ? (
-            <Form
-              name='edit-form'
-              method='POST'
-              navigate={false}
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                  flushSync(() => {
-                    setEditComment(false)
-                  })
-                  buttonRef.current?.focus()
-                }
+          <div className='flex flex-col gap-2 w-full'>
+            <EditableElement
+              value={comment.message}
+              onChange={(value) => {
+                setMyMessage(value)
+                console.log('value', value)
               }}
-              className={cn(
-                'transition-opacity duration-500 flex  gap-2 items-center text-sm border rounded-md w-full ',
-                { 'opacity-0': !editComment },
-                { 'opacity-100': editComment }
-              )}
-              onSubmit={(e) => {
-                e.preventDefault()
-                flushSync(() => {
-                  setEditComment(!editComment)
-                })
+            />
+            <ul className='[&_&]:mt-1 [&_&]:border-l [&_&]:pl-5'>
+              {
+                replying && (
+                  <div
+                     className={`transition-opacity duration-500 ease-in-out ${replying ? 'opacity-100 scale-100' : 'opacity-0 scale-95'} transform`}
+>
+                    <CreateCommentForm
+                  setState={setReplying}
 
-                let formData = new FormData(e.currentTarget)
-                console.log(Object.fromEntries(formData))
-                submit(formData, {
-                  method: 'POST'
-                })
-              }}
-            >
-              <Input type='hidden' name='commentId' value={comment.id} />
-              <Input type='hidden' name='intent' value='edit-comment' />
-
-              <Textarea
-                name='message'
-                defaultValue={myMessage}
-                onChange={(e) => setMyMessage(e.target.value)}
-              />
-              <div className='flex flex-col items-center gap-2'>
-                <Button
-                  variant='ghost'
-                  size='default'
-                  type='submit'
-                  value='edit-comment'
-                  name='intent'
-                  disabled={isDoneEditing}
-                >
-                  {isDoneEditing ? (
-                    <SaveIcon className='text-primary md:size-6 size-4 animate-spin' />
-                  ) : (
-                    <SaveIcon className='text-primary md:size-6 size-4' />
-                  )}
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='default'
-                  type='button'
-                  onClick={() => setEditComment(false)}
-                >
-                  <Muted className='text-primary md:size-6 size-4 hidden md:block'>
-                    cancel
-                  </Muted>
-                  <XIcon className='text-primary md:size-6 size-4' />
-                </Button>
-              </div>
-            </Form>
-          ) : replying === true ? (<div
-            className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'
-
-            >
-
-
-
-              <CreateCommentForm
-                parentId={comment.id}
-                  intent='reply-comment'
-                  setReplying={setReplying}
-                  replying={replying}
-
-                />
-
-
-
-
-
-            </div>) :
-
-
-              (
-            <div
-              onKeyDown={(event) => {
-                if (event.key === 'ESCAPE' && isOwner) {
-                  flushSync(() => {
-                    setEditComment(false)
-                  })
-                  buttonRef.current?.focus()
-                }
-              }}
-              onClick={() => {
-                if (isOwner) {
-                  setEditComment(!editComment)
-                }
-              }}
-              className={cn(
-                'flex gap-2 items-center text-sm border rounded-md w-full justify-between',
-                { 'opacity-0': editComment },
-                { 'opacity-100': !editComment }
-              )}
-            >
-              <Small>{comment?.message}</Small>
-
-              <div className='flex flex-col items-center gap-2'>
-                <Button
-                  variant='ghost'
-                  size='default'
-                  type='button'
-                  onClick={() => setEditComment(false)}
-                >
-                  <Muted className='text-primary md:size-6 size-4 hidden md:block'>
-                    Edit
-                  </Muted>
-                  <Edit2Icon className='text-primary md:size-6 size-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='default'
-                  value='delete-comment'
-                  name='intent'
-                  disabled={!isOwner}
-                  onClick={() => {
-                    deleteFetcher.submit(
-                      {
-                        intent: 'delete-comment',
-                        commentId: comment.id
-                      },
-                      {
-                        method: 'DELETE'
-                      }
-                    )
-                  }}
-                >
-                  {isDeleting ? (
-                    <Trash2Icon className='text-primary md:size-6 size-4 animate-spin' />
-                  ) : (
-                    <Trash2 className='text-primary md:size-6 size-4' />
-                  )}{' '}
-                </Button>
-              </div>
-            </div>
-          )}
-
+                  parentId={ comment.id } />
+                  </div>
+                )
+             }
+            </ul>
+          </div>
 
           <CommentFooter>
             <div className='flex flex-row gap-2 justify-between w-full items-center'>
-              <Button
-                size='xs'
-                type='button'
-                disabled={!currentUser}
-                onClick={() => setReplying(!replying)}
-              >
-                <MessageCircleReply className='mr-2 h-4 w-4' />
-                Reply?
-              </Button>
-
               {comment.children && (
                 <>
                   <Button
@@ -264,7 +148,11 @@ const CommentBox = ({
                     disabled={comment.children.length > 0 ? false : true}
                     onClick={() => setShowReplies(!showReplies)}
                   >
-                    <MessageSquareQuoteIcon className='text-primary md:size-6 size-4' />
+                    {showReplies ? (
+                      <ChevronUpIcon className='text-primary md:size-6 size-4' />
+                    ) : (
+                      <ChevronDownIcon className='text-primary md:size-6 size-4' />
+                    )}
                     <Muted className='text-primary text-[10px]'>
                       {comment.children.length === 0
                         ? 'No Replies'
@@ -275,7 +163,16 @@ const CommentBox = ({
                   </Button>
                 </>
               )}
+              <Button
+                size='xs'
+                type='button'
+                disabled={!currentUser}
+                onClick={(e) => handleReplyButton(e)}
 
+              >
+              {replying ? 'Cancel' : <>  <MessageCircleReply className='mr-2 h-4 w-4' />
+                Reply?</>}
+              </Button>
               {isOwner && (
                 <div className='flex flex-row items-center gap-2'></div>
               )}
@@ -292,9 +189,10 @@ const CommentBox = ({
       </li>
       <div className='flex flex-col gap-2'>
         {showReplies && (
-          <ul  className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'>
+          <ul className='[&_&]:mt-4 [&_&]:border-l [&_&]:pl-5 space-y-2'>
+            {' '}
             {comment.children?.map((child) => (
-              <CommentBox key={child.id} comment={child} depth={depth + 1} />
+              <CommentBox key={child.id} comment={child} depth={depth + 2} />
             ))}
           </ul>
         )}
@@ -308,7 +206,7 @@ type CommentFooterProps = {
 }
 const CommentFooter = ({ children }: CommentFooterProps) => {
   return (
-    <div className='flex flex-col items-center gap-2 border border-teal-500 justify-between min-w-full'>
+    <div className='flex mt-1 flex-col items-center gap-2 border border-teal-500 justify-between min-w-full'>
       {children}
     </div>
   )
@@ -326,4 +224,12 @@ const CommentHeader = ({ children }: CommentHeaderProps) => {
       {children}
     </div>
   )
+}
+
+
+// I want to write a function that manages multiple true/false togglees. The function takes in the  setState function and updates it with the the opposite of it's current value and can be used to manage multiple states
+
+
+export const useToggle = (setState: React.Dispatch<React.SetStateAction<boolean>>) => {
+  return () => setState((prev) => !prev)
 }
