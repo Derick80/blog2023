@@ -4,16 +4,13 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
-  CardContent
-} from '~/components/ui/card'
+  CardFooter} from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { NavLink } from '@remix-run/react'
 import LikeContainer from '../like-container'
 import { CommentPreview } from './blog-comments-count-container'
 import FavoriteContainer from './favorite-container'
 import { SharePostButton } from './share-button'
-import { ReadMore } from './blog-preview-card'
 import CreateCommentForm from './comments/create-comment-form'
 import CommentList from './comments/list-comments'
 import { ScrollArea } from '~/components/ui/scroll-area'
@@ -40,7 +37,11 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
     comments
   } = post
 
+
+
   return (
+
+
     <Card className='w-full h-auto  '>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
@@ -66,19 +67,12 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
 
           <FavoriteContainer postId={id} favorites={favorites} />
           <SharePostButton id={id} />
-          <div className='flex flex-row items-center gap-2'></div>
-
-          <div className='flex flex-row items-end gap-2'>
-            <ReadMore postId={id} />
-          </div>
         </div>
-        <CreateCommentForm postId={id} intent='create-comment' />
+        <CreateCommentForm
+         />
 
-        <ScrollArea className='w-full h-96 overflow-y-auto'>
-          {post.comments.length > 0 &&
-            post.comments.map((comment) => (
-              <CommentList key={comment.id} comment={comment} />
-            ))}
+        <ScrollArea className='w-full '>
+          {post._count.comments > 0 && <CommentList />}
         </ScrollArea>
       </CardFooter>
     </Card>

@@ -182,7 +182,6 @@ export const DefaultCommentSelect = {
   user: {
     select: DefaultUserSelect
   },
-
   userId: true,
   postId: true,
   parentId: true,
@@ -287,6 +286,9 @@ export async function getSinglePostById(id: string) {
           likes: {
             select: DefaultCommentLikeSelect
           }
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       }
     }

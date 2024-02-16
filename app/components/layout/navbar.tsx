@@ -17,11 +17,15 @@ export default function NavigationBar() {
   return (
     <nav className='bg-background relative w-full border-b md:border-0 flex flex-col md:flex-row items justify-between'>
       <DesktopBrandIcon />
-      <div className='flex flex-row items- justify-between gap-2 w-full '>
+      <div className='flex flex-row items- justify-around gap-2 w-full '>
         <DesktopMenu />
         <MobileDropdown />
-        <UserMenu />
+        <div
+          className='flex flex-row items-center justify-center gap-2'
+        >
+            <UserMenu />
         <ThemeToggle />
+        </div>
       </div>
     </nav>
   )
@@ -48,7 +52,7 @@ function UserMenu() {
                 <li>
                   <NavLink
                     to='/login'
-                    title='Click here to login to your account'
+                      title='Click here to login to your account'
                   >
                     Login
                   </NavLink>

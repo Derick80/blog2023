@@ -46,30 +46,22 @@ export async function replyToComment({
   message: string
   parentId: string
 }) {
-  return await prisma.comment.update({
-    where: {
-      id: parentId
-    },
+  return await prisma.comment.create({
     data: {
+      message: message,
+      user: {
+        connect: {
+          id: userId
+        }
+      },
       parent: {
         connect: {
           id: parentId
         }
       },
-      children: {
-        create: {
-          message,
-
-          user: {
-            connect: {
-              id: userId
-            }
-          },
-          post: {
-            connect: {
-              id: postId
-            }
-          }
+      post: {
+        connect: {
+          id: postId
         }
       }
     }

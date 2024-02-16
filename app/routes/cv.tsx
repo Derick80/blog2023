@@ -17,6 +17,15 @@ export const meta: MetaFunction = () => {
   ]
 }
 
+
+export async function action () {
+  // create a pdf of the resume
+
+
+
+
+}
+
 export default function Cv() {
   return (
     <>

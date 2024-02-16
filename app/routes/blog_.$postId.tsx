@@ -18,7 +18,6 @@ import {
 } from '~/server/comment.server'
 import { getSinglePostById } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
-import type { Comment, Post } from '~/server/schemas/schemas'
 import {
   commitSession,
   getSession,
@@ -34,13 +33,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Error('Post not found')
   }
 
-  // Isolate the comments from the post object for later use in a fetcher
-  const postComments = post.comments
+  // isolate the root comments from the rest of the comments. Root comments are comments that have no parent
+  const rootComments = post.comments.filter((comment) => !comment.parentId)
 
-  // remove the comments with parentId from the post object
-  post.comments = post.comments.filter((comment) => !comment.parentId)
-
-  return json({ post, comments: postComments })
+  return json({ post, rootComments })
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -65,7 +61,7 @@ const schema = z.discriminatedUnion('intent', [
   }),
   z.object({
     intent: z.literal('reply-comment'),
-    commentId: z.string(),
+    id: z.string(),
     message: z.string().min(1).max(250)
   }),
   z.object({
@@ -135,7 +131,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
       const replyComment = await replyToComment({
         postId,
         message: formData.message,
-        parentId: formData.commentId,
+        parentId: formData.id,
         userId: user.id
       })
       if (!replyComment) {
@@ -212,10 +208,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 }
 export default function BlogPostRoute() {
-  const data = useLoaderData<{
-    post: Post
-    comments: Comment[]
-  }>()
+  const { post, rootComments } = useLoaderData<typeof loader>()
 
   return (
     <div className='mx-auto h-full  w-full items-center gap-4'>
@@ -229,7 +222,7 @@ export default function BlogPostRoute() {
         Back
       </NavLink>
       <div className='flex flex-col h-full min-h-full items-center gap-4'>
-        <BlogFullView post={data.post} />
+        <BlogFullView post={post} />
       </div>
     </div>
   )
