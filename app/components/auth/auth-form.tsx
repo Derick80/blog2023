@@ -123,7 +123,7 @@ export const AuthForm = () => {
             </p>
           )}
 
-          {mode === 'register' && (
+          {mode === 'register'  || mode === 'OTP'  && (
             <>
               <Label className='sr-only' htmlFor='username'>
                 Username

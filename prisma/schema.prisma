@@ -69,7 +69,7 @@ model Block {
 model Post {
   id          String      @id @default(cuid())
   title       String
-  slug        String      @unique
+  slug        String?     @unique
   description String
   content     String
   imageUrl    String
@@ -328,4 +328,56 @@ model Totp {
 
   // Index for expiresAt
   @@index([expiresAt])
+}
+
+model Resume {
+  id                     String                   @id @default(cuid())
+  title                  String
+  phoneNumber            String
+  email                  String
+  website                String
+  location               String
+  // (City, State, ZIP)
+  summary                String
+  professionalExperience ProfessionalExperience[]
+  education              Education[]
+  sills                  String[]
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+}
+
+model ProfessionalExperience {
+  id        String   @id @default(cuid())
+  title     String
+  company   String
+  location  String
+  startDate String
+  endDate   String
+  duties    Duties[]
+  resume    Resume   @relation(fields: [resumeId], references: [id])
+  resumeId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Duties {
+  id                       String                 @id @default(cuid())
+  description              String
+  professionalExperience   ProfessionalExperience @relation(fields: [professionalExperienceId], references: [id])
+  professionalExperienceId String
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+}
+
+model Education {
+  id          String   @id @default(cuid())
+  institution String
+  degree      String
+  field       String
+  startDate   String
+  endDate     String
+  resume      Resume   @relation(fields: [resumeId], references: [id])
+  resumeId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

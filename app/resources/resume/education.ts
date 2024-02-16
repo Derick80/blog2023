@@ -1,7 +1,7 @@
 export const education = [
   {
-    institution: 'Tufts University School of Biomedical Sciences',
-    degree: 'Genetics PhD',
+    institution: 'Tufts Graduate School of Biomedical Sciences',
+    degree: 'Doctor of Philosophy in Genetics',
     location: 'Boston, MA',
     startDate: '2006',
     endDate: '2014'
