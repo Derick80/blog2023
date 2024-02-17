@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -175,7 +175,7 @@ model Profile {
   bio            String
   location       String
   education      String
-  occupation     String
+  jobTitle       String
   employer       String
   profilePicture String         @default("https://res.cloudinary.com/dch-photo/image/upload/v1672092441/stock/image_FILL0_wght400_GRAD0_opsz48_loo0xo.png")
   createdAt      DateTime       @default(now())
@@ -226,7 +226,7 @@ model Project {
   githubUrl        String
   status           String            @default("In Progress")
   technologyStacks TechnologyStack[]
-  features         String[]
+  features         projectFeatures[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt()
 
@@ -234,14 +234,22 @@ model Project {
   userId String
 }
 
-model TechnologyStack {
+model projectFeatures {
   id        String   @id @unique @default(uuid())
   value     String   @unique
-  url       String
   projects  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   projectId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TechnologyStack {
+  id        String    @id @unique @default(uuid())
+  value     String    @unique
+  url       String
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model ProjectImage {
@@ -263,7 +271,7 @@ model ProjectImage {
 model Token {
   id        String    @id @default(cuid())
   token     String
-  type      TokenType
+  type      String
   expiresAt DateTime?
   sentTo    String?
   usedAt    DateTime?
@@ -288,12 +296,6 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
-}
-
-enum TokenType {
-  REFRESH_TOKEN
-  VERIFY_EMAIL
-  RESET_PASSWORD
 }
 
 model Session {
@@ -341,10 +343,19 @@ model Resume {
   summary                String
   professionalExperience ProfessionalExperience[]
   education              Education[]
-  skills                 String[]
+  skills                 JobSkill[]
   publications           Publication[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
+}
+
+model JobSkill {
+  id        String   @id @default(cuid())
+  skill     String
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProfessionalExperience {
@@ -394,15 +405,15 @@ model eduDuties {
 }
 
 model Publication {
-  id       String   @id @default(cuid())
+  id       String  @id @default(cuid())
   title    String
   year     String
   journal  String
-  authors  String[]
+  authors  String
   edition  String
   type     String
   url      String
   pdf      String?
-  Resume   Resume?  @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Resume   Resume? @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   resumeId String?
 }
