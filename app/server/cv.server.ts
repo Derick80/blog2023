@@ -13,7 +13,13 @@ export async function getCV() {
           duties: true
         }
       },
-      publications: true
+      publications: true,
+      skills: {
+        select: {
+          id: true,
+          skill: true
+        }
+      }
     }
   })
 }

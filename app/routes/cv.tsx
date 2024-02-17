@@ -131,14 +131,10 @@ export default function Cv() {
                 <CardContent className='pl-1 pb-2'>
                   <ul className='flex flex-col gap-2'>
                     <Label>Authors:</Label>
-                    {pub.authors.map((author, index) => (
-                      <li
-                        className='prose prose-neutral dark:prose-invert space-y-2 italic'
-                        key={index}
-                      >
-                        <Caption>{author}</Caption>
-                      </li>
-                    ))}
+
+                    <li className='prose prose-neutral dark:prose-invert space-y-2 italic'>
+                      <Caption>{pub.authors}</Caption>
+                    </li>
                   </ul>
                   <Label className='pl-0'>Article Information:</Label>{' '}
                   <div className='flex flex-row flex-wrap gap-2'>
@@ -222,9 +218,9 @@ export default function Cv() {
             {cv.skills.map((skill, index) => (
               <li
                 className='t-rounded-md list-none border-2 p-1 text-xs '
-                key={index}
+                key={skill.id}
               >
-                <span className='text-xs leading-5 '>{skill}</span>
+                <span className='text-xs leading-5 '>{skill.skill}</span>
               </li>
             ))}
           </ul>

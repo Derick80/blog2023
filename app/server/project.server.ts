@@ -3,13 +3,16 @@ import { prisma } from './prisma.server'
 import type { TechnologyStack as Tstack } from '@prisma/client'
 
 export async function getProjects() {
-  const projects = await prisma.project.findMany({
+  return await prisma.project.findMany({
     include: {
       technologyStacks: true,
-      projectImages: true
+      projectImages: true,
+      features: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   })
-  return projects
 }
 
 export async function createProject({
@@ -36,7 +39,14 @@ export async function createProject({
       status: input.status,
       userId: input.userId,
       features: {
-        set: input.features
+        connectOrCreate: input.features.map((feature) => ({
+          where: {
+            value: feature
+          },
+          create: {
+            value: feature
+          }
+        }))
       }
     }
   })

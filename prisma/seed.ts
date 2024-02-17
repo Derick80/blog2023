@@ -2,10 +2,9 @@ import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { resume_basics,professionalExperience,skills,education,pubs } from '~/resources/resume';
-import { seedCategories } from '~/server/categories.server';
-
 const prisma = new PrismaClient();
-
+import { Project, projects } from '~/resources/projects';
+import { TechnologyStack } from '~/server/project.server';
 
 
 
@@ -35,6 +34,7 @@ export const categorySeed = [
 ];
 
 
+
 async function generateResume () {
   const init_resume = await prisma.resume.create({
     data: {
@@ -44,7 +44,9 @@ async function generateResume () {
       website: resume_basics.website,
       location: resume_basics.location,
       summary: resume_basics.summary,
-      skills: skills,
+      skills: {
+        create: skills
+     },
       education: {
         create: {
           institution: education[0].institution,
@@ -104,9 +106,11 @@ async function generateResume () {
             connect: {
               id: init_resume.id
             }
-          }
+          },
         }
+
       })
+
     }
   }
 
@@ -120,6 +124,12 @@ async function generateMe (environment:string,numberofPosts: number, numberOfUse
     await prisma.like.deleteMany()
     await prisma.comment.deleteMany()
     await prisma.resume.deleteMany()
+    await prisma.professionalExperience.deleteMany()
+    await prisma.education.deleteMany()
+    await prisma.publication.deleteMany()
+    await prisma.jobSkill.deleteMany()
+    await prisma.project.deleteMany()
+    await prisma.technologyStack.deleteMany()
   //  remove prior categories
     await prisma.category.deleteMany()
   }
@@ -150,6 +160,7 @@ async function generateMe (environment:string,numberofPosts: number, numberOfUse
     return cats;
   }
 
+  // write a
 
   // clean up the database
   const email = (await process.env.SEED_EMAIL) as string;
@@ -196,6 +207,115 @@ async function generateMe (environment:string,numberofPosts: number, numberOfUse
       },
     });
   }
+
+  await prisma.profile.create({
+    data: {
+      user: {
+        connect: {
+          id: me.id,
+        },
+      },
+      firstName: 'Derick',
+      lastName: 'Hoskinson',
+      bio: `I am a Senior Clinical Scientist for a large health care + tech company in Chicago IL. Human genetics, data analysis, and the integration of big data into modern web applications is what I stay up at night thinking about.`,
+      location: 'Chicago, IL',
+      education: 'PhD Genetics, TUfts Graduate School of Biomedical Sciences',
+      jobTitle: 'Senior Clinical Scientist',
+      employer:'Tempus AI',
+      profilePicture: 'https://blogphotosbucket.s3.us-east-2.amazonaws.com/profileimages/DerickFace.jpg',
+      email: me.email,
+      socials: {
+        create: {
+          github: 'https://www.github.com/Derick80',
+          linkedin: 'https://www.linkedin.com/in/dhoskinson/',
+          twitter: 'https://twitter.com/GeneticsStar',
+          instagram: 'https://www.instagram.com/thatgrayone/',
+          email: me.email
+      }
+    },
+    }
+  })
+
+
+  // generate a unique list of categories from the projects to seed the technologyStacks but I only need the value and url
+  type ProjectTechnologyStackPartial = {
+    value: string;
+    url: string;
+
+}
+  const allTechStacks = projects.map((project) => project.categories).flat();
+
+const uniqueCategories = Array.from(new Set(allTechStacks.map(category => category.value))).map(value => {
+  const category = allTechStacks.find(category => category.value === value);
+  return {
+    value,
+    url: category?.url || ''
+  };
+});
+
+  console.log('Unique categories', uniqueCategories);
+
+  // create all technologyStacks
+
+  for (let i = 0; i < uniqueCategories.length; i++) {
+    await prisma.technologyStack.create({
+      data: uniqueCategories[i],
+    });
+  }
+
+  const savedTechStacks = await prisma.technologyStack.findMany()
+
+
+
+  // write a function that returns 1-5 random categories from the uniqueCategories array and then creates a new project with those technologyStacks
+
+  function getRandomTechStacks() {
+    const numberOfTechStacks = Math.floor(Math.random() * 5) + 1;
+    const techStacks = [];
+    for (let i = 0; i < numberOfTechStacks; i++) {
+      techStacks.push(savedTechStacks[i]);
+    }
+    return techStacks;
+  }
+
+
+
+  for (let i = 0; i < projects.length; i++) {
+    const techStacks = getRandomTechStacks();
+    await prisma.project.create({
+      data: {
+        title: projects[i].title,
+        description: projects[i].description,
+        primaryImage: projects[i].primaryImage,
+        projectUrl: projects[i].projectUrl,
+        githubUrl: projects[i].githubUrl,
+        status: projects[i].status,
+        features: {
+          create: projects[i].features
+        },
+        technologyStacks: {
+         connect: techStacks
+        },
+
+        user: {
+          connect: {
+            id: me.id
+
+
+
+
+  }
+
+}
+      }
+    })
+  }
+
+
+
+
+
+
   // create a some new users
   const basePassword = "EGtAUQgz";
   const passwords = await bcrypt.hash(basePassword, 10);
