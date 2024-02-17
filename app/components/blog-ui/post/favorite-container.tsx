@@ -37,8 +37,8 @@ export default function FavoriteContainer({
     }
 
     fetcher.submit(
-      { userId: currentUser, postId },
-      { method, action: `/blog/${postId}/favorite` }
+      { userId: currentUser, postId , intent: 'favorite', method},
+      { method, action: `/blog/${postId}` }
     )
   }
 

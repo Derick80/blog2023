@@ -71,6 +71,11 @@ const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('like'),
     method: z.enum(['post', 'delete'])
+  }),
+  z.object({
+    intent: z.literal('favorite'),
+    method: z.enum(['post', 'delete'])
+
   })
 ])
 
@@ -194,6 +199,52 @@ export async function action({ request, params }: LoaderFunctionArgs) {
           }
         }
 
+
+
+        return json(
+          { message: 'ok' },
+          {
+            headers: {
+              'Set-Cookie': await commitSession(session)
+            }
+          }
+        )
+
+
+
+      } catch (error) {
+        return json({ error: 'invalid like data' }, { status: 500 })
+      }
+    case 'favorite':
+      try {
+        if (formData.method === 'post') {
+          // favorite the post
+          const favorited = await prisma.favorite.create({
+            data: {
+              postId,
+              userId: user.id
+            }
+          })
+          if (!favorited) throw new Error('could not favorite post')
+          if (favorited) {
+            setSuccessMessage(session, 'successMessage favorited')
+          }
+        }
+        if (formData.method === 'delete') {
+          // unfavorite the post
+          const unfavorited = await prisma.favorite.delete({
+            where: {
+              postId_userId: {
+                postId,
+                userId: user.id
+              }
+            }
+          })
+          if (!unfavorited) throw new Error('could not delete favorite')
+          if (unfavorited) {
+            setSuccessMessage(session, 'successMessage unfavorited')
+          }
+        }
         return json(
           { message: 'ok' },
           {
@@ -203,7 +254,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
           }
         )
       } catch (error) {
-        return json({ error: 'invalid like data' }, { status: 500 })
+        return json({ error: 'invalid favorite data' }, { status: 500 })
       }
   }
 }
