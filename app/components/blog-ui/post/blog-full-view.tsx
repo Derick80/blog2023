@@ -4,7 +4,8 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter} from '~/components/ui/card'
+  CardFooter
+} from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { NavLink } from '@remix-run/react'
 import LikeContainer from '../like-container'
@@ -37,11 +38,7 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
     comments
   } = post
 
-
-
   return (
-
-
     <Card className='w-full h-auto  '>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
@@ -68,8 +65,7 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
           <FavoriteContainer postId={id} favorites={favorites} />
           <SharePostButton id={id} />
         </div>
-        <CreateCommentForm
-         />
+        <CreateCommentForm />
 
         <ScrollArea className='w-full '>
           {post._count.comments > 0 && <CommentList />}

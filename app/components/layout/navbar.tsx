@@ -20,11 +20,9 @@ export default function NavigationBar() {
       <div className='flex flex-row items- justify-around gap-2 w-full '>
         <DesktopMenu />
         <MobileDropdown />
-        <div
-          className='flex flex-row items-center justify-center gap-2'
-        >
-            <UserMenu />
-        <ThemeToggle />
+        <div className='flex flex-row items-center justify-center gap-2'>
+          <UserMenu />
+          <ThemeToggle />
         </div>
       </div>
     </nav>
@@ -52,7 +50,7 @@ function UserMenu() {
                 <li>
                   <NavLink
                     to='/login'
-                      title='Click here to login to your account'
+                    title='Click here to login to your account'
                   >
                     Login
                   </NavLink>

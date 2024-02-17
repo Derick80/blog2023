@@ -9,12 +9,10 @@ import { useToggle } from './comment'
 
 type CreateCommentFormProps = {
   parentId?: string
-setState: React.Dispatch<React.SetStateAction<boolean>>
-
-
+  setState: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CreateCommentForm = ({ parentId ,setState}: CreateCommentFormProps) => {
+const CreateCommentForm = ({ parentId, setState }: CreateCommentFormProps) => {
   const [commenting, setIsCommenting] = React.useState(false)
   const user = useOptionalUser()
 
@@ -32,52 +30,45 @@ const CreateCommentForm = ({ parentId ,setState}: CreateCommentFormProps) => {
   React.useEffect(() => {
     if (!isDone) {
       formRef.current?.reset()
-
     }
     if (!isDone && parentId) {
       formRef.current?.reset()
       setState((prev) => !prev)
-
     }
   }, [isDone])
 
   return (
-
-        <>
-          <div className='text-[8px] text-primary'>replying...</div>
-          <Form
-            ref={formRef}
-            method='POST'
-            className='w-full h-auto flex flex-col items-end  '
-          >
-            <input type='hidden' name='parentId' value={parentId} />
-            {!parentId && (
-              <Label htmlFor='message' className='w-full'>
-                Comment
-              </Label>
-            )}
-            <Textarea
-              placeholder='comment here'
-              name='message'
-              id='message'
-              className='w-full '
-            />
+    <>
+      <div className='text-[8px] text-primary'>replying...</div>
+      <Form
+        ref={formRef}
+        method='POST'
+        className='w-full h-auto flex flex-col items-end  '
+      >
+        <input type='hidden' name='parentId' value={parentId} />
+        {!parentId && (
+          <Label htmlFor='message' className='w-full'>
+            Comment
+          </Label>
+        )}
+        <Textarea
+          placeholder='comment here'
+          name='message'
+          id='message'
+          className='w-full '
+        />
 
         <Button
           size='xs'
-
-              type='submit'
-              name='intent'
-              value='create-comment'
-              disabled={isActionSubmission}
-            >
-            <SaveIcon className='mr-2 h-4 w-4' />
-          {
-            parentId ? 'Send' : 'Comment'
-            }
-            </Button>
-          </Form>
-
+          type='submit'
+          name='intent'
+          value='create-comment'
+          disabled={isActionSubmission}
+        >
+          <SaveIcon className='mr-2 h-4 w-4' />
+          {parentId ? 'Send' : 'Comment'}
+        </Button>
+      </Form>
     </>
   )
 }

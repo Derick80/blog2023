@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
 import type { MetaFunction } from '@remix-run/react'
-import { Link } from '@remix-run/react'
+import { Form, Link, json, useLoaderData } from '@remix-run/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback } from 'react'
 import { blurb } from '~/resources/resume/blurb'
@@ -8,6 +8,12 @@ import { pubs } from '~/resources/resume/pubs'
 import { skills } from '~/resources/resume/skills'
 import { work_experience } from '~/resources/resume/workexperience'
 import { education } from '~/resources/resume/education'
+import { getResume } from '~/server/resume.server'
+import EditableTextField from '~/components/editable-text'
+import { Label } from '~/components/ui/label'
+import { H2, H3 } from '~/components/ui/typography'
+import { Button } from '~/components/ui/button'
+import { DotIcon } from 'lucide-react'
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,120 +23,104 @@ export const meta: MetaFunction = () => {
   ]
 }
 
+export async function loader() {
+  const resume = await getResume()
 
-export async function action () {
-  // create a pdf of the resume
-
-
-
-
+  return json({ resume })
 }
 
-export default function Cv() {
+export async function action() {
+  // create a pdf of the resume
+}
+
+export default function CVRoute() {
+  const { resume } = useLoaderData<typeof loader>()
+  const [isAddingNew, setIsAddingNew] = React.useState(false)
+  const handleAddNewClick = () => {
+    setIsAddingNew(true)
+  }
+
   return (
-    <>
-      <div className='items-censter flex flex-col justify-center gap-1 font-Montserrat'>
-        <div className='flex flex-col gap-1 md:gap-2'>
-          <h1>Derick Hoskinson, PhD</h1>
-          <h2></h2>
-          <p>
-            <span className='text-xs'>{blurb.blurb}</span>
-          </p>
+    <Form method='POST' className='flex flex-col justify-center gap-4 p-4'>
+      <Label>Title: Name</Label>
+      <EditableTextField initialValue={resume?.title} />
+      <Label>Phone Number</Label>
+      <EditableTextField initialValue={resume?.phoneNumber} />
+      <Label>Email</Label>
+      <EditableTextField initialValue={resume?.email} />
+      <Label>Location</Label>
+      <EditableTextField initialValue={resume?.location} />
+      <Label>Summary</Label>
+      <EditableTextField initialValue={resume?.summary} />
+      <H2>Professional Experience</H2>
+      <Button type='button' onClick={handleAddNewClick}>
+        Add new
+      </Button>
+
+      {isAddingNew && (
+        <div>
+          <Label>Title</Label>
+          <EditableTextField />
+          <Button type='button' onClick={() => setIsAddingNew(false)}>
+            Cancel
+          </Button>
         </div>
-
-        <h1>Work Experience</h1>
-
-        {work_experience.map((job, index) => (
-          <div
-            key={index}
-            className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
-          >
-            <h3 className='font-Montserrat'>{job.institution}</h3>
-            <AccordianTriggers job={job}>
-              <div className='flex flex-col items-start px-4'>
-                <ul>
-                  {job.duties.map((duty) => (
-                    <li className='list-disc text-teal-400' key={duty.id}>
-                      <div className='flex flex-row items-center'>
-                        <span className='text-xs leading-5 '>{duty.duty}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </AccordianTriggers>
-          </div>
-        ))}
-        <h1>Publications</h1>
-        {pubs.map((pub, index) => (
-          <div
-            key={index}
-            className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
-          >
-            <h3 className='font-Montserrat'>{pub.title}</h3>
-
-            <AccordianTriggerPub pub={pub}>
-              <div className='flex flex-col items-start px-4'>
-                <ul>
-                  <li className='list-disc text-teal-400' key={pub.id}>
-                    <div className='flex flex-row items-center'>
-                      {pub.authors.map((author, index) => (
-                        <div className='flex flex-col' key={index}>
-                          <span className='text-xs leading-5 '>{author}</span>
-                          <span className='text-xs leading-5 '>
-                            {pub.edition}
-                            {pub.type}
-                          </span>
-                          <span className='text-xs leading-5 '>
-                            <Link to={pub.url}>{pub.journal}</Link>
-                          </span>
-                          <div className='flex'>
-                            <span className='text-xs leading-5 '></span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </AccordianTriggerPub>
-          </div>
-        ))}
-        <h1>Education</h1>
-        <div className='flex flex-col'>
-          {education.map((edu, index) => (
-            <div
-              key={index}
-              className='flex flex-col items-stretch gap-2 rounded-md border-2 p-1'
-            >
-              <h3 className='font-Montserrat'>{edu.institution}</h3>
-              <div className='flex flex-row items-center justify-between'>
-                <h4 className='font-Montserrat'>{edu.degree}</h4>
-                <h4 className='font-Montserrat'>
-                  {edu.startDate} - {edu.endDate}
-                </h4>
-              </div>
+      )}
+      {resume && resume.professionalExperience.length > 0 ? (
+        resume?.professionalExperience.map((exp) => (
+          <div key={exp.id}>
+            <Label className='underline'>Title</Label>
+            <EditableTextField initialValue={exp.title} />
+            <Label>Company</Label>
+            <EditableTextField initialValue={exp.company} />
+            <Label>Location</Label>
+            <EditableTextField initialValue={exp.location} />
+            <Label>Period</Label>
+            <div className='flex flex-row gap-2'>
+              <EditableTextField initialValue={exp.startDate} />
+              -
+              <EditableTextField initialValue={exp.endDate} />
             </div>
-          ))}
-        </div>
-        <div className='flex flex-col items-stretch gap-1 md:gap-2 rounded-md p-1'>
-          <div className='flex flex-col justify-between gap-2 text-xs'>
-            <h1>Skills</h1>
-
-            <ul className='flex list-none flex-row flex-wrap gap-2'>
-              {skills.map((skill, index) => (
-                <li
-                  className='t-rounded-md list-none border-2 p-1 text-xs '
-                  key={index}
-                >
-                  <span className='text-xs leading-5 '>{skill.skill}</span>
-                </li>
-              ))}
-            </ul>
+            <div className='flex flex-col gap-2'>
+              <span className='flex flex-row gap-2 items-center justify-between'>
+                <H3>Duties</H3>
+                <Button type='button' size='sm' onClick={handleAddNewClick}>
+                  Add new
+                </Button>
+              </span>
+              {exp.duties && exp.duties.length > 0 ? (
+                exp.duties.map((duty) => (
+                  <div
+                    key={duty.id}
+                    className='pl-0 m-0 leading-normal flex items-center'
+                  >
+                    <DotIcon />
+                    <EditableTextField initialValue={duty.description} />
+                  </div>
+                ))
+              ) : (
+                <p>No duties added yet</p>
+              )}
+            </div>
           </div>
+        ))
+      ) : (
+        <div>
+          <p>No professional experience added yet</p>
+          <button
+            type='button'
+            onClick={handleAddNewClick}
+            className='text-blue-500'
+          >
+            Add new
+          </button>
         </div>
-      </div>
-    </>
+      )}
+
+      <H2>Skills</H2>
+
+      <H2>Education</H2>
+    </Form>
   )
 }
 

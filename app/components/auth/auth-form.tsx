@@ -123,26 +123,27 @@ export const AuthForm = () => {
             </p>
           )}
 
-          {mode === 'register'  || mode === 'OTP'  && (
-            <>
-              <Label className='sr-only' htmlFor='username'>
-                Username
-              </Label>
-              <Input
-                type='text'
-                name='username'
-                id='username'
-                placeholder='Username'
-                autoComplete='username'
-                required
-              />
-              {actionData?.errors?.username && (
-                <p id='title-error' className='text-red-500'>
-                  {actionData?.errors?.username}
-                </p>
-              )}
-            </>
-          )}
+          {mode === 'register' ||
+            (mode === 'OTP' && (
+              <>
+                <Label className='sr-only' htmlFor='username'>
+                  Username
+                </Label>
+                <Input
+                  type='text'
+                  name='username'
+                  id='username'
+                  placeholder='Username'
+                  autoComplete='username'
+                  required
+                />
+                {actionData?.errors?.username && (
+                  <p id='title-error' className='text-red-500'>
+                    {actionData?.errors?.username}
+                  </p>
+                )}
+              </>
+            ))}
 
           {mode !== 'OTP' && (
             <>
