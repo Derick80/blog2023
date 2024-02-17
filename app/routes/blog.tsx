@@ -208,19 +208,22 @@ export default function BlogRoute() {
 
 const BlogAdminMenu = () => {
   return (
-
     <div className='flex flex-col gap-4'>
       <H3>Admin Menu</H3>
-            <Link to='/blog/drafts'>Go to Drafts</Link>
+      <Link to='/blog/drafts'>Go to Drafts</Link>
 
-          <H3>Create a new Post</H3>
-            <Form method='post'>
-              <Input type='text' name='title' placeholder='enter a title to get started' />
-              <Button type='submit' name='intent' value='create'>
-                Submit
-              </Button>
-            </Form>
-          </div>
+      <H3>Create a new Post</H3>
+      <Form method='post'>
+        <Input
+          type='text'
+          name='title'
+          placeholder='enter a title to get started'
+        />
+        <Button type='submit' name='intent' value='create'>
+          Submit
+        </Button>
+      </Form>
+    </div>
   )
 }
 export function ErrorBoundary() {

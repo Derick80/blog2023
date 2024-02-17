@@ -1,84 +1,15 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { resume_basics,professionalExperience,skills,education,pubs } from '~/resources/resume';
+import { seedCategories } from '~/server/categories.server';
+
 const prisma = new PrismaClient();
 
-// Generate user data
-async function generateTestData(numberofPosts: number) {
-  // create a new user
-  const basePassword = "EGtAUQgz";
-  const passwords = await bcrypt.hash(basePassword, 10);
-  const user = await prisma.user.create({
-    data: {
-      email: faker.internet.exampleEmail(),
-      username: faker.name.firstName(),
-      avatarUrl: faker.image.avatar(),
-      password: passwords,
-    },
-  });
 
-  for (let i = 0; i < numberofPosts; i++) {
-    await prisma.post.create({
-      data: {
-        title: faker.lorem.sentence(),
-        slug: faker.lorem.slug(),
-        description: faker.lorem.paragraph(2),
-        content: faker.lorem.paragraph(4),
-        imageUrl: faker.image.imageUrl(),
-        published: true,
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
-      },
-    });
-  }
-}
 
-async function generateMe(numberofPosts: number) {
-  // clean up the database
-  const email = (await process.env.SEED_EMAIL) as string;
 
-  await prisma.user
-    .delete({
-      where: {
-        email,
-      },
-    })
-    .catch(() => {
-      console.log("No user to delete");
-    });
-  const hashedPassword = (await process.env.HASHEDPASSWORD) as string;
-
-  const me = await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-      username: "DerickC",
-      avatarUrl: `https://res.cloudinary.com/dch-photo/image/upload/v1679953623/p6ii8bxgb3v3n3zpvg0d.webp`,
-    },
-  });
-
-  for (let i = 0; i < numberofPosts; i++) {
-    await prisma.post.create({
-      data: {
-        title: faker.lorem.sentence(),
-        slug: faker.lorem.slug(),
-        description: faker.lorem.paragraph(2),
-        content: faker.lorem.paragraph(4),
-        imageUrl: faker.image.url(),
-        published: true,
-        user: {
-          connect: {
-            id: me.id,
-          },
-        },
-      },
-    });
-  }
-}
-const categorySeed = [
+export const categorySeed = [
   { value: "Javascript", label: "Javascript" },
   { value: "React", label: "React" },
   { value: "Node", label: "Node" },
@@ -102,13 +33,349 @@ const categorySeed = [
   { value: "Music", label: "Music" },
   { value: "Japan", label: "Japan" },
 ];
-async function seed() {
-  // await generateTestData(5);
-  // await generateTestData(5);
-  await generateMe(5);
-  await prisma.category.createMany({
-    data: categorySeed,
+
+
+async function generateResume () {
+  const init_resume = await prisma.resume.create({
+    data: {
+      title: resume_basics.title,
+      phoneNumber: resume_basics.phoneNumber,
+      email: resume_basics.email,
+      website: resume_basics.website,
+      location: resume_basics.location,
+      summary: resume_basics.summary,
+      skills: skills,
+      education: {
+        create: {
+          institution: education[0].institution,
+          degree: education[0].degree,
+          field: education[0].field,
+          startDate: education[0].startDate,
+          endDate: education[0].endDate,
+
+        }
+
+      },
+      publications: {
+        create: pubs
+
+      }
+
+
+    }
+  }
+
+  )
+  if (init_resume) {
+    for (let i = 0; i < professionalExperience.length; i++) {
+      await prisma.professionalExperience.create({
+        data: {
+            title: professionalExperience[i].title,
+          company: professionalExperience[i].company,
+          location: professionalExperience[i].location,
+          startDate: professionalExperience[i].startDate,
+          endDate: professionalExperience[i].endDate,
+          duties: {
+            create: professionalExperience[i].duties
+          },
+          resume: {
+            connect: {
+              id: init_resume.id
+            }
+          }
+        }
+
+      })
+
+    }
+    for (let i = 0; i < education.length; i++) {
+      await prisma.education.create({
+        data: {
+          institution: education[i].institution,
+          degree: education[i].degree,
+          field: education[i].field,
+          startDate: education[i].startDate,
+          endDate: education[i].endDate,
+          duties: {
+            create: education[i].duties
+
+          },
+          resume: {
+            connect: {
+              id: init_resume.id
+            }
+          }
+        }
+      })
+    }
+  }
+
+
+}
+async function generateMe (environment:string,numberofPosts: number, numberOfUsers: number) {
+
+  if (environment === 'development') {
+    await prisma.user.deleteMany()
+    await prisma.post.deleteMany()
+    await prisma.like.deleteMany()
+    await prisma.comment.deleteMany()
+    await prisma.resume.deleteMany()
+  //  remove prior categories
+    await prisma.category.deleteMany()
+  }
+
+  console.log('Cleaning up the database');
+
+
+  for (let i = 0; i < categorySeed.length; i++) {
+    await prisma.category.create({
+      data: categorySeed[i],
+    });
+  }
+
+  const categories = await prisma.category.findMany()
+
+  const randomCategory = () => {
+    const index = Math.floor(Math.random() * categories.length);
+    return categories[index];
+  }
+
+  // write a function that generates 1-5 random categories for a post
+  const generateCategories = () => {
+    const numberOfCategories = Math.floor(Math.random() * 5) + 1;
+    const cats = [];
+    for (let i = 0; i < numberOfCategories; i++) {
+      cats.push(randomCategory());
+    }
+    return cats;
+  }
+
+
+  // clean up the database
+  const email = (await process.env.SEED_EMAIL) as string;
+
+  await prisma.user
+    .delete({
+      where: {
+        email,
+      },
+    })
+    .catch(() => {
+      console.log("No user to delete");
+    });
+  const hashedPassword = (await process.env.HASHEDPASSWORD) as string;
+
+  const me = await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      username: "DerickC",
+      avatarUrl: `https://res.cloudinary.com/dch-photo/image/upload/v1679953623/p6ii8bxgb3v3n3zpvg0d.webp`,
+      role: "ADMIN",
+
+    },
   });
+
+  for (let i = 0; i < numberofPosts; i++) {
+    await prisma.post.create({
+      data: {
+        title: faker.lorem.sentence(),
+        slug: faker.lorem.slug(),
+        description: faker.lorem.paragraph(2),
+        content: faker.lorem.paragraph(4),
+        imageUrl: faker.image.url(),
+        published: true,
+        categories: {
+          connect: generateCategories(),
+        },
+        user: {
+          connect: {
+            id: me.id,
+          },
+        },
+      },
+    });
+  }
+  // create a some new users
+  const basePassword = "EGtAUQgz";
+  const passwords = await bcrypt.hash(basePassword, 10);
+
+  for (let i = 0; i < numberOfUsers; i++){
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        password: passwords,
+        username: faker.internet.userName(),
+        avatarUrl: faker.image.avatar(),
+        role: "USER",
+
+      },
+    });
+
+    const otherUsers = await prisma.user.findMany({
+      where: {
+        id: {
+          not: me.id,
+        }
+
+      },
+      select: {
+        id: true,
+
+      }
+    });
+
+
+    for (let i = 0; i < otherUsers.length; i++) {
+      await prisma.post.create({
+        data: {
+          title: faker.lorem.sentence(),
+          slug: faker.lorem.slug(),
+          description: faker.lorem.paragraph(1),
+          content: faker.lorem.paragraph(4),
+          imageUrl: faker.image.url(),
+          published: true,
+          categories: {
+            connect: generateCategories(),
+          },
+          user: {
+            connect: {
+              id: otherUsers[i].id,
+            },
+          },
+        },
+      });
+    }
+  }
+
+  // retrieve the posts and users from the database
+  // then write a function that takes every user and has them like 1-10 random posts
+
+  const posts = await prisma.post.findMany({
+    select: {
+      id: true,
+    }
+  });
+
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+    }
+  });
+
+  // write a function that returns a random post but does not return the same post twice
+
+  const randomPost = () => {
+    const index = Math.floor(Math.random() * posts.length);
+    return posts[index];
+  }
+// Combine the randomPost and randomUser functions to create a function that generates a random number of likes for a random post by a random user
+for (let i = 0; i < users.length; i++) {
+  const user = users[i];
+  const numberOfLikes = Math.floor(Math.random() * 10) + 1;
+
+  for (let j = 0; j < numberOfLikes; j++) {
+    const post = randomPost();
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        postId: post.id,
+        userId: user.id,
+      },
+    });
+
+    if (!existingLike) {
+      await prisma.like.create({
+        data: {
+          post: {
+            connect: { id: post.id },
+          },
+          user: {
+            connect: { id: user.id },
+          },
+        },
+      });
+    }
+  }
+}
+
+  // combine the randomPost and randomUser functions to create a function that generates a random number of likes for a random post by a random user
+
+
+
+  // Create comments for each post
+  for (let i = 0; i < numberofPosts; i++) {
+    const post = await prisma.post.findFirst({
+      skip: i,
+      take: 1,
+    });
+
+    if (post) {
+      const numberOfComments = Math.floor(Math.random() * 10) + 1; // Generate a random number of comments
+      for (let j = 0; j < numberOfComments; j++) {
+        const user = await prisma.user.findFirst(); // Get a random user
+        if (user) {
+          await prisma.comment.create({
+            data: {
+              message: faker.lorem.paragraph(), // Generate a random comment message
+              user: {
+                connect: { id: user.id },
+              },
+              post: {
+                connect: { id: post.id },
+              },
+            },
+          });
+        }
+      }
+
+    }
+    const commentIds = await prisma.comment.findMany({
+      select: {
+        id: true,
+        postId: true,
+
+      }
+    });
+    const randomComment = () => {
+      const index = Math.floor(Math.random() * commentIds.length);
+      return commentIds[index];
+    }
+    // pick 0-5 random commentIds and then create a new comment that replies to that comment
+    const numberOfReplies = Math.floor(Math.random() * 5);
+    for (let i = 0; i < numberOfReplies; i++) {
+      const comment = randomComment();
+      const user = await prisma.user.findFirst();
+      if (user) {
+        await prisma.comment.create({
+          data: {
+            message: faker.lorem.paragraph(2),
+            user: {
+              connect: { id: user.id },
+            },
+            parent: {
+              connect: { id: comment.id },
+            },
+            post: {
+              connect: { id: comment.postId },
+          },
+          },
+        });
+      }
+    }
+
+  }
+
+  // pick 0-5 random commentIds and then create a new comment that replies to that comment
+
+
+
+}
+
+async function seed() {
+
+  await generateMe('development', 5, 5);
+  await generateResume();
+
 
   console.log(`Database has been seeded. 🌱`);
 }

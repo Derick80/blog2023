@@ -75,7 +75,6 @@ const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('favorite'),
     method: z.enum(['post', 'delete'])
-
   })
 ])
 
@@ -199,8 +198,6 @@ export async function action({ request, params }: LoaderFunctionArgs) {
           }
         }
 
-
-
         return json(
           { message: 'ok' },
           {
@@ -209,9 +206,6 @@ export async function action({ request, params }: LoaderFunctionArgs) {
             }
           }
         )
-
-
-
       } catch (error) {
         return json({ error: 'invalid like data' }, { status: 500 })
       }
