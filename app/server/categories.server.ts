@@ -1,5 +1,12 @@
 import { json } from '@remix-run/node'
 import { prisma } from './prisma.server'
+import { categorySeed } from 'prisma/seed'
+
+export async function seedCategories() {
+  return await prisma.category.createMany({
+    data: categorySeed
+  })
+}
 
 export async function createCategory({
   title,

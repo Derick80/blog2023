@@ -56,24 +56,22 @@ const CommentBox = ({
   const isDeleting =
     deleteFetcher.state === 'idle' && deleteFetcher.data != null
 
-
-
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Escape') {
       setReplying(!replying)
     }
-    if(e.key === 'Enter' && e.shiftKey === false && replying && makeComment) {
-createCommentFetcher.submit({
-      message: makeComment,
-      parentId: comment.id,
-      intent: 'create-comment'
-    }, {
-      method: 'POST',
-
-      })
+    if (e.key === 'Enter' && e.shiftKey === false && replying && makeComment) {
+      createCommentFetcher.submit(
+        {
+          message: makeComment,
+          parentId: comment.id,
+          intent: 'create-comment'
+        },
+        {
+          method: 'POST'
+        }
+      )
     }
-
   }
 
   // handle focus on the reply button
@@ -85,16 +83,12 @@ createCommentFetcher.submit({
     }, 0)
   }
 
-
-
-
   const createCommentFetcher = useFetcher<typeof action>({
     key: 'create-comment'
   })
 
-
-  const doneCommenting = createCommentFetcher.state === 'idle' && createCommentFetcher.data != null
-
+  const doneCommenting =
+    createCommentFetcher.state === 'idle' && createCommentFetcher.data != null
 
   React.useEffect(() => {
     if (doneCommenting) {
@@ -102,7 +96,6 @@ createCommentFetcher.submit({
       setMakeComment('')
     }
   }, [doneCommenting])
-
 
   return (
     <>
@@ -121,18 +114,18 @@ createCommentFetcher.submit({
               }}
             />
             <ul className='[&_&]:mt-1 [&_&]:border-l [&_&]:pl-5'>
-              {
-                replying && (
-                  <div
-                     className={`transition-opacity duration-500 ease-in-out ${replying ? 'opacity-100 scale-100' : 'opacity-0 scale-95'} transform`}
->
-                    <CreateCommentForm
-                  setState={setReplying}
-
-                  parentId={ comment.id } />
-                  </div>
-                )
-             }
+              {replying && (
+                <div
+                  className={`transition-opacity duration-500 ease-in-out ${
+                    replying ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                  } transform`}
+                >
+                  <CreateCommentForm
+                    setState={setReplying}
+                    parentId={comment.id}
+                  />
+                </div>
+              )}
             </ul>
           </div>
 
@@ -168,10 +161,16 @@ createCommentFetcher.submit({
                 type='button'
                 disabled={!currentUser}
                 onClick={(e) => handleReplyButton(e)}
-
               >
-              {replying ? 'Cancel' : <>  <MessageCircleReply className='mr-2 h-4 w-4' />
-                Reply?</>}
+                {replying ? (
+                  'Cancel'
+                ) : (
+                  <>
+                    {' '}
+                    <MessageCircleReply className='mr-2 h-4 w-4' />
+                    Reply?
+                  </>
+                )}
               </Button>
               {isOwner && (
                 <div className='flex flex-row items-center gap-2'></div>
@@ -226,10 +225,10 @@ const CommentHeader = ({ children }: CommentHeaderProps) => {
   )
 }
 
-
 // I want to write a function that manages multiple true/false togglees. The function takes in the  setState function and updates it with the the opposite of it's current value and can be used to manage multiple states
 
-
-export const useToggle = (setState: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const useToggle = (
+  setState: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   return () => setState((prev) => !prev)
 }

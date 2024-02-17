@@ -15,7 +15,7 @@ const NavLinks = ({
   return (
     <NavLink
       to={path}
-      title={ title }
+      title={title}
       prefetch='intent'
       className={({ isActive, isPending }) => {
         return cn`font-semibold ${isActive ? 'underline' : ''} ${className}`

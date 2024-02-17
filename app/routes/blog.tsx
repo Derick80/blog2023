@@ -208,31 +208,22 @@ export default function BlogRoute() {
 
 const BlogAdminMenu = () => {
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-            <Link to='/blog/new'>New Post</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-            <Link to='/blog/drafts'>Drafts</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>New Post</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <Form method='post'>
-              <Input type='text' name='title' placeholder='title' />
-              <Button type='submit' name='intent' value='create'>
-                Submit
-              </Button>
-            </Form>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+    <div className='flex flex-col gap-4'>
+      <H3>Admin Menu</H3>
+      <Link to='/blog/drafts'>Go to Drafts</Link>
+
+      <H3>Create a new Post</H3>
+      <Form method='post'>
+        <Input
+          type='text'
+          name='title'
+          placeholder='enter a title to get started'
+        />
+        <Button type='submit' name='intent' value='create'>
+          Submit
+        </Button>
+      </Form>
+    </div>
   )
 }
 export function ErrorBoundary() {

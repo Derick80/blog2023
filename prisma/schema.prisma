@@ -332,8 +332,8 @@ model Totp {
 
 model Resume {
   id                     String                   @id @default(cuid())
-  title                  String
-  phoneNumber            String
+  title                  String                   @unique
+  phoneNumber            Int
   email                  String
   website                String
   location               String
@@ -341,7 +341,8 @@ model Resume {
   summary                String
   professionalExperience ProfessionalExperience[]
   education              Education[]
-  sills                  String[]
+  skills                 String[]
+  publications           Publication[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
 }
@@ -354,7 +355,7 @@ model ProfessionalExperience {
   startDate String
   endDate   String
   duties    Duties[]
-  resume    Resume   @relation(fields: [resumeId], references: [id])
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   resumeId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -363,21 +364,45 @@ model ProfessionalExperience {
 model Duties {
   id                       String                 @id @default(cuid())
   description              String
-  professionalExperience   ProfessionalExperience @relation(fields: [professionalExperienceId], references: [id])
+  professionalExperience   ProfessionalExperience @relation(fields: [professionalExperienceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   professionalExperienceId String
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
 }
 
 model Education {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   institution String
   degree      String
   field       String
+  duties      eduDuties[]
   startDate   String
   endDate     String
-  resume      Resume   @relation(fields: [resumeId], references: [id])
+  resume      Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   resumeId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model eduDuties {
+  id          String    @id @default(cuid())
+  description String
+  education   Education @relation(fields: [educationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  educationId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Publication {
+  id       String   @id @default(cuid())
+  title    String
+  year     String
+  journal  String
+  authors  String[]
+  edition  String
+  type     String
+  url      String
+  pdf      String?
+  Resume   Resume?  @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId String?
 }
