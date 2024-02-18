@@ -1,6 +1,10 @@
 name: 🚀 Deploy to Staging
 on:
   push:
+    branches:
+      - main
+      - development
+  pull_request: {}
 
 env:
   FLY_APP_NAME: ${{ secrets.FLY_APP_NAME }}
@@ -14,7 +18,7 @@ permissions:
 
 jobs:
   deploy:
-    name: 🚀 Deploy Staging
+    name: 🚀 Deploy STUFF
     runs-on: ubuntu-latest
     if:
       ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') &&
@@ -24,28 +28,23 @@ jobs:
       - name: 👀 Checkout Repo
         uses: actions/checkout@v3
 
-      - name: 👀 Read app name
-        uses: SebRollen/toml-action@v1.2.0
-        id: app_name
-        with:
-          file: fly.toml
-          field: app
-
       - name: 🎈 Setup Fly
         uses: superfly/flyctl-actions/setup-flyctl@1.5
 
       - name: 🚀 Deploy Staging
         if: ${{ github.ref == 'refs/heads/development' || github.ref == 'refs/heads/dev' }}
         run: |
-          flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} \
-          --app ${{ steps.app_name.outputs.value }}-staging
+          flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{
+          secrets.FLY_APP_NAME
+           }}-staging
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_APP_NAME: ${{ secrets.FLY_APP_NAME }}
 
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
         run:
-          flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} \
+          flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }}
           --app ${{ steps.app_name.outputs.value }}-Production
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
