@@ -34,7 +34,7 @@ import {
 import React from 'react'
 import CustomCheckbox from '~/components/custom-checkbox_v2'
 import { Separator } from '~/components/ui/separator'
-import { H2, H3, Large, Muted } from '~/components/ui/typography'
+import { H2, H3, Large, Muted, Small } from '~/components/ui/typography'
 import BlogPreviewCard from '~/components/blog-ui/post/blog-preview-card'
 import {
   getUserAndAdminStatus,
@@ -50,6 +50,17 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '~/components/ui/accordion'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription
+
+} from '~/components/ui/card'
+import { ArrowRight, ArrowRightIcon, ArrowUpRightSquare } from 'lucide-react'
+import { Label } from '~/components/ui/label'
 
 export const meta: MetaFunction = () => {
   return [
@@ -209,12 +220,30 @@ export default function BlogRoute() {
 const BlogAdminMenu = () => {
   return (
     <div className='flex flex-col gap-4'>
-      <H3>Admin Menu</H3>
-      <Link to='/blog/drafts'>Go to Drafts</Link>
+      <Card>
+        <CardHeader>
+          <CardTitle>Admin Menu</CardTitle>
+          <CardDescription>Manage Blog Posts</CardDescription>
+        </CardHeader>
+        <CardContent
+        className='flex flex-col gap-4'
+        >
+
+          <Link
+            prefetch='intent'
+            to='/blog/drafts'
+            className='flex flex-row items-center gap-2'>
+            <H3>View Drafts</H3>
+            <ArrowUpRightSquare
+              size={20}
+            />
+            </Link>
 
       <H3>Create a new Post</H3>
-      <Form method='post'>
-        <Input
+          <Form method='post'>
+            <Label htmlFor='title'>Title</Label>
+            <Input
+              className='placeholder:italic'
           type='text'
           name='title'
           placeholder='enter a title to get started'
@@ -222,7 +251,9 @@ const BlogAdminMenu = () => {
         <Button type='submit' name='intent' value='create'>
           Submit
         </Button>
-      </Form>
+          </Form>
+          </CardContent>
+      </Card>
     </div>
   )
 }

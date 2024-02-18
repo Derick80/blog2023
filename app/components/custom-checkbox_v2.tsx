@@ -1,5 +1,4 @@
 import * as Checkbox from '@radix-ui/react-checkbox'
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import clsx from 'clsx'
 
 interface CboxProps {

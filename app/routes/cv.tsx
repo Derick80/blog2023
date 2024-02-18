@@ -37,7 +37,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!cv) {
     throw new Error('CV not found')
   }
-  console.log(cv, 'cv')
 
   return json({ cv })
 }
