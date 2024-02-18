@@ -6,6 +6,8 @@ on:
       - development
   pull_request: {}
 
+env:
+  FLY_APP_NAME: ${{ secrets.FLY_APP_NAME }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
