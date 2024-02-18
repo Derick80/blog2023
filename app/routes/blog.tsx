@@ -57,7 +57,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription
-
 } from '~/components/ui/card'
 import { ArrowRight, ArrowRightIcon, ArrowUpRightSquare } from 'lucide-react'
 import { Label } from '~/components/ui/label'
@@ -225,34 +224,30 @@ const BlogAdminMenu = () => {
           <CardTitle>Admin Menu</CardTitle>
           <CardDescription>Manage Blog Posts</CardDescription>
         </CardHeader>
-        <CardContent
-        className='flex flex-col gap-4'
-        >
-
+        <CardContent className='flex flex-col gap-4'>
           <Link
             prefetch='intent'
             to='/blog/drafts'
-            className='flex flex-row items-center gap-2'>
+            className='flex flex-row items-center gap-2'
+          >
             <H3>View Drafts</H3>
-            <ArrowUpRightSquare
-              size={20}
-            />
-            </Link>
+            <ArrowUpRightSquare size={20} />
+          </Link>
 
-      <H3>Create a new Post</H3>
+          <H3>Create a new Post</H3>
           <Form method='post'>
             <Label htmlFor='title'>Title</Label>
             <Input
               className='placeholder:italic'
-          type='text'
-          name='title'
-          placeholder='enter a title to get started'
-        />
-        <Button type='submit' name='intent' value='create'>
-          Submit
-        </Button>
+              type='text'
+              name='title'
+              placeholder='enter a title to get started'
+            />
+            <Button type='submit' name='intent' value='create'>
+              Submit
+            </Button>
           </Form>
-          </CardContent>
+        </CardContent>
       </Card>
     </div>
   )

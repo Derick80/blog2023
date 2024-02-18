@@ -1,8 +1,8 @@
-# syntax = docker/dockerfile:1
+FROM node:20-alpine as base
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=18.14.2
-FROM node:${NODE_VERSION}-slim as base
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN corepack enable
 
 LABEL fly_launch_runtime="Remix/Prisma"
 
@@ -18,7 +18,7 @@ FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install -y python-is-python3 pkg-config build-essential openssl 
+    apt-get install -y python-is-python3 pkg-config build-essential openssl
 
 # Install node modules
 COPY --link package.json package-lock.json .

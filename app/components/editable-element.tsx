@@ -1,6 +1,5 @@
 // I want to create an element that can be edited in place. I want to be able to click on the element and have it turn into an input field. I want to be able to click away from the input field and have it turn back into a regular element. I want to be able to submit the input field and have it turn back into a regular element.
 
-
 // look here if I want to explore having an icon to the right of the input field
 // https://tailwindcss.com/docs/hover-focus-and-other-states
 import React from 'react'

@@ -484,11 +484,6 @@ for (let i = 0; i < users.length; i++) {
     }
 
   }
-
-  // pick 0-5 random commentIds and then create a new comment that replies to that comment
-
-
-
 }
 
 async function seed() {

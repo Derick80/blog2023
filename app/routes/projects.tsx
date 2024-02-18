@@ -38,7 +38,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Error("Couldn't find any projects.")
   }
 
-
   return json({ projects })
 }
 
@@ -135,16 +134,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function ProjectIndex() {
   const { projects } = useLoaderData<typeof loader>()
-  const allTechStacks = projects.map(project => project.technologyStacks).flat();
+  const allTechStacks = projects
+    .map((project) => project.technologyStacks)
+    .flat()
 
-
-const uniqueCategories = Array.from(new Set(allTechStacks.map(category => category.value))).map(value => {
-  const category = allTechStacks.find(category => category.value === value);
-  return {
-    value,
-    url: category?.url || ''
-  };
-});
+  const uniqueCategories = Array.from(
+    new Set(allTechStacks.map((category) => category.value))
+  ).map((value) => {
+    const category = allTechStacks.find((category) => category.value === value)
+    return {
+      value,
+      url: category?.url || ''
+    }
+  })
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>
