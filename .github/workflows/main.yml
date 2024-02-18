@@ -1,10 +1,6 @@
 name: 🚀 Deploy to Staging
 on:
   push:
-    branches:
-      - main
-      - development
-  pull_request: {}
 
 env:
   FLY_APP_NAME: ${{ secrets.FLY_APP_NAME }}
