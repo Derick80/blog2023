@@ -38,7 +38,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Error("Couldn't find any projects.")
   }
 
-  console.log(projects, 'projects')
 
   return json({ projects })
 }
@@ -137,7 +136,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function ProjectIndex() {
   const { projects } = useLoaderData<typeof loader>()
   const allTechStacks = projects.map(project => project.technologyStacks).flat();
-  console.log(allTechStacks, 'allTechStacks');
 
 
 const uniqueCategories = Array.from(new Set(allTechStacks.map(category => category.value))).map(value => {
