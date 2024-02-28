@@ -136,17 +136,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function ProjectIndex() {
   const { projects } = useLoaderData<typeof loader>()
-  const allTechStacks = projects.map(project => project.technologyStacks).flat();
-  console.log(allTechStacks, 'allTechStacks');
+  const allTechStacks = projects
+    .map((project) => project.technologyStacks)
+    .flat()
+  console.log(allTechStacks, 'allTechStacks')
 
-
-const uniqueCategories = Array.from(new Set(allTechStacks.map(category => category.value))).map(value => {
-  const category = allTechStacks.find(category => category.value === value);
-  return {
-    value,
-    url: category?.url || ''
-  };
-});
+  const uniqueCategories = Array.from(
+    new Set(allTechStacks.map((category) => category.value))
+  ).map((value) => {
+    const category = allTechStacks.find((category) => category.value === value)
+    return {
+      value,
+      url: category?.url || ''
+    }
+  })
 
   return (
     <div className='flex w-full flex-col items-center gap-2'>

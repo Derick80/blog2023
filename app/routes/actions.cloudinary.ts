@@ -26,9 +26,8 @@ const PhotoFormSchema = z.discriminatedUnion('intent', [
 
 export type ActionInput = z.infer<typeof PhotoFormSchema>
 export async function action({ request }: ActionFunctionArgs) {
-  const userId = 'ffea4a2e-f416-4322-9d4d-a14ea1874689'
-
   const data = await parseForm(request, PhotoFormSchema)
+  console.log(data, 'data from cloudinary delete and primary')
 
   switch (data.intent) {
     case 'delete':
@@ -36,6 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
         await deleteImage({
           cloudinaryPublicId: data.cloudinaryPublicId,
           imageId: data.imageId,
+          imageUrl: data.imageUrl,
           postId: data.postId
         })
       )

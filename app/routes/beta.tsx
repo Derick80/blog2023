@@ -146,8 +146,8 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
         image,
         postId
     }: {
-            image: { id: string; imageUrl: string; filename: string; cloudinaryPublicId: string };
         postId: string;
+    image: { id: string; imageUrl: string; filename: string; cloudinaryPublicId: string };
    }) => {
   setPendingFiles((pendingFiles) => {
     return pendingFiles.filter(
@@ -165,14 +165,14 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
 
   submit(
       {
-        postId,
+        postId: postId,
       imageId: image.id,
       imageUrl: image.imageUrl,
       cloudinaryPublicId: image.cloudinaryPublicId,
       intent: 'delete',
     },
     {
-      method: 'DELETE',
+      method: 'POST',
       action: '/actions/cloudinary',
       navigate: false,
     }
@@ -253,11 +253,9 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
                 name={image.filename}
                 cloudinaryPublicId={image.cloudinaryPublicId}
                 isAvatar={imageUrl === image.imageUrl}
-                    onDelete={
-                        () => {
-                            handleDelete({ image, postId: id});
-                        }
-                }
+                onDelete={() => {
+                    handleDelete({ image, postId: id });
+                } }
                 onSetPrimary={() => {
                   // set primary image
                 }}

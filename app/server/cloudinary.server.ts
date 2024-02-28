@@ -181,51 +181,51 @@ export const saveToPost = async ({ imagesToUpload, postId }: SaveToPost) => {
 export const deleteImage = async ({
   cloudinaryPublicId,
   imageId,
-  postId
+  postId,
+  imageUrl
 }: {
   cloudinaryPublicId: string
   imageId: string
   postId: string
+  imageUrl: string
 }) => {
   const deletedImage = (await cloudinary.v2.uploader.destroy(
     cloudinaryPublicId
   )) as { result: string }
   console.log('deletedImage', deletedImage)
 
-  const isPrimary = await prisma.postImage.findFirst({
-    where: {
-      postId,
-      id: imageId,
-      isPrimary: true
-    },
-    select: {
-      isPrimary: true
+  if (deletedImage.result === 'ok') {
+    const isPrimaryImage = await prisma.postImage.findFirst({
+      where: {
+        id: imageId,
+        isPrimary: true
+      },
+      select: {
+        isPrimary: true
+      }
+    })
+    if (isPrimaryImage) {
+      await prisma.post.update({
+        where: {
+          id: postId
+        },
+        data: {
+          imageUrl: '',
+          postImages: {
+            delete: {
+              id: imageId
+            }
+          }
+        }
+      })
     }
-  })
-  console.log('isPrimary', isPrimary)
-
-  if (!isPrimary && deletedImage.result === 'ok') {
     return await prisma.postImage.delete({
       where: {
         id: imageId
       }
     })
   }
-  if (isPrimary && deletedImage.result === 'ok') {
-    return await prisma.post.update({
-      where: {
-        id: postId
-      },
-      data: {
-        imageUrl: '',
-        postImages: {
-          delete: {
-            id: imageId
-          }
-        }
-      }
-    })
-  }
+
   throw new Error('No image deleted')
 }
 

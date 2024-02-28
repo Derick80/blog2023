@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * @tutorial https://www.jacobparis.com/content/image-placeholders
@@ -35,5 +35,5 @@ export function ImageWithPlaceholder({
     img.src = src
   }, [src])
 
-  return <img src={imgSrc} alt="" {...props} />
+  return <img src={imgSrc} alt='' {...props} />
 }
