@@ -17,6 +17,7 @@ import { LucideArrowUpRightSquare } from 'lucide-react'
 import { CommentPreview } from './blog-comments-count-container'
 import { Badge } from '~/components/ui/badge'
 import AvatarWithOptions from '~/components/avatar-with-options'
+import { Pencil2Icon } from '@radix-ui/react-icons'
 
 const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
   const {
@@ -30,6 +31,8 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
     categories
   } = post
   const { likes, favorites, user } = post
+  const isOwner = user.id === userId
+  console.log(isOwner, 'isOwner');
 
   return (
     <Card>
@@ -64,7 +67,27 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
           <div className='flex flex-row items-center gap-2'></div>
 
           <div className='flex flex-row items-end gap-2'>
-            <ReadMore postId={id} />
+            {
+              isOwner ? (
+                <Link
+                  className='flex items-center gap-2'
+                  to={`/blog/drafts/${id}`}
+                  prefetch='intent'
+                >
+                  <Caption className='hidden md:block'>Edit</Caption>
+                  <Pencil2Icon className='text-primary md:size-6 size-4' />
+                </Link>
+              ) : (
+                <Link
+                  className='flex items-center gap-2'
+                  to={`/blog/${id}`}
+                  prefetch='intent'
+                >
+                  <Caption className='hidden md:block'>Read More</Caption>
+                  <LucideArrowUpRightSquare className='text-primary md:size-6 size-4' />
+                </Link>
+              )
+           }
           </div>
         </div>
       </CardFooter>

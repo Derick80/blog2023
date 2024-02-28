@@ -15,6 +15,7 @@ import {
 } from '~/components/ui/tooltip'
 import { useCategories } from '~/utilities'
 import CheckSelect from '~/components/check-select'
+import ImageController from '~/components/images/image-controller'
 
 const BlogEditCard = ({ post }: { post: DraftType }) => {
   const actionData = useActionData<{ errors: Record<string, string> }>()
@@ -96,7 +97,9 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
             <p id='content-error' role='alert' className='text-red-500'>
               {actionData?.errors?.content}
             </p>
-          )}
+          ) }
+                            <ImageController post={post} />
+
           {actionData?.errors?.newCategory && (
             <p id='categories-error' role='alert' className='text-red-500'>
               {actionData?.errors?.newCategory}
@@ -135,6 +138,7 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
 
           <PublishToggle isPublished={published} postId={id} />
         </Form>
+
       </CardContent>
     </Card>
   )
