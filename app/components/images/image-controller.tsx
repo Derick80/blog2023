@@ -13,7 +13,6 @@ import { Input } from '../ui/input'
 import { Muted } from '../ui/typography'
 import { ImageWithPlaceholder } from './image-with-placeholder'
 import { useFileURLs } from './use-file-urls'
-import { CopyCloudinaryUrl } from './copy-image-url'
 
 export type ImageControllerProps = {
   post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>
@@ -292,7 +291,6 @@ const FileImage = ({
         value={cloudinaryPublicId}
       />
           { children }
-<CopyCloudinaryUrl imageUrl={url} />
       {/* // if you delete an image it falls back to the placeholder image */}
       <button
         type='button'
