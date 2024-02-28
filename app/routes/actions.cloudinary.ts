@@ -1,14 +1,55 @@
-import type { ActionFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
-import { cloudUpload } from '~/server/cloudinary.server'
-import { prisma } from '~/server/prisma.server'
-import cloudinary from 'cloudinary'
-// This is the ac tion that will be called when the form is submitted on the client from the image upload component that's likely in another route
-export const action: ActionFunction = async ({ request }) => {
-  // const imageUrl = await cloudUpload(request)
-  // console.log('imageUrl', imageUrl)
+import { ActionFunctionArgs, json } from '@remix-run/node'
+import { z } from 'zod'
+import { parseForm } from 'zodix'
+import { deleteImage, setPrimaryImage } from '~/server/cloudinary.server'
 
-  const imageResults = await cloudUpload(request)
+const DeleteImageSchema = z.object({
+  intent: z.literal('delete'),
+  imageId: z.string(),
+  imageUrl: z.string(),
+  cloudinaryPublicId: z.string(),
+  postId: z.string()
+})
 
-  return json({ imageResults })
+const SetPrimaryImageSchema = z.object({
+  intent: z.literal('setPrimary'),
+  imageUrl: z.string(),
+  imageId: z.string(),
+  isPrimary: z.string(),
+  postId: z.string()
+})
+
+const PhotoFormSchema = z.discriminatedUnion('intent', [
+  DeleteImageSchema,
+  SetPrimaryImageSchema
+])
+
+export type ActionInput = z.infer<typeof PhotoFormSchema>
+export async function action({ request }: ActionFunctionArgs) {
+  const data = await parseForm(request, PhotoFormSchema)
+  console.log(data, 'data from cloudinary delete and primary')
+
+  switch (data.intent) {
+    case 'delete':
+      return json(
+        await deleteImage({
+          cloudinaryPublicId: data.cloudinaryPublicId,
+          imageId: data.imageId,
+          imageUrl: data.imageUrl,
+          postId: data.postId
+        })
+      )
+
+    case 'setPrimary': {
+      return json(
+        await setPrimaryImage({
+          postId: data.postId,
+          imageId: data.imageId,
+          imageUrl: data.imageUrl
+        })
+      )
+    }
+    default:
+      return json({ message: 'Image uploaded' })
+  }
 }

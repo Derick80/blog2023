@@ -1,9 +1,14 @@
 // change fill-Rule and Clip-rule to fillRule and clipRule
 
-export function UserPlaceHolder() {
+import { cn } from '~/lib/utils'
+
+export function UserPlaceHolder({ className }: { className?: string }) {
   return (
     <svg
-      className='h-10 w-10 text-gray-400'
+      className={cn(
+        'h-20 w-20 rounded-full bg-neutral-100 text-neutral-400',
+        className
+      )}
       fill='currentColor'
       viewBox='0 0 20 20'
       xmlns='http://www.w3.org/2000/svg'

@@ -90,7 +90,7 @@ model PostImage {
   id                 String   @id @default(uuid())
   imageUrl           String
   cloudinaryPublicId String
-  filename           String?
+  filename           String
   isPrimary          Boolean? @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
