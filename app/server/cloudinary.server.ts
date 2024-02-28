@@ -95,6 +95,7 @@ export const uploadHandler: UploadHandler = unstable_composeUploadHandlers(
     }
 
     const uploadedImage = await uploadImage(data, filename)
+    if (!uploadedImage) throw new Error('No uploaded image')
     // @ts-ignore
     // this ignore came from the source i followed.  I think I kinda solved this by adding the type to the uploadImage function
     console.log(
@@ -193,19 +194,19 @@ export const deleteImage = async ({
     cloudinaryPublicId
   )) as { result: string }
   console.log('deletedImage', deletedImage)
+  const isPrimaryImage = await prisma.post.findFirst({
+    where: {
+      id: postId,
+      imageUrl
+    },
+    select: {
+      imageUrl: true
+    }
+  })
 
   if (deletedImage.result === 'ok') {
-    const isPrimaryImage = await prisma.postImage.findFirst({
-      where: {
-        id: imageId,
-        isPrimary: true
-      },
-      select: {
-        isPrimary: true
-      }
-    })
-    if (isPrimaryImage) {
-      await prisma.post.update({
+    if (isPrimaryImage !== null) {
+      return await prisma.post.update({
         where: {
           id: postId
         },
@@ -219,28 +220,42 @@ export const deleteImage = async ({
         }
       })
     }
-    return await prisma.postImage.delete({
-      where: {
-        id: imageId
-      }
-    })
+    if (isPrimaryImage === null) {
+      return await prisma.postImage.delete({
+        where: {
+          id: imageId
+        }
+      })
+    }
   }
-
-  throw new Error('No image deleted')
+  if (deletedImage.result !== 'ok') {
+    throw new Error('Image not deleted')
+  }
 }
 
 export const setPrimaryImage = async ({
   postId,
   imageId,
-  imageUrl,
-  isPrimary
+  imageUrl
 }: {
   postId: string
   imageId: string
   imageUrl: string
-  isPrimary: string
 }) => {
-  if (isPrimary === 'true') {
+  console.log('postId', postId, 'imageId', imageId, 'imageUrl', imageUrl)
+
+  const isPrimary = await prisma.postImage.findFirst({
+    where: {
+      id: imageId,
+      isPrimary: true
+    },
+    select: {
+      isPrimary: true
+    }
+  })
+  console.log('isPrimary', isPrimary)
+
+  if (isPrimary) {
     return await prisma.post.update({
       where: {
         id: postId
@@ -265,7 +280,7 @@ export const setPrimaryImage = async ({
       }
     })
   }
-  if (isPrimary === 'false') {
+  if (!isPrimary) {
     return await prisma.post.update({
       where: {
         id: postId

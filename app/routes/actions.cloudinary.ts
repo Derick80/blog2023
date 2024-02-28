@@ -45,8 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
         await setPrimaryImage({
           postId: data.postId,
           imageId: data.imageId,
-          imageUrl: data.imageUrl,
-          isPrimary: data.isPrimary
+          imageUrl: data.imageUrl
         })
       )
     }

@@ -70,7 +70,9 @@ const ImageController = ({ post }: ImageControllerProps) => {
   const formRef = React.useRef<HTMLFormElement>(null)
   const [errorMessage, setErrorMessage] = React.useState('')
   const [pendingFiles, setPendingFiles] = React.useState<File[]>([])
-const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
+  const [primaryImage, setPrimaryImage] = React.useState<string | null>(
+    imageUrl
+  )
   const displayPendingFiles = pendingFiles.filter(
     (file) =>
       !post.postImages.some(
@@ -87,6 +89,10 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
     // It might seem intuitive to clear the pending files when we do this
     // but we don't actually want to clear the pending file until the real one has loaded on screen
     // Otherwise it'll go blank for a second and that's not a great experience
+  })
+
+  useResetCallback(post.imageUrl, () => {
+    setPrimaryImage(post.imageUrl)
   })
 
   const submit = useSubmit()
@@ -119,7 +125,7 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
           formData.append(`filename${index}`, file.name)
         })
 
-          formData.append('postId', id)
+        formData.append('postId', id)
         // Send the form data to the server
         submit(formData, {
           method: 'POST',
@@ -142,42 +148,6 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
     noClick: true
   })
 
-    const handleDelete = ({
-        image,
-        postId
-    }: {
-        postId: string;
-    image: { id: string; imageUrl: string; filename: string; cloudinaryPublicId: string };
-   }) => {
-  setPendingFiles((pendingFiles) => {
-    return pendingFiles.filter(
-      (file) => file.name.split('.')[0] !== image.filename
-    );
-  });
-        setPrimaryImage((imageUrl) => {
-            if (imageUrl === image.imageUrl) {
-                return null;
-            }
-            return imageUrl;
-        }
-        );
-
-
-  submit(
-      {
-        postId: postId,
-      imageId: image.id,
-      imageUrl: image.imageUrl,
-      cloudinaryPublicId: image.cloudinaryPublicId,
-      intent: 'delete',
-    },
-    {
-      method: 'POST',
-      action: '/actions/cloudinary',
-      navigate: false,
-    }
-  );
-};
 
   return (
     <Card className='w-full'>
@@ -233,8 +203,8 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
               <Muted>Drag and drop an image here</Muted>
             </div>
           </Label>
-              </Form>
-                        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
+        </Form>
+        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
 
         <h3 className='underline mt-4'>User Images</h3>
         <div className='text-xs text-neutral-500 italic'>
@@ -248,16 +218,44 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
             )
             return (
               <FileImage
-                key={image.cloudinaryPublicId}
+                key={image.id}
                 url={image.imageUrl}
                 name={image.filename}
                 cloudinaryPublicId={image.cloudinaryPublicId}
                 isAvatar={imageUrl === image.imageUrl}
-                onDelete={() => {
-                    handleDelete({ image, postId: id });
-                } }
+                    onDelete={ () => {
+                        submit(
+                            {
+                            postId: id,
+                            imageId: image.id,
+                            imageUrl: image.imageUrl,
+                            cloudinaryPublicId: image.cloudinaryPublicId,
+                            intent: 'delete'
+                            },
+                            {
+                            method: 'POST',
+                            action: '/actions/cloudinary',
+                            navigate: false
+                            }
+                        )
+                    }
+                }
                 onSetPrimary={() => {
-                  // set primary image
+                  setPrimaryImage(image.imageUrl)
+                  submit(
+                    {
+                      postId: id,
+                      imageId: image.id,
+                      imageUrl: image.imageUrl,
+                      isPrimary: imageUrl === image.imageUrl ? 'false' : 'true',
+                      intent: 'setPrimary'
+                    },
+                    {
+                      method: 'POST',
+                      action: '/actions/cloudinary',
+                      navigate: false
+                    }
+                  )
                 }}
               >
                 <ImageWithPlaceholder
@@ -276,20 +274,20 @@ const [primaryImage, setPrimaryImage] = React.useState<string | null>(imageUrl)
                 />
               </FileImage>
             )
-          }) }
+          })}
 
-                    {displayPendingFiles.map((file) => (
-              <div
-                className='relative mt-2 h-20 w-20 overflow-hidden rounded-lg border border-neutral-100'
-                key={file.name}
-              >
-                <img
-                  src={getFileUrl(file)}
-                  alt='Uploaded file'
-                  className='opacity-50'
-                />
-              </div>
-            ))}
+          {displayPendingFiles.map((file) => (
+            <div
+              className='relative mt-2 h-20 w-20 overflow-hidden rounded-lg border border-neutral-100'
+              key={file.name}
+            >
+              <img
+                src={getFileUrl(file)}
+                alt='Uploaded file'
+                className='opacity-50'
+              />
+            </div>
+          ))}
         </div>
       </CardFooter>
     </Card>
