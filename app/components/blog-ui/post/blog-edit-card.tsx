@@ -16,7 +16,14 @@ import {
 import { useCategories } from '~/utilities'
 import CheckSelect from '~/components/check-select'
 import ImageController from '~/components/images/image-controller'
+import React from 'react'
+import { EditableText } from '~/components/editable-text'
+export const INTENTS = {
+  updateTitle: 'update-title' as const,
+  updateDescription: 'update-description' as const,
+  updateContent: 'update-content' as const,
 
+}
 const BlogEditCard = ({ post }: { post: DraftType }) => {
   const actionData = useActionData<{ errors: Record<string, string> }>()
   const allcategories = useCategories()
@@ -30,7 +37,7 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
     categories,
     postImages
   } = post
-
+const [editorContent, setEditorContent] = React.useState<string>(content)
   const deleteFetcher = useFetcher()
 
   const handleDelete = () => {
@@ -56,15 +63,17 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
           <input type='hidden' name='postId' value={id} />
 
           <Label htmlFor='title'>Title</Label>
-          <Input
-            id='title'
-            name='title'
-            defaultValue={title}
-            aria-invalid={Boolean(actionData?.errors?.title) || undefined}
-            aria-errormessage={
-              actionData?.errors?.title ? 'title-error' : undefined
-            }
-          />
+          <EditableText
+          value={title}
+          fieldName="title"
+          inputClassName="w-64 h-10 px-4 py-2 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+          buttonClassName="my-4 font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800"
+          buttonLabel={`Edit Post "${title}" title`}
+          inputLabel="Edit Post Title"
+        >
+          <input type="hidden" name="intent" value={INTENTS.updateTitle} />
+          <input type="hidden" name="postId" value={id} />
+        </EditableText>
           {actionData?.errors?.title && (
             <p id='title-error' className='text-red-500'>
               {actionData?.errors?.title}
@@ -72,15 +81,17 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
           )}
 
           <Label htmlFor='description'>Description</Label>
-          <Input
-            id='description'
-            name='description'
-            defaultValue={description}
-            aria-invalid={Boolean(actionData?.errors?.description) || undefined}
-            aria-errormessage={
-              actionData?.errors?.description ? 'description-error' : undefined
-            }
-          />
+          <EditableText
+          value={description}
+          fieldName="description"
+          inputClassName="w-64 h-10 px-4 py-2 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+          buttonClassName="my-4 font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800"
+          buttonLabel={`Edit Post "${description}" description`}
+          inputLabel="Edit Post description"
+        >
+          <input type="hidden" name="intent" value={INTENTS.updateDescription} />
+          <input type="hidden" name="postId" value={id} />
+        </EditableText>
           {actionData?.errors?.description && (
             <p id='description-error' role='alert' className='text-red-500'>
               {actionData?.errors?.description}
@@ -92,7 +103,11 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
             </p>
           )}
           <Label htmlFor='content'>Content</Label>
-          <TipTap content={content} />
+          <TipTap content={ editorContent }
+            setContent={ setEditorContent }
+            postId={ id }
+
+          />
           {actionData?.errors?.content && (
             <p id='content-error' role='alert' className='text-red-500'>
               {actionData?.errors?.content}

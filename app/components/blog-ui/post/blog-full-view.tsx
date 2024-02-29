@@ -15,6 +15,7 @@ import { SharePostButton } from './share-button'
 import CreateCommentForm from './comments/create-comment-form'
 import CommentList from './comments/list-comments'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { LoggedIn } from '~/components/logged-in'
 
 type BlogFullViewProps = {
   post: Post
@@ -65,7 +66,9 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
           <FavoriteContainer postId={id} favorites={favorites} />
           <SharePostButton id={id} />
         </div>
-        <CreateCommentForm />
+      <LoggedIn>
+          <CreateCommentForm />
+        </LoggedIn>
 
         <ScrollArea className='w-full '>
           {post._count.comments > 0 && <CommentList />}
