@@ -37,14 +37,12 @@ const CustomSuperscript = Superscript.extend({
   excludes: 'subscript'
 })
 
-const TipTap = ({ content, setContent,postId,intent }: {
+const Editor = ({ content, setContent,postId }: {
   content?: string,
   setContent: (content: string) => void,
   postId: string,
-  intent: string
 
 }) => {
-  	let fetcher = useDebounceFetcher();
 
   const limit = 10000
   const editor = useEditor({
@@ -91,18 +89,7 @@ const TipTap = ({ content, setContent,postId,intent }: {
       content,
     // use a debounce fetcher to submit the content to the server and prevent too many requests
     onUpdate ({ editor }) {
-      setContent(editor.getHTML()),
-       fetcher.submit({
-         intent,
-         content: content || '',
-         postId,
-       },
-         {
-           method: 'POST',
-           debounceTimeout: 2000
-         }
-
-      )
+      setContent(editor.getHTML())
     },
     editorProps: {
       attributes: {
@@ -131,4 +118,4 @@ const TipTap = ({ content, setContent,postId,intent }: {
   )
 }
 
-export default TipTap
+export default Editor

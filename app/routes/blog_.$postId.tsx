@@ -1,12 +1,13 @@
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
+import { defer, json, redirect } from '@remix-run/node'
 import {
   NavLink,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
+import React from 'react'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import BlogFullView from '~/components/blog-ui/post/blog-full-view'
@@ -25,7 +26,7 @@ import {
   setSuccessMessage
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   const post = await getSinglePostById(postId)
 
@@ -33,10 +34,92 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Error('Post not found')
   }
 
-  // isolate the root comments from the rest of the comments. Root comments are comments that have no parent
-  const rootComments = post.comments.filter((comment) => !comment.parentId)
+  console.log(post, 'post');
 
-  return json({ post, rootComments })
+
+  const allComments = await prisma.comment.findMany({
+    where: {
+      postId
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true
+        }
+      },
+      children: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true
+            }
+
+          }
+        }
+      }
+    },
+
+  })
+
+  console.log(allComments, 'allComments');
+
+  function depthAndDeletionDecorator (array: any, depth = 1) {
+    return array.map((child: any) =>
+      Object.assign(child, {
+        depth,
+        //Remove content if deleted
+        // ...(child.isDeleted == true && { comment: undefined }),
+        replies: depthAndDeletionDecorator(child.children || [], depth + 1),
+      }),
+    );
+  }
+
+  //Recursively generated nested query to get all replies
+  function generateNestedJsonObject (depth: number) {
+    if (depth === 0) {
+      return {};
+    } else {
+      let object = {
+        id: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+
+        user: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+
+        },
+      };
+      for (let i = 0; i < depth; i++) {
+        //@ts-ignore
+        object["replies"] = generateNestedJsonObject(depth - 1);
+      }
+      return object;
+    }
+  }
+
+  const nestedJsonObject = generateNestedJsonObject(3);
+
+  const comments = depthAndDeletionDecorator(
+    //@ts-ignore
+    allComments,
+  )
+  console.log(comments, 'comments');
+
+
+
+   return defer({
+      postPath: request.url,
+      post,
+      comments,
+
+   });
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -253,7 +336,8 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 }
 export default function BlogPostRoute() {
-  const { post, rootComments } = useLoaderData<typeof loader>()
+  const { post, comments } = useLoaderData<typeof loader>()
+   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
     <div className='mx-auto h-full  w-full items-center gap-4'>
@@ -267,7 +351,7 @@ export default function BlogPostRoute() {
         Back
       </NavLink>
       <div className='flex flex-col h-full min-h-full items-center gap-4'>
-        <BlogFullView post={post} />
+        <BlogFullView />
       </div>
     </div>
   )

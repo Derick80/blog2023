@@ -1,6 +1,7 @@
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
+  defer,
   json,
   redirect
 } from '@remix-run/node'
@@ -21,6 +22,7 @@ import {
   changePostFeaturedStatus,
   changePostPublishStatus,
   deletePost,
+  getSinglePostById,
   updatePost,
   updateTitle
 } from '~/server/post.server'
@@ -33,7 +35,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
     postId: z.string()
   })
@@ -43,17 +45,94 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     return redirect('/login')
   }
 
-  const post = await prisma.post.findUnique({
-    where: { id: postId, userId: user.id },
-    include: {
-      categories: true,
-      postImages: true
-    }
-  })
+  const post = await getSinglePostById(postId)
 
   if (!post) throw new Error('No post found')
 
-  return json({ post })
+  console.log(post, 'post');
+
+  const allComments = await prisma.comment.findMany({
+    where: {
+      postId
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true
+        }
+      },
+      children: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true
+            }
+
+          }
+        }
+      }
+    },
+
+  })
+
+  console.log(allComments, 'allComments');
+
+  function depthAndDeletionDecorator (array: any, depth = 1) {
+    return array.map((child: any) =>
+      Object.assign(child, {
+        depth,
+        //Remove content if deleted
+        // ...(child.isDeleted == true && { comment: undefined }),
+        replies: depthAndDeletionDecorator(child.children || [], depth + 1),
+      }),
+    );
+  }
+
+  //Recursively generated nested query to get all replies
+  function generateNestedJsonObject (depth: number) {
+    if (depth === 0) {
+      return {};
+    } else {
+      let object = {
+        id: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+
+        user: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+
+        },
+      };
+      for (let i = 0; i < depth; i++) {
+        //@ts-ignore
+        object["replies"] = generateNestedJsonObject(depth - 1);
+      }
+      return object;
+    }
+  }
+
+  const nestedJsonObject = generateNestedJsonObject(3);
+
+  const comments = depthAndDeletionDecorator(
+    //@ts-ignore
+    allComments,
+  )
+  console.log(comments, 'comments');
+
+
+  return defer({
+      postPath: request.url,
+      post,
+      comments,
+
+   });
 }
 
 const schema = z.discriminatedUnion('intent', [

@@ -11,46 +11,41 @@ import {
 import { Caption } from '~/components/ui/typography'
 import { Post } from '~/server/schemas/schemas'
 import LikeContainer from '../like-container'
-import { Link, NavLink } from '@remix-run/react'
+import { Await, Link, NavLink, useLoaderData } from '@remix-run/react'
 import { useOptionalUser } from '~/utilities'
 import { LucideArrowUpRightSquare } from 'lucide-react'
-import { CommentPreview } from './blog-comments-count-container'
 import { Badge } from '~/components/ui/badge'
 import AvatarWithOptions from '~/components/avatar-with-options'
 import { Pencil2Icon } from '@radix-ui/react-icons'
+import { CommentHeader, Comments } from './comments/comment'
+import { Suspense } from 'react'
+import { Loading } from '~/components/loading'
+import { loader } from '~/routes/blog_.$postId'
 
-const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
-  const {
-    title,
-    description,
-    content,
-    published,
-    id,
-    userId,
-    _count,
-    categories
-  } = post
-  const { likes, favorites, user } = post
-  const isOwner = user.id === userId
-  console.log(isOwner, 'isOwner');
+const BlogPreviewCard = () => {
 
+const user = useOptionalUser()
+
+  const { post, comments } = useLoaderData<typeof loader>()
+  const isOwner = user?.id === post?.userId
+   console.log(isOwner, 'isOwner');
   return (
     <Card>
       <CardHeader className='p-4'>
         <div className='flex flex-row items-center justify-between w-full gap-2'>
-          <CardTitle>{title}</CardTitle>
-          <AvatarWithOptions user={user} />
+          <CardTitle>{post.title}</CardTitle>
+          <AvatarWithOptions user={post.user} />
         </div>
-        <CardDescription className='indent-4'>{description}</CardDescription>
+        <CardDescription className='indent-4'>{post.description}</CardDescription>
       </CardHeader>
       <CardContent
         className='w-full h-auto line-clamp-3 bg-secondary text-primary'
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: post.content }}
       ></CardContent>
 
       <CardFooter className='flex  flex-col items-start p-2'>
         <div className='flex flex-row flex-wrap gap-2'>
-          {categories?.map((category) => (
+          {post.categories?.map((category) => (
             <Badge key={category.id} className='shrink' variant='default'>
               <NavLink to={`/blog?category=${category.value}`}>
                 {category.label}
@@ -59,19 +54,17 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
           ))}
         </div>
         <div className='flex items-center justify-between w-full gap-2'>
-          <LikeContainer postId={id} likes={likes} />
-          <CommentPreview commentLength={_count?.comments} postId={id} />
+          <LikeContainer postId={post.id} likes={post.likes} />
 
-          <FavoriteContainer postId={id} favorites={favorites} />
-          <SharePostButton id={id} />
-          <div className='flex flex-row items-center gap-2'></div>
+          <FavoriteContainer postId={post.id} favorites={post.favorites} />
+          <SharePostButton id={post.id} />
 
           <div className='flex flex-row items-end gap-2'>
             {
               isOwner ? (
                 <Link
                   className='flex items-center gap-2'
-                  to={`/blog/drafts/${id}`}
+                  to={`/blog/drafts/${post.id}`}
                   prefetch='intent'
                 >
                   <Caption className='hidden md:block'>Edit</Caption>
@@ -80,7 +73,7 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
               ) : (
                 <Link
                   className='flex items-center gap-2'
-                  to={`/blog/${id}`}
+                  to={`/blog/${post.id}`}
                   prefetch='intent'
                 >
                   <Caption className='hidden md:block'>Read More</Caption>
@@ -90,6 +83,13 @@ const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
            }
           </div>
         </div>
+        <CommentHeader totalComments={ post._count?.comments } />
+         <Suspense fallback={<Loading />}>
+               <Await resolve={comments}>
+                  {(comments) => <Comments comments={comments} />}
+               </Await>
+            </Suspense>
+
       </CardFooter>
     </Card>
   )

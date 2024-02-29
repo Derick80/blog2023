@@ -274,22 +274,20 @@ const getSinglePostById = async (id: string) => {
     where: {
       id
     },
-    select: {
-      ...DefaultAllPostSelect,
-      comments: {
-        include: {
-          children: true,
-          user: {
-            select: DefaultUserSelect
-          },
-          likes: {
-            select: DefaultCommentLikeSelect
-          }
-        },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      }
+
+    include: {
+      user: {
+        select: DefaultUserSelect
+      },
+      likes: {
+        select: DefaultLikeSelect
+      },
+      favorites: {
+        select: DefaultFavoriteSelect
+      },
+      _count: true,
+      postImages: true,
+      categories: true
     }
   })
 }

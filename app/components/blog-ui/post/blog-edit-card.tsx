@@ -18,12 +18,8 @@ import CheckSelect from '~/components/check-select'
 import ImageController from '~/components/images/image-controller'
 import React from 'react'
 import { EditableText } from '~/components/editable-text'
-export const INTENTS = {
-  updateTitle: 'update-title' as const,
-  updateDescription: 'update-description' as const,
-  updateContent: 'update-content' as const,
+import { INTENTS } from '../types'
 
-}
 const BlogEditCard = ({ post }: { post: DraftType }) => {
   const actionData = useActionData<{ errors: Record<string, string> }>()
   const allcategories = useCategories()
@@ -106,6 +102,7 @@ const [editorContent, setEditorContent] = React.useState<string>(content)
           <TipTap content={ editorContent }
             setContent={ setEditorContent }
             postId={ id }
+            intent={INTENTS.updateContent}
 
           />
           {actionData?.errors?.content && (
