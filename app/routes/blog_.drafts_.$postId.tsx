@@ -21,7 +21,8 @@ import {
   changePostFeaturedStatus,
   changePostPublishStatus,
   deletePost,
-  updatePost
+  updatePost,
+  updateTitle
 } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
 import {
@@ -106,6 +107,17 @@ const schema = z.discriminatedUnion('intent', [
     intent: z.literal('removeCategoryFromDataBase'),
     postId: z.string(),
     categoryId: z.string()
+  }),
+  z.object({
+    intent: z.literal('updateTitle'),
+    postId: z.string(),
+    title: z.string().min(25, 'Title should be at least 25 characters').max(60)
+  }),
+  z.object({
+    intent: z.literal('update-content'),
+    postId: z.string(),
+    content: z.string().min(1).max(50000)
+
   })
 ])
 
@@ -225,6 +237,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
       })
       if (!removeCategoryFromDataBase) throw new Error('Category not removed')
       return json({ removeCategoryFromDataBase })
+    case 'updateTitle':
+      const updatedTitle = await updateTitle({
+        id: formData.postId,
+        title: formData.title,
+      })
+      if (!updatedTitle) throw new Error('Title not updated')
+      return json({ updatedTitle })
+    case 'update-content':
+      const updatedContent = await prisma.post.update({
+        where: {
+          id: formData.postId
+        },
+        data: {
+          content: formData.content
+        }
+      })
+      if (!updatedContent) throw new Error('Content not updated')
+      return json({ updatedContent })
+
     default:
       throw new Error('Invalid intent')
   }

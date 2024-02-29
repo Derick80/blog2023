@@ -2,13 +2,15 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "name": "dch.com",
   "scripts": {
     "build": "remix build",
     "deploy": "fly deploy --remote-only",
     "dev": "remix dev",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
-    "format": "prettier \"app/**/*.ts\" \"app/**/*.tsx\" --write . "
+    "format": "prettier \"app/**/*.ts\" \"app/**/*.tsx\" --write . ",
+    "knip": "knip"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -112,6 +114,7 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
     "eslint-import-resolver-typescript": "^3.6.1",
+    "knip": "^5.0.2",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "prisma": "^5.10.2",

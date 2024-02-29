@@ -7,7 +7,7 @@ import {
 import React, { useMemo } from 'react'
 import type { ZodError, ZodSchema, ZodType } from 'zod'
 import type { CategoryMinimal, Post, UserType } from './server/schemas/schemas'
-
+import { loader as rootLoaderType } from './root'
 import { TechnologyStack } from './server/project.server'
 import { isAuthenticated } from './server/auth/auth.server'
 
@@ -277,6 +277,11 @@ export function filterPosts(
 
   return Array.from(new Set([...allResults, ...individualWordResults]))
 }
-export function useClosePositionFetcher() {
-  return useFetcher<typeof action>()
+
+// export typesafe helpers to get shared loaders from hierachy
+
+// export a typesafe function to get the root data
+export function useRootLoaderData() {
+  //the ! will tell TS that the type is not nullable (not null or undefined)
+  return useRouteLoaderData<typeof rootLoaderType>('root')!
 }

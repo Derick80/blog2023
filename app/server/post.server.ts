@@ -328,3 +328,16 @@ export async function deletePost({
     }
   })
 }
+
+const updateTitle = async ({ id, title }: { id: string; title: string }) => {
+  return await prisma.post.update({
+    where: {
+      id
+    },
+    data: {
+      title
+    }
+  })
+}
+
+export { updateTitle }
