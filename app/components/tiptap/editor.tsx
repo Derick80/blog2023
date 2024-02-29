@@ -27,6 +27,8 @@ import Dropcursor from '@tiptap/extension-dropcursor'
 import ToolBar from '../blog-ui/post/toolbar'
 import { Muted } from '../ui/typography'
 import {type  INTENTS } from '../blog-ui/types';
+import { Card, CardContent, CardFooter } from '../ui/card';
+import { Post } from '~/server/schemas/schemas';
 
 
 const CustomSubscript = SubScript.extend({
@@ -37,10 +39,11 @@ const CustomSuperscript = Superscript.extend({
   excludes: 'subscript'
 })
 
-const Editor = ({ content, setContent,postId }: {
+const Editor = ({ content, setContent,postId,post }: {
   content?: string,
   setContent: (content: string) => void,
   postId: string,
+  post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>
 
 }) => {
 
@@ -68,7 +71,7 @@ const Editor = ({ content, setContent,postId }: {
       CustomSubscript,
       CodeBlock.configure({
         HTMLAttributes: {
-          class: 'p-2 rounded-md mt-2 min-h-[500px]'
+          class: 'p-2 rounded-md mt-2'
         }
       }),
       Underline,
@@ -94,7 +97,7 @@ const Editor = ({ content, setContent,postId }: {
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[250px] p-2 rounded-md mt-2 shadow-foreground bg-background',
+          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[250px] p-2 rounded-md mt-2 dark:prose-invert',
         spellcheck: 'true'
       }
     }
@@ -104,17 +107,24 @@ const Editor = ({ content, setContent,postId }: {
   }
 
   return (
-    <div className='flex flex-col gap-2 rounded-md bg-background shadow-[0_2px_10px] shadow-blackA4'>
-      <ToolBar editor={editor} />
+    <Card className='flex flex-col gap-2 rounded-md bg-background'>
+      <CardContent className='flex flex-col gap-2'>
+        <ToolBar editor={ editor }
+          post={ post }
+
+        />
       <EditorContent editor={editor} />
-      <input type='hidden' name='content' value={editor?.getHTML()} />
+        <input type='hidden' name='content' value={ editor?.getHTML() } />
+      </CardContent>
+      <CardFooter className='flex flex-col gap-2 p-2'>
       <div className='flex items-center justify-end gap-1 text-xs'>
         <Muted>
           {editor.storage.characterCount.characters()}/{limit} characters
         </Muted>
         <Muted>{editor.storage.characterCount.words()} words</Muted>
-      </div>
-    </div>
+        </div>
+      </CardFooter>
+    </Card>
   )
 }
 

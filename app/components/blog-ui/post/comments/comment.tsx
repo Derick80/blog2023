@@ -1,20 +1,23 @@
 import { ChatBubbleIcon, ChevronUpIcon, HeartIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { Popover, Transition } from '@headlessui/react';
+import {  Transition } from '@headlessui/react';
 import { Float } from "@headlessui-float/react";
+import {
+  Popover, PopoverTrigger, PopoverContent, PopoverAnchor,
+} from '~/components/ui/popover'
 
-import { Icon } from '@radix-ui/react-select';
 import { useFetcher, useLoaderData, useLocation } from '@remix-run/react';
-import { ChevronDownIcon, ChevronsDownUp, DeleteIcon, Link, MoreVerticalIcon, ReplyIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronRightIcon, ChevronsDownUp, DeleteIcon, Link, MoreVerticalIcon, ReplyIcon, ThumbsUpIcon, Trash2Icon, XIcon } from 'lucide-react';
 import React, { Fragment } from 'react';
 import { isAdding, isProcessing } from '~/components/form-submit-state';
 import { LoggedIn } from '~/components/logged-in';
 import Editor from '~/components/tiptap/editor';
-import TipTap from '~/components/tiptap/tip-tap';
 import { cn } from '~/lib/utils';
 import { UserPlaceHolder } from '~/resources/user-placeholder';
 import { loader } from '~/routes/blog_.drafts_.$postId';
-import { useRootLoaderData } from '~/utilities';
+import { useOptionalUser, useRootLoaderData } from '~/utilities';
 import { LoggedOut } from '../logged-out';
+import { Button } from '~/components/ui/button';
+import { Muted } from '~/components/ui/typography';
 
 export function Comments({ comments }: { comments: Comment[] | null }) {
    const { user } = useRootLoaderData();
@@ -82,10 +85,12 @@ function CommentRow({
    isNested?: Boolean;
    topLevelIndex?: number;
    postId: string;
-}) {
-   const [isReplyOpen, setReplyOpen] = React.useState(false);
-   const [isCommentExpanded, setCommentExpanded] = React.useState(true);
-
+  }) {
+  const user = useOptionalUser();
+   const [isReplyOpen, setReplyOpen] = React.useState(true);
+   const [isCommentExpanded, setCommentExpanded] = React.useState(false);
+  const isLiked = comment?.likes?.some((like) => like.userId === userId);
+const [likeCount, setLikeCount] = React.useState(comment?.likes?.length);
    const fetcher = useFetcher({ key: "comments" });
 
    //Hide the comment field after submission
@@ -106,7 +111,7 @@ function CommentRow({
             className={cn(
                isNested
                   ? `relative before:content-[''] before:absolute before:left-3
-         before:dark:bg-zinc-700 before:bg-[#ededed] before:-z-0 before:h-full before:w-[1px] rounded-full`
+         before:dark:bg-zinc-700 before:bg-[#ededed] before:h-full before:w-[1px] rounded-full`
                   : "mb-3",
             )}
          >
@@ -115,13 +120,13 @@ function CommentRow({
                   className="dark:border-zinc-600 bg-zinc-50 border dark:bg-zinc-700 justify-center shadow-sm shadow-1
                         flex h-6 w-6 flex-none items-center overflow-hidden rounded-full"
                >
-                  {comment.user?.imageUrl ? (
+                  {comment.user?.avatarUrl ? (
                      <img
                         width={50}
                         height={50}
                    alt="Avatar"
                    className='aspect-auto w-20 h-20 '
-                        src={comment.user.imageUrl ?? ""}
+                        src={comment.user.avatarUrl ?? ""}
                      />
                   ) : (
                      <UserPlaceHolder className="text-sm mx-auto " />
@@ -149,23 +154,30 @@ function CommentRow({
                className={cn(
                   !isNested
                      ? `relative before:content-[''] before:absolute before:left-0 rounded-full
-                     before:dark:bg-zinc-700 before:bg-[#ededed] before:-z-0 before:h-full before:w-[1px]`
+                     before:bg-primary before:-z-0 before:h-full before:w-[1px]`
                      : "",
                   "mb-4 ml-3 pl-5 relative",
                )}
             >
-               {comment?.replies && comment?.replies?.length > 0 && (
-                  <button
+               {comment?.children && comment?.children?.length > 0 && (
+             <Button
+               variant='default'
+               size='xs'
+               type='button'
                      onClick={() => setCommentExpanded(!isCommentExpanded)}
-                     className="absolute -left-[8.5px] bottom-0 bg-zinc-100 dark:bg-dark450 border shadow-sm shadow-1
-                   dark:border-zinc-600 w-[18px] h-[18px] rounded-full flex items-center justify-center"
+                     className="absolute -left-[13px] bottom-0 px-0  border shadow-sm shadow-1
+                   dark:border-zinc-600 rounded-full flex items-center justify-center"
                   >
                      {isCommentExpanded ? (
-                        <ChevronUpIcon  />
+                 <ChevronDownIcon
+                    fill={'bg-primary'}
+                 />
                      ) : (
-                        <ChevronDownIcon   />
+                   <ChevronRightIcon
+                      fill={'bg-primary'}
+                   />
                      )}
-                  </button>
+                  </Button>
                )}
                <div className="pt-2.5">
              { comment.message && <div
@@ -175,37 +187,44 @@ function CommentRow({
 
                } /> }
                </div>
-               <div className="pt-3 flex items-center">
-                  <div className="flex items-center gap-2">
-                     <button
-                        onClick={() =>
-                           fetcher.submit(
-                              //@ts-ignore
-                              {
-                                 commentId: comment?.id,
-                                 userId,
-                                 intent: "like-comment",
-                              },
-                              { method: "post" },
-                           )
-                        }
-                        className="border shadow-sm shadow-emerald-100 dark:shadow-emerald-950/50 active:border-emerald-300 group
-                        hover:dark:border-emerald-600/70 dark:hover:bg-emerald-950 border-emerald-300/60 bg-emerald-50/50 hover:bg-emerald-50 dark:bg-emerald-950/10
-                      dark:border-emerald-700/50 w-5 h-5 rounded-md flex items-center justify-center dark:active:border-emerald-600"
-                     >
-                        <HeartIcon
-                           className="text-emerald-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400"
-
-                        />
-                     </button>
-
-                  </div>
-                  <LoggedIn>
-                     <span className="w-1 h-1 dark:bg-zinc-600 bg-zinc-300 rounded-full mx-3" />
-                     <button
+           <div className="pt-3 flex items-center justify-between">
+             <Muted className="text-xs">
+               { comment?.children?.length
+                  ? comment?.children?.length === 1
+                   ?
+                   <div
+                    className='flex items-center gap-1.5'
+                   >
+                       <div className="text-xs font-bold">{ comment?.children?.length } reply </div> <Button
+                 type='button'
+                 variant='ghost'
+                  size='xs'
                         onClick={() => setReplyOpen(!isReplyOpen)}
                         className="shadow-sm dark:shadow-zinc-800 flex items-center gap-0.5 border dark:border-zinc-600/50 mr-1
-                     dark:hover:border-zinc-500/50 rounded-full dark:bg-dark350 pl-1 pr-2.5 bg-zinc-50 hover:border-zinc-300"
+                     dark:hover:border-zinc-500/50 rounded-full dark:bg-dark350 pl-1 pr-2.5  hover:border-zinc-300"
+                     >
+                        <div className="w-5 h-5 rounded text-1 flex items-center justify-center">
+                           {isReplyOpen ? (
+                              <XIcon  />
+                           ) : (
+                       <ReplyIcon
+                       />
+                           )}
+                        </div>
+                        <div className="text-[10px] font-bold">Reply</div>
+                     </Button>
+                   </div>
+
+                    : <div
+                    className='flex items-center gap-1.5'
+                   >
+                       <div className="text-xs font-bold">{ comment?.children?.length } replies </div> <Button
+                 type='button'
+                 variant='ghost'
+                  size='xs'
+                        onClick={() => setReplyOpen(!isReplyOpen)}
+                        className="shadow-sm dark:shadow-zinc-800 flex items-center gap-0.5 border dark:border-zinc-600/50 mr-1
+                     dark:hover:border-zinc-500/50 rounded-full dark:bg-dark350 pl-1 pr-2.5  hover:border-zinc-300"
                      >
                         <div className="w-5 h-5 rounded text-1 flex items-center justify-center">
                            {isReplyOpen ? (
@@ -216,33 +235,77 @@ function CommentRow({
                            )}
                         </div>
                         <div className="text-[10px] font-bold">Reply</div>
-                     </button>
-                     <Popover>
-                        {({ open }) => (
-                           <>
-                              <Float
-                                 as={Fragment}
-                                 enter="transition ease-out duration-200"
-                                 enterFrom="opacity-0 translate-y-1"
-                                 enterTo="opacity-100 translate-y-0"
-                                 leave="transition ease-in duration-150"
-                                 leaveFrom="opacity-100 translate-y-0"
-                                 leaveTo="opacity-0 translate-y-1"
-                                 placement="bottom-end"
-                                 offset={7}
-                              >
-                                 <Popover.Button className="flex focus:outline-none items-center text-zinc-400 dark:text-zinc-500 justify-center rounded-full w-5 h-5">
-                                    {open ? (
-                                       <ChevronUpIcon
-                                       />
-                                    ) : (
-                                       <MoreVerticalIcon />
-                                    )}
-                                 </Popover.Button>
-                                 <Popover.Panel
-                                    className="border-color-sub justify-items-center text-1 bg-3-sub shadow-1
-                                       gap-1 z-30 rounded-lg border p-1 shadow-sm"
-                                 >
+                     </Button>
+                   </div>
+                  :  <LoggedIn>
+                     <span className="w-1 h-1 dark:bg-zinc-600 bg-zinc-300 rounded-full mx-3" />
+               <Button
+                 type='button'
+                 variant='ghost'
+                  size='xs'
+                        onClick={() => setReplyOpen(!isReplyOpen)}
+                        className="shadow-sm dark:shadow-zinc-800 flex items-center gap-0.5 border dark:border-zinc-600/50 mr-1
+                     dark:hover:border-zinc-500/50 rounded-full dark:bg-dark350 pl-1 pr-2.5  hover:border-zinc-300"
+                     >
+                        <div className="w-5 h-5 rounded text-1 flex items-center justify-center">
+                           {isReplyOpen ? (
+                              <ChevronsDownUp  />
+                           ) : (
+                       <ReplyIcon
+                       />
+                           )}
+                        </div>
+                        <div className="text-[10px] font-bold">Reply</div>
+                     </Button>
+
+
+                  </LoggedIn>
+               }
+
+              </Muted>
+              <Button
+                type='button'
+                variant='ghost'
+                disabled={!user}
+                size='xs'
+                onClick={() => {
+                  setLikeCount((prev: number) => (isLiked ? prev - 1 : prev + 1));
+                  fetcher.submit(
+                    //@ts-ignore
+                    {
+                      commentId: comment?.id,
+                      userId,
+                      intent: "like-comment",
+                    },
+                    { method: "post" },
+                  );
+                }}
+              >
+                {isLiked ? (
+        <ThumbsUpIcon
+          className='text-primary md:size-6 size-4'
+          style={{ fill: 'currentColor' }}
+        />
+      ) : (
+        <ThumbsUpIcon className='text-primary md:size-6 size-4' />
+                 ) }
+                       <Muted className='relative top-1.5 text-xs'>{likeCount}</Muted>
+
+                     </Button>
+ <Popover>
+                 <PopoverTrigger asChild>
+                   <Button
+                     type='button'
+                     variant='ghost'
+                     size='xs'
+                     className='shadow-sm dark:shadow-zinc-800 flex items-center gap-0.5 border dark:border-zinc-600/50 mr-1'
+                   >
+                     <MoreVerticalIcon />
+                   </Button>
+                 </PopoverTrigger>
+                 <PopoverContent sideOffset={ 19 } align='center'>
+
+
                                     {userId === comment?.user?.id && (
                                        <button
                                           className="hover:dark:bg-zinc-700 hover:bg-zinc-100 rounded p-1.5"
@@ -256,18 +319,15 @@ function CommentRow({
                                              )
                                           }
                                        >
-                                          <DeleteIcon
+                                          <Trash2Icon
 
 
                                           />
                                        </button>
-                                    )}
-                                 </Popover.Panel>
-                              </Float>
-                           </>
-                        )}
-                     </Popover>
-                  </LoggedIn>
+                     ) }
+                 </PopoverContent>
+               </Popover>
+
                </div>
             </div>
             <Transition
@@ -282,14 +342,14 @@ function CommentRow({
                <div className="pb-5 pl-8">
                   <CommentsEditor
                      isReply
-                     commentParentId={comment.id}
+                     parentId={comment.id}
                      //@ts-ignore
                      commentDepth={comment.depth}
                      postId={postId}
                   />
                </div>
             </Transition>
-            {comment?.replies && comment?.replies?.length > 0 && (
+            {comment?.children && comment?.children?.length > 0 && (
                <Transition
                   show={isCommentExpanded}
                   enter="transition ease-out duration-200"
@@ -300,7 +360,7 @@ function CommentRow({
                   leaveTo="opacity-0 translate-y-1"
                >
                   <div className="pl-7">
-                     {comment?.replies?.map((comment, index) => (
+                     {comment?.children?.map((comment, index) => (
                         <CommentRow
                            key={comment.id}
                            userId={userId}
@@ -360,17 +420,16 @@ export function CommentHeader({
 
 
 function CommentsEditor({
-   commentParentId,
-   commentDepth,
+   parentId,
    isReply,
    postId,
 
 }: {
-   commentParentId?: string;
-   commentDepth?: number;
+   parentId?: string;
    isReply?: boolean;
    postId: string;
   }) {
+  const {post} = useLoaderData<typeof loader>();
   const [editorContent, setEditorContent] = React.useState<string>('');
    const fetcher = useFetcher({ key: "comments" });
   const creatingTopLevelComment = isAdding(fetcher, "create-top-level-comment");
@@ -380,7 +439,7 @@ function CommentsEditor({
    function createComment() {
       return fetcher.submit(
          {
-            comment: editorContent,
+            message: editorContent,
             intent: "create-top-level-comment",
             postId: postId,
          },
@@ -391,10 +450,9 @@ function CommentsEditor({
       return fetcher.submit(
          //@ts-ignore
          {
-            comment: editorContent,
-            commentParentId,
+            message: editorContent,
+            parentId: parentId,
             postId: postId,
-            commentDepth: commentDepth ? commentDepth + 1 : 1,
             intent: "create-comment-reply",
          },
          { method: "post" },
@@ -402,23 +460,26 @@ function CommentsEditor({
    }
 
    return (
-      <div className="relative bg-2-sub rounded-xl p-4 pb-1 pr-3 border dark:border-zinc-700 dark:focus-within:border-zinc-600 shadow-sm shadow-1">
+      <div className="relative rounded-xl p-4 pb-1 pr-3 border   shadow-sm ">
        <Editor
          content={ editorContent }
          setContent={ setEditorContent }
          postId={ postId }
+         post={ post}
 
        />
-         <div className="absolute right-3.5 bottom-3.5 flex items-center justify-end">
-            <button
+         <div className=" flex items-center justify-end mt-2">
+         <Button
+           type="button"
+           variant="default"
+           size='default'
                disabled={disabled}
                onClick={() =>
                   isReply ? createCommentReply() : createComment()
                }
                className={cn(
-                  disabled ? "dark:bg-zinc-400 " : "",
-                  `rounded-full text-white bg-zinc-600 dark:bg-zinc-300
-                  dark:text-zinc-700 w-20 py-1.5 text-xs font-bold`,
+                  disabled ? "bg-primary-foreground " : "",
+                  `rounded-md w-full py-1.5 text-xs font-bold`,
                )}
             >
                {creatingTopLevelComment || creatingReply ? (
@@ -429,7 +490,7 @@ function CommentsEditor({
                ) : (
                   "Comment"
                )}
-            </button>
+            </Button>
          </div>
       </div>
    );

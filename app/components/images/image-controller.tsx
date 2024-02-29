@@ -13,12 +13,20 @@ import { Input } from '../ui/input'
 import { Muted } from '../ui/typography'
 import { ImageWithPlaceholder } from './image-with-placeholder'
 import { useFileURLs } from './use-file-urls'
+import { Editor } from '@tiptap/react'
+import { PlusIcon } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export type ImageControllerProps = {
-  post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>
+  post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>,
+  editor?: Editor,
+  setImageLink?: React.Dispatch<React.SetStateAction<string>>
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
-const ImageController = ({ post }: ImageControllerProps) => {
+const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerProps) => {
   const { postImages, id, title, imageUrl } = post
+
+
 
   const getFileUrl = useFileURLs()
 
@@ -102,6 +110,26 @@ const ImageController = ({ post }: ImageControllerProps) => {
   })
 
 
+  const addImage = React.useCallback(({ url }: {
+    url: string
+   }) => {
+
+
+    if (
+      editor && url
+    ) {
+      editor
+        .chain()
+        .focus()
+        .setImage({ src: url, alt: `A image replacement for ${url}` })
+        .run();
+
+    }
+  }, [editor,])
+
+  console.log(editor,'editor');
+
+
   return (
     <Card className='w-full'>
       <CardHeader>
@@ -140,7 +168,9 @@ const ImageController = ({ post }: ImageControllerProps) => {
             )
             return (
               <FileImage
-                key={image.id}
+
+
+                key={ image.id }
                 url={image.imageUrl}
                 name={image.filename}
                 cloudinaryPublicId={image.cloudinaryPublicId}
@@ -178,7 +208,20 @@ const ImageController = ({ post }: ImageControllerProps) => {
                       navigate: false
                     }
                   )
-                }}
+                } }
+                onSetImageLink={() => {
+                  if (setImageLink && setOpen) {
+                    setImageLink(image.imageUrl);
+                    addImage({ url: image.imageUrl });
+                    setOpen(!setOpen);
+                    toast.success(`${image.imageUrl} added to the editor`);
+
+
+
+                }
+                }
+              }
+
               >
                 <ImageWithPlaceholder
                   key={image.filename}
@@ -253,8 +296,11 @@ const FileImage = ({
   isAvatar,
   cloudinaryPublicId,
   onDelete = () => {},
-  onSetPrimary = () => {}
+  onSetPrimary = () => { },
+  onSetImageLink = () => { },
+  editor,
 }: {
+  editor?: Editor,
   url: string
   name: string
   children: React.ReactNode
@@ -262,7 +308,8 @@ const FileImage = ({
   cloudinaryPublicId: string
   className?: string
   onDelete?: () => void
-  onSetPrimary?: () => void
+    onSetPrimary?: () => void
+    onSetImageLink?: () => void
 }) => {
   const [isHidden, setIsHidden] = React.useState(false)
 
@@ -279,6 +326,20 @@ const FileImage = ({
       })
     }
   }
+    const addImage = React.useCallback(({ url }: {
+    url: string
+   }) => {
+
+
+    if ( url) {
+      editor
+        .chain()
+        .focus()
+        .setImage({ src: url, alt: `A image replacement for ${url}` })
+        .run()
+    }
+    }, [editor,])
+
 
   return (
     <div className='group relative'>
@@ -290,7 +351,21 @@ const FileImage = ({
         name='cloudinaryPublicId'
         value={cloudinaryPublicId}
       />
-          { children }
+      { children }
+      {/* make a button to add an image to the text edtior */ }
+      <button
+        type='button'
+        value='image'
+        onClick={ () => {
+
+          onSetImageLink();
+          addImage({ url });
+        }}
+        className='absolute -left-[0.625rem] -top-[0.125rem] rounded-full bg-white text-black/50 block text-black'
+      >
+        <PlusIcon />
+      </button>
+
       {/* // if you delete an image it falls back to the placeholder image */}
       <button
         type='button'

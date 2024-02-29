@@ -6,19 +6,22 @@ import {
   StrikethroughIcon,
   UnderlineIcon
 } from '@radix-ui/react-icons'
-import { Editor } from '@tiptap/react'
-import React from 'react'
-import { Button } from '~/components/ui/button'
-import { DropdownMenu } from '~/components/ui/dropdown-menu'
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverAnchor
+} from '~/components/ui/popover'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from  '~/components/ui/dialog'
 import {
   Drawer,
   DrawerClose,
@@ -26,14 +29,31 @@ import {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
+  DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
-}  from '~/components/ui/drawer'
+} from '~/components/ui/drawer'
+import { Editor } from '@tiptap/react'
+import React from 'react'
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group'
+import { Button } from '~/components/ui/button'
+import { Post } from '~/server/schemas/schemas'
+import ImageController from '~/components/images/image-controller'
 
-const ToolBar = ({ editor }: { editor: Editor }) => {
-   const addImage = React.useCallback(() => {
-    const url = window.prompt('URL')
+const ToolBar = ({ editor, post }: {
+  editor: Editor,
+  post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>
+}) => {
+  const [open, setOpen] = React.useState(false)
+  console.log(open,'open');
+
+  const [imageLink, setImageLink] = React.useState('')
+  console.log(imageLink,'imageLink');
+
+  const addImage = React.useCallback(({ url }: {
+    url: string
+   }) => {
+
 
     if (url) {
       editor
@@ -42,35 +62,15 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         .setImage({ src: url, alt: `A image replacement for ${url}` })
         .run()
     }
-  }, [editor])
-  const setLink = React.useCallback(() => {
-    const previousUrl = editor?.getAttributes('link').href
-    const url = window.prompt('URL', previousUrl)
+  }, [editor,])
 
-    // cancelled
-    if (url === null) {
-      return
-    }
+  if (!editor) return null
 
-    // empty
-    if (url === '') {
-      editor?.chain().focus().extendMarkRange('link').unsetLink().run()
-
-      return
-    }
-
-    // update link
-    editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-  }, [editor])
-
-  if (!editor) {
-    return null
-  }
 
   return (
-    <><ToggleGroup
+   <ToggleGroup
       type='multiple'
-      className='flex p-[10px] pb-0 border-b w-full min-w-max justify-start rounded-md bg-background shadow-2xl shadow-black-50'
+      className='flex pt-2 pb-0 w-full rounded-sm bg-background shadow-2xl shadow-black-50'
     >
       <ToggleGroupItem
         value='bold'
@@ -119,27 +119,130 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         <CodeIcon />
       </ToggleGroupItem>
         <ToggleGroupItem
-          value='image'
+          value={imageLink}
           size='sm'
           type='button'
           variant='outline'
           className={ editor.isActive('bold') ? 'border-2' : '' }
-          onClick={ addImage }
+        onChange={ () => addImage({ url: imageLink }) }
+
+
+        onBlur={ () => addImage({ url: imageLink }) }
+
+
         >
           Image
           <ImageIcon />
 
+      </ToggleGroupItem>
+
+        {/* <Popover>
+          <PopoverTrigger asChild>
+        <Button variant="outline">Open popover</Button>
+
+        </PopoverTrigger>
+        <PopoverAnchor />
+          <PopoverContent>
+          <ImageController
+            post={post}
+            />
+          </PopoverContent>
+        </Popover> */}
+      {/* {
+        editor && ( <ToggleGroupItem
+        value='link'
+        size='sm'
+        type='button'
+        variant='outline'
+        className={ editor.isActive('bold') ? 'border-2' : '' }
+        onClick={ setLink }
+      asChild>
+        <Drawer
+      aria-label='Image Controller'
+            modal={ true }
+
+      >
+            <DrawerTrigger asChild>
+
+        <Button variant='outline'>Image</Button>
+            </DrawerTrigger>
+                        <DrawerContent>
+        <div className="mx-auto w-full max-w-sm">
+
+             <DrawerHeader>
+          <DrawerTitle>Image Controller</DrawerTitle>
+          <DrawerDescription>Upload and manage images</DrawerDescription>
+        </DrawerHeader>
+            <DrawerPortal>
+
+
+
+  <DrawerHeader>
+          <DrawerTitle>Image Controller</DrawerTitle>
+          <DrawerDescription>Upload and manage images</DrawerDescription>
+        </DrawerHeader>
+        <ImageController post={post} />
+                </DrawerPortal>
+              <DrawerFooter>
+                  <DrawerClose
+
+                    asChild>
+
+                    <Button variant='outline'>Close</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+                </div>
+                            </DrawerContent>
+
+    </Drawer>
+        </ToggleGroupItem>)
+
+     } */}
+
+      {
+        editor && ( <ToggleGroupItem
+        value='link'
+        size='sm'
+        type='button'
+        variant='outline'
+        className={ editor.isActive('bold') ? 'border-2' : '' }
+
+        asChild>
+        <Dialog
+          aria-label='Image Controller'
+            modal={ true }
+            open={open} onOpenChange={setOpen}
+          >
+            <DialogTrigger asChild>
+              <Button variant='outline'>Link</Button>
+            </DialogTrigger>
+            <DialogContent
+
+            >
+
+
+              <ImageController
+                editor={ editor}
+                post={ post }
+                setImageLink={ setImageLink }
+                setOpen={ setOpen }
+                  />
+
+
+            </DialogContent>
+          </Dialog>
+
+
+
         </ToggleGroupItem>
-      </ToggleGroup></>
-  )
-}
+        )
+      }
+
+          </ToggleGroup>
+      )
+      }
+
+
 
 export default ToolBar
 
-{
-  /* <div
-    className="flex p-[10px] w-full min-w-max rounded-md bg-background shadow-[0_2px_10px] shadow-blackA4"
-    aria-label="Formatting options"
->
-</div> */
-}

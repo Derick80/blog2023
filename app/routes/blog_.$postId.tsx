@@ -26,7 +26,8 @@ import {
   setSuccessMessage
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
-export async function loader({request, params }: LoaderFunctionArgs) {
+import formatComments from './format-comments'
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   const post = await getSinglePostById(postId)
 
@@ -34,8 +35,7 @@ export async function loader({request, params }: LoaderFunctionArgs) {
     throw new Error('Post not found')
   }
 
-  console.log(post, 'post');
-
+  console.log(post, 'post')
 
   const allComments = await prisma.comment.findMany({
     where: {
@@ -49,6 +49,12 @@ export async function loader({request, params }: LoaderFunctionArgs) {
           avatarUrl: true
         }
       },
+      likes: {
+        select: {
+          userId: true,
+          commentId: true,
+        }
+      },
       children: {
         include: {
           user: {
@@ -57,69 +63,27 @@ export async function loader({request, params }: LoaderFunctionArgs) {
               username: true,
               avatarUrl: true
             }
-
+          },
+          likes: {
+            select: {
+              userId: true,
+              commentId: true
+            }
           }
         }
       }
-    },
-
+    }
   })
 
-  console.log(allComments, 'allComments');
+  console.log(allComments, 'allComments')
 
-  function depthAndDeletionDecorator (array: any, depth = 1) {
-    return array.map((child: any) =>
-      Object.assign(child, {
-        depth,
-        //Remove content if deleted
-        // ...(child.isDeleted == true && { comment: undefined }),
-        replies: depthAndDeletionDecorator(child.children || [], depth + 1),
-      }),
-    );
-  }
+  const comments = formatComments(allComments)
 
-  //Recursively generated nested query to get all replies
-  function generateNestedJsonObject (depth: number) {
-    if (depth === 0) {
-      return {};
-    } else {
-      let object = {
-        id: true,
-        content: true,
-        createdAt: true,
-        updatedAt: true,
-
-        user: {
-          id: true,
-          username: true,
-          avatarUrl: true,
-
-        },
-      };
-      for (let i = 0; i < depth; i++) {
-        //@ts-ignore
-        object["replies"] = generateNestedJsonObject(depth - 1);
-      }
-      return object;
-    }
-  }
-
-  const nestedJsonObject = generateNestedJsonObject(3);
-
-  const comments = depthAndDeletionDecorator(
-    //@ts-ignore
-    allComments,
-  )
-  console.log(comments, 'comments');
-
-
-
-   return defer({
-      postPath: request.url,
-      post,
-      comments,
-
-   });
+  return defer({
+    postPath: request.url,
+    post,
+    comments
+  })
 }
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -133,22 +97,27 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 const schema = z.discriminatedUnion('intent', [
   z.object({
-    intent: z.literal('create-comment'),
+    intent: z.literal('create-top-level-comment'),
     parentId: z.string().optional(),
-    message: z.string().min(1).max(250)
+    message: z.string().min(1).max(10000)
   }),
   z.object({
     intent: z.literal('edit-comment'),
-    message: z.string().min(1).max(250),
+    message: z.string().min(1).max(10000),
     commentId: z.string()
   }),
   z.object({
-    intent: z.literal('reply-comment'),
-    id: z.string(),
-    message: z.string().min(1).max(250)
+    intent: z.literal('create-comment-reply'),
+    parentId: z.string(),
+    postId: z.string(),
+    message: z.string().min(1).max(10000)
   }),
   z.object({
     intent: z.literal('delete-comment'),
+    commentId: z.string()
+  }),
+  z.object({
+    intent: z.literal('like-comment'),
     commentId: z.string()
   }),
   z.object({
@@ -180,11 +149,10 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 
   switch (formData.intent) {
-    case 'create-comment':
+    case 'create-top-level-comment':
       const comment = await createComment({
         postId,
         message: formData.message,
-        parentId: formData?.parentId,
         userId: user.id
       })
       if (!comment) setErrorMessage(session, 'errorMessage createComment')
@@ -214,11 +182,11 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         }
       )
 
-    case 'reply-comment':
+    case 'create-comment-reply':
       const replyComment = await replyToComment({
         postId,
         message: formData.message,
-        parentId: formData.id,
+        parentId: formData.parentId,
         userId: user.id
       })
       if (!replyComment) {
@@ -248,6 +216,38 @@ export async function action({ request, params }: LoaderFunctionArgs) {
         })
       } catch (error) {
         return json({ error: 'invalid delete data' }, { status: 500 })
+      }
+    case 'like-comment':
+      const isLiked = await prisma.commentLike.findUnique({
+        where: {
+          commentId_userId: {
+            commentId: formData.commentId,
+            userId: user.id
+          }
+        }
+      })
+      if (!isLiked) {
+        // like the comment
+        const liked = await prisma.commentLike.create({
+          data: {
+            commentId: formData.commentId,
+            userId: user.id
+          }
+        })
+        return json({ message: 'ok' })
+      }
+      if (isLiked) {
+        // unlike the comment
+        const unliked = await prisma.commentLike.delete({
+          where: {
+            commentId_userId: {
+              commentId: formData.commentId,
+              userId: user.id
+            }
+          }
+        })
+        return json({ message: 'ok' })
+
       }
 
     case 'like':
@@ -337,7 +337,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 }
 export default function BlogPostRoute() {
   const { post, comments } = useLoaderData<typeof loader>()
-   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false)
 
   return (
     <div className='mx-auto h-full  w-full items-center gap-4'>
