@@ -332,11 +332,7 @@ const FileImage = ({
 
 
     if ( url) {
-      editor
-        .chain()
-        .focus()
-        .setImage({ src: url, alt: `A image replacement for ${url}` })
-        .run()
+      editor?.chain().focus().setImage({ src: url, alt: `A image replacement for ${url}` }).run()
     }
     }, [editor,])
 
