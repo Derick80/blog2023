@@ -22,6 +22,20 @@ const MobileDropdown = () => {
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <NavLink to='/blog' title='Click to go to the blog page'>
+              Blog
+            </NavLink>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+<NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <NavLink to='/cv' title='Click to go to view my CV'>
+             CV
+            </NavLink>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
           <NavigationMenuTrigger>Browse</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className='m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[600px] sm:grid-flow-col sm:grid-rows-3'>
