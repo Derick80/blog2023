@@ -1,6 +1,6 @@
 import { TOTPStrategy } from 'remix-auth-totp'
-import { prisma } from '~/server/prisma.server'
 import { sendAuthEmail } from '../auth-email.server'
+import { prisma } from '../../prisma.server'
 
 export const totpStrategy = new TOTPStrategy(
   {

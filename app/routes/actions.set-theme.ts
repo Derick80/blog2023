@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import { createThemeCookie } from '../server/theme.server'
+import { createThemeCookie } from '../.server/theme.server'
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return redirect('/')

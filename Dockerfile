@@ -42,7 +42,8 @@ RUN npm prune --production
 FROM base
 
 # Copy built application
-COPY --from=build /app /app
+COPY --from=build /app/build/server /app/build/server
+
 
 # Entrypoint prepares the database.
 

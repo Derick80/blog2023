@@ -6,7 +6,6 @@ import type {
 import { json } from '@remix-run/node'
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -17,18 +16,18 @@ import {
   useLocation,
   useRouteError
 } from '@remix-run/react'
-import { isAuthenticated } from './server/auth/auth.server'
+import { isAuthenticated } from './.server/auth/auth.server'
 import Layout from './components/layout/layout'
 import stylesheet from '~/tailwind.css'
-import type { ToastMessage } from './server/session.server'
-import { commitSession, getSession } from './server/session.server'
+import type { ToastMessage } from './.server/session.server'
+import { commitSession, getSession } from './.server/session.server'
 import React from 'react'
 import { Toaster, toast } from 'react-hot-toast'
-import { prisma } from './server/prisma.server'
+import { prisma } from './.server/prisma.server'
 import { AnimatePresence, motion } from 'framer-motion'
-import { getEnv } from './server/env.server'
+import { getEnv } from './.server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
-import { getThemeFromCookie } from './server/theme.server'
+import { getThemeFromCookie } from './.server/theme.server'
 import { H2 } from './components/ui/typography'
 
 export const links: LinksFunction = () => [
@@ -159,7 +158,6 @@ export default function App() {
 
             <ScrollRestoration />
             <Scripts />
-            <LiveReload />
           </Layout>
         </ThemeProvider>
       </body>
