@@ -33,7 +33,7 @@ const BlogEditCard = ({ post }: { post: DraftType }) => {
     categories,
     postImages
   } = post
-const [editorContent, setEditorContent] = React.useState<string>(content)
+  const [editorContent, setEditorContent] = React.useState<string>(content)
   const deleteFetcher = useFetcher()
 
   const handleDelete = () => {
@@ -60,16 +60,16 @@ const [editorContent, setEditorContent] = React.useState<string>(content)
 
           <Label htmlFor='title'>Title</Label>
           <EditableText
-          value={title}
-          fieldName="title"
-          inputClassName="w-64 h-10 px-4 py-2 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
-          buttonClassName="my-4 font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800"
-          buttonLabel={`Edit Post "${title}" title`}
-          inputLabel="Edit Post Title"
-        >
-          <input type="hidden" name="intent" value={INTENTS.updateTitle} />
-          <input type="hidden" name="postId" value={id} />
-        </EditableText>
+            value={title}
+            fieldName='title'
+            inputClassName='w-64 h-10 px-4 py-2 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500'
+            buttonClassName='my-4 font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800'
+            buttonLabel={`Edit Post "${title}" title`}
+            inputLabel='Edit Post Title'
+          >
+            <input type='hidden' name='intent' value={INTENTS.updateTitle} />
+            <input type='hidden' name='postId' value={id} />
+          </EditableText>
           {actionData?.errors?.title && (
             <p id='title-error' className='text-red-500'>
               {actionData?.errors?.title}
@@ -78,16 +78,20 @@ const [editorContent, setEditorContent] = React.useState<string>(content)
 
           <Label htmlFor='description'>Description</Label>
           <EditableText
-          value={description}
-          fieldName="description"
-          inputClassName="w-64 h-10 px-4 py-2 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
-          buttonClassName="my-4 font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800"
-          buttonLabel={`Edit Post "${description}" description`}
-          inputLabel="Edit Post description"
-        >
-          <input type="hidden" name="intent" value={INTENTS.updateDescription} />
-          <input type="hidden" name="postId" value={id} />
-        </EditableText>
+            value={description}
+            fieldName='description'
+            inputClassName='w-64 h-10 px-4 py-2 rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500'
+            buttonClassName='my-4 font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800'
+            buttonLabel={`Edit Post "${description}" description`}
+            inputLabel='Edit Post description'
+          >
+            <input
+              type='hidden'
+              name='intent'
+              value={INTENTS.updateDescription}
+            />
+            <input type='hidden' name='postId' value={id} />
+          </EditableText>
           {actionData?.errors?.description && (
             <p id='description-error' role='alert' className='text-red-500'>
               {actionData?.errors?.description}
@@ -99,18 +103,18 @@ const [editorContent, setEditorContent] = React.useState<string>(content)
             </p>
           )}
           <Label htmlFor='content'>Content</Label>
-          <TipTap content={ editorContent }
-            setContent={ setEditorContent }
-            postId={ id }
+          <TipTap
+            content={editorContent}
+            setContent={setEditorContent}
+            postId={id}
             intent={INTENTS.updateContent}
-
           />
           {actionData?.errors?.content && (
             <p id='content-error' role='alert' className='text-red-500'>
               {actionData?.errors?.content}
             </p>
-          ) }
-                            <ImageController post={post} />
+          )}
+          <ImageController post={post} />
 
           {actionData?.errors?.newCategory && (
             <p id='categories-error' role='alert' className='text-red-500'>
@@ -150,7 +154,6 @@ const [editorContent, setEditorContent] = React.useState<string>(content)
 
           <PublishToggle isPublished={published} postId={id} />
         </Form>
-
       </CardContent>
     </Card>
   )

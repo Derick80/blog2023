@@ -35,7 +35,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, {
     postId: z.string()
   })
@@ -49,7 +49,7 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
 
   if (!post) throw new Error('No post found')
 
-  console.log(post, 'post');
+  console.log(post, 'post')
 
   const allComments = await prisma.comment.findMany({
     where: {
@@ -71,31 +71,29 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
               username: true,
               avatarUrl: true
             }
-
           }
         }
       }
-    },
-
+    }
   })
 
-  console.log(allComments, 'allComments');
+  console.log(allComments, 'allComments')
 
-  function depthAndDeletionDecorator (array: any, depth = 1) {
+  function depthAndDeletionDecorator(array: any, depth = 1) {
     return array.map((child: any) =>
       Object.assign(child, {
         depth,
         //Remove content if deleted
         // ...(child.isDeleted == true && { comment: undefined }),
-        replies: depthAndDeletionDecorator(child.children || [], depth + 1),
-      }),
-    );
+        replies: depthAndDeletionDecorator(child.children || [], depth + 1)
+      })
+    )
   }
 
   //Recursively generated nested query to get all replies
-  function generateNestedJsonObject (depth: number) {
+  function generateNestedJsonObject(depth: number) {
     if (depth === 0) {
-      return {};
+      return {}
     } else {
       let object = {
         id: true,
@@ -106,33 +104,30 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
         user: {
           id: true,
           username: true,
-          avatarUrl: true,
-
-        },
-      };
+          avatarUrl: true
+        }
+      }
       for (let i = 0; i < depth; i++) {
         //@ts-ignore
-        object["replies"] = generateNestedJsonObject(depth - 1);
+        object['replies'] = generateNestedJsonObject(depth - 1)
       }
-      return object;
+      return object
     }
   }
 
-  const nestedJsonObject = generateNestedJsonObject(3);
+  const nestedJsonObject = generateNestedJsonObject(3)
 
   const comments = depthAndDeletionDecorator(
     //@ts-ignore
-    allComments,
+    allComments
   )
-  console.log(comments, 'comments');
-
+  console.log(comments, 'comments')
 
   return defer({
-      postPath: request.url,
-      post,
-      comments,
-
-   });
+    postPath: request.url,
+    post,
+    comments
+  })
 }
 
 const schema = z.discriminatedUnion('intent', [
@@ -196,7 +191,6 @@ const schema = z.discriminatedUnion('intent', [
     intent: z.literal('update-content'),
     postId: z.string(),
     content: z.string().min(1).max(50000)
-
   }),
   z.object({
     intent: z.literal('update-description'),
@@ -327,7 +321,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     case 'update-title':
       const updatedTitle = await updateTitle({
         id: formData.postId,
-        title: formData.title,
+        title: formData.title
       })
       if (!updatedTitle) throw new Error('Title not updated')
       return json({ updatedTitle })
@@ -354,7 +348,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
       if (!updatedDescription) throw new Error('Description not updated')
       return json({ updatedDescription })
 
-
     default:
       throw new Error('Invalid intent')
   }
@@ -366,7 +359,7 @@ export default function DraftsRoute() {
 
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
-      <BlogEditCard post={post} />
+      {/* <BlogEditCard post={post} /> */}
     </div>
   )
 }

@@ -1,5 +1,10 @@
 import { Label } from '../ui/label'
-import { CrossCircledIcon, ImageIcon, StarFilledIcon, StarIcon } from '@radix-ui/react-icons'
+import {
+  CrossCircledIcon,
+  ImageIcon,
+  StarFilledIcon,
+  StarIcon
+} from '@radix-ui/react-icons'
 import { useSubmit, Form } from '@remix-run/react'
 import React from 'react'
 import { flushSync } from 'react-dom'
@@ -8,7 +13,13 @@ import { useResetCallback } from '~/lib/useResetCallback'
 import { cn } from '~/lib/utils'
 import { UserPlaceHolder } from '~/resources/user-placeholder'
 import { Post } from '~/server/schemas/schemas'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter
+} from '../ui/card'
 import { Input } from '../ui/input'
 import { Muted } from '../ui/typography'
 import { ImageWithPlaceholder } from './image-with-placeholder'
@@ -16,16 +27,21 @@ import { useFileURLs } from './use-file-urls'
 import { Editor } from '@tiptap/react'
 import { PlusIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { getImageBuilder, getImgProps } from './images'
 
 export type ImageControllerProps = {
-  post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>,
-  editor?: Editor,
+  post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>
+  editor?: Editor
   setImageLink?: React.Dispatch<React.SetStateAction<string>>
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }
-const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerProps) => {
+const ImageController = ({
+  post,
+  editor,
+  setImageLink,
+  setOpen
+}: ImageControllerProps) => {
   const { postImages, id, title, imageUrl } = post
-
 
 
   const getFileUrl = useFileURLs()
@@ -43,7 +59,7 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
       )
   )
 
-  const existingImages = post.postImages.map((image) => ({
+  const existingImages = postImages.map((image) => ({
     ...image,
     isNew: false
   }))
@@ -110,25 +126,8 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
   })
 
 
-  const addImage = React.useCallback(({ url }: {
-    url: string
-   }) => {
 
-
-    if (
-      editor && url
-    ) {
-      editor
-        .chain()
-        .focus()
-        .setImage({ src: url, alt: `A image replacement for ${url}` })
-        .run();
-
-    }
-  }, [editor,])
-
-  console.log(editor,'editor');
-
+  console.log(editor, 'editor')
 
   return (
     <Card className='w-full'>
@@ -147,6 +146,43 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
         )}
 
         <Muted>This is the primary Image for the post</Muted>
+
+        {
+          postImages.map((img) => (
+            <div className="aspect-[3/4] md:aspect-[3/2]"
+              key={ img.filename }
+
+            >
+            <img
+  title={img.cloudinaryPublicId}
+  {...getImgProps(
+    getImageBuilder(
+      img.cloudinaryPublicId,
+      img.filename,
+      { className: 'rounded-lg object-cover object-center' }
+    ),
+    {
+
+      widths: [280, 560, 840, 1100, 1650, 2500, 2100, 3100],
+      sizes: [
+        '(max-width:1023px) 80vw',
+        '(min-width:1024px) and (max-width:1620px) 67vw',
+        '1100px',
+      ],
+      transformations: {
+        quality: 'auto',
+        format: 'auto',
+
+      },
+    },
+  )}
+/>
+
+            </div>
+          ))
+        }
+
+
       </CardContent>
       <CardFooter className='flex flex-col gap-4 w-full items-start'>
         <Muted>
@@ -154,7 +190,6 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
             ? 'This post has 1 image'
             : `This post has ${postImages?.length} images`}
         </Muted>
-
 
         <h3 className='underline mt-4'>User Images</h3>
         <div className='text-xs text-neutral-500 italic'>
@@ -168,30 +203,27 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
             )
             return (
               <FileImage
-
-
-                key={ image.id }
+                key={image.id}
                 url={image.imageUrl}
                 name={image.filename}
                 cloudinaryPublicId={image.cloudinaryPublicId}
                 isAvatar={imageUrl === image.imageUrl}
-                    onDelete={ () => {
-                        submit(
-                            {
-                            postId: id,
-                            imageId: image.id,
-                            imageUrl: image.imageUrl,
-                            cloudinaryPublicId: image.cloudinaryPublicId,
-                            intent: 'delete'
-                            },
-                            {
-                            method: 'POST',
-                            action: '/actions/cloudinary',
-                            navigate: false
-                            }
-                        )
+                onDelete={() => {
+                  submit(
+                    {
+                      postId: id,
+                      imageId: image.id,
+                      imageUrl: image.imageUrl,
+                      cloudinaryPublicId: image.cloudinaryPublicId,
+                      intent: 'delete'
+                    },
+                    {
+                      method: 'POST',
+                      action: '/actions/cloudinary',
+                      navigate: false
                     }
-                }
+                  )
+                }}
                 onSetPrimary={() => {
                   setPrimaryImage(image.imageUrl)
                   submit(
@@ -208,19 +240,7 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
                       navigate: false
                     }
                   )
-                } }
-                onSetImageLink={() => {
-                  if (setImageLink && setOpen) {
-                    setImageLink(image.imageUrl);
-                    addImage({ url: image.imageUrl });
-                    setOpen(!setOpen);
-                    toast.success(`${image.imageUrl} added to the editor`);
-
-
-
-                }
-                }
-              }
+                }}
 
               >
                 <ImageWithPlaceholder
@@ -252,37 +272,34 @@ const ImageController = ({ post ,editor,setImageLink,setOpen}: ImageControllerPr
                 className='opacity-50'
               />
             </div>
-          )) }
-                    <div
+          ))}
+          <div
+            {...getRootProps({
+              className: cn('w-full h-fit', {
+                'bg-primary-foreground': isDragActive,
+                'bg-neutral-100': !isDragActive
+              })
+            })}
+          >
+            <input type='hidden' name='postId' value={id} />
 
-          {...getRootProps({
-            className: cn('w-full h-fit', {
-              'bg-primary-foreground': isDragActive,
-              'bg-neutral-100': !isDragActive
-            })
-          })}
-        >
-          <input type='hidden' name='postId' value={id} />
-
-          <Label htmlFor='imageField' className='block w-full items-center'>
-            <div className='flex gap-2 cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-6 md:py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800 w-full justify-center'>
-              <ImageIcon name='image' className='h-8 w-8' />
-              <Input
-                {...getInputProps()}
-                ref={inputRef}
-                type='file'
-                name='imageField'
-                id='imageField'
-                multiple
-                className='sr-only'
-              />
-              <Muted>Drag and drop an image here</Muted>
-            </div>
-          </Label>
-        </div>
-        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
-
-
+            <Label htmlFor='imageField' className='block w-full items-center'>
+              <div className='flex gap-2 cursor-pointer place-items-center rounded-md border-2 border-dashed px-4 py-6 md:py-12 text-neutral-500 transition-colors hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-800 w-full justify-center'>
+                <ImageIcon name='image' className='h-8 w-8' />
+                <Input
+                  {...getInputProps()}
+                  ref={inputRef}
+                  type='file'
+                  name='imageField'
+                  id='imageField'
+                  multiple
+                  className='sr-only'
+                />
+                <Muted>Drag and drop an image here</Muted>
+              </div>
+            </Label>
+          </div>
+          {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
         </div>
       </CardFooter>
     </Card>
@@ -296,11 +313,11 @@ const FileImage = ({
   isAvatar,
   cloudinaryPublicId,
   onDelete = () => {},
-  onSetPrimary = () => { },
-  onSetImageLink = () => { },
-  editor,
+  onSetPrimary = () => {},
+  onSetImageLink = () => {},
+  editor
 }: {
-  editor?: Editor,
+  editor?: Editor
   url: string
   name: string
   children: React.ReactNode
@@ -308,8 +325,8 @@ const FileImage = ({
   cloudinaryPublicId: string
   className?: string
   onDelete?: () => void
-    onSetPrimary?: () => void
-    onSetImageLink?: () => void
+  onSetPrimary?: () => void
+  onSetImageLink?: () => void
 }) => {
   const [isHidden, setIsHidden] = React.useState(false)
 
@@ -326,15 +343,6 @@ const FileImage = ({
       })
     }
   }
-    const addImage = React.useCallback(({ url }: {
-    url: string
-   }) => {
-
-
-    if ( url) {
-      editor?.chain().focus().setImage({ src: url, alt: `A image replacement for ${url}` }).run()
-    }
-    }, [editor,])
 
 
   return (
@@ -347,15 +355,13 @@ const FileImage = ({
         name='cloudinaryPublicId'
         value={cloudinaryPublicId}
       />
-      { children }
-      {/* make a button to add an image to the text edtior */ }
+{children}
+      {/* make a button to add an image to the text edtior */}
       <button
         type='button'
         value='image'
-        onClick={ () => {
-
-          onSetImageLink();
-          addImage({ url });
+        onClick={() => {
+          onSetImageLink()
         }}
         className='absolute -left-[0.625rem] -top-[0.125rem] rounded-full bg-white text-black/50 block text-black'
       >
@@ -396,6 +402,5 @@ const FileImage = ({
     </div>
   )
 }
-
 
 export default ImageController

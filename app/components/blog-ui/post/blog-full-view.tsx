@@ -24,8 +24,7 @@ type BlogFullViewProps = {
 }
 
 const BlogFullView = () => {
-
-    const {post,comments} = useLoaderData<typeof loader>()
+  const { post, comments } = useLoaderData<typeof loader>()
 
   return (
     <Card className='w-full h-auto  '>
@@ -54,19 +53,16 @@ const BlogFullView = () => {
           <SharePostButton id={post.id} />
         </div>
         <LoggedIn>
-         <CommentHeader totalComments={ post._count?.comments } />
-         <Suspense fallback={<Loading />}>
-               <Await resolve={comments}>
-                  {(comments) => <Comments comments={comments} />}
-               </Await>
-            </Suspense>
+          <CommentHeader totalComments={post._count?.comments} />
+          <Suspense fallback={<Loading />}>
+            <Await resolve={comments}>
+              {(comments) => <Comments comments={comments} />}
+            </Await>
+          </Suspense>
         </LoggedIn>
-        <LoggedOut>
-            log in to comment
-        </LoggedOut>
+        <LoggedOut>log in to comment</LoggedOut>
 
-        <ScrollArea className='w-full '>
-        </ScrollArea>
+        <ScrollArea className='w-full '></ScrollArea>
       </CardFooter>
     </Card>
   )

@@ -1,5 +1,5 @@
 import { EditorContent, useEditor } from '@tiptap/react'
-import { useDebounceFetcher } from "remix-utils/use-debounce-fetcher";
+import { useDebounceFetcher } from 'remix-utils/use-debounce-fetcher'
 
 import Superscript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
@@ -24,10 +24,9 @@ import History from '@tiptap/extension-history'
 import CodeBlock from '@tiptap/extension-code-block'
 import { ResizableImage } from './tiptap-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
-import ToolBar from '../blog-ui/post/toolbar'
+import ToolBar from './toolbar'
 import { Muted } from '../ui/typography'
-import {type  INTENTS } from '../blog-ui/types';
-
+import { type INTENTS } from '../blog-ui/types'
 
 const CustomSubscript = SubScript.extend({
   excludes: 'superscript'
@@ -37,14 +36,18 @@ const CustomSuperscript = Superscript.extend({
   excludes: 'subscript'
 })
 
-const TipTap = ({ content, setContent,postId,intent }: {
-  content?: string,
-  setContent: (content: string) => void,
-  postId: string,
+const TipTap = ({
+  content,
+  setContent,
+  postId,
+  intent
+}: {
+  content?: string
+  setContent: (content: string) => void
+  postId: string
   intent: string
-
 }) => {
-  	let fetcher = useDebounceFetcher();
+  let fetcher = useDebounceFetcher()
 
   const limit = 10000
   const editor = useEditor({
@@ -88,21 +91,21 @@ const TipTap = ({ content, setContent,postId,intent }: {
       }),
       Typography
     ],
-      content,
+    content,
     // use a debounce fetcher to submit the content to the server and prevent too many requests
-    onUpdate ({ editor }) {
+    onUpdate({ editor }) {
       setContent(editor.getHTML()),
-       fetcher.submit({
-         intent,
-         content: content || '',
-         postId,
-       },
-         {
-           method: 'POST',
-           debounceTimeout: 2000
-         }
-
-      )
+        fetcher.submit(
+          {
+            intent,
+            content: content || '',
+            postId
+          },
+          {
+            method: 'POST',
+            debounceTimeout: 2000
+          }
+        )
     },
     editorProps: {
       attributes: {

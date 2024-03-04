@@ -76,6 +76,7 @@
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "cloudinary": "^1.41.2",
+    "cloudinary-build-url": "^0.2.4",
     "clsx": "^2.1.0",
     "date-fns": "^3.2.0",
     "esbuild-register": "^3.4.2",
@@ -104,6 +105,7 @@
     "zodix": "^0.4.1"
   },
   "devDependencies": {
+    "@cld-apis/types": "^0.1.6",
     "@faker-js/faker": "^8.3.1",
     "@remix-run/dev": "^2.5.1",
     "@remix-run/eslint-config": "^2.5.1",

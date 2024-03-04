@@ -1,5 +1,5 @@
 import { EditorContent, useEditor } from '@tiptap/react'
-import { useDebounceFetcher } from "remix-utils/use-debounce-fetcher";
+import { useDebounceFetcher } from 'remix-utils/use-debounce-fetcher'
 
 import Superscript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
@@ -24,12 +24,11 @@ import History from '@tiptap/extension-history'
 import CodeBlock from '@tiptap/extension-code-block'
 import { ResizableImage } from './tiptap-image'
 import Dropcursor from '@tiptap/extension-dropcursor'
-import ToolBar from '../blog-ui/post/toolbar'
+import ToolBar from './toolbar'
 import { Muted } from '../ui/typography'
-import {type  INTENTS } from '../blog-ui/types';
-import { Card, CardContent, CardFooter } from '../ui/card';
-import { Post } from '~/server/schemas/schemas';
-
+import { type INTENTS } from '../blog-ui/types'
+import { Card, CardContent, CardFooter } from '../ui/card'
+import { Post } from '~/server/schemas/schemas'
 
 const CustomSubscript = SubScript.extend({
   excludes: 'superscript'
@@ -39,14 +38,17 @@ const CustomSuperscript = Superscript.extend({
   excludes: 'subscript'
 })
 
-const Editor = ({ content, setContent,postId,post }: {
-  content?: string,
-  setContent: (content: string) => void,
-  postId: string,
+const Editor = ({
+  content,
+  setContent,
+  postId,
+  post
+}: {
+  content?: string
+  setContent: (content: string) => void
+  postId: string
   post: Pick<Post, 'id' | 'title' | 'imageUrl' | 'postImages'>
-
 }) => {
-
   const limit = 10000
   const editor = useEditor({
     extensions: [
@@ -89,9 +91,9 @@ const Editor = ({ content, setContent,postId,post }: {
       }),
       Typography
     ],
-      content,
+    content,
     // use a debounce fetcher to submit the content to the server and prevent too many requests
-    onUpdate ({ editor }) {
+    onUpdate({ editor }) {
       setContent(editor.getHTML())
     },
     editorProps: {
@@ -109,19 +111,16 @@ const Editor = ({ content, setContent,postId,post }: {
   return (
     <Card className='flex flex-col gap-2 rounded-md bg-background'>
       <CardContent className='flex flex-col gap-2'>
-        <ToolBar editor={ editor }
-          post={ post }
-
-        />
-      <EditorContent editor={editor} />
-        <input type='hidden' name='content' value={ editor?.getHTML() } />
+        <ToolBar editor={editor} post={post} />
+        <EditorContent editor={editor} />
+        <input type='hidden' name='content' value={editor?.getHTML()} />
       </CardContent>
       <CardFooter className='flex flex-col gap-2 p-2'>
-      <div className='flex items-center justify-end gap-1 text-xs'>
-        <Muted>
-          {editor.storage.characterCount.characters()}/{limit} characters
-        </Muted>
-        <Muted>{editor.storage.characterCount.words()} words</Muted>
+        <div className='flex items-center justify-end gap-1 text-xs'>
+          <Muted>
+            {editor.storage.characterCount.characters()}/{limit} characters
+          </Muted>
+          <Muted>{editor.storage.characterCount.words()} words</Muted>
         </div>
       </CardFooter>
     </Card>

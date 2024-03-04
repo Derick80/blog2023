@@ -27,6 +27,7 @@ import {
 } from '~/server/session.server'
 import { validateAction2 as validateAction } from '~/utilities'
 import formatComments from './format-comments'
+import { H2 } from '~/components/ui/typography'
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { postId } = zx.parseParams(params, { postId: z.string() })
   const post = await getSinglePostById(postId)
@@ -52,7 +53,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       likes: {
         select: {
           userId: true,
-          commentId: true,
+          commentId: true
         }
       },
       children: {
@@ -247,7 +248,6 @@ export async function action({ request, params }: LoaderFunctionArgs) {
           }
         })
         return json({ message: 'ok' })
-
       }
 
     case 'like':
@@ -356,30 +356,35 @@ export default function BlogPostRoute() {
     </div>
   )
 }
-export function ErrorBoundary() {
+const ErrorBoundary = () => {
   const error = useRouteError()
+
   if (isRouteErrorResponse(error)) {
     return (
-      <div>
-        <h1>oops</h1>
-        <h2>Status:{error.status}</h2>
-        <p>{error.data.message}</p>
+      <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+        <h1 className='text-3xl font-bold text-red-600 mb-4'>Oops! Error</h1>
+        <p className='text-lg text-red-700'>{`Status: ${error.status}`}</p>
+        <p className='text-lg text-red-700'>{error.data.message}</p>
       </div>
     )
   }
-  let errorMessage = 'unknown error'
+
+  let errorMessage = 'Unknown error'
   if (error instanceof Error) {
     errorMessage = error.message
   } else if (typeof error === 'string') {
     errorMessage = error
   }
+
   return (
-    <div>
-      <p className='scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl'>
-        uh Oh..
-      </p>
-      <p>something went wrong</p>
-      <pre>{errorMessage}</pre>
+    <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+      <h1 className='text-3xl font-bold text-red-600 mb-4'>Uh oh...</h1>
+      <h2 className='text-xl font-semibold text-red-700 mb-4'>
+        Something went wrong
+      </h2>
+      <pre className='text-lg text-red-700 whitespace-pre-wrap'>
+        {errorMessage}
+      </pre>
     </div>
   )
 }

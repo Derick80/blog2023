@@ -22,13 +22,12 @@ import { Suspense } from 'react'
 import { Loading } from '~/components/loading'
 import { loader } from '~/routes/blog_.$postId'
 
-const BlogPreviewCard = () => {
+const BlogPreviewCard = ({ post }: { post: Omit<Post, 'comments'> }) => {
+  const user = useOptionalUser()
+  console.log(user, 'user')
 
-const user = useOptionalUser()
-
-  const { post, comments } = useLoaderData<typeof loader>()
   const isOwner = user?.id === post?.userId
-   console.log(isOwner, 'isOwner');
+  console.log(isOwner, 'isOwner')
   return (
     <Card>
       <CardHeader className='p-4'>
@@ -36,10 +35,12 @@ const user = useOptionalUser()
           <CardTitle>{post.title}</CardTitle>
           <AvatarWithOptions user={post.user} />
         </div>
-        <CardDescription className='indent-4'>{post.description}</CardDescription>
+        <CardDescription className='indent-4'>
+          {post.description}
+        </CardDescription>
       </CardHeader>
       <CardContent
-        className='w-full h-auto line-clamp-3 bg-secondary text-primary'
+        className='w-full h-auto line-clamp-3 bg-card text-primary'
         dangerouslySetInnerHTML={{ __html: post.content }}
       ></CardContent>
 
@@ -60,36 +61,33 @@ const user = useOptionalUser()
           <SharePostButton id={post.id} />
 
           <div className='flex flex-row items-end gap-2'>
-            {
-              isOwner ? (
-                <Link
-                  className='flex items-center gap-2'
-                  to={`/blog/drafts/${post.id}`}
-                  prefetch='intent'
-                >
-                  <Caption className='hidden md:block'>Edit</Caption>
-                  <Pencil2Icon className='text-primary md:size-6 size-4' />
-                </Link>
-              ) : (
-                <Link
-                  className='flex items-center gap-2'
-                  to={`/blog/${post.id}`}
-                  prefetch='intent'
-                >
-                  <Caption className='hidden md:block'>Read More</Caption>
-                  <LucideArrowUpRightSquare className='text-primary md:size-6 size-4' />
-                </Link>
-              )
-           }
+            {isOwner ? (
+              <Link
+                className='flex items-center gap-2'
+                to={`/blog/drafts/${post.id}`}
+                prefetch='intent'
+              >
+                <Caption className='hidden md:block'>Edit</Caption>
+                <Pencil2Icon className='text-primary md:size-6 size-4' />
+              </Link>
+            ) : (
+              <Link
+                className='flex items-center gap-2'
+                to={`/blog/${post.id}`}
+                prefetch='intent'
+              >
+                <Caption className='hidden md:block'>Read More</Caption>
+                <LucideArrowUpRightSquare className='text-primary md:size-6 size-4' />
+              </Link>
+            )}
           </div>
         </div>
-        <CommentHeader totalComments={ post._count?.comments } />
-         <Suspense fallback={<Loading />}>
-               <Await resolve={comments}>
-                  {(comments) => <Comments comments={comments} />}
-               </Await>
-            </Suspense>
-
+        <CommentHeader totalComments={post._count?.comments} />
+        {/* <Suspense fallback={<Loading />}>
+          <Await resolve={comments}>
+            {(comments) => <Comments comments={comments} />}
+          </Await>
+        </Suspense> */}
       </CardFooter>
     </Card>
   )
