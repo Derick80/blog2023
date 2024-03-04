@@ -29,6 +29,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { getEnv } from './server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { getThemeFromCookie } from './server/theme.server'
+import { H2 } from './components/ui/typography'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
@@ -166,48 +167,35 @@ export default function App() {
   )
 }
 
-export function ErrorBoundary() {
+const ErrorBoundary = () => {
   const error = useRouteError()
+
   if (isRouteErrorResponse(error)) {
     return (
-      <html>
-        <head>
-          <title>Oh no!</title>
-          <Meta />
-          <Links />
-        </head>
-        <body>
-          <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-            <h1 className='font-bold text-red-500'>Uh Oh!...</h1>
-            <h2 className='font-bold text-red-500'>Status:{error.status}</h2>
-            <p>{error.data.message}</p>
-          </div>
-          <Scripts />
-        </body>
-      </html>
+      <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+        <h1 className='text-3xl font-bold text-red-600 mb-4'>Oops! Error</h1>
+        <p className='text-lg text-red-700'>{`Status: ${error.status}`}</p>
+        <p className='text-lg text-red-700'>{error.data.message}</p>
+      </div>
     )
   }
-  let errorMessage = 'unknown error'
+
+  let errorMessage = 'Unknown error'
   if (error instanceof Error) {
     errorMessage = error.message
   } else if (typeof error === 'string') {
     errorMessage = error
   }
+
   return (
-    <html>
-      <head>
-        <title>Oh no!</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <div className='flex h-full w-full flex-col items-center justify-center text-center'>
-          <h1 className='text-2xl font-bold'>uh Oh..</h1>
-          <p className='text-xl'>something went wrong</p>
-          <pre>{errorMessage}</pre>
-        </div>{' '}
-        <Scripts />
-      </body>
-    </html>
+    <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+      <h1 className='text-3xl font-bold text-red-600 mb-4'>Uh oh...</h1>
+      <h2 className='text-xl font-semibold text-red-700 mb-4'>
+        Something went wrong
+      </h2>
+      <pre className='text-lg text-red-700 whitespace-pre-wrap'>
+        {errorMessage}
+      </pre>
+    </div>
   )
 }

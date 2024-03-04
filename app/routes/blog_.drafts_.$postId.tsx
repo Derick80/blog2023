@@ -1,6 +1,7 @@
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
+  defer,
   json,
   redirect
 } from '@remix-run/node'
@@ -21,7 +22,9 @@ import {
   changePostFeaturedStatus,
   changePostPublishStatus,
   deletePost,
-  updatePost
+  getSinglePostById,
+  updatePost,
+  updateTitle
 } from '~/server/post.server'
 import { prisma } from '~/server/prisma.server'
 import {
@@ -42,17 +45,89 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     return redirect('/login')
   }
 
-  const post = await prisma.post.findUnique({
-    where: { id: postId, userId: user.id },
-    include: {
-      categories: true,
-      postImages: true
-    }
-  })
+  const post = await getSinglePostById(postId)
 
   if (!post) throw new Error('No post found')
 
-  return json({ post })
+  console.log(post, 'post')
+
+  const allComments = await prisma.comment.findMany({
+    where: {
+      postId
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true
+        }
+      },
+      children: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true
+            }
+          }
+        }
+      }
+    }
+  })
+
+  console.log(allComments, 'allComments')
+
+  function depthAndDeletionDecorator(array: any, depth = 1) {
+    return array.map((child: any) =>
+      Object.assign(child, {
+        depth,
+        //Remove content if deleted
+        // ...(child.isDeleted == true && { comment: undefined }),
+        replies: depthAndDeletionDecorator(child.children || [], depth + 1)
+      })
+    )
+  }
+
+  //Recursively generated nested query to get all replies
+  function generateNestedJsonObject(depth: number) {
+    if (depth === 0) {
+      return {}
+    } else {
+      let object = {
+        id: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+
+        user: {
+          id: true,
+          username: true,
+          avatarUrl: true
+        }
+      }
+      for (let i = 0; i < depth; i++) {
+        //@ts-ignore
+        object['replies'] = generateNestedJsonObject(depth - 1)
+      }
+      return object
+    }
+  }
+
+  const nestedJsonObject = generateNestedJsonObject(3)
+
+  const comments = depthAndDeletionDecorator(
+    //@ts-ignore
+    allComments
+  )
+  console.log(comments, 'comments')
+
+  return defer({
+    postPath: request.url,
+    post,
+    comments
+  })
 }
 
 const schema = z.discriminatedUnion('intent', [
@@ -106,6 +181,24 @@ const schema = z.discriminatedUnion('intent', [
     intent: z.literal('removeCategoryFromDataBase'),
     postId: z.string(),
     categoryId: z.string()
+  }),
+  z.object({
+    intent: z.literal('update-title'),
+    postId: z.string(),
+    title: z.string().min(25, 'Title should be at least 25 characters').max(60)
+  }),
+  z.object({
+    intent: z.literal('update-content'),
+    postId: z.string(),
+    content: z.string().min(1).max(50000)
+  }),
+  z.object({
+    intent: z.literal('update-description'),
+    postId: z.string(),
+    description: z
+      .string()
+      .min(25, 'Description should be at least 10 characters')
+      .max(10000, 'Description should be less than 160 characters')
   })
 ])
 
@@ -225,6 +318,36 @@ export async function action({ request, params }: ActionFunctionArgs) {
       })
       if (!removeCategoryFromDataBase) throw new Error('Category not removed')
       return json({ removeCategoryFromDataBase })
+    case 'update-title':
+      const updatedTitle = await updateTitle({
+        id: formData.postId,
+        title: formData.title
+      })
+      if (!updatedTitle) throw new Error('Title not updated')
+      return json({ updatedTitle })
+    case 'update-content':
+      const updatedContent = await prisma.post.update({
+        where: {
+          id: formData.postId
+        },
+        data: {
+          content: formData.content
+        }
+      })
+      if (!updatedContent) throw new Error('Content not updated')
+      return json({ updatedContent })
+    case 'update-description':
+      const updatedDescription = await prisma.post.update({
+        where: {
+          id: formData.postId
+        },
+        data: {
+          description: formData.description
+        }
+      })
+      if (!updatedDescription) throw new Error('Description not updated')
+      return json({ updatedDescription })
+
     default:
       throw new Error('Invalid intent')
   }
@@ -236,7 +359,7 @@ export default function DraftsRoute() {
 
   return (
     <div className='flex flex-col items-center gap-2 border-2'>
-      <BlogEditCard post={post} />
+      {/* <BlogEditCard post={post} /> */}
     </div>
   )
 }

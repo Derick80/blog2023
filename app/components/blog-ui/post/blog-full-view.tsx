@@ -7,42 +7,30 @@ import {
   CardFooter
 } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
-import { NavLink } from '@remix-run/react'
+import { Await, NavLink, useLoaderData } from '@remix-run/react'
 import LikeContainer from '../like-container'
-import { CommentPreview } from './blog-comments-count-container'
 import FavoriteContainer from './favorite-container'
 import { SharePostButton } from './share-button'
-import CreateCommentForm from './comments/create-comment-form'
-import CommentList from './comments/list-comments'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { LoggedIn } from '~/components/logged-in'
+import { LoggedOut } from './logged-out'
+import { CommentHeader, Comments } from './comments/comment'
+import { Suspense } from 'react'
+import { Loading } from '~/components/loading'
+import { loader } from '~/routes/blog_.$postId'
 
 type BlogFullViewProps = {
   post: Post
 }
 
-const BlogFullView = ({ post }: BlogFullViewProps) => {
-  const {
-    title,
-    description,
-    content,
-    published,
-    id,
-    userId,
-    _count,
-    categories,
-    likes,
-    favorites,
-    user,
-    imageUrl,
-    postImages,
-    comments
-  } = post
+const BlogFullView = () => {
+  const { post, comments } = useLoaderData<typeof loader>()
 
   return (
     <Card className='w-full h-auto  '>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{post.title}</CardTitle>
+        <CardDescription>{post.description}</CardDescription>
       </CardHeader>
       {/* <CardContent
                 className='w-full h-auto bg-secondary text-primary'
@@ -50,7 +38,7 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
             ></CardContent> */}
       <CardFooter className='flex  flex-col items-start p-2'>
         <div className='flex flex-row flex-wrap gap-2'>
-          {categories?.map((category) => (
+          {post.categories?.map((category) => (
             <Badge key={category.id} className='shrink' variant='default'>
               <NavLink to={`/blog?category=${category.value}`}>
                 {category.label}
@@ -59,17 +47,22 @@ const BlogFullView = ({ post }: BlogFullViewProps) => {
           ))}
         </div>
         <div className='flex items-center justify-between w-full gap-2'>
-          <LikeContainer postId={id} likes={likes} />
-          <CommentPreview commentLength={_count?.comments} postId={id} />
+          <LikeContainer postId={post.id} likes={post.likes} />
 
-          <FavoriteContainer postId={id} favorites={favorites} />
-          <SharePostButton id={id} />
+          <FavoriteContainer postId={post.id} favorites={post.favorites} />
+          <SharePostButton id={post.id} />
         </div>
-        <CreateCommentForm />
+        <LoggedIn>
+          <CommentHeader totalComments={post._count?.comments} />
+          <Suspense fallback={<Loading />}>
+            <Await resolve={comments}>
+              {(comments) => <Comments comments={comments} />}
+            </Await>
+          </Suspense>
+        </LoggedIn>
+        <LoggedOut>log in to comment</LoggedOut>
 
-        <ScrollArea className='w-full '>
-          {post._count.comments > 0 && <CommentList />}
-        </ScrollArea>
+        <ScrollArea className='w-full '></ScrollArea>
       </CardFooter>
     </Card>
   )

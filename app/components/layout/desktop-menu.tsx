@@ -7,11 +7,13 @@ import NavLinks from './nav-links'
 
 const DesktopMenu = () => {
   return (
-    <NavigationMenu className='hidden md:flex justify-between'>
-      <NavigationMenuList>
+    <NavigationMenu className='hidden md:flex gap-2 w-full  max-w-full'>
+      <NavigationMenuList
+      className='flex gap-10 justify-around w-full items-center'
+      >
         {menuItems.map((item, index) => {
           return (
-            <NavigationMenuItem className='' key={index}>
+            <NavigationMenuItem className='flex gap-10 justify-between' key={index}>
               <NavLinks
                 path={item.path}
                 label={item.label}

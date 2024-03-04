@@ -13,15 +13,6 @@ import {
   useRouteError,
   useSearchParams
 } from '@remix-run/react'
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle
-} from '~/components/ui/navigation-menu'
 import { createMinimalPost, getPosts } from '~/server/post.server'
 
 import {
@@ -43,7 +34,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import { z } from 'zod'
-import { AllPostsDisplayType, Category, Post } from '~/server/schemas/schemas'
+import { Category, Post } from '~/server/schemas/schemas'
 import {
   Accordion,
   AccordionContent,
@@ -63,14 +54,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { user, isAdmin } = await getUserAndAdminStatus(request)
 
   const posts = await getPosts()
+  if (!posts) throw new Error('No posts found')
 
-  return json({ posts, isAdmin })
+  return json({ posts, isAdmin, user })
 }
 
 const schema = z.discriminatedUnion('intent', [
   z.object({
     intent: z.literal('create'),
-    title: z.string()
+    title: z.string().nonempty('Title is required')
   })
 ])
 
@@ -87,16 +79,18 @@ export async function action({ request }: LoaderFunctionArgs) {
     return json({ errors }, { status: 400 })
   }
 
-  const { intent, ...rest } = formData as ActionInput
+  const { intent, title } = formData as ActionInput
 
   if (intent === 'create') {
-    const post = await createMinimalPost({ userId: user.id, title: rest.title })
+    const post = await createMinimalPost({ userId: user.id, title })
     if (!post) throw new Error('Post not created')
     return redirect(`/blog/drafts/${post.id}`)
   }
 }
 export default function BlogRoute() {
   const user = useOptionalUser()
+  console.log(user, 'user in blog rouee from useOptionalUser')
+
   const { posts, isAdmin } = useLoaderData<typeof loader>()
   const categories = useCategories()
 
@@ -226,28 +220,36 @@ const BlogAdminMenu = () => {
     </div>
   )
 }
-export function ErrorBoundary() {
+
+export const ErrorBoundary = () => {
   const error = useRouteError()
+
   if (isRouteErrorResponse(error)) {
     return (
-      <div>
-        <h1>oops blog Error boundry</h1>
-        <h1>Status:{error.status}</h1>
-        <p>{error.data.message}</p>
+      <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+        <h1 className='text-3xl font-bold text-red-600 mb-4'>Oops! Error</h1>
+        <p className='text-lg text-red-700'>{`Status: ${error.status}`}</p>
+        <p className='text-lg text-red-700'>{error.data.message}</p>
       </div>
     )
   }
-  let errorMessage = 'unknown error'
+
+  let errorMessage = 'Unknown error'
   if (error instanceof Error) {
     errorMessage = error.message
   } else if (typeof error === 'string') {
     errorMessage = error
   }
+
   return (
-    <div>
-      <h1>uh Oh..</h1>
-      <p>something went wrong</p>
-      <pre>{errorMessage}</pre>
+    <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+      <h1 className='text-3xl font-bold text-red-600 mb-4'>Uh oh...</h1>
+      <h2 className='text-xl font-semibold text-red-700 mb-4'>
+        Something went wrong
+      </h2>
+      <pre className='text-lg text-red-700 whitespace-pre-wrap'>
+        {errorMessage}
+      </pre>
     </div>
   )
 }

@@ -32,4 +32,5 @@ components.json
 remix.config.ts
 ./github
 *.mdx
+/app/components/ui
 

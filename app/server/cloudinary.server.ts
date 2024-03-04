@@ -317,3 +317,25 @@ export const setPrimaryImage = async ({
   }
   throw new Error('No primary image set')
 }
+
+// retreive images from a cloudinary folder
+
+export const getImages = async (folder: string) => {
+  const images = await cloudinary.v2.api.resources({
+    type: 'upload',
+    prefix: folder,
+    max_results: 500
+  })
+  return images
+}
+
+// I used the following code to download the images from cloudinary to my local machine
+
+// const cloudinary_images = await getImages('Japan_2023')
+// const just_basics = cloudinary_images.resources.map((image) => {
+//   return {
+//     cloudinaryPublicId: image.public_id,
+//     imageUrl: image.url
+//   }
+// })
+// console.log(just_basics, 'just_basics')

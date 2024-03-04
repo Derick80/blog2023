@@ -184,21 +184,6 @@ const DropdownMenuShortcut = ({
 }
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut'
 
-export const useOpenState = () => {
-  const [open, setOpen] = React.useState(false)
-
-  const onOpenChange = React.useCallback(
-    (_value = !open) => {
-      setOpen(_value)
-    },
-    [open]
-  )
-
-  return {
-    open,
-    onOpenChange
-  }
-}
 export {
   DropdownMenu,
   DropdownMenuTrigger,

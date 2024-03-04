@@ -1,6 +1,5 @@
 import { prisma } from './prisma.server'
 import { PostImage } from './schemas/images.schema'
-import type { CategoryForm } from './schemas/schemas'
 
 // update and maybe use this type
 export type PostInput = {
@@ -15,13 +14,13 @@ export type PostInput = {
   postImages: PostImage[]
 }
 
-export async function createMinimalPost({
+const createMinimalPost = async ({
   userId,
   title
 }: {
   userId: string
   title: string
-}) {
+}) => {
   return await prisma.post.create({
     data: {
       title,
@@ -40,7 +39,7 @@ export async function createMinimalPost({
   })
 }
 
-export async function createPost(data: PostInput) {
+const createPost = async (data: PostInput) => {
   const post = await prisma.post.create({
     data: {
       title: data.title,
@@ -73,11 +72,11 @@ export async function createPost(data: PostInput) {
   return post
 }
 
-export async function updatePost(
+const updatePost = async (
   data: Omit<PostInput, 'postImages' | 'imageUrl' | 'categories'> & {
     postId: string
   }
-) {
+) => {
   const { title, slug, description, content, featured } = data
   return await prisma.post.update({
     where: {
@@ -95,7 +94,7 @@ export async function updatePost(
   })
 }
 
-export async function changePostPublishStatus({
+const changePostPublishStatus = async ({
   id,
   userId,
   published
@@ -103,7 +102,7 @@ export async function changePostPublishStatus({
   id: string
   userId: string
   published: boolean
-}) {
+}) => {
   return await prisma.post.update({
     where: {
       id,
@@ -115,7 +114,7 @@ export async function changePostPublishStatus({
   })
 }
 
-export async function changePostFeaturedStatus({
+const changePostFeaturedStatus = async ({
   id,
   userId,
   featured
@@ -123,7 +122,7 @@ export async function changePostFeaturedStatus({
   id: string
   userId: string
   featured: boolean
-}) {
+}) => {
   return await prisma.post.update({
     where: {
       id,
@@ -135,7 +134,7 @@ export async function changePostFeaturedStatus({
   })
 }
 
-export async function getPosts() {
+const getPosts = async () => {
   const posts = await prisma.post.findMany({
     where: {
       published: true
@@ -219,7 +218,7 @@ export const DefaultAllPostSelect = {
   _count: true
 }
 
-export async function getAllUserDraftsV1(userId: string) {
+const getAllUserDraftsV1 = async (userId: string) => {
   return await prisma.post.findMany({
     where: {
       published: false,
@@ -233,7 +232,7 @@ export async function getAllUserDraftsV1(userId: string) {
     }
   })
 }
-export async function getAllPostsV1WithFilter(filter: string) {
+const getAllPostsV1WithFilter = async (filter: string) => {
   return await prisma.post.findMany({
     select: {
       ...DefaultAllPostSelect
@@ -270,38 +269,36 @@ export async function getAllPostsV1WithFilter(filter: string) {
 }
 
 // updted this to use at blog.$postId
-export async function getSinglePostById(id: string) {
+const getSinglePostById = async (id: string) => {
   return await prisma.post.findUnique({
     where: {
       id
     },
-    select: {
-      ...DefaultAllPostSelect,
-      comments: {
-        include: {
-          children: true,
-          user: {
-            select: DefaultUserSelect
-          },
-          likes: {
-            select: DefaultCommentLikeSelect
-          }
-        },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      }
+
+    include: {
+      user: {
+        select: DefaultUserSelect
+      },
+      likes: {
+        select: DefaultLikeSelect
+      },
+      favorites: {
+        select: DefaultFavoriteSelect
+      },
+      _count: true,
+      postImages: true,
+      categories: true
     }
   })
 }
 
-export async function getDraftOrPostToEditById({
+const getDraftOrPostToEditById = async ({
   id,
   userId
 }: {
   id: string
   userId: string
-}) {
+}) => {
   return await prisma.post.findUnique({
     where: {
       id,
@@ -314,17 +311,73 @@ export async function getDraftOrPostToEditById({
   })
 }
 
-export async function deletePost({
-  id,
-  userId
-}: {
-  id: string
-  userId: string
-}) {
+const deletePost = async ({ id, userId }: { id: string; userId: string }) => {
   return await prisma.post.delete({
     where: {
       id,
       userId
     }
   })
+}
+
+const updateTitle = async ({ id, title }: { id: string; title: string }) => {
+  return await prisma.post.update({
+    where: {
+      id
+    },
+    data: {
+      title
+    }
+  })
+}
+
+const updateDescription = async ({
+  id,
+  description
+}: {
+  id: string
+  description: string
+}) => {
+  return await prisma.post.update({
+    where: {
+      id
+    },
+    data: {
+      description
+    }
+  })
+}
+
+const updateContent = async ({
+  id,
+  content
+}: {
+  id: string
+  content: string
+}) => {
+  return await prisma.post.update({
+    where: {
+      id
+    },
+    data: {
+      content
+    }
+  })
+}
+
+export {
+  createMinimalPost,
+  createPost,
+  updatePost,
+  changePostPublishStatus,
+  changePostFeaturedStatus,
+  getPosts,
+  getAllUserDraftsV1,
+  getAllPostsV1WithFilter,
+  getSinglePostById,
+  getDraftOrPostToEditById,
+  deletePost,
+  updateTitle,
+  updateDescription,
+  updateContent
 }

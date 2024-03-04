@@ -15,16 +15,18 @@ import {
 // sticky top-0 z-50 flex w-full flex-row items-center justify-around bg-slate-50 dark:bg-slate-800
 export default function NavigationBar() {
   return (
-    <nav className='bg-background relative w-full border-b md:border-0 flex flex-col md:flex-row items justify-between'>
-      <DesktopBrandIcon />
-      <div className='flex flex-row items- justify-around gap-2 w-full '>
+    <nav className='bg-background relative w-full border-b md:border-0 flex md:flex-row items justify-between'>
+      <DesktopBrandIcon
+        className='basis-1/4'
+      />
+      <div className='flex flex-row basis-2/4 gap-2'>
         <DesktopMenu />
         <MobileDropdown />
-        <div className='flex flex-row items-center justify-center gap-2'>
+        </div>
+        <div className='flex flex-row basis-1/4 items-center justify-center gap-2'>
           <UserMenu />
           <ThemeToggle />
         </div>
-      </div>
     </nav>
   )
 }
