@@ -29,7 +29,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { getEnv } from './server/env.server'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { getThemeFromCookie } from './server/theme.server'
-import { H2 } from './components/ui/typography'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet, preload: 'true' }
