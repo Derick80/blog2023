@@ -1,8 +1,9 @@
-# Welcome to Remix + Vite!
+# Welcome to Remix + Vite
 
 📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/future/vite) for details on supported features.
 
 ## Tech Stack
+
 - [Remix](https://remix.run/)
 - [Vite](https://vitejs.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
@@ -11,11 +12,31 @@
 - [PostgreSQL](https://www.postgresql.org/)
 - [Fly.io](https://fly.io/)
 - [Cloudinary](https://cloudinary.com/)
+- [Zod](https://zod.dev/)
 
+## Additional Packages
 
-  ## Additional Packages
-  - [Prettier Tailwind](https://github.com/tailwindlabs/prettier-plugin-tailwindcss)
-  - [tsx](https://www.npmjs.com/package/tsx)
+- [Prettier Tailwind](https://github.com/tailwindlabs/prettier-plugin-tailwindcss)
+- [tsx](https://www.npmjs.com/package/tsx)
+- [Remix Dev Tools](https://remix-development-tools.fly.dev/)
+- [Remix Flat Routes](https://github.com/kiliman/remix-flat-routes)
+- [Remix Auth](https://github.com/sergiodxa/remix-auth)
+
+## ToDos
+
+- [] Rewrite, refactor, or create new components derived from the original project.
+  - [] brand-icon.tsx
+  - [] user-placeholder.tsx
+  - [] resume/index.ts
+  - [] Prisma seed data
+  - []
+
+## Documentation
+
+### Images
+
+- [Blur Data URL Generator](https://blurred.dev/)
+-
 
 ## Getting Started
 

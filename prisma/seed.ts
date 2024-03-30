@@ -1,0 +1,25 @@
+
+export const categoriesToSeed = [
+  { value: "javascript", label: "Javascript" },
+  { value: "react", label: "React" },
+  { value: "node", label: "Node" },
+  {
+    value: "typescript",
+    label: "typescript",
+  },
+  { value: "next", label: "Next" },
+  { value: "remix", label: "Remix" },
+  { value: "prisma", label: "Prisma" },
+  { value: "tailwindCss", label: "TailwindCss" },
+  { value: "cloudinary", label: "Cloudinary" },
+  { value: "postgres", label: "Postgres" },
+  { value: "coding", label: "Coding" },
+  { value: "genetics", label: "Genetics" },
+  { value: "biology", label: "Biology" },
+  { value: "bcience", label: "Science" },
+  { value: "technology", label: "Technology" },
+  { value: "books", label: "Books" },
+  { value: "travel", label: "Travel" },
+  { value: "music", label: "Music" },
+  { value: "japan", label: "Japan" },
+];
