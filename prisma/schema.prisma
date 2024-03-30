@@ -311,26 +311,6 @@ model Session {
   @@index([userId])
 }
 
-model Totp {
-  // The encrypted data used to generate the OTP.
-  hash String @unique
-
-  // The status of the TOTP.
-  // Used internally / programmatically to invalidate TOTPs.
-  active Boolean
-
-  // The input attempts of the TOTP.
-  // Used internally to invalidate TOTPs after a certain amount of attempts.
-  attempts Int
-
-  // The expiration date of the TOTP.
-  // Used programmatically to invalidate unused TOTPs.
-  expiresAt DateTime
-
-  // Index for expiresAt
-  @@index([expiresAt])
-}
-
 model Resume {
   id                     String                   @id @default(cuid())
   title                  String                   @unique

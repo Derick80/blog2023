@@ -18,13 +18,21 @@ const envSchema = z.object({
     DISCORD_CALLBACK_URL: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
 
-    DISCORD_CLIENT_ID: z.string()
+    DISCORD_CLIENT_ID: z.string(),
+
+    RESEND_API_KEY: z.string(),
+    ENCRYPTION_SECRET: z.string(),
 })
 
-const environment = () => envSchema.parse(process.env)
 
-export { environment }
 
+export function getSharedEnvs () {
+
+    return {
+        NODE_ENV: process.env.NODE_ENV,
+        ENCRYPTION_SECRET: process.env.ENCRYPTION_SECRET,
+    }
+}
 export type Env = z.infer<typeof envSchema>
 
 declare global {
@@ -33,17 +41,3 @@ declare global {
     }
 }
 
-try {
-    envSchema.parse(process.env)
-} catch (err) {
-    if (err instanceof z.ZodError) {
-        const { fieldErrors } = err.flatten()
-        const errorMessage = Object.entries(fieldErrors)
-            .map(([field, errors]) =>
-                errors ? `${field}: ${errors.join(', ')}` : field
-            )
-            .join('\n  ')
-        throw new Error(`Missing environment variables:\n  ${errorMessage}`)
-        process.exit(1)
-    }
-}

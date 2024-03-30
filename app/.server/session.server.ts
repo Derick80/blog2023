@@ -1,13 +1,10 @@
 import type { Session } from '@remix-run/node'
 import { createCookieSessionStorage } from '@remix-run/node'
-import { environment } from './env.server'
-import { createTypedSessionStorage } from "remix-utils/typed-session";
-import { z } from 'zod';
-
+import { createTypedSessionStorage } from 'remix-utils/typed-session'
+import { z } from 'zod'
 /* https://dev.to/remix-run-br/type-safe-environment-variables-on-both-client-and-server-with-remix-54l5 */
 
 // Create a session storage that uses cookies to store the session data.  This is the basic session storage setup that I used in my Auth server files.
-
 
 // 7.26.23 changed lax as 'lax' to lax as const
 // revisit secure before production
@@ -16,20 +13,25 @@ const cookieOptions = {
     httpOnly: true,
     sameSite: 'lax' as const,
     path: '/',
-    secrets: [environment().SESSION_SECRET],
+    secrets: [process.env.SESSION_SECRET],
     secure: false
 }
 
 const userCookieSchema = z.object({
-    theme: z.string().default('system')
+    theme: z.enum(['light', 'dark', 'system']).default('system'),
+
 })
 
-const typedSessionStorage = createCookieSessionStorage({
+export type Theme = z.infer<typeof userCookieSchema>['theme']
+export const typedSessionStorage = createCookieSessionStorage({
     cookie: cookieOptions
 })
 
-export const { commitSession, getSession } = createTypedSessionStorage({sessionStorage:typedSessionStorage, schema: userCookieSchema})
-
+export const { commitSession, getSession, destroySession } =
+    createTypedSessionStorage({
+        sessionStorage: typedSessionStorage,
+        schema: userCookieSchema
+    })
 
 // Toast message functions
 
