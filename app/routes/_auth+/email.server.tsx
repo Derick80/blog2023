@@ -28,7 +28,7 @@ export type SendEmailOptions = {
     text?: string
 }
 
-export async function sendEmail (options: SendEmailOptions) {
+export async function sendEmail(options: SendEmailOptions) {
     const from = 'onboarding@derickchoskinson.com'
     const email = { from, ...options }
 
@@ -78,8 +78,9 @@ export const sendAuthEmail = async ({
       </head>
       <body style="max-width: 50%; margin: 0 auto; text-align: center;">
         <h1>Code: ${code}</h1>
-        ${magicLink &&
-        `<p style="font-size: 16px;">
+        ${
+            magicLink &&
+            `<p style="font-size: 16px;">
             Alternatively, you can click the Magic Link URL.
             <br />
             <a href="${magicLink}">${magicLink}</a>

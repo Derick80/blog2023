@@ -5,7 +5,8 @@ import {
     Scripts,
     ScrollRestoration,
     useFetcher,
-    useLoaderData
+    useLoaderData,
+    useRouteLoaderData
 } from '@remix-run/react'
 import { json } from '@remix-run/node' // or cloudflare/deno
 
@@ -15,6 +16,9 @@ import { getThemeFromCookie } from './.server/theme.server.ts'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { Theme } from './.server/session.server'
 import { getSharedEnvs } from './.server/env.server.js'
+import { getSession } from './routes/_auth+/auth.server.js'
+import { TooltipProvider } from './components/ui/tooltip.js'
+import { useNonce } from './lib/nonce-provider.js'
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
@@ -22,33 +26,26 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const theme = await getThemeFromCookie(request)
-    const {NODE_ENV} = getSharedEnvs(
-
-    )
+    console.log(theme, 'theme from cookie')
+    const { NODE_ENV } = getSharedEnvs()
     const mode = NODE_ENV
     // const theme:Theme = 'system'
     console.log(`The current mode is: ${mode}`)
-console.log(`The current theme is: ${theme}`);
+    console.log(`The current theme is: ${theme}`)
+    const session = await getSession(request)
+    console.log(session.data, 'session from authserver')
+    console.log(session.id, 'session id from authserver')
 
     return json({ theme })
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-    const { theme = 'system' } = useLoaderData<typeof loader>()
-    const themeFetcher = useFetcher()
-    const onThemeChange = (theme: Theme) => {
-        themeFetcher.submit(
-            { theme },
-            {
-                method: 'POST',
-                encType: 'application/json',
-                action: '/actions/set-theme'
-            }
-        )
-    }
+    const { theme } = useLoaderData<typeof loader>()
+
+    const nonce = useNonce()
     return (
-        <ThemeProvider defaultTheme={theme} onThemeChange={onThemeChange}>
-            <html lang='en'>
+        <TooltipProvider>
+            <html lang='en' className={`${theme}`}>
                 <head>
                     <meta charSet='utf-8' />
                     <meta
@@ -61,13 +58,38 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <body>
                     {children}
                     <ScrollRestoration />
-                    <Scripts />
+                    <Scripts nonce={nonce} />
                 </body>
             </html>
-        </ThemeProvider>
+        </TooltipProvider>
     )
 }
 
 export default function App() {
     return <Outlet />
+}
+
+export function useRootLoaderData() {
+    return useRouteLoaderData<typeof loader>('root')
+}
+
+export function ErrorBoundary() {
+    // the nonce doesn't rely on the loader so we can access that
+    const nonce = useNonce()
+
+    // NOTE: you cannot use useLoaderData in an ErrorBoundary because the loader
+    // likely failed to run so we have to do the best we can.
+    // We could probably do better than this (it's possible the loader did run).
+    // This would require a change in Remix.
+
+    // Just make sure your root route never errors out and you'll always be able
+    // to give the user a better UX.
+
+    return (
+        <div className='text-red-500'>
+            <h1>Something went wrong</h1>
+            <p>Sorry about that. Please try again.</p>
+            <Scripts nonce={nonce} />
+        </div>
+    )
 }

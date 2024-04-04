@@ -1,15 +1,21 @@
 import { Authenticator } from 'remix-auth'
-import { Prisma, User } from '@prisma/client'
-import { AuthProvider, AuthProviderUser } from './auth-shema'
+import { User } from '@prisma/client'
 import { prisma } from '~/.server/prisma.server'
 import { z } from 'zod'
-import { createCookieSessionStorage, redirect } from '@remix-run/node'
+import { createCookieSessionStorage, redirect, Session } from '@remix-run/node'
+import { discordStrategy } from './discord.server'
+import { totpStrategy } from './totp-server'
+import type { Prisma } from '@prisma/client'
+import { randomBytes } from 'crypto'
+import { addDays, addHours, isBefore } from 'date-fns'
+import { getUser } from '~/.server/user.server'
+import { Theme } from '~/.server/session.server'
 
-
-export const SESSION_ID_KEY:string = "sessionId";
-export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30;
+export type TokenType = 'RESET_PASSWORD' | 'REFRESH_TOKEN'
+export const SESSION_ID_KEY: string = 'sessionId'
+export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const getSessionExpirationDate = () =>
-  new Date(Date.now() + SESSION_EXPIRATION_TIME);
+    new Date(Date.now() + SESSION_EXPIRATION_TIME)
 
 // Create a session storage that uses cookies to store the session data.  This is the basic session storage setup that I used in my Auth server files.
 
@@ -21,104 +27,85 @@ const cookieOptions = {
     sameSite: 'lax' as const,
     path: '/',
     secrets: [process.env.SESSION_SECRET],
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production'
 }
 
-const authCookieSchema = z.object({
- userId: z.string().nullable(),
-        email: z.string().nullable(),
-        name: z.string().nullable(),
-        avatar: z.string().nullable(),
-  roles: z.array(z.string()).default([]),
-  SESSION_ID_KEY: z.string(),
-  expires: z.date().optional(),
+type SessionData = {
+    userId: User['id']
+    role: User['role']
+    sessionId: string
+    theme?: Theme
+}
 
-
-})
-
-export type AuthCookieSchema = z.infer<typeof authCookieSchema>
-
-export const typeAuthSessionStorage = createCookieSessionStorage<AuthCookieSchema>({
+export const sessionStorage = createCookieSessionStorage<SessionData>({
     cookie: cookieOptions
 })
+export const getSession = async (request: Request) => {
+    const session = await sessionStorage.getSession(
+        request.headers.get('Cookie')
+    )
 
-const originCommitSession = typeAuthSessionStorage.commitSession
-
-typeAuthSessionStorage.commitSession = async (session, options) => {
-  if (options?.expires) {
-    session.set('expires', options.expires)
-  }
-  if (options?.maxAge) {
-    session.set('expires', new Date(Date.now() + options.maxAge * 1000))
-
-  }
-  const expires = session.has('expires') ? session.get('expires') : undefined
-
-  const serialzedCookie = originCommitSession(session, {
-    ...options,
-    expires
-    })
-  return serialzedCookie
-
-
+    return session
 }
 
+export const commitSession = async (session: Session) => {
+    const headers = new Headers({
+        'Set-Cookie': await sessionStorage.commitSession(session)
+    })
 
-export const getAuthSession = async (request: Request) => {
-  const authSession = await typeAuthSessionStorage.getSession(
-    request.headers.get("cookie"),
-  );
-  const sessionId = authSession.get("SESSION_ID_KEY",);
+    return headers
+}
 
-  return { authSession, sessionId };
-};
+export const authenticator = new Authenticator(sessionStorage, {
+    throwOnError: true,
+    sessionErrorKey: 'authError'
+})
 
+authenticator.use(discordStrategy, 'discord')
+authenticator.use(totpStrategy, 'totp')
 
+export const getUserId = (request: Request) => {
+    return authenticator.isAuthenticated(request)
+}
 
-export const getUserId = async (request: Request) => {
-  const { authSession, sessionId } = await getAuthSession(request);
+export const isAuthenticated = async (request: Request) => {
+    const userId = await authenticator.isAuthenticated(request)
+    if (!userId) return null
+    return getUser({ id: userId })
+}
 
-  if (!sessionId) {
-    return null;
-  }
-  const session = await prisma.session.findFirst({
-    where: {
-      id: sessionId,
-      expirationDate: {
-        gt: new Date(),
-      },
+export const setUserSession = async (session: Session, id: User['id']) => {
+    session.set(authenticator.sessionKey, id)
 
-      }
-  },
-  );
-  if (!session) {
-    throw redirect("/", {
-      headers: {
-        "set-cookie": await typeAuthSessionStorage.destroySession(authSession),
-      },
-    });
+    return session
+}
 
-  }
-  return session.userId;
+export const setUserSessionAndCommit = async (
+    request: Request,
+    id: User['id']
+) => {
+    const session = await getSession(request)
+    await setUserSession(session, id)
+    const headers = await commitSession(session)
+
+    return headers
 }
 
 export const requireAnonymous = async (request: Request) => {
-  if (await getUserId(request)) {
-    throw redirect("/");
-  }
-};
+    if (await getUserId(request)) {
+        throw redirect('/')
+    }
+}
 
 export const requireUserId = async (request: Request) => {
-  const userId = await getUserId(request);
+    const userId = await getUserId(request)
 
-  if (!userId) {
-    throw redirect("/login");
-  }
+    if (!userId) {
+        throw redirect('/login')
+    }
 
-  return userId;
-};
-
-
+    return userId
+}
 
 export const getAccount = async ({
     provider,
@@ -132,39 +119,90 @@ export const getAccount = async ({
             }
         },
         include: {
-            user: true
+            user: {
+                select: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    avatarUrl: true,
+                    role: true,
+                    accounts: {
+                        select: {
+                            provider: true,
+                            providerAccountId: true,
+                            accessToken: true,
+                            refreshToken: true
+                        }
+                    }
+                }
+            }
         }
     })
 
     return account
 }
-
-export const authenticator = new Authenticator<AuthProviderUser>(
-    typeAuthSessionStorage,
-    {
-        throwOnError: true,
-        sessionErrorKey: 'authError'
+const getTokenExpiration = (tokenType: TokenType) => {
+    switch (tokenType) {
+        case 'RESET_PASSWORD':
+            return addHours(new Date(), 1)
+        case 'REFRESH_TOKEN':
+            return addDays(new Date(), 60)
+        default:
+            return null
     }
-)
-
-
-
-
-
-
-export const setUserSessionAndCommit = async (
-    request: Request,
-    userId: User['id']
-) => {
-    const session = await typeAuthSessionStorage.getSession(request.headers.get('Cookie') ?? '')
-  session.set('userId', userId)
-
-    const headers = new Headers({
-        'Set-Cookie': await sessionStorage.commitSession(session)
-    })
-    return headers
 }
 
+export const generateToken = () => {
+    return randomBytes(20).toString('hex')
+}
+
+export const createToken = async (
+    tokenType: TokenType,
+    input: Omit<Prisma.TokenCreateInput, 'token' | 'type' | 'expiresAt'>
+) => {
+    const token = generateToken()
+    const expiresAt = getTokenExpiration(tokenType)
+
+    const created = await prisma.token.create({
+        data: {
+            ...input,
+            token,
+            type: tokenType,
+            expiresAt
+        }
+    })
+
+    return created
+}
+
+export const validateToken = async (tokenType: TokenType, token?: string) => {
+    if (!token) return false
+
+    const savedToken = await prisma.token.findUnique({
+        where: {
+            token_type: {
+                token,
+                type: tokenType
+            }
+        }
+    })
+
+    if (
+        !savedToken ||
+        savedToken.usedAt ||
+        (savedToken.expiresAt && !isBefore(new Date(), savedToken.expiresAt))
+    ) {
+        return false
+    }
+
+    const updated = await prisma.token.update({
+        where: { id: savedToken.id },
+        data: { usedAt: new Date() },
+        include: { user: true }
+    })
+
+    return updated.user
+}
 
 export const createUser = async (
     input: Prisma.UserCreateInput & {
@@ -174,10 +212,6 @@ export const createUser = async (
 ) => {
     const data: Prisma.UserCreateInput = {
         email: input.email
-    }
-
-    if (input.password) {
-        data.password = await createPasswordHash(input.password)
     }
 
     if (input.account) {

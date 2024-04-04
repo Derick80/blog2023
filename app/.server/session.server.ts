@@ -1,6 +1,3 @@
-import type { Session } from '@remix-run/node'
-import { createCookieSessionStorage } from '@remix-run/node'
-import { createTypedSessionStorage } from 'remix-utils/typed-session'
 import { z } from 'zod'
 /* https://dev.to/remix-run-br/type-safe-environment-variables-on-both-client-and-server-with-remix-54l5 */
 
@@ -18,29 +15,7 @@ const cookieOptions = {
 }
 
 const userCookieSchema = z.object({
-    theme: z.enum(['light', 'dark', 'system']).default('system'),
-
+    theme: z.enum(['light', 'dark', 'system']).default('system')
 })
 
 export type Theme = z.infer<typeof userCookieSchema>['theme']
-export const typedSessionStorage = createCookieSessionStorage({
-    cookie: cookieOptions
-})
-
-export const { commitSession, getSession, destroySession } =
-    createTypedSessionStorage({
-        sessionStorage: typedSessionStorage,
-        schema: userCookieSchema
-    })
-
-// Toast message functions
-
-export type ToastMessage = { message: string; type: 'success' | 'error' }
-
-export function setSuccessMessage(session: Session, message: string) {
-    session.flash('toastMessage', { message, type: 'success' } as ToastMessage)
-}
-
-export function setErrorMessage(session: Session, message: string) {
-    session.flash('toastMessage', { message, type: 'error' } as ToastMessage)
-}

@@ -21,8 +21,11 @@ module.exports = {
     },
     ignorePatterns: ['!**/.server', '!**/.client'],
 
-    // Base config
-    extends: ['eslint:recommended'],
+    // Base config was modified to extend the Remix config
+    // https://github.com/shadcn-ui/ui/issues/120#issuecomment-1887178298
+
+
+    extends: [ "@remix-run/eslint-config", "@remix-run/eslint-config/node" ],
 
     overrides: [
         // React

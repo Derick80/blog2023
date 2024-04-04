@@ -21,16 +21,13 @@ const envSchema = z.object({
     DISCORD_CLIENT_ID: z.string(),
 
     RESEND_API_KEY: z.string(),
-    ENCRYPTION_SECRET: z.string(),
+    ENCRYPTION_SECRET: z.string()
 })
 
-
-
-export function getSharedEnvs () {
-
+export function getSharedEnvs() {
     return {
         NODE_ENV: process.env.NODE_ENV,
-        ENCRYPTION_SECRET: process.env.ENCRYPTION_SECRET,
+        ENCRYPTION_SECRET: process.env.ENCRYPTION_SECRET
     }
 }
 export type Env = z.infer<typeof envSchema>
@@ -40,4 +37,3 @@ declare global {
         interface ProcessEnv extends TypeOf<typeof envSchema> {}
     }
 }
-

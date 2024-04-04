@@ -1,3 +1,4 @@
+import { useFetcher } from '@remix-run/react'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Theme } from '~/.server/session.server'
 
@@ -22,7 +23,6 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
     children,
     defaultTheme = 'system',
-    onThemeChange,
     ...props
 }: ThemeProviderProps) {
     const [theme, setTheme] = useState(defaultTheme)

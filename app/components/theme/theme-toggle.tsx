@@ -1,36 +1,40 @@
-import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
+import { GlobeIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { Button } from '../ui/button'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '../ui/dropdown-menu'
-import { useTheme } from './theme-provider'
+import { useRootLoaderData } from '~/root'
+import { useFetcher } from '@remix-run/react'
+import { Theme } from '~/.server/session.server'
 
 export function ThemeToggle() {
-    const { setTheme } = useTheme()
+    const themeFetcher = useFetcher()
+    const onThemeChange = (theme: Theme) => {
+        themeFetcher.submit(
+            { theme },
+            {
+                method: 'POST',
+
+                action: '/actions/set-theme'
+            }
+        )
+    }
+    const data = useRootLoaderData()
+
+    const mode = data?.theme
+
+    const nextMode =
+        mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button type='button' variant='ghost' size='default'>
-                    <SunIcon className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-                    <MoonIcon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-                    <span className='sr-only'>Toggle theme</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-                <DropdownMenuItem onClick={() => setTheme('light')}>
-                    Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>
-                    Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>
-                    System
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+            <Button
+                type='submit'
+                variant='ghost'
+                onClick={() => onThemeChange(nextMode)}
+            >
+                <input type='hidden' name='theme' value={nextMode} />
+                {mode === 'light' && <SunIcon />}
+                {mode === 'dark' && <MoonIcon />}
+                {mode === 'system' && <GlobeIcon />}
+            </Button>
+        </>
     )
 }
