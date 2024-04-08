@@ -7,7 +7,8 @@ import {
     CardContent,
     CardDescription,
     CardFooter,
-    CardHeader
+    CardHeader,
+    CardTitle
 } from '~/components/ui/card'
 import { authenticator } from './auth.server'
 
@@ -17,6 +18,7 @@ export default function LoginRoute() {
         <div className='container max-w-lg md:mt-10'>
             <Card>
                 <CardHeader>
+                    <CardTitle>Log in by Email or By Discord</CardTitle>
                     <CardDescription></CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -26,10 +28,9 @@ export default function LoginRoute() {
                         className='flex flex-col items-center gap-2'
                         method='POST'
                     >
-                        <input type='hidden' name='provider' value='discord' />
+                        <input type='hidden' name='provider' value={provider} />
                         <Button
                             className='w-full text-center justify-center gap-2'
-                            form='discord'
                             type='submit'
                             value='discord'
                             variant='ghost'
@@ -57,6 +58,6 @@ export default function LoginRoute() {
 export async function loader({ request }: LoaderFunctionArgs) {
     // If the user is already authenticated redirect to /dashboard directly
     return await authenticator.isAuthenticated(request, {
-        successRedirect: '/dashboard'
+        successRedirect: '/'
     })
 }

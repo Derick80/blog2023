@@ -1,10 +1,15 @@
 import { json } from '@remix-run/node'
-import type { Theme } from './session.server'
 import { getSession } from '~/routes/_auth+/auth.server'
 import { z } from 'zod'
 import { parseWithZod } from '@conform-to/zod'
 import { sessionStorage } from '../routes/_auth+/auth.server'
 const THEME_PREFERENCE_KEY = 'theme'
+
+const userCookieSchema = z.object({
+    theme: z.enum(['light', 'dark', 'system']).default('system')
+})
+
+export type Theme = z.infer<typeof userCookieSchema>['theme']
 
 const ThemeFormSchema = z.object({
     theme: z.enum(['system', 'light', 'dark']).default('system')

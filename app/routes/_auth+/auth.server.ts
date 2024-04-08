@@ -4,18 +4,35 @@ import { prisma } from '~/.server/prisma.server'
 import { z } from 'zod'
 import { createCookieSessionStorage, redirect, Session } from '@remix-run/node'
 import { discordStrategy } from './discord.server'
-import { totpStrategy } from './totp-server'
 import type { Prisma } from '@prisma/client'
-import { randomBytes } from 'crypto'
 import { addDays, addHours, isBefore } from 'date-fns'
-import { getUser } from '~/.server/user.server'
-import { Theme } from '~/.server/session.server'
+import { Theme } from '~/.server/theme.server.ts'
 
-export type TokenType = 'RESET_PASSWORD' | 'REFRESH_TOKEN'
+export type ProviderUser = {
+    userId: string
+    username: string
+    email: string
+    avatarUrl: string
+    role: string
+    provider: string
+    providerId: string
+    token: string
+  refreshToken?: string
+      sessionId?: string
+    theme?: Theme
+
+}
 export const SESSION_ID_KEY: string = 'sessionId'
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const getSessionExpirationDate = () =>
     new Date(Date.now() + SESSION_EXPIRATION_TIME)
+
+export const DISCORD_PROVIDER_NAME = 'discord'
+
+export const providerNames = [DISCORD_PROVIDER_NAME] as const
+export const ProviderNameSchema = z.enum(providerNames)
+
+export type ProviderName = z.infer<typeof ProviderNameSchema>
 
 // Create a session storage that uses cookies to store the session data.  This is the basic session storage setup that I used in my Auth server files.
 
@@ -30,14 +47,8 @@ const cookieOptions = {
     secure: process.env.NODE_ENV === 'production'
 }
 
-type SessionData = {
-    userId: User['id']
-    role: User['role']
-    sessionId: string
-    theme?: Theme
-}
 
-export const sessionStorage = createCookieSessionStorage<SessionData>({
+export const sessionStorage = createCookieSessionStorage<ProviderUser>({
     cookie: cookieOptions
 })
 export const getSession = async (request: Request) => {
@@ -56,196 +67,101 @@ export const commitSession = async (session: Session) => {
     return headers
 }
 
-export const authenticator = new Authenticator(sessionStorage, {
+export const authenticator = new Authenticator<ProviderUser>(sessionStorage, {
+  sessionKey: SESSION_ID_KEY,
     throwOnError: true,
     sessionErrorKey: 'authError'
 })
 
 authenticator.use(discordStrategy, 'discord')
-authenticator.use(totpStrategy, 'totp')
 
 export const getUserId = (request: Request) => {
     return authenticator.isAuthenticated(request)
 }
 
 export const isAuthenticated = async (request: Request) => {
-    const userId = await authenticator.isAuthenticated(request)
-    if (!userId) return null
-    return getUser({ id: userId })
-}
+    const user = await authenticator.isAuthenticated(request)
+    console.log(user,'user from isAuthenticated');
+    return user
 
-export const setUserSession = async (session: Session, id: User['id']) => {
-    session.set(authenticator.sessionKey, id)
-
-    return session
-}
-
-export const setUserSessionAndCommit = async (
-    request: Request,
-    id: User['id']
-) => {
-    const session = await getSession(request)
-    await setUserSession(session, id)
-    const headers = await commitSession(session)
-
-    return headers
-}
-
-export const requireAnonymous = async (request: Request) => {
-    if (await getUserId(request)) {
-        throw redirect('/')
-    }
-}
-
-export const requireUserId = async (request: Request) => {
-    const userId = await getUserId(request)
-
-    if (!userId) {
-        throw redirect('/login')
-    }
-
-    return userId
 }
 
 export const getAccount = async ({
-    provider,
-    providerAccountId
+  provider,
+  providerAccountId
 }: Prisma.AccountProviderProviderAccountIdCompoundUniqueInput) => {
-    const account = await prisma.account.findUnique({
+  const account = await prisma.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider,
+        providerAccountId
+      }
+      },
+      include: {
+          user: {
+
+              include: {
+                    sessions: true
+
+
+      }
+          }
+      }
+  })
+
+  return account
+}
+
+export const getUser = async (email: string) => {
+    return await prisma.user.findUnique({
         where: {
-            provider_providerAccountId: {
-                provider,
-                providerAccountId
-            }
+            email
         },
         include: {
-            user: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    avatarUrl: true,
-                    role: true,
-                    accounts: {
-                        select: {
-                            provider: true,
-                            providerAccountId: true,
-                            accessToken: true,
-                            refreshToken: true
-                        }
-                    }
-                }
-            }
+            sessions: true,
+            accounts: true,
         }
     })
-
-    return account
-}
-const getTokenExpiration = (tokenType: TokenType) => {
-    switch (tokenType) {
-        case 'RESET_PASSWORD':
-            return addHours(new Date(), 1)
-        case 'REFRESH_TOKEN':
-            return addDays(new Date(), 60)
-        default:
-            return null
-    }
 }
 
-export const generateToken = () => {
-    return randomBytes(20).toString('hex')
-}
-
-export const createToken = async (
-    tokenType: TokenType,
-    input: Omit<Prisma.TokenCreateInput, 'token' | 'type' | 'expiresAt'>
-) => {
-    const token = generateToken()
-    const expiresAt = getTokenExpiration(tokenType)
-
-    const created = await prisma.token.create({
+export const createUser = async (userData: Omit<ProviderUser, "userId" | "role">) => {
+    return await prisma.user.create({
         data: {
-            ...input,
-            token,
-            type: tokenType,
-            expiresAt
-        }
-    })
+            email: userData.email,
+            username: userData.username,
+            avatarUrl: userData.avatarUrl,
 
-    return created
-}
-
-export const validateToken = async (tokenType: TokenType, token?: string) => {
-    if (!token) return false
-
-    const savedToken = await prisma.token.findUnique({
-        where: {
-            token_type: {
-                token,
-                type: tokenType
-            }
-        }
-    })
-
-    if (
-        !savedToken ||
-        savedToken.usedAt ||
-        (savedToken.expiresAt && !isBefore(new Date(), savedToken.expiresAt))
-    ) {
-        return false
-    }
-
-    const updated = await prisma.token.update({
-        where: { id: savedToken.id },
-        data: { usedAt: new Date() },
-        include: { user: true }
-    })
-
-    return updated.user
-}
-
-export const createUser = async (
-    input: Prisma.UserCreateInput & {
-        password?: string
-        account?: Omit<Prisma.AccountCreateInput, 'user'>
-    }
-) => {
-    const data: Prisma.UserCreateInput = {
-        email: input.email
-    }
-
-    if (input.account) {
-        data.accounts = {
-            create: [
-                {
-                    provider: input.account.provider,
-                    providerAccountId: input.account.providerAccountId,
-                    accessToken: input.account.accessToken,
-                    refreshToken: input.account.refreshToken
+            sessions: {
+                create: {
+                    expirationDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
                 }
-            ]
-        }
-    }
+            },
+            accounts: {
+                create: {
+                    provider: userData.provider,
+                    providerAccountId: userData.providerId,
+                    accessToken: userData.token,
+                    refreshToken: userData.refreshToken,
+                }
+            }
 
-    const user = await prisma.user.create({
-        data,
+        },
         select: {
             id: true,
             email: true,
             username: true,
             avatarUrl: true,
             role: true,
-
             accounts: {
                 select: {
                     provider: true,
                     providerAccountId: true,
                     accessToken: true,
-                    refreshToken: true
+                    refreshToken: true,
                 }
+            },
             }
-        }
-    })
 
-    return user
+
+    })
 }

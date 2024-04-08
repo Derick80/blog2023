@@ -2,8 +2,8 @@ import { GlobeIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { Button } from '../ui/button'
 import { useRootLoaderData } from '~/root'
 import { useFetcher } from '@remix-run/react'
-import { Theme } from '~/.server/session.server'
-
+import { Theme } from '~/.server/theme.server.ts'
+// https://github.com/kentcdodds/kentcdodds.com/blob/main/app/components/navbar.tsx
 export function ThemeToggle() {
     const themeFetcher = useFetcher()
     const onThemeChange = (theme: Theme) => {
@@ -11,7 +11,6 @@ export function ThemeToggle() {
             { theme },
             {
                 method: 'POST',
-
                 action: '/actions/set-theme'
             }
         )

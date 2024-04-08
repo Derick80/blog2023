@@ -1,16 +1,7 @@
-import { DiscordStrategy, type DiscordProfile } from 'remix-auth-discord'
-import { createUser, getAccount } from './auth.server'
+import { DiscordStrategy } from 'remix-auth-discord'
+import { createUser, getAccount, ProviderUser } from './auth.server'
 
-export interface DiscordUser {
-    id: DiscordProfile['id']
-    displayName: DiscordProfile['displayName']
-    avatar: DiscordProfile['__json']['avatar']
-    email: DiscordProfile['__json']['email']
-    locale?: string
-    accessToken: string
-    refreshToken: string
-}
-export const discordStrategy = new DiscordStrategy<DiscordUser>(
+export const discordStrategy = new DiscordStrategy(
     {
         clientID: process.env.DISCORD_CLIENT_ID,
         clientSecret: process.env.DISCORD_CLIENT_SECRET,
@@ -18,56 +9,61 @@ export const discordStrategy = new DiscordStrategy<DiscordUser>(
         // Provide all the scopes you want as an array
         scope: ['identify', 'email']
     },
-    async ({ accessToken, refreshToken, profile }): Promise<DiscordUser> => {
-        const account = await getAccount({
-            provider: profile.provider,
-            providerAccountId: profile.id
-        })
+    async ({ accessToken, refreshToken, profile }): Promise<ProviderUser> => {
 
-        if (account)
+      const userEmail = profile.__json.email;
+      if (!userEmail) {
+        throw new Error("Email is required");
+      }
+
+      const account = await getAccount({
+        provider: profile.provider,
+        providerAccountId: profile.id,
+      });
+
+        if (account) {
+            // If the user is already in the database, update the token and return the user
             return {
-                id: account.userId,
-                displayName: account.user.username || profile.displayName,
-                avatar: account.user.avatarUrl,
-                email: account.user.email,
-                locale: profile.__json.locale,
-                accessToken: accessToken,
-                refreshToken: account.refreshToken || ''
-            }
-
-        const newUser = await createUser({
-            email: profile.emails ? profile.emails[0].value : '',
-            username: profile.displayName,
-            avatarUrl: profile.photos ? profile.photos[0].value : '',
-            account: {
-                provider: profile.provider,
-
-                providerAccountId: profile.id,
-                accessToken: accessToken,
-                refreshToken: refreshToken
-            }
-        })
-
-        const user = newUser.accounts.map((account) => ({
-            id: newUser.id,
-            email: newUser.email,
-            username: newUser.username,
-            avatarUrl: newUser.avatarUrl,
-            role: newUser.role,
+                userId: account.user.id,
+            username: account.user.username || "",
+            email: account.user.email,
+                avatarUrl: account.user.avatarUrl || "",
+                role: account.user.role,
             provider: account.provider,
-            providerAccountId: account.providerAccountId,
-            accessToken: account.accessToken,
-            refreshToken: account.refreshToken
-        }))[0]
+            providerId: account.providerAccountId,
+            token: accessToken,
+                refreshToken,
+            };
+        }
+
+    //   If the user is not in the database, create a new user
+      const userData = {
+        email: userEmail,
+        username: profile.displayName || "",
+        avatarUrl: profile.__json.avatar_decoration || "",
+        provider: profile.provider,
+        providerId: profile.id,
+        token: accessToken,
+          refreshToken,
+
+      };
+
+
+      const user = await createUser(
+            userData
+
+      )
 
         return {
-            id: user.id,
-            displayName: user.username || profile.displayName,
-            avatar: user.avatarUrl,
+            userId: user.id,
+            username: user.username || "",
             email: user.email,
-            locale: profile.__json.locale,
-            accessToken: user.accessToken || '',
-            refreshToken: user.refreshToken || ''
-        }
-    }
+            avatarUrl: user.avatarUrl || "",
+            role: user.role,
+            provider: profile.provider,
+            providerId: profile.id,
+            token: accessToken,
+            refreshToken,
+        };
+  }
 )

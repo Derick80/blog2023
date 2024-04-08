@@ -4,7 +4,6 @@ import {
     Outlet,
     Scripts,
     ScrollRestoration,
-    useFetcher,
     useLoaderData,
     useRouteLoaderData
 } from '@remix-run/react'
@@ -13,8 +12,6 @@ import { json } from '@remix-run/node' // or cloudflare/deno
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import stylesheet from '~/tailwind.css?url'
 import { getThemeFromCookie } from './.server/theme.server.ts'
-import { ThemeProvider } from './components/theme/theme-provider'
-import { Theme } from './.server/session.server'
 import { getSharedEnvs } from './.server/env.server.js'
 import { getSession } from './routes/_auth+/auth.server.js'
 import { TooltipProvider } from './components/ui/tooltip.js'
