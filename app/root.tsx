@@ -1,200 +1,92 @@
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction
-} from '@remix-run/node'
-import { json } from '@remix-run/node'
 import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  isRouteErrorResponse,
-  useFetcher,
-  useLoaderData,
-  useLocation,
-  useRouteError
+    Links,
+    Meta,
+    Outlet,
+    Scripts,
+    ScrollRestoration,
+    useLoaderData,
+    useRouteLoaderData
 } from '@remix-run/react'
-import { isAuthenticated } from './server/auth/auth.server'
-import Layout from './components/layout/layout'
-import stylesheet from '~/tailwind.css'
-import type { ToastMessage } from './server/session.server'
-import { commitSession, getSession } from './server/session.server'
-import React from 'react'
-import { Toaster, toast } from 'react-hot-toast'
-import { prisma } from './server/prisma.server'
-import { AnimatePresence, motion } from 'framer-motion'
-import { getEnv } from './server/env.server'
-import { ThemeProvider } from './components/theme/theme-provider'
-import { getThemeFromCookie } from './server/theme.server'
+import { json } from '@remix-run/node' // or cloudflare/deno
+
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
+import stylesheet from '~/tailwind.css?url'
+import { getThemeFromCookie } from './.server/theme.server.ts'
+import { getSharedEnvs } from './.server/env.server.js'
+import { getSession } from './routes/_auth+/auth.server.js'
+import { TooltipProvider } from './components/ui/tooltip.js'
+import { useNonce } from './lib/nonce-provider.js'
 
 export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: stylesheet, preload: 'true' }
+    { rel: 'stylesheet', href: stylesheet }
 ]
 
-// SEO  meta tags
-export const meta: MetaFunction = () => {
-  return [
-    {
-      name: 'viewport',
-      content: 'width=device-width, initial-scale=1'
-    },
-
-    {
-      title: `Derick's Remix Blog`
-    }
-  ]
-}
-// long story short I missed the if !toastMessage return so most of the time I was not returning my user because the message is blank.  This way, I think I'm able to use toast and also not have it refresh every time I navigate.
 export async function loader({ request }: LoaderFunctionArgs) {
-  const theme = await getThemeFromCookie(request)
-  // const user = await getUserByEmail('wowbearwow80@gmail.com')
-  // console.log(user, 'user');
+    const theme = await getThemeFromCookie(request)
+    console.log(theme, 'theme from cookie')
+    const { NODE_ENV } = getSharedEnvs()
+    const mode = NODE_ENV
+    // const theme:Theme = 'system'
+    console.log(`The current mode is: ${mode}`)
+    console.log(`The current theme is: ${theme}`)
+    const session = await getSession(request)
+    console.log(session.data, 'session from authserver')
+    console.log(session.id, 'session id from authserver')
 
-  const user = await isAuthenticated(request)
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      label: 'asc'
-    }
-  })
-  const session = await getSession(request.headers.get('Cookie'))
-  const toastMessage = (await session.get('toastMessage')) as ToastMessage
+    return json({ theme })
+}
 
-  if (!toastMessage) {
-    return json({ toastMessage: null, user, categories, theme })
-  }
+export function Layout({ children }: { children: React.ReactNode }) {
+    const { theme } = useLoaderData<typeof loader>()
 
-  if (!toastMessage.type) {
-    throw new Error('Message should have a type')
-  }
-
-  return json(
-    { toastMessage, categories, theme, user, ENV: getEnv() },
-    {
-      headers: {
-        'Set-Cookie': await commitSession(session)
-      }
-    }
-  )
+    const nonce = useNonce()
+    return (
+        <TooltipProvider>
+            <html lang='en' className={`${theme}`}>
+                <head>
+                    <meta charSet='utf-8' />
+                    <meta
+                        name='viewport'
+                        content='width=device-width, initial-scale=1'
+                    />
+                    <Meta />
+                    <Links />
+                </head>
+                <body>
+                    {children}
+                    <ScrollRestoration />
+                    <Scripts nonce={nonce} />
+                </body>
+            </html>
+        </TooltipProvider>
+    )
 }
 
 export default function App() {
-  const { theme = 'system' } = useLoaderData<typeof loader>()
-
-  const data = useLoaderData<typeof loader>()
-  const { toastMessage } = data
-
-  React.useEffect(() => {
-    if (!toastMessage) {
-      return
-    }
-    const { message, type } = toastMessage
-
-    switch (type) {
-      case 'success':
-        toast.success(message)
-        break
-      case 'error':
-        toast.error(message)
-        break
-      default:
-        throw new Error(`${type} is not handled`)
-    }
-  }, [toastMessage])
-  const fetcher = useFetcher()
-  const onThemeChange = (theme: string) => {
-    fetcher.submit(
-      { theme },
-      {
-        method: 'POST',
-        encType: 'application/json',
-        action: '/actions/set-theme'
-      }
-    )
-  }
-  return (
-    <html lang='en'>
-      <head>
-        <meta charSet='utf-8' />
-        <meta name='viewport' content='width=device-width,initial-scale=1' />
-        <Meta />
-        <Links />
-      </head>
-      <body id='body' className='h-screen bg-background text-foreground'>
-        <ThemeProvider defaultTheme={theme} onThemeChange={onThemeChange}>
-          <Layout>
-            <AnimatePresence mode='wait' initial={false}>
-              <motion.div
-                key={useLocation().pathname}
-                animate={{ x: '90', opacity: 1 }}
-                transition={{
-                  duration: 0.25,
-                  type: 'spring',
-                  stiffness: 150,
-                  damping: 20
-                }}
-                exit={{ x: '-40%', opacity: 0 }}
-              >
-                <Outlet />
-              </motion.div>
-            </AnimatePresence>
-            <Toaster
-              position='bottom-right'
-              toastOptions={{
-                success: {
-                  style: {
-                    background: 'green'
-                  }
-                },
-                error: {
-                  style: {
-                    background: 'red'
-                  }
-                }
-              }}
-            />
-
-            <ScrollRestoration />
-            <Scripts />
-            <LiveReload />
-          </Layout>
-        </ThemeProvider>
-      </body>
-    </html>
-  )
+    return <Outlet />
 }
 
-const ErrorBoundary = () => {
-  const error = useRouteError()
+export function useRootLoaderData() {
+    return useRouteLoaderData<typeof loader>('root')
+}
 
-  if (isRouteErrorResponse(error)) {
+export function ErrorBoundary() {
+    // the nonce doesn't rely on the loader so we can access that
+    const nonce = useNonce()
+
+    // NOTE: you cannot use useLoaderData in an ErrorBoundary because the loader
+    // likely failed to run so we have to do the best we can.
+    // We could probably do better than this (it's possible the loader did run).
+    // This would require a change in Remix.
+
+    // Just make sure your root route never errors out and you'll always be able
+    // to give the user a better UX.
+
     return (
-      <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
-        <h1 className='text-3xl font-bold text-red-600 mb-4'>Oops! Error</h1>
-        <p className='text-lg text-red-700'>{`Status: ${error.status}`}</p>
-        <p className='text-lg text-red-700'>{error.data.message}</p>
-      </div>
+        <div className='text-red-500'>
+            <h1>Something went wrong</h1>
+            <p>Sorry about that. Please try again.</p>
+            <Scripts nonce={nonce} />
+        </div>
     )
-  }
-
-  let errorMessage = 'Unknown error'
-  if (error instanceof Error) {
-    errorMessage = error.message
-  } else if (typeof error === 'string') {
-    errorMessage = error
-  }
-
-  return (
-    <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
-      <h1 className='text-3xl font-bold text-red-600 mb-4'>Uh oh...</h1>
-      <h2 className='text-xl font-semibold text-red-700 mb-4'>
-        Something went wrong
-      </h2>
-      <pre className='text-lg text-red-700 whitespace-pre-wrap'>
-        {errorMessage}
-      </pre>
-    </div>
-  )
 }

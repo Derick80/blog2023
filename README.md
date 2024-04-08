@@ -1,74 +1,76 @@
-# Welcome to Remix
+# Welcome to Remix + Vite
 
-- [Remix Docs](https://remix.run/docs)
+📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/future/vite) for details on supported features.
 
-## Prisma Seeding in Development
+## Tech Stack
 
-- Until form login is working again login with discord and then copy paste the userId from prisma studio into the seed file
+- [Remix](https://remix.run/)
+- [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Fly.io](https://fly.io/)
+- [Cloudinary](https://cloudinary.com/)
+- [Zod](https://zod.dev/)
 
-## Component References
+## Additional Packages
 
-- Accordian - <https://github.com/AllanSimoyi/PersonalWebsite/blob/main/app/core/components/AccordionItem.tsx>
-- Post Editor - [TipTap](https://tiptap.dev/)
-- Resizeable  image component [reference](https://github.com/Habib-Shahzad/tiptap-resizable-image/tree/main/src/components)
-- Blog Category Filter
-  - [reference](https://github.com/kentcdodds/kentcdodds.com/blob/main/app/routes/blog.tsx)
+- [Prettier Tailwind](https://github.com/tailwindlabs/prettier-plugin-tailwindcss)
+- [tsx](https://www.npmjs.com/package/tsx)
+- [Remix Dev Tools](https://remix-development-tools.fly.dev/)
+- [Remix Flat Routes](https://github.com/kiliman/remix-flat-routes)
+- [Remix Auth](https://github.com/sergiodxa/remix-auth)
 
-## Database Setup
+## ToDos
 
-I use [Render](https://render.com/) for hosting a postgress database using Prisma ORM.
-Create a new database and then add the following environment variables to your `.env` file.
+- [] Rewrite, refactor, or create new components derived from the original project.
+  - [] brand-icon.tsx
+  - [] user-placeholder.tsx
+  - [] resume/index.ts
+  - [] Prisma seed data
+  - []
 
-```sh
-DATABASE_URL=''
-```
+## Documentation
 
-## Image Upload Setup
+### Images
 
-Create a [Cloudinary](https://cloudinary.com/) account and add the following environment variables to your `.env` file.
+- [Blur Data URL Generator](https://blurred.dev/)
+-
 
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-CLOUDINARY_CLOUD_NAME=
+## Getting Started
 
-## Fly Setup
-
-1. [Install `flyctl`](https://fly.io/docs/getting-started/installing-flyctl/)
-
-2. Sign up and log in to Fly
-
-```sh
-flyctl auth signup
-```
-
-1. Setup Fly. It might ask if you want to deploy, say no since you haven't built the app yet.
-
-```sh
-flyctl launch
-```
+- use ```openssl rand -hex 32``` to generate a secret key for the .env file
 
 ## Development
 
-From your terminal:
+Run the Vite dev server:
 
-```sh
+```shellscript
 npm run dev
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
-
-## Maintaining package versions
-
-npm-check -u
-
 ## Deployment
 
-If you've followed the setup instructions already, all you need to do is run this:
+First, build your app for production:
 
 ```sh
-npm run deploy
+npm run build
 ```
 
-You can run `flyctl info` to get the url and ip address of your server.
+Then run the app in production mode:
 
-Check out the [fly docs](https://fly.io/docs/getting-started/node/) for more information.
+```sh
+npm start
+```
+
+Now you'll need to pick a host to deploy it to.
+
+### DIY
+
+If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
+
+Make sure to deploy the output of `npm run build`
+
+- `build/server`
+- `build/client`
