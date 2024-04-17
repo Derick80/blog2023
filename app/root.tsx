@@ -16,6 +16,7 @@ import { getSharedEnvs } from './.server/env.server.js'
 import { getSession } from './routes/_auth+/auth.server.js'
 import { TooltipProvider } from './components/ui/tooltip.js'
 import { useNonce } from './lib/nonce-provider.js'
+import NavigationBar from './components/navbar/navigation-bar.js'
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
@@ -23,20 +24,19 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const theme = await getThemeFromCookie(request)
-    console.log(theme, 'theme from cookie')
     const { NODE_ENV } = getSharedEnvs()
     const mode = NODE_ENV
     // const theme:Theme = 'system'
-    console.log(`The current mode is: ${mode}`)
-    console.log(`The current theme is: ${theme}`)
+
     const session = await getSession(request)
-    console.log(session.data, 'session from authserver')
-    console.log(session.id, 'session id from authserver')
 
     return json({ theme })
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+// place TooltipProvider here to wrap the entire app in it
+
+
+export function Layout ({ children }: { children: React.ReactNode }) {
     const { theme } = useLoaderData<typeof loader>()
 
     const nonce = useNonce()
@@ -53,6 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <Links />
                 </head>
                 <body>
+                    <NavigationBar />
                     {children}
                     <ScrollRestoration />
                     <Scripts nonce={nonce} />

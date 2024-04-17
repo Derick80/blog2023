@@ -1,11 +1,9 @@
 import { Authenticator } from 'remix-auth'
-import { User } from '@prisma/client'
 import { prisma } from '~/.server/prisma.server'
 import { z } from 'zod'
-import { createCookieSessionStorage, redirect, Session } from '@remix-run/node'
+import { createCookieSessionStorage, Session } from '@remix-run/node'
 import { discordStrategy } from './discord.server'
 import type { Prisma } from '@prisma/client'
-import { addDays, addHours, isBefore } from 'date-fns'
 import { Theme } from '~/.server/theme.server.ts'
 
 export type ProviderUser = {
@@ -81,7 +79,6 @@ export const getUserId = (request: Request) => {
 
 export const isAuthenticated = async (request: Request) => {
     const user = await authenticator.isAuthenticated(request)
-    console.log(user,'user from isAuthenticated');
     return user
 
 }

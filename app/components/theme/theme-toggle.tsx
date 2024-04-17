@@ -3,6 +3,12 @@ import { Button } from '../ui/button'
 import { useRootLoaderData } from '~/root'
 import { useFetcher } from '@remix-run/react'
 import { Theme } from '~/.server/theme.server.ts'
+import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+
+ } from '../ui/tooltip'
 // https://github.com/kentcdodds/kentcdodds.com/blob/main/app/components/navbar.tsx
 export function ThemeToggle() {
     const themeFetcher = useFetcher()
@@ -23,17 +29,23 @@ export function ThemeToggle() {
         mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
 
     return (
-        <>
-            <Button
-                type='submit'
-                variant='ghost'
-                onClick={() => onThemeChange(nextMode)}
-            >
-                <input type='hidden' name='theme' value={nextMode} />
-                {mode === 'light' && <SunIcon />}
-                {mode === 'dark' && <MoonIcon />}
-                {mode === 'system' && <GlobeIcon />}
-            </Button>
-        </>
+        <Tooltip>
+            <TooltipTrigger>
+                <Button
+                    type='submit'
+                    variant='ghost'
+                    onClick={ () => onThemeChange(nextMode) }
+                >
+                    <input type='hidden' name='theme' value={ nextMode } />
+                    { mode === 'light' && <SunIcon /> }
+                    { mode === 'dark' && <MoonIcon /> }
+                    { mode === 'system' && <GlobeIcon /> }
+                </Button>
+
+            </TooltipTrigger>
+            <TooltipContent>Current theme: { mode }
+
+            </TooltipContent>
+        </Tooltip>
     )
 }
