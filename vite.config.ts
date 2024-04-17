@@ -5,7 +5,7 @@ import {flatRoutes} from 'remix-flat-routes'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { remixDevTools } from "remix-development-tools";
 import mdx from "@mdx-js/rollup";
-
+import rehypePrettyCode  from 'rehype-pretty-code'
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 installGlobals()
@@ -20,7 +20,10 @@ export default defineConfig({
 remarkPlugins: [
         remarkFrontmatter,
         remarkMdxFrontmatter,
-      ],
+    ],
+    rehypePlugins: [
+rehypePrettyCode
+    ],
   }),remixDevTools(), remix({
 ignoredRouteFiles:['**/*.css'],
     routes: async defineRoutes => {

@@ -85,7 +85,9 @@ export default function BlogRoute () {
                     >
                         <h2 className='text-2xl font-bold'>Posts</h2>
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent
+                        className='flex flex-col gap-2'
+                    >
                         { postsData ? postsData.map((post) =>
                             post && (
 

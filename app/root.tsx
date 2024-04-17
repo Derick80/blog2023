@@ -53,7 +53,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <Meta />
                     <Links />
                 </head>
-                <body>
+                <body
+                className={`mx-auto bg-primary text-primary max-w-3xl`}
+                >
                     <NavigationBar
                     />
                     {children}

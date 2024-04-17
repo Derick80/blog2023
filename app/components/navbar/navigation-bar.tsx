@@ -31,6 +31,10 @@ const navigationLinks = [
     {
         name: 'Contact',
         href: '/contact'
+    },
+    {
+        name: 'Writing',
+        href: '/writing'
     }
 ]
 
@@ -55,6 +59,17 @@ const MobileNavigationMenu = () => {
             >
                 Blog
             </NavLink>
+            {
+                navigationLinks.map((link) => (
+                    <NavLink
+                        key={link.href}
+                        className='text-purple-500 hover:text-purple-700'
+                        to={link.href}
+                    >
+                        {link.name}
+                    </NavLink>
+                ))
+            }
             <NavDrawer />
         </nav>
     )
@@ -70,6 +85,17 @@ const DesktopNavigationMenu = () => {
             >
                 Blog
             </NavLink>
+            {
+                navigationLinks.map((link) => (
+                    <NavLink
+                        key={link.href}
+                        className='text-purple-500 hover:text-purple-700'
+                        to={link.href}
+                    >
+                        {link.name}
+                    </NavLink>
+                ))
+            }
         </div>
     )
 }
