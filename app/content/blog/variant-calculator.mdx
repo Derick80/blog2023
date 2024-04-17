@@ -1,0 +1,46 @@
+---
+title: ACMG Variant Pathogenicity Calculator
+author: "Derick Hoskinson, Ph.D."
+description: "ACMG Criteria Usage at VariantAlleles.com"
+datePublished: 2023-11-06
+published: true
+categories: ["feature", "documentation", "ACMG", "tool"]
+---
+
+## Context
+
+## Decision
+
+## Versions
+
+### 1.0
+
+This calculator is based on the V3.0 of the ACMG guidelines (Richards et al. 2015). It uses the ACMG criteria from the 2015 publication and incorporates the 2017 updates to the guidelines. Specifically the PM2 criteria was updated to be scored as PM2_Supporting.
+
+This version also uses a modified version of the Bayesian score system from Tavtigian et al. 2020.
+
+The following point values were used for the Bayesian score system to calculate the pathogenicity of a variant:
+
+| Strength      | Point Value |
+| ------------- | ----------- |
+| Very Strong   | 5           |
+| Strong        | 4           |
+| Moderate      | 2           |
+| Supporting    | 3           |
+| Indeterminate | 1           |
+
+#### Thresholds
+
+| Pathogenicity     | Point Value |
+| ----------------- | ----------- |
+| Pathogenic        | >= 10       |
+| Likely Pathogenic | 5-9         |
+| Uncertain         | 0- 5        |
+| Likely Benign     | -1 - -6     |
+| Benign            | > -6        |
+
+### 1.5
+
+### 2.0
+
+This calculator is based on the unreleased V4.0 of the ACMG guidelines.

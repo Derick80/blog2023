@@ -16,6 +16,7 @@ export default defineConfig({
   },
 
   plugins: [mdx({
+
 remarkPlugins: [
         remarkFrontmatter,
         remarkMdxFrontmatter,

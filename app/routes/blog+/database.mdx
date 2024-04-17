@@ -1,0 +1,25 @@
+---
+title: Database
+author: "Derick Hoskinson, Ph.D."
+description: "Database Planning for VariantAlleles.com"
+datePublished: 2023-11-06
+published: true
+categories: ["databases", "planning", "documentation"]
+---
+
+## Context
+
+VariantAlleles.com will use a distributed SQL database that is compatible with postgres to store data. The database is hosted on cockroachlabs cloud.
+
+### CockroachDB
+
+Connection string template:
+DATABASE_URL=postgresql://USER:PASSWORD.HOST:PORT/DATABASE?sslmode=verify-full
+
+## Decision
+
+Using CockroachDB as the database for VariantAlleles.com has been useful for development as I test out different application frameworks. I can just place the conncection string in the .env file and the application will connect to the database.
+
+I also used this database for the initial seeding of the app which involved large and complex datasets.
+
+## Consequences

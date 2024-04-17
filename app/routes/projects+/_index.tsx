@@ -1,12 +1,3 @@
-
-
 export default function ProjectRoute() {
-
-    return (
-        <div
-            className= ''
-        >
-            stuff here
-        </div>
-    )
+    return <div className=''>stuff here</div>
 }

@@ -25,18 +25,19 @@ export const links: LinksFunction = () => [
 export async function loader({ request }: LoaderFunctionArgs) {
     const theme = await getThemeFromCookie(request)
     const { NODE_ENV } = getSharedEnvs()
+    console.log(theme,'theme in root');
+
     const mode = NODE_ENV
     // const theme:Theme = 'system'
 
     const session = await getSession(request)
 
-    return json({ theme })
+    return json({ theme:'system' })
 }
 
 // place TooltipProvider here to wrap the entire app in it
 
-
-export function Layout ({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: React.ReactNode }) {
     const { theme } = useLoaderData<typeof loader>()
 
     const nonce = useNonce()
@@ -53,7 +54,8 @@ export function Layout ({ children }: { children: React.ReactNode }) {
                     <Links />
                 </head>
                 <body>
-                    <NavigationBar />
+                    <NavigationBar
+                    />
                     {children}
                     <ScrollRestoration />
                     <Scripts nonce={nonce} />
