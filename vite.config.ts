@@ -15,7 +15,10 @@ export default defineConfig({
     port:6236
   },
 
-  plugins: [mdx({
+  plugins: [
+
+    mdx({
+                providerImportSource: '@mdx-js/react',
 
 remarkPlugins: [
         remarkFrontmatter,
@@ -24,7 +27,8 @@ remarkPlugins: [
     rehypePlugins: [
 rehypePrettyCode
     ],
-  }),remixDevTools(), remix({
+    }),
+    remixDevTools(), remix({
 ignoredRouteFiles:['**/*.css'],
     routes: async defineRoutes => {
     return flatRoutes('routes', defineRoutes)

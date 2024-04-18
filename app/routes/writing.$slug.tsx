@@ -1,79 +1,46 @@
-
-
-import { type LoaderFunctionArgs, json } from '@remix-run/node';
-import { compile } from '@mdx-js/mdx'
+import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import { MDXProvider } from '@mdx-js/react';
-import { useLoaderData } from '@remix-run/react';
-import { frontmatterType } from './writing';
+import { useLoaderData } from '@remix-run/react'
+import { getMDXComponent } from 'mdx-bundler/client'
+import { bundleMDX } from '../.server/markdown.server'
+import rehypePrettyCode from 'rehype-pretty-code'
+// import Markdown from 'react-markdown'
+import * as React from 'react'
+
 type PostModule = { [key: string]: unknown } // Unknown structure for now
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-    const slug = params.slug;
-    if (!slug) throw new Error('No slug found'
-    )
-        const posts = import.meta.glob(`..//content/blog/*.mdx`)
-
-    if (!posts) throw new Error('No post found')
-    console.log(Array.isArray(posts), 'posts');
-
-    console.log(posts, 'post');
-
-    const keys = Object.keys(posts)
-
-    const slugs = keys.map((key) => key.replace('../content/blog/', '').replace('.mdx', ''))
+    const slug = params.slug
+    if (!slug) throw new Error('N o slug found')
+    const result = await bundleMDX({
+        file: `../../content/blog/${slug}.mdx`,
+        cwd: '/app/content/blog',
 
 
-    const postData = await Promise.all(
-        keys.map(async (key) => {
-            const { frontmatter } = await posts[key]() as PostModule;
-            if (frontmatter && typeof frontmatter === 'object') {
-                // Only process if frontmatter exists and is an object
-                return {
-                    ...frontmatter,
-                    url: key,
-                    slug: key.replace('../content/blog/', '').replace('.mdx', ''),
-                    code: () => import(`../content/blog/${key.replace('../content/blog/', '').replace('.mdx', '')}.mdx`)
-                } as frontmatterType;
-            } else {
-                // Handle the case where frontmatter is missing or not an object
-                console.error(`Error processing post: ${key}. Missing or invalid frontmatter.`);
-                return null; // Or some placeholder value if needed
             }
-        })
-    );
 
-    const post = postData.find((post) => post.slug === slug)
-    if (!post) throw new Error('No post found'
     )
-    console.log(post, 'post');
-    // need to parse the mdx file here
+    const { code, frontmatter } = result
+console.log(code, 'code');
 
-    const mdxFile = await post.code()
-    console.log(mdxFile, 'mdxFile');
+    const community =  import.meta.glob(`../content/blog/community.mdx`)
+    console.dir(community, 'community');
+    console.log(Reflect.ownKeys(community));
 
-    const Component = String(await compile(post.code, { outputFormat: 'function-body' }))
-console.log(Component, 'Component');
 
-  return json({post, Component, postData, slugs});
+    return json({ community, code, frontmatter })
 }
 
-
 export default function SlugRoute() {
-    const {post,Component} = useLoaderData<typeof loader>();
+    const { code } = useLoaderData<typeof loader>()
+
+    const Component = React.useMemo(() => getMDXComponent(code), [code])
 
     return (
-        <div
-            className= 'border-2'
-        >
+        <div className='border-2 w-full overflow-hidden'>
+            <Component />
             <h1>Writing</h1>
-            <MDXProvider>
-                <Component
-                    {...remarkFrontmatter}
-                />
-            </MDXProvider>
-            huhg
         </div>
     )
 }
