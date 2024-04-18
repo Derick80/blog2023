@@ -17,22 +17,27 @@ import { getSession } from './routes/_auth+/auth.server.js'
 import { TooltipProvider } from './components/ui/tooltip.js'
 import { useNonce } from './lib/nonce-provider.js'
 import NavigationBar from './components/navbar/navigation-bar.js'
+import { getUsers } from './.server/user.server.js'
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
 ]
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader ({ request }: LoaderFunctionArgs) {
+    const user = await getUsers()
+
+    if (!user) throw new Error('No user found')
+
     const theme = await getThemeFromCookie(request)
     const { NODE_ENV } = getSharedEnvs()
-    console.log(theme,'theme in root');
+    console.log(theme, 'theme in root')
 
     const mode = NODE_ENV
     // const theme:Theme = 'system'
 
     const session = await getSession(request)
 
-    return json({ theme:'system' })
+    return json({ theme,user })
 }
 
 // place TooltipProvider here to wrap the entire app in it
@@ -53,12 +58,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <Meta />
                     <Links />
                 </head>
-                <body
-                className={`mx-auto bg-primary text-primary max-w-3xl`}
-                >
-                    <NavigationBar
-                    />
-                    {children}
+                <body>
+                    <main className='mx-auto p-1 md:p-2 max-w-3xl'>
+                        <NavigationBar />
+                        {children}
+                    </main>
                     <ScrollRestoration />
                     <Scripts nonce={nonce} />
                 </body>

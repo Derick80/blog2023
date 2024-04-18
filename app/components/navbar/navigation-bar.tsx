@@ -9,39 +9,58 @@ import {
     SheetTitle,
     SheetTrigger
 } from '../ui/sheet'
-import { HamburgerMenuIcon } from '@radix-ui/react-icons'
+import {
+    BookmarkFilledIcon,
+    CodeIcon,
+    EnvelopeClosedIcon,
+    FileTextIcon,
+    HamburgerMenuIcon,
+    HomeIcon,
+    Pencil1Icon,
+    PersonIcon
+} from '@radix-ui/react-icons'
 
 const navigationLinks = [
     {
         name: 'Home',
-        href: '/'
+        href: '/',
+        icon: <HomeIcon className=' w-4 h-4' />
     },
     {
         name: 'About',
-        href: '/about'
+        href: '/about',
+        icon: <PersonIcon className=' w-4 h-4' />
     },
     {
         name: 'Blog',
-        href: '/blog'
+        href: '/blog',
+        icon: <Pencil1Icon className=' w-4 h-4' />
     },
     {
         name: 'Projects',
-        href: '/projects'
+        href: '/projects',
+        icon: <CodeIcon className=' w-4 h-4' />
     },
     {
         name: 'Contact',
-        href: '/contact'
+        href: '/contact',
+        icon: <EnvelopeClosedIcon className=' w-4 h-4' />
+    },
+    {
+        name: 'CV',
+        href: '/cv',
+        icon: <FileTextIcon className=' w-4 h-4' />
     },
     {
         name: 'Writing',
-        href: '/writing'
+        href: '/writing',
+        icon: <BookmarkFilledIcon className=' w-4 h-4' />
     }
 ]
 
 export const NavigationBar = () => {
     return (
         <>
-            <DesktopNavigationMenu />
             <MobileNavigationMenu />
         </>
     )
@@ -51,51 +70,52 @@ export default NavigationBar
 
 const MobileNavigationMenu = () => {
     return (
-        <nav className='flex md:hidden justify-between items-center p-1 border-2 border-purple-400'>
+        <nav className='flex justify-between items-center p-1'>
             <BrandIcon />
-            <NavLink
-                className='text-purple-500 hover:text-purple-700'
-                to='/blog'
-            >
-                Blog
-            </NavLink>
-            {
-                navigationLinks.map((link) => (
-                    <NavLink
-                        key={link.href}
-                        className='text-purple-500 hover:text-purple-700'
-                        to={link.href}
-                    >
-                        {link.name}
-                    </NavLink>
-                ))
-            }
-            <NavDrawer />
+
+            {navigationLinks.map((link) => (
+                <NavLink
+                    key={link.href}
+                    className={({ isActive }) =>
+                        isActive
+                            ? 'underline flex items-center gap-2'
+                            : 'flex items-center gap-2 '
+                    }
+                    to={link.href}
+                    title={link.name}
+                >
+                    {link.icon}
+
+                    <div className='text-base hidden md:block'>{link.name}</div>
+                </NavLink>
+            ))}
+            <div className='flex items-center justify-between '>
+                <ThemeToggle />
+
+                <NavDrawer />
+            </div>
         </nav>
     )
 }
 
 const DesktopNavigationMenu = () => {
     return (
-        <div className='hidden md:flex items-center justify-between p-2 border-2 border-purple-500'>
-            <BrandIcon />
-            <NavLink
-                className='text-purple-500 hover:text-purple-700'
-                to='/blog'
-            >
-                Blog
+        <div className='flex flex-col justify-around '>
+            <NavLink className='flex flex-row items-center' to='/blog'>
+                <BrandIcon />
+                Home
             </NavLink>
-            {
-                navigationLinks.map((link) => (
-                    <NavLink
-                        key={link.href}
-                        className='text-purple-500 hover:text-purple-700'
-                        to={link.href}
-                    >
-                        {link.name}
-                    </NavLink>
-                ))
-            }
+            {navigationLinks.map((link) => (
+                <NavLink
+                    key={link.href}
+                    prefetch='intent'
+                    className=''
+                    to={link.href}
+                >
+                    {link.name}
+                </NavLink>
+            ))}
+            <ThemeToggle />
         </div>
     )
 }
@@ -103,18 +123,11 @@ const DesktopNavigationMenu = () => {
 const NavDrawer = () => {
     return (
         <Sheet>
-            <SheetTrigger>
+            <SheetTrigger className='block md:hidden'>
                 <HamburgerMenuIcon />
             </SheetTrigger>
             <SheetContent side='right'>
-                <SheetHeader>
-                    <SheetTitle>Are you absolutely sure?</SheetTitle>
-                    <SheetDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
-                    </SheetDescription>
-                </SheetHeader>
+                <DesktopNavigationMenu />
             </SheetContent>
         </Sheet>
     )
