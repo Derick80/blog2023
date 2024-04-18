@@ -4,15 +4,11 @@ import { getUser, getUsers } from '~/.server/user.server'
 import { useOptionalUser } from '~/lib/functions'
 
 export type LikeContainerProps = {
-    slug: string,
-}
-export const LikeContainer = ({ slug }: {
     slug: string
-}) => {
-
-
+}
+export const LikeContainer = ({ slug }: { slug: string }) => {
     const user = useOptionalUser()
-    if(!user) return null
+    if (!user) return null
     const userId = user.id
 
     const matches = useMatches()
@@ -20,7 +16,7 @@ export const LikeContainer = ({ slug }: {
     return (
         <div>
             {userId}
-            { slug }
+            {slug}
             <pre>{JSON.stringify(matches, null, 2)}</pre>
         </div>
     )

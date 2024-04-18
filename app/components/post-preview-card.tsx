@@ -41,13 +41,9 @@ export default function PostPreviewCard({
                     <CardDescription className='italic text-xs'>
                         {description}
                     </CardDescription>
-                    <Muted
-                        className='text-right'
-                    >By { author }</Muted>
-
+                    <Muted className='text-right'>By {author}</Muted>
                 </CardContent>
                 <CardFooter className=''>
-
                     <div className='flex flex-row gap-1 md:gap-2'>
                         {categories.map((category) => (
                             <Badge key={category}>{category}</Badge>
@@ -55,7 +51,7 @@ export default function PostPreviewCard({
                     </div>
 
                     <Link
-                        to={`/blog/${slug}`}
+                        to={`/writing/${slug}`}
                         prefetch='intent'
                         className='flex flex-end w-full'
                         onClick={() => setItem('')}

@@ -20,9 +20,8 @@ export const getUser = async (input: Prisma.UserWhereUniqueInput) => {
 
 export const getUsers = async () => {
     const users = await prisma.user.findFirst({
-        select: defaultSelect,
+        select: defaultSelect
     })
 
     return users
 }
-

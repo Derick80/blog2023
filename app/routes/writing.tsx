@@ -1,6 +1,18 @@
 import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
+import React from 'react'
+import { bundleSomeMDX } from '~/.server/mdx.server'
 import { Badge } from '~/components/ui/badge'
+import { getMDXComponent } from 'mdx-bundler/client'
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger
+} from '~/components/ui/accordion'
+import { item } from '@markdoc/markdoc/dist/src/schema'
+import PostPreviewCard from '~/components/post-preview-card'
+
 export type frontmatterType = {
     title: string
     author: string
@@ -53,7 +65,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         (post) => post !== null && post.published === true
     )
     const categories = postsData.map((post) => (post ? post.categories : null))
-    console.log(postsData, 'postsData from writing')
 
     if (!postsData || postsData === null) throw new Error('No posts data found')
     return json({ postData, categories, slugs })
@@ -61,42 +72,47 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function WritingRoute() {
     const { postData, slugs, categories } = useLoaderData<typeof loader>()
+    const [item, setItem] = React.useState('item-1')
+    console.log(item, 'item')
+
+    const [value, setValue] = React.useState('item-1')
     return (
         <div className='flex flex-col items-center justify-around w-full h-full p-2 gap-4'>
             <h1>Writing</h1>
             <Outlet />
-            <div className='flex flex-col gap-2 w-full'>
-                {postData.map(
-                    (post) =>
-                        post && (
-                            <div
-                                className='border-2 flex flex-col gap-2 w-full p-2'
-                                key={post.slug}
-                            >
-                                <NavLink
-                                    className={
-                                        'text-blue-500 hover:text-blue-700'
-                                    }
-                                    to={`/writing/${post.slug}`}
-                                >
-                                    <h2>{post.title}</h2>
-                                </NavLink>
-                                <p>{post.description}</p>
-                                <p>{post.datePublished}</p>
-                                <p>{post.author}</p>
-                                <ul className='flex gap-2 flex-row flex-wrap w-full '>
-                                    {post.categories.map((category) => {
-                                        return (
-                                            <li key={category}>
-                                                <Badge>{category}</Badge>
-                                            </li>
-                                        )
-                                    })}
-                                </ul>
-                            </div>
-                        )
-                )}
-            </div>
+            <Accordion
+                className='w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'
+                value={value}
+                onValueChange={setValue}
+                type='single'
+                collapsible
+            >
+                <AccordionItem value={item}>
+                    <AccordionTrigger onClick={() => setItem('item-1')}>
+                        <h2 className='text-2xl font-bold'>Posts</h2>
+                    </AccordionTrigger>
+                    <AccordionContent className='flex flex-col gap-2'>
+                        {postData
+                            ? postData.map(
+                                  (post) =>
+                                      post && (
+                                          <PostPreviewCard
+                                              setItem={setValue}
+                                              key={post.slug}
+                                              title={post.title}
+                                              author={post.author}
+                                              description={post.description}
+                                              datePublished={post.datePublished}
+                                              published={post.published}
+                                              categories={post.categories}
+                                              slug={post.slug}
+                                          />
+                                      )
+                              )
+                            : null}
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </div>
     )
 }

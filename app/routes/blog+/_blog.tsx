@@ -1,5 +1,11 @@
 import { type LoaderFunctionArgs, json } from '@remix-run/node'
-import { NavLink, Outlet, useFetcher, useLoaderData, useLocation } from '@remix-run/react'
+import {
+    NavLink,
+    Outlet,
+    useFetcher,
+    useLoaderData,
+    useLocation
+} from '@remix-run/react'
 import React from 'react'
 import PostPreviewCard from '~/components/post-preview-card'
 import {
@@ -9,10 +15,9 @@ import {
     AccordionTrigger
 } from '~/components/ui/accordion'
 
-
 import { compile } from '@mdx-js/mdx'
 import { getFile } from '~/.server/markdown.server'
-import {marked} from 'marked'
+import { marked } from 'marked'
 export type frontmatterType = {
     title: string
     author: string
@@ -24,11 +29,11 @@ export type frontmatterType = {
     categories: string[]
 }
 type PostModule = { [key: string]: unknown } // Unknown structure for now
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
     const posts = import.meta.glob('./*.mdx')
-    console.log(posts, 'posts');
+    console.log(posts, 'posts')
     const pUrl = new URL('/app/content/blog/database.mdx', import.meta.url)
-    console.log(pUrl, 'pUrl');
+    console.log(pUrl, 'pUrl')
 
     if (!posts) throw new Error('No posts found')
     const keys = Object.keys(posts)
@@ -42,12 +47,12 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
     // console.log(apost, 'apost');
     // const content = fs.readFileSync(pUrl.href, { encoding: 'utf-8' })
 
-
     const slugs = keys.map((key) => key.replace('./', '').replace('.mdx', ''))
     const oneSlug = slugs[0]
-    console.log(oneSlug, 'oneSlug');
+    console.log(oneSlug, 'oneSlug')
 
-    const {frontmatter,content} = await getFile(slugs[3])
+    const { frontmatter, content } = await getFile(slugs[3])
+    console.log(frontmatter, 'frontmatter')
 
     const postData = await Promise.all(
         keys.map(async (key) => {
@@ -76,7 +81,7 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
 
     if (!postsData || postsData === null) throw new Error('No posts data found')
     const compiled = await compile(content)
-    console.log(compiled, 'compiled');
+    console.log(compiled, 'compiled')
 
     return json({ slugs, postsData, categories, content, compiled })
 }
@@ -87,29 +92,30 @@ export default function BlogRoute() {
 
     const [value, setValue] = React.useState('item-1')
 
-    const { postsData, slugs, categories, content, compiled } = useLoaderData<typeof loader>()
-
+    const { postsData, slugs, categories, content, compiled } =
+        useLoaderData<typeof loader>()
 
     const handleNavigationAndOpenOrClose = React.useCallback(() => {
         setItem('item-1')
     }, [item])
 
-
     return (
         <div className='flex flex-col gap-2 items-center w-full mx-auto mt-4'>
-            <div className='flex flex-col w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8' dangerouslySetInnerHTML={{ __html: compiled }} />
             <div
-                className='flex flex-col gap-2 items-center w-full mx-auto mt-4'>
+                className='flex flex-col w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'
+                dangerouslySetInnerHTML={{ __html: compiled }}
+            />
+            <div className='flex flex-col gap-2 items-center w-full mx-auto mt-4'>
                 <div
                     className='flex flex-col w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'
-                    dangerouslySetInnerHTML={ { __html: marked(content) } }
+                    dangerouslySetInnerHTML={{ __html: marked(content) }}
                 />
 
                 <div className='flex flex-row gap-2'>
                     <NavLink to='/blog+'>Posts</NavLink>
                     <NavLink to='/blog+/new'>New Post</NavLink>
-                    </div>
                 </div>
+            </div>
 
             <Accordion
                 className='w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'

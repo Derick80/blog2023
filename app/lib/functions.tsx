@@ -1,10 +1,10 @@
 import { Params, useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
 export type UserType = {
-    id: string,
-    email: string,
-    username: string,
-    avatarUrl: string,
+    id: string
+    email: string
+    username: string
+    avatarUrl: string
     role: string
 }
 interface Match {
@@ -20,7 +20,7 @@ interface Match {
  * @param {string} id The route id
  * @returns {JSON|undefined} The router data or undefined if not found
  */
-export function useMatchesData (id: string): Match['data'] | undefined {
+export function useMatchesData(id: string): Match['data'] | undefined {
     const matchingRoutes = useMatches()
     const route = useMemo(
         () => matchingRoutes.find((route) => route.id === id),
@@ -29,11 +29,11 @@ export function useMatchesData (id: string): Match['data'] | undefined {
     return route?.data
 }
 
-function isUser (user: any): user is UserType {
+function isUser(user: any): user is UserType {
     return user && typeof user === 'object' && typeof user.email === 'string'
 }
 
-export function useOptionalUser (): UserType | undefined {
+export function useOptionalUser(): UserType | undefined {
     const data = useMatchesData('root')
     if (!data || !isUser(data.user)) {
         return undefined

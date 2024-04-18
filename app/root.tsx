@@ -23,21 +23,20 @@ export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
 ]
 
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
     const user = await getUsers()
 
     if (!user) throw new Error('No user found')
 
     const theme = await getThemeFromCookie(request)
     const { NODE_ENV } = getSharedEnvs()
-    console.log(theme, 'theme in root')
 
     const mode = NODE_ENV
     // const theme:Theme = 'system'
 
     const session = await getSession(request)
 
-    return json({ theme,user })
+    return json({ theme, user })
 }
 
 // place TooltipProvider here to wrap the entire app in it
