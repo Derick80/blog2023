@@ -31,11 +31,7 @@ const navigationLinks = [
         href: '/about',
         icon: <PersonIcon className=' w-4 h-4' />
     },
-    {
-        name: 'Blog',
-        href: '/blog',
-        icon: <Pencil1Icon className=' w-4 h-4' />
-    },
+
     {
         name: 'Projects',
         href: '/projects',

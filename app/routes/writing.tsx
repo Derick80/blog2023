@@ -1,9 +1,6 @@
 import { type LoaderFunctionArgs, json } from '@remix-run/node'
-import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
+import { Outlet, useLoaderData } from '@remix-run/react'
 import React from 'react'
-import { bundleSomeMDX } from '~/.server/mdx.server'
-import { Badge } from '~/components/ui/badge'
-import { getMDXComponent } from 'mdx-bundler/client'
 import {
     Accordion,
     AccordionContent,
@@ -60,20 +57,16 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
             }
         })
     )
+    const categories = postData.map((post) => (post ? post.categories : null))
 
-    const postsData = postData.filter(
-        (post) => post !== null && post.published === true
-    )
-    const categories = postsData.map((post) => (post ? post.categories : null))
+    const allPosts = postData.filter((post) => post !== null && post.published === true)
 
-    if (!postsData || postsData === null) throw new Error('No posts data found')
-    return json({ postData, categories, slugs })
+    return json({ allPosts, categories, slugs })
 }
 
 export default function WritingRoute() {
-    const { postData, slugs, categories } = useLoaderData<typeof loader>()
+    const { allPosts, slugs, categories } = useLoaderData<typeof loader>()
     const [item, setItem] = React.useState('item-1')
-    console.log(item, 'item')
 
     const [value, setValue] = React.useState('item-1')
     return (
@@ -92,8 +85,8 @@ export default function WritingRoute() {
                         <h2 className='text-2xl font-bold'>Posts</h2>
                     </AccordionTrigger>
                     <AccordionContent className='flex flex-col gap-2'>
-                        {postData
-                            ? postData.map(
+                        {allPosts
+                            ? allPosts.map(
                                   (post) =>
                                       post && (
                                           <PostPreviewCard

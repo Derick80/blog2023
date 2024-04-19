@@ -1,12 +1,10 @@
-import { useFetcher, useMatches } from '@remix-run/react'
-import React from 'react'
-import { getUser, getUsers } from '~/.server/user.server'
+import { useMatches } from '@remix-run/react'
 import { useOptionalUser } from '~/lib/functions'
 
 export type LikeContainerProps = {
     slug: string
 }
-export const LikeContainer = ({ slug }: { slug: string }) => {
+const LikeContainer = ({ slug }: { slug: string }) => {
     const user = useOptionalUser()
     if (!user) return null
     const userId = user.id

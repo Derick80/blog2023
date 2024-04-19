@@ -131,7 +131,21 @@ export const categoriesToSeed = [
 
 
 const mdxPostsToSeed = [
-[
+  [
+  {
+  "title": "ACMG Criteria",
+  "author": "Derick Hoskinson, Ph.D.",
+  "description": "ACMG Criteria Usage at VariantAlleles.com",
+  "datePublished": "2023-11-06",
+  "published": false,
+  "categories": [
+    "planning",
+    "documentation",
+    "ACMG"
+  ],
+  "url": "../content/blog/acmg-criteria.mdx",
+  "slug": "acmg-criteria"
+},
   {
     "title": "Community",
     "author": "Derick Hoskinson, Ph.D.",
