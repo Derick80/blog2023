@@ -1,37 +1,29 @@
-import { ActionFunctionArgs, type LoaderFunctionArgs, json } from '@remix-run/node'
-import { MDXProvider } from '@mdx-js/react'
-import { useLoaderData } from '@remix-run/react'
-import { frontmatterType } from './writing'
+import {
+    ActionFunctionArgs,
+    type LoaderFunctionArgs,
+    json
+} from '@remix-run/node'
+import { useActionData, useLoaderData } from '@remix-run/react'
 import { getFile } from '~/.server/markdown.server'
-import { marked } from 'marked'
-import { Markdown } from '~/components/markdown'
 import { bundleMDX } from 'mdx-bundler'
 import React from 'react'
 import { getMDXComponent } from 'mdx-bundler/client'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import rehypePrettyCode from 'rehype-pretty-code'
 import HoverBar from '~/components/hover-bar'
-import { getPostInformation } from '~/.server/content.server'
+import { getPostInformation, likeContent } from '~/.server/content.server'
 import { z } from 'zod'
 
 // app/routes/writing.$slug_index.tsx
 const relativePath = 'app/content/blog/'
 const filePath = String([process.cwd(), relativePath, +'*/tsx'])
 
-const contentActionSchema = z.discriminatedUnion('intent', [
-    z.object({
-        intent: z.literal('like-content'),
-        contentId: z.string(),
-        userId: z.string().min(1).max(10000)
-    }),
-
-])
 
 const slugSchema = z.object({
     slug: z.string()
 })
 
-export async function loader ({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
     const { slug } = slugSchema.parse(params)
     if (!slug) throw new Error('No slug found')
 
@@ -70,28 +62,42 @@ export async function loader ({ request, params }: LoaderFunctionArgs) {
         }
     })
     const contentDetails = await getPostInformation(slug)
-if(!contentDetails) throw new Error('No content details found')
+    if (!contentDetails) throw new Error('No content details found')
 
-    return json({ slug, content, code , contentDetails})
+    return json({ slug, content, code, contentDetails })
 }
+const contentActionSchema = z.discriminatedUnion('intent', [
+    z.object({
+        intent: z.literal('like-content'),
+        contentId: z.string(),
+        userId: z.string().min(1).max(10000)
+    })
+])
 
-
+export type actionType = z.infer<typeof contentActionSchema>
 export async function action ({ request, params }: ActionFunctionArgs) {
+    const formData = await request.formData()
+console.log(Object.fromEntries(formData.entries()));
 
+    const { intent,userId,contentId } = contentActionSchema.parse(Object.fromEntries(formData.entries()))
 
-    return json({message:'success'})
+    const result = await likeContent({ userId, contentId })
+    if (!result) return json({ message: 'error' }, { status: 500 })
+
+    return json({ message: 'success' }, { status: 200 })
 }
-export default function SlugRoute() {
-    const {  code,contentDetails } = useLoaderData<typeof loader>()
+export default function SlugRoute () {
+    const actionData = useActionData<typeof action>()
+    console.log(actionData, 'actionData');
+
+
+    const { code, contentDetails } = useLoaderData<typeof loader>()
     const Component = React.useMemo(() => getMDXComponent(code), [code])
 
     return (
         <>
             <div className='prose w-screen py-[1em] px-[2em] dark:prose-invert md:prose-lg lg:prose-xl prose-headings:text-text-primary prose-a:no-underline prose-pre:p-0 dark:prose-headings:text-d-text-primary'>
-
-                <HoverBar
-
-                   contentDetails={contentDetails}/>
+                <HoverBar contentDetails={contentDetails} />
                 <Component />
             </div>
         </>

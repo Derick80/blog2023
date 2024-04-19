@@ -59,7 +59,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     )
     const categories = postData.map((post) => (post ? post.categories : null))
 
-    const allPosts = postData.filter((post) => post !== null && post.published === true)
+    const allPosts = postData.filter(
+        (post) => post !== null && post.published === true
+    )
 
     return json({ allPosts, categories, slugs })
 }

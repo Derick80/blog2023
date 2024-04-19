@@ -17,12 +17,11 @@ export type HoverBarProps = {
     contentDetails: {
         _count: {
             loves: number
-        },
+        }
         loves: {
-            userId: string,
+            userId: string
             contentId: string
         }[]
-
     }
 }
 const HoverBar = ({ contentDetails }: HoverBarProps) => {
@@ -30,14 +29,17 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
     // extract contentId from the contentDetails object
     const contentId = contentDetails.loves.map((love) => love.contentId)[0]
 
-    console.log(contentId, 'contentId');
 
-    const [likeCount, setLikeCount] = React.useState(contentDetails._count.loves)
-    const hasLiked = contentDetails.loves.some((love) => love.userId === user?.id)
+    const [likeCount, setLikeCount] = React.useState(
+        contentDetails._count.loves
+    )
+    const hasLiked = contentDetails.loves.some(
+        (love) => love.userId === user?.id
+    )
 
     const [userLiked, setUserLiked] = React.useState(hasLiked)
 
-    const likeFetcher= useFetcher()
+    const likeFetcher = useFetcher()
     const handleLike = async () => {
         if (!user) return alert('You must be logged in to like this post')
 
@@ -48,18 +50,17 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
             setLikeCount((prev) => prev + 1)
             setUserLiked(true)
         }
-        likeFetcher.submit({
+        likeFetcher.submit(
+            {
                 userId: user?.id,
                 contentId: contentId,
-                intent: 'like',
-
+                intent: 'like-content'
             },
             {
-                method: 'post',
-                action:`/writing/${contentId}`
+                method: 'POST',
+                action: `/writing/${contentId}`
             }
         )
-
     }
 
     return (
@@ -69,18 +70,20 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
                     type='button'
                     variant='default'
                     size='sm'
-                    disabled={ !user }
-
-                    className={userLiked ? 'bg-red-500 text-white' :`bg-white text-black`  }
-                                onClick={() => alert(`Liked ${contentDetails.loves.map((love) => love.contentId)}`) }
+                    name='intent'
+                    value='like-content'
+                    disabled={!user}
+                    className={
+                        userLiked
+                            ? 'bg-red-500 text-white'
+                            : `bg-white text-black`
+                    }
+                    onClick={handleLike
+                    }
                 >
                     <span className='ml-2 text-xs font-bold'>
                         <HeartIcon />
-                        <Badge
-                            variant='secondary'
-                        >
-                            {likeCount}
-                            </Badge>
+                        <Badge variant='secondary'>{likeCount}</Badge>
                     </span>{' '}
                 </Button>
                 <span className='ml-2 text-xs font-bold'>

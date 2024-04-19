@@ -1,6 +1,5 @@
 import { prisma } from './prisma.server'
 
-
 export const getPostInformation = async (slug: string) => {
     return await prisma.content.findUnique({
         where: {
@@ -18,14 +17,16 @@ export const getPostInformation = async (slug: string) => {
                 select: {
                     loves: true
                 }
-
             }
         }
     })
-
 }
 
-export const likeContent = async (userId: string, contentId: string) => {
+export const likeContent = async ({ userId, contentId }: {
+    userId: string
+    contentId: string
+
+}) => {
     const hasLiked = await prisma.love.findUnique({
         where: {
             contentId_userId: {
@@ -52,4 +53,3 @@ export const likeContent = async (userId: string, contentId: string) => {
         })
     }
 }
-
