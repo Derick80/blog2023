@@ -77,7 +77,6 @@ const contentActionSchema = z.discriminatedUnion('intent', [
 export type actionType = z.infer<typeof contentActionSchema>
 export async function action ({ request, params }: ActionFunctionArgs) {
     const formData = await request.formData()
-console.log(Object.fromEntries(formData.entries()));
 
     const { intent,userId,contentId } = contentActionSchema.parse(Object.fromEntries(formData.entries()))
 

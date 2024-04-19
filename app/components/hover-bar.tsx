@@ -4,7 +4,7 @@
 
  */
 
-import { HeartIcon, Share1Icon } from '@radix-ui/react-icons'
+import { HeartFilledIcon, HeartIcon, Share1Icon } from '@radix-ui/react-icons'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { useOptionalUser } from '~/lib/functions'
@@ -65,7 +65,7 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
 
     return (
         <div className='post-floating-bar active animation fixed left-0 right-0 z-50 flex h-12 w-full flex-wrap justify-center 2xl:h-14 bottom-10'>
-            <div className='border-1/2 relative mx-auto flex h-12 shrink flex-wrap items-center justify-center rounded-full border-primary bg-primary px-5 py-1 text-sm  text-primary-foreground shadow-xl 2xl:h-14'>
+            <div className='border-1/2 relative mx-auto flex h-12  flex-wrap items-center justify-center rounded-full border-primary bg-primary px-5 py-1 text-sm  text-primary-foreground shadow-xl 2xl:h-14'>
                 <Button
                     type='button'
                     variant='default'
@@ -73,16 +73,12 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
                     name='intent'
                     value='like-content'
                     disabled={!user}
-                    className={
-                        userLiked
-                            ? 'bg-red-500 text-white'
-                            : `bg-white text-black`
-                    }
+
                     onClick={handleLike
                     }
                 >
                     <span className='ml-2 text-xs font-bold'>
-                        <HeartIcon />
+                  {userLiked ? <HeartFilledIcon /> : <HeartIcon />}
                         <Badge variant='secondary'>{likeCount}</Badge>
                     </span>{' '}
                 </Button>

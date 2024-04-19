@@ -35,19 +35,13 @@ export const getFile = async (slug: string) => {
         relativePath,
         slug + '.mdx'
     )
-    console.log(contentPath, 'contentPath')
 
     const content = fs.readFileSync(contentPath, { encoding: 'utf-8' })
-    console.log(content, 'content')
     const isAFile = await isFile(contentPath)
-    console.log(isAFile, 'isFile')
     const test1 = isString(content)
-    console.log(test1, 'test1')
     // return the frontmatter and the content
     const frontmatter = content.split('---')[1]
-    console.log(frontmatter, 'frontmatter')
     const content1 = content.split('---')[2]
-    console.log(content1, 'content1')
 
     return { frontmatter, content: content1 }
 }
