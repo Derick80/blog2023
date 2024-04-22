@@ -1,24 +1,19 @@
 import { NavLink } from '@remix-run/react'
 import { ThemeToggle } from '../theme/theme-toggle'
 import { BrandIcon } from '../brand-icon'
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger
-} from '../ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
 import {
     BookmarkFilledIcon,
     CodeIcon,
+    EnterIcon,
     EnvelopeClosedIcon,
+    ExitIcon,
     FileTextIcon,
     HamburgerMenuIcon,
     HomeIcon,
-    Pencil1Icon,
     PersonIcon
 } from '@radix-ui/react-icons'
+import { useRootLoaderData } from '~/root'
 
 const navigationLinks = [
     {
@@ -57,14 +52,17 @@ const navigationLinks = [
 export const NavigationBar = () => {
     return (
         <>
-            <MobileNavigationMenu />
+            <MainNavigationMenu />
         </>
     )
 }
 
 export default NavigationBar
 
-const MobileNavigationMenu = () => {
+const MainNavigationMenu = () => {
+    const data = useRootLoaderData()
+    const user = data?.user
+
     return (
         <nav className='flex justify-between items-center p-1'>
             <BrandIcon />
@@ -86,6 +84,25 @@ const MobileNavigationMenu = () => {
                 </NavLink>
             ))}
             <div className='flex items-center justify-between '>
+                {user ? (
+                    <NavLink
+                        className='flex flex-row items-center gap-2'
+                        to='/logout'
+                    >
+                        <ExitIcon />
+                        <div className='text-base hidden md:block'>
+                            Logout
+                        </div>{' '}
+                    </NavLink>
+                ) : (
+                    <NavLink
+                        className='flex flex-row items-center gap-2'
+                        to='/login'
+                    >
+                        <EnterIcon />
+                        <div className='text-base hidden md:block'>Login</div>
+                    </NavLink>
+                )}
                 <ThemeToggle />
 
                 <NavDrawer />
@@ -94,7 +111,11 @@ const MobileNavigationMenu = () => {
     )
 }
 
-const DesktopNavigationMenu = () => {
+// Mobile Navigation Menu for use in the NavDrawer component
+
+const MobileNavigationMenu = () => {
+    const data = useRootLoaderData()
+    const user = data?.user
     return (
         <div className='flex flex-col justify-around '>
             <NavLink className='flex flex-row items-center' to='/blog'>
@@ -111,6 +132,20 @@ const DesktopNavigationMenu = () => {
                     {link.name}
                 </NavLink>
             ))}
+            {user ? (
+                <NavLink
+                    className='flex flex-row items-center gap-2'
+                    to='/logout'
+                >
+                    <ExitIcon />
+                    <div className='text-base '>Logout</div>{' '}
+                </NavLink>
+            ) : (
+                <NavLink to='/login'>
+                    <EnterIcon />
+                    <div className='text-base '>Login</div>
+                </NavLink>
+            )}
             <ThemeToggle />
         </div>
     )
@@ -123,7 +158,7 @@ const NavDrawer = () => {
                 <HamburgerMenuIcon />
             </SheetTrigger>
             <SheetContent side='right'>
-                <DesktopNavigationMenu />
+                <MobileNavigationMenu />
             </SheetContent>
         </Sheet>
     )

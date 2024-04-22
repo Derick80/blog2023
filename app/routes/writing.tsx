@@ -1,5 +1,5 @@
 import { type LoaderFunctionArgs, json } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { Outlet, Scripts, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import {
     Accordion,
@@ -7,8 +7,8 @@ import {
     AccordionItem,
     AccordionTrigger
 } from '~/components/ui/accordion'
-import { item } from '@markdoc/markdoc/dist/src/schema'
 import PostPreviewCard from '~/components/post-preview-card'
+import { useNonce } from '~/lib/nonce-provider'
 
 export type frontmatterType = {
     title: string
@@ -108,6 +108,27 @@ export default function WritingRoute() {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
+        </div>
+    )
+}
+
+export function ErrorBoundary() {
+    // the nonce doesn't rely on the loader so we can access that
+    const nonce = useNonce()
+
+    // NOTE: you cannot use useLoaderData in an ErrorBoundary because the loader
+    // likely failed to run so we have to do the best we can.
+    // We could probably do better than this (it's possible the loader did run).
+    // This would require a change in Remix.
+
+    // Just make sure your root route never errors out and you'll always be able
+    // to give the user a better UX.
+
+    return (
+        <div className='text-red-500'>
+            <h1>Something went wrong At the Writing Route</h1>
+            <p>Sorry about that. Please try again.</p>
+            <Scripts nonce={nonce} />
         </div>
     )
 }

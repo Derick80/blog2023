@@ -26,6 +26,7 @@ model User {
   sessions      Session[]
   userImages    UserImage[]
   loves         Love[]
+  Project       Project[]
 }
 
 model Account {
@@ -187,3 +188,148 @@ model CommentLike {
   @@index([userId])
   @@index([commentId, userId])
 }
+
+// resume schema
+
+model Resume {
+  id                     String                   @id @default(cuid())
+  title                  String                   @unique
+  phoneNumber            Int
+  email                  String
+  website                String
+  location               String
+  // (City, State, ZIP)
+  summary                String
+  professionalExperience ProfessionalExperience[]
+  education              Education[]
+  skills                 JobSkill[]
+  publications           Publication[]
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+}
+
+model JobSkill {
+  id        String   @id @default(cuid())
+  skill     String
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfessionalExperience {
+  id        String   @id @default(cuid())
+  title     String
+  company   String
+  location  String
+  startDate String
+  endDate   String
+  duties    Duties[]
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Duties {
+  id                       String                 @id @default(cuid())
+  description              String
+  professionalExperience   ProfessionalExperience @relation(fields: [professionalExperienceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  professionalExperienceId String
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+}
+
+model Education {
+  id          String      @id @default(cuid())
+  institution String
+  degree      String
+  field       String
+  duties      eduDuties[]
+  startDate   String
+  endDate     String
+  resume      Resume      @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId    String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model eduDuties {
+  id          String    @id @default(cuid())
+  description String
+  education   Education @relation(fields: [educationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  educationId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Publication {
+  id       String  @id @default(cuid())
+  title    String
+  year     String
+  journal  String
+  authors  String
+  edition  String
+  type     String
+  url      String
+  pdf      String?
+  Resume   Resume? @relation(fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId String?
+}
+
+// end resume schema
+
+// start project schema
+model Project {
+  id               String            @id @unique @default(uuid())
+  title            String
+  description      String
+  primaryImage     String?
+  projectImages    ProjectImage[]
+  projectUrl       String
+  githubUrl        String
+  status           String            @default("In Progress")
+  technologyStacks TechnologyStack[]
+  features         projectFeatures[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt()
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model projectFeatures {
+  id        String   @id @unique @default(uuid())
+  value     String   @unique
+  projects  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TechnologyStack {
+  id        String    @id @unique @default(uuid())
+  value     String    @unique
+  url       String
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ProjectImage {
+  id                 String   @id @default(uuid())
+  imageUrl           String
+  cloudinaryPublicId String
+  filename           String?
+  isPrimary          Boolean? @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  project            Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId          String
+
+  @@unique([projectId, imageUrl])
+  @@index([projectId])
+  @@index([imageUrl])
+}
+
+// end project schema

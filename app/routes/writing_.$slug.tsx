@@ -4,7 +4,7 @@ import {
     json
 } from '@remix-run/node'
 import { useActionData, useLoaderData } from '@remix-run/react'
-import { getFile } from '~/.server/markdown.server'
+import { getFile } from '~/.server/mdx-compile.server'
 import { bundleMDX } from 'mdx-bundler'
 import React from 'react'
 import { getMDXComponent } from 'mdx-bundler/client'
@@ -13,11 +13,11 @@ import rehypePrettyCode from 'rehype-pretty-code'
 import HoverBar from '~/components/hover-bar'
 import { getPostInformation, likeContent } from '~/.server/content.server'
 import { z } from 'zod'
+import { isAuthenticated } from './_auth+/auth.server'
 
 // app/routes/writing.$slug_index.tsx
 const relativePath = 'app/content/blog/'
 const filePath = String([process.cwd(), relativePath, +'*/tsx'])
-
 
 const slugSchema = z.object({
     slug: z.string()
@@ -29,6 +29,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
     // I use this to load the file.
     const { frontmatter, content } = await getFile(slug)
+    console.log(content, 'frontmatter')
 
     if (!frontmatter) throw new Error('No frontmatter found')
     if (!content) throw new Error('No content found')
@@ -69,26 +70,42 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 const contentActionSchema = z.discriminatedUnion('intent', [
     z.object({
         intent: z.literal('like-content'),
-        contentId: z.string(),
-        userId: z.string().min(1).max(10000)
+        contentId: z.string()
     })
 ])
 
 export type actionType = z.infer<typeof contentActionSchema>
-export async function action ({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
+    const user = await isAuthenticated(request)
+    if (!user) {
+        return json(
+            { message: 'You must be logged in to like content' },
+            { status: 401 }
+        )
+    }
+
+    const userId = user.userId
+
     const formData = await request.formData()
 
-    const { intent,userId,contentId } = contentActionSchema.parse(Object.fromEntries(formData.entries()))
+    const { intent, contentId } = contentActionSchema.parse(
+        Object.fromEntries(formData.entries())
+    )
+    console.log(userId, 'userId')
 
-    const result = await likeContent({ userId, contentId })
-    if (!result) return json({ message: 'error' }, { status: 500 })
+    if (intent === 'like-content') {
+        const liked = await likeContent({ userId, contentId })
+        if (!liked) {
+            return json({ message: 'error' }, { status: 500 })
+        }
+        return json({ message: 'success' }, { status: 200 })
+    }
 
     return json({ message: 'success' }, { status: 200 })
 }
-export default function SlugRoute () {
+export default function SlugRoute() {
     const actionData = useActionData<typeof action>()
-    console.log(actionData, 'actionData');
-
+    console.log(actionData, 'actionData')
 
     const { code, contentDetails } = useLoaderData<typeof loader>()
     const Component = React.useMemo(() => getMDXComponent(code), [code])

@@ -1,5 +1,6 @@
 import { prisma } from '~/.server/prisma.server';
 import { faker } from '@faker-js/faker';
+import { education, professionalExperience, pubs, resume_basics, skills } from '~/content/resume/resume';
 
 
 // use faker.js to generate random users
@@ -76,6 +77,7 @@ async function seed() {
 
   }
 
+  await generateResume();
 
   console.log(`Database has been seeded. 🌱`);
 }
@@ -100,6 +102,89 @@ const generateRandomUsers = async (numberofUsers: number) => {
         role: "USER",
       },
     });
+  }
+
+}
+
+
+async function generateResume () {
+  const init_resume = await prisma.resume.create({
+    data: {
+      title: resume_basics.title,
+      phoneNumber: resume_basics.phoneNumber,
+      email: resume_basics.email,
+      website: resume_basics.website,
+      location: resume_basics.location,
+      summary: resume_basics.summary,
+      skills: {
+        create: skills
+      },
+      education: {
+        create: {
+          institution: education[0].institution,
+          degree: education[0].degree,
+          field: education[0].field,
+          startDate: education[0].startDate,
+          endDate: education[0].endDate,
+
+        }
+
+      },
+      publications: {
+        create: pubs
+
+      }
+
+
+    }
+  }
+
+  )
+  if (init_resume) {
+    for (let i = 0; i < professionalExperience.length; i++) {
+      await prisma.professionalExperience.create({
+        data: {
+          title: professionalExperience[i].title,
+          company: professionalExperience[i].company,
+          location: professionalExperience[i].location,
+          startDate: professionalExperience[i].startDate,
+          endDate: professionalExperience[i].endDate,
+          duties: {
+            create: professionalExperience[i].duties
+          },
+          resume: {
+            connect: {
+              id: init_resume.id
+            }
+          }
+        }
+
+      })
+
+    }
+    for (let i = 0; i < education.length; i++) {
+      await prisma.education.create({
+        data: {
+          institution: education[i].institution,
+          degree: education[i].degree,
+          field: education[i].field,
+          startDate: education[i].startDate,
+          endDate: education[i].endDate,
+          duties: {
+            create: education[i].duties
+
+          },
+          resume: {
+            connect: {
+              id: init_resume.id
+            }
+          },
+        }
+
+      })
+
+    }
+
   }
 
 }

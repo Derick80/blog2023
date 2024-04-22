@@ -3,7 +3,7 @@
 
 declare module '*.mdx' {
     let MDXComponent: (props: any) => JSX.Element
-    export const frontmatter: {
+    export type frontmatter = {
         title: string
         author: string
         description: string

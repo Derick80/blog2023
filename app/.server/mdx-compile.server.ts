@@ -10,20 +10,7 @@ function markdown(markdown: string): RenderableTreeNodes {
 
 export { markdown }
 
-async function isDirectory(d: string) {
-    try {
-        return (await fs.lstat(d)).isDirectory()
-    } catch {
-        return false
-    }
-}
-async function isFile(d: string) {
-    try {
-        return (await fs.lstat(d)).isFile()
-    } catch {
-        return false
-    }
-}
+
 
 function isString(value: any): value is string {
     return typeof value === 'string'
@@ -37,8 +24,6 @@ export const getFile = async (slug: string) => {
     )
 
     const content = fs.readFileSync(contentPath, { encoding: 'utf-8' })
-    const isAFile = await isFile(contentPath)
-    const test1 = isString(content)
     // return the frontmatter and the content
     const frontmatter = content.split('---')[1]
     const content1 = content.split('---')[2]

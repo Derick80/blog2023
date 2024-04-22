@@ -33,31 +33,31 @@ export default function PostPreviewCard({
 }: PostPreviewCardProps) {
     return (
         <>
-            <Card>
+            <Card className='w-full'>
                 <CardHeader className='pb-1 pt-2'>
-                    <CardTitle>{title}</CardTitle>
+                    <CardTitle>
+                        <Link
+                            to={`/writing/${slug}`}
+                            prefetch='intent'
+                            onClick={() => setItem('')}
+                        >
+                            <H3>{title}</H3>
+                        </Link>
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className='pb-2 gap-4 w-full'>
                     <CardDescription className='italic text-xs'>
                         {description}
                     </CardDescription>
-                    <Muted className='text-right'>By {author}</Muted>
                 </CardContent>
-                <CardFooter className=''>
-                    <div className='flex flex-row gap-1 md:gap-2'>
+                <CardFooter className='flex flex-col items-start gap-1 md:gap-2 pb-1 md:pb-2'>
+                    <div className='flex flex-row flex-wrap gap-1 md:gap-2'>
                         {categories.map((category) => (
                             <Badge key={category}>{category}</Badge>
                         ))}
                     </div>
 
-                    <Link
-                        to={`/writing/${slug}`}
-                        prefetch='intent'
-                        className='flex flex-end w-full'
-                        onClick={() => setItem('')}
-                    >
-                        <Small className='text-right'>Read More</Small>
-                    </Link>
+                    <Muted>By {author}</Muted>
                 </CardFooter>
             </Card>
         </>
