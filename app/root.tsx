@@ -16,25 +16,30 @@ import { getSharedEnvs } from './.server/env.server.js'
 import { getSession } from './routes/_auth+/auth.server.js'
 import { TooltipProvider } from './components/ui/tooltip.js'
 import { useNonce } from './lib/nonce-provider.js'
+import NavigationBar from './components/navbar/navigation-bar.js'
+import { getUsers } from './.server/user.server.js'
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
+    const user = await getUsers()
+
+    if (!user) throw new Error('No user found')
+
     const theme = await getThemeFromCookie(request)
-    console.log(theme, 'theme from cookie')
     const { NODE_ENV } = getSharedEnvs()
+
     const mode = NODE_ENV
     // const theme:Theme = 'system'
-    console.log(`The current mode is: ${mode}`)
-    console.log(`The current theme is: ${theme}`)
-    const session = await getSession(request)
-    console.log(session.data, 'session from authserver')
-    console.log(session.id, 'session id from authserver')
 
-    return json({ theme })
+    const session = await getSession(request)
+
+    return json({ theme, user })
 }
+
+// place TooltipProvider here to wrap the entire app in it
 
 export function Layout({ children }: { children: React.ReactNode }) {
     const { theme } = useLoaderData<typeof loader>()
@@ -53,7 +58,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <Links />
                 </head>
                 <body>
-                    {children}
+                    <main className='mx-auto p-1 md:p-2 max-w-3xl'>
+                        <NavigationBar />
+                        {children}
+                    </main>
                     <ScrollRestoration />
                     <Scripts nonce={nonce} />
                 </body>

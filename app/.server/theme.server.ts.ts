@@ -20,7 +20,6 @@ export const createThemeCookie = async (request: Request, theme: Theme) => {
     const headers = new Headers({
         'Set-Cookie': await sessionStorage.commitSession(session)
     })
-    console.log(theme, 'theme from createThemeCookie')
 
     return json(
         { theme },

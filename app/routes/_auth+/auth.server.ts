@@ -1,11 +1,9 @@
 import { Authenticator } from 'remix-auth'
-import { User } from '@prisma/client'
 import { prisma } from '~/.server/prisma.server'
 import { z } from 'zod'
-import { createCookieSessionStorage, redirect, Session } from '@remix-run/node'
+import { createCookieSessionStorage, Session } from '@remix-run/node'
 import { discordStrategy } from './discord.server'
 import type { Prisma } from '@prisma/client'
-import { addDays, addHours, isBefore } from 'date-fns'
 import { Theme } from '~/.server/theme.server.ts'
 
 export type ProviderUser = {
@@ -17,10 +15,9 @@ export type ProviderUser = {
     provider: string
     providerId: string
     token: string
-  refreshToken?: string
-      sessionId?: string
+    refreshToken?: string
+    sessionId?: string
     theme?: Theme
-
 }
 export const SESSION_ID_KEY: string = 'sessionId'
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
@@ -47,7 +44,6 @@ const cookieOptions = {
     secure: process.env.NODE_ENV === 'production'
 }
 
-
 export const sessionStorage = createCookieSessionStorage<ProviderUser>({
     cookie: cookieOptions
 })
@@ -68,7 +64,7 @@ export const commitSession = async (session: Session) => {
 }
 
 export const authenticator = new Authenticator<ProviderUser>(sessionStorage, {
-  sessionKey: SESSION_ID_KEY,
+    sessionKey: SESSION_ID_KEY,
     throwOnError: true,
     sessionErrorKey: 'authError'
 })
@@ -81,35 +77,30 @@ export const getUserId = (request: Request) => {
 
 export const isAuthenticated = async (request: Request) => {
     const user = await authenticator.isAuthenticated(request)
-    console.log(user,'user from isAuthenticated');
     return user
-
 }
 
 export const getAccount = async ({
-  provider,
-  providerAccountId
+    provider,
+    providerAccountId
 }: Prisma.AccountProviderProviderAccountIdCompoundUniqueInput) => {
-  const account = await prisma.account.findUnique({
-    where: {
-      provider_providerAccountId: {
-        provider,
-        providerAccountId
-      }
-      },
-      include: {
-          user: {
-
-              include: {
+    const account = await prisma.account.findUnique({
+        where: {
+            provider_providerAccountId: {
+                provider,
+                providerAccountId
+            }
+        },
+        include: {
+            user: {
+                include: {
                     sessions: true
+                }
+            }
+        }
+    })
 
-
-      }
-          }
-      }
-  })
-
-  return account
+    return account
 }
 
 export const getUser = async (email: string) => {
@@ -119,12 +110,14 @@ export const getUser = async (email: string) => {
         },
         include: {
             sessions: true,
-            accounts: true,
+            accounts: true
         }
     })
 }
 
-export const createUser = async (userData: Omit<ProviderUser, "userId" | "role">) => {
+export const createUser = async (
+    userData: Omit<ProviderUser, 'userId' | 'role'>
+) => {
     return await prisma.user.create({
         data: {
             email: userData.email,
@@ -133,7 +126,9 @@ export const createUser = async (userData: Omit<ProviderUser, "userId" | "role">
 
             sessions: {
                 create: {
-                    expirationDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+                    expirationDate: new Date(
+                        Date.now() + 1000 * 60 * 60 * 24 * 7
+                    )
                 }
             },
             accounts: {
@@ -141,10 +136,9 @@ export const createUser = async (userData: Omit<ProviderUser, "userId" | "role">
                     provider: userData.provider,
                     providerAccountId: userData.providerId,
                     accessToken: userData.token,
-                    refreshToken: userData.refreshToken,
+                    refreshToken: userData.refreshToken
                 }
             }
-
         },
         select: {
             id: true,
@@ -157,11 +151,9 @@ export const createUser = async (userData: Omit<ProviderUser, "userId" | "role">
                     provider: true,
                     providerAccountId: true,
                     accessToken: true,
-                    refreshToken: true,
+                    refreshToken: true
                 }
-            },
             }
-
-
+        }
     })
 }
