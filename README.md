@@ -33,6 +33,29 @@
 
 ## Documentation
 
+
+#zods stf
+// This adds type narrowing by the intent property
+const Schema = z.discriminatedUnion('intent', [
+  z.object({ intent: z.literal('delete'), id: z.string() }),
+  z.object({ intent: z.literal('create'), name: z.string() }),
+]);
+
+export async function action({ request }: ActionArgs) {
+  const data = await zx.parseForm(request, Schema);
+  switch (data.intent) {
+    case 'delete':
+      // data is now narrowed to { intent: 'delete', id: string }
+      return;
+    case 'create':
+      // data is now narrowed to { intent: 'create', name: string }
+      return;
+    default:
+      // data is now narrowed to never. This will error if a case is missing.
+      const _exhaustiveCheck: never = data;
+  }
+};
+
 ### Images
 
 - [Blur Data URL Generator](https://blurred.dev/)
