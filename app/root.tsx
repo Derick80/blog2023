@@ -13,28 +13,25 @@ import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import stylesheet from '~/tailwind.css?url'
 import { getThemeFromCookie } from './.server/theme.server.ts'
 import { getSharedEnvs } from './.server/env.server.js'
-import { getSession } from './routes/_auth+/auth.server.js'
+import { getUserId } from './routes/_auth+/auth.server.js'
 import { TooltipProvider } from './components/ui/tooltip.js'
 import { useNonce } from './lib/nonce-provider.js'
 import NavigationBar from './components/navbar/navigation-bar.js'
-import { getUsers } from './.server/user.server.js'
 
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    const user = await getUsers()
-
-    if (!user) throw new Error('No user found')
-
     const theme = await getThemeFromCookie(request)
+    const user = await getUserId(request)
+
+    if (!user) return json({ theme, user })
+
     const { NODE_ENV } = getSharedEnvs()
 
     const mode = NODE_ENV
     // const theme:Theme = 'system'
-
-    const session = await getSession(request)
 
     return json({ theme, user })
 }

@@ -22,10 +22,12 @@ export const getPostInformation = async (slug: string) => {
     })
 }
 
-export const likeContent = async ({ userId, contentId }: {
+export const likeContent = async ({
+    userId,
+    contentId
+}: {
     userId: string
     contentId: string
-
 }) => {
     const hasLiked = await prisma.love.findUnique({
         where: {

@@ -262,6 +262,17 @@ export const education = [
 
 export const pubs = [
     {
+        title: `Mutations in yeast Pcf11, a conserved protein essential for mRNA 3' end processing and transcription termination, elicit the Environmental Stress Response`,
+        year: '2024',
+        journal: ' Genetics',
+        authors:
+            'Graber JH, Hoskinson D, Lui H, Micheals KK, Benson PS, Maki NJ, Wilson CL, McGrath C, Puelo F, Pearson E, Kuehner, JN, Moore C',
+        edition: `2024 Feb 7;226(2):iyad199. PMID:37967370; PMCID: PMC10847720.`,
+        type: 'published',
+        url: `https://doi.org/10.1093/genetics/iyad199`,
+        pdf: `''`
+    },
+    {
         title: 'Tumor Mutational Burden From Tumor-Only Sequencing Compared With Germline Subtraction From Paired Tumor and Normal Specimens',
         year: '2020',
         journal: 'JAMA',
