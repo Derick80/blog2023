@@ -19,9 +19,19 @@ export const getUser = async (input: Prisma.UserWhereUniqueInput) => {
 }
 
 export const getUsers = async () => {
-    const users = await prisma.user.findFirst({
-        select: defaultSelect
+    const users = await prisma.user.findMany({
+        select: {
+            id: true,
+            email: true,
+            username: true,
+        avatarUrl: true,
+        role: true,
+            userImages: true,
+
+        }
     })
 
     return users
 }
+
+

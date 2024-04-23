@@ -9,6 +9,7 @@ import {
 } from '~/components/ui/accordion'
 import PostPreviewCard from '~/components/post-preview-card'
 import { useNonce } from '~/lib/nonce-provider'
+import { getAllBlogContent, getPostContent, updateAllContent, upsertContent } from '~/.server/content.server'
 
 export type frontmatterType = {
     title: string
@@ -21,8 +22,14 @@ export type frontmatterType = {
     categories: string[]
     code: () => Promise<{ default: React.ComponentType }>
 }
+
+export type frontMatterIntermediateType = Omit<frontmatterType, 'code' |'url' |'datePublished'> & {
+    datePublished: Date
+
+}
 type PostModule = { [key: string]: unknown } // Unknown structure for now
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader ({ request, params }: LoaderFunctionArgs) {
+
     const posts = import.meta.glob('../content/blog/*.mdx')
 
     if (!posts) throw new Error('No posts found')

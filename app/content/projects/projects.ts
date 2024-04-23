@@ -1,20 +1,24 @@
-import { ProjectImage, TechnologyStack, User } from '@prisma/client'
+import { ProjectImage as PImages, TechnologyStack as Tstack, User } from '@prisma/client'
+import { SerializeFrom } from '@remix-run/node'
 
-export type ProjectStatus = 'Active' | 'Completed' | 'Abandoned'
+
+
+export type ProjectImage = SerializeFrom<PImages>
+
+export type TechnologyStack = SerializeFrom<Tstack>
+
 export type Project = {
     id: string
     title: string
     description: string
-    primaryImage: string
+    primaryImage: string | null
     projectUrl: string
     githubUrl: string
     createdAt: string
-    userId: string
-    status: ProjectStatus | string
+    status: string
     projectImages: ProjectImage[]
     technologyStacks: TechnologyStack[]
     features: { id: string; value: string }[]
-    user: Omit<User, 'role' | 'password'>
 }
 export const projects = [
     {
@@ -24,7 +28,7 @@ export const projects = [
             'https://res.cloudinary.com/dch-photo/image/upload/v1684398538/myr4wowmklv2pwyyumsj.webp',
         projectUrl: `https://main--jovial-platypus-2a8460.netlify.app/`,
         githubUrl: `https://github.com/Derick80/genes_23`,
-        status: 'Active',
+        status: 'In Progress',
         features: [
             { value: 'variant classification' },
             { value: 'gene search' },
@@ -35,7 +39,8 @@ export const projects = [
             { value: 'gene details' },
             { value: 'variant classification details' }
         ],
-        categories: [
+        technologyStacks: [
+
             {
                 value: 'Remix-run',
                 url: 'https://remix.run/'
@@ -74,9 +79,8 @@ export const projects = [
         features: [
             { value: 'Image Carousel' },
             { value: 'Pagination' },
-            { value: 'UpVote' }
         ],
-        categories: [
+        technologyStacks: [
             {
                 value: 'Remix-run',
                 url: 'https://remix.run/'
@@ -102,6 +106,4 @@ export const projects = [
     }
 ]
 
-// write a function that seeds the database with the projects
 
-function seedProjects() {}

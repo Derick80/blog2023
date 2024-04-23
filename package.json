@@ -7,7 +7,8 @@
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
-    "build": "remix vite:build",
+    "prebuild": "tsc ./scripts/prebuild.ts --outdir ./build/scripts",
+    "build": "npm run prebuild && remix vite:build",
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",

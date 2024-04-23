@@ -11,7 +11,7 @@ import {
     CardTitle
 } from '~/components/ui/card'
 import { P, Small } from '~/components/ui/typography'
-import { Project } from './projects'
+import { Project } from '../../content/projects/projects'
 
 const ProjectCard = ({ project }: { project: Project }) => {
     return (

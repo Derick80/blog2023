@@ -1,5 +1,4 @@
 import { prisma } from './prisma.server'
-import { Prisma } from '@prisma/client'
 const getAllProjects = async () => {
     return await prisma.project.findMany({
         include: {
