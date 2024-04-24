@@ -19,7 +19,7 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
+    DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { useRootLoaderData } from '~/root'
 import { Muted } from '../ui/typography'
@@ -76,31 +76,28 @@ const MainNavigationMenu = () => {
         <nav className='flex justify-between items-center p-1'>
             <BrandIcon />
 
-            { navigationLinks.map((link) => (
-                <div
-                    className=' md:block'
-                    key={link.href}
-                >
-                <NavLink
-                    className={({ isActive }) =>
-                        isActive
-                            ? 'underline flex items-center gap-2'
-                            : 'flex items-center gap-2 '
-                    }
-                    to={link.href}
-                    title={link.name}
-                >
-                    {link.icon}
+            {navigationLinks.map((link) => (
+                <div className=' md:block' key={link.href}>
+                    <NavLink
+                        className={({ isActive }) =>
+                            isActive
+                                ? 'underline flex items-center gap-2'
+                                : 'flex items-center gap-2 '
+                        }
+                        to={link.href}
+                        title={link.name}
+                    >
+                        {link.icon}
 
-                    <div className='text-base hidden md:block'>{link.name}</div>
+                        <div className='text-base hidden md:block'>
+                            {link.name}
+                        </div>
                     </NavLink>
                 </div>
             ))}
             <div className='flex items-center justify-between '>
                 {user ? (
-                    <div
-                        className='hidden md:block'
-                    >
+                    <div className='hidden md:block'>
                         <AccountDropdown />
                     </div>
                 ) : (
@@ -132,21 +129,19 @@ const MobileNavigationMenu = () => {
                 Home
             </NavLink>
             {navigationLinks.map((link) => (
-
                 <NavLink
                     key={link.href}
                     prefetch='intent'
                     className='flex flex-row items-center gap-2'
                     to={link.href}
                 >
-                    { link.icon }
+                    {link.icon}
 
-                    <div className='text-base '>{ link.name }</div>
+                    <div className='text-base '>{link.name}</div>
                 </NavLink>
             ))}
             {user ? (
-
-                    <AccountDropdown />
+                <AccountDropdown />
             ) : (
                 <NavLink to='/login'>
                     <EnterIcon />
@@ -171,18 +166,12 @@ const NavDrawer = () => {
     )
 }
 
-
 const AccountDropdown = () => {
-
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger
-            className='flex flex-row items-center gap-2'
-            >
+            <DropdownMenuTrigger className='flex flex-row items-center gap-2'>
                 <PersonIcon />
-                <div
-                className='text-base'
-                >Account</div>
+                <div className='text-base'>Account</div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
@@ -195,7 +184,7 @@ const AccountDropdown = () => {
                         to='/logout'
                     >
                         <ExitIcon />
-                        <div className='text-base '>Logout</div>{ ' ' }
+                        <div className='text-base '>Logout</div>{' '}
                     </NavLink>
                 </DropdownMenuItem>
             </DropdownMenuContent>

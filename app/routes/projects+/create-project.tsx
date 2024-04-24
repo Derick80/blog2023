@@ -9,7 +9,13 @@ import {
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '~/components/ui/select'
 
 const CreateProjectComponent = () => {
     return (
@@ -43,15 +49,21 @@ const CreateProjectComponent = () => {
                             required
                         />
                         <Label htmlFor='status'> Status</Label>
-                        <Select  name='status' required>
-                            <SelectTrigger className="">
-                                <SelectValue placeholder="Status" />
+                        <Select name='status' required>
+                            <SelectTrigger className=''>
+                                <SelectValue placeholder='Status' />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="in-progress">In Progress</SelectItem>
-                                <SelectItem value="completed">Completed</SelectItem>
-                                <SelectItem value="archived">Archived</SelectItem>
-                                <SelectItem value="Todo">To Do</SelectItem>
+                                <SelectItem value='in-progress'>
+                                    In Progress
+                                </SelectItem>
+                                <SelectItem value='completed'>
+                                    Completed
+                                </SelectItem>
+                                <SelectItem value='archived'>
+                                    Archived
+                                </SelectItem>
+                                <SelectItem value='Todo'>To Do</SelectItem>
                             </SelectContent>
                         </Select>
 

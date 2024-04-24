@@ -90,14 +90,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const { intent, contentId } = contentActionSchema.parse(
         Object.fromEntries(formData.entries())
     )
-    console.log(contentId, 'contentId');
-
-    console.log(userId, 'userId')
 
     const liked = await likeContent({ userId, contentId })
     if (!liked) throw new Error('No content found')
     return json({ liked })
-
 }
 export default function SlugRoute() {
     const actionData = useActionData<typeof action>()

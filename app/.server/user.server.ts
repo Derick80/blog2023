@@ -24,14 +24,11 @@ export const getUsers = async () => {
             id: true,
             email: true,
             username: true,
-        avatarUrl: true,
-        role: true,
-            userImages: true,
-
+            avatarUrl: true,
+            role: true,
+            userImages: true
         }
     })
 
     return users
 }
-
-

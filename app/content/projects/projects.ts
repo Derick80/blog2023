@@ -1,7 +1,9 @@
-import { ProjectImage as PImages, TechnologyStack as Tstack, User } from '@prisma/client'
+import {
+    ProjectImage as PImages,
+    TechnologyStack as Tstack,
+    User
+} from '@prisma/client'
 import { SerializeFrom } from '@remix-run/node'
-
-
 
 export type ProjectImage = SerializeFrom<PImages>
 
@@ -40,7 +42,6 @@ export const projects = [
             { value: 'variant classification details' }
         ],
         technologyStacks: [
-
             {
                 value: 'Remix-run',
                 url: 'https://remix.run/'
@@ -76,10 +77,7 @@ export const projects = [
         createdAt: '2023-04-15T21:52:08.779Z',
 
         status: 'Completed',
-        features: [
-            { value: 'Image Carousel' },
-            { value: 'Pagination' },
-        ],
+        features: [{ value: 'Image Carousel' }, { value: 'Pagination' }],
         technologyStacks: [
             {
                 value: 'Remix-run',
@@ -105,5 +103,3 @@ export const projects = [
         ]
     }
 ]
-
-

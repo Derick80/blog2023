@@ -16,14 +16,17 @@ declare module '*.mdx' {
 // types/gray-matter.d.ts
 declare module 'gray-matter' {
     interface GrayMatterFile<T = Record<string, any>> {
-        content: string;
-        data: T;
-        isEmpty?: boolean;
-        excerpt?: string;
-        orig: string | Buffer;
+        content: string
+        data: T
+        isEmpty?: boolean
+        excerpt?: string
+        orig: string | Buffer
     }
 
-    function matter<T = Record<string, any>>(input: string | Buffer, options?: any): GrayMatterFile<T>;
+    function matter<T = Record<string, any>>(
+        input: string | Buffer,
+        options?: any
+    ): GrayMatterFile<T>
 
-    export = matter;
+    export = matter
 }

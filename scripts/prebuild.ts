@@ -1,16 +1,38 @@
-// scripts/preibuild.
-import { getAllPostContent } from '../app/.server/update-content.server';
-import { updateDataBaseContent } from '../app//.server/content.server';
+import { prisma } from '~/.server/prisma.server'
+import { getAllPostContent } from '~/.server/update-content.server'
 
-export async function prebuild() {
-    try {
-          const posts = await getAllPostContent()
-    // console.log(posts, 'posts from loader');
+async function getThings() {
+    const content = getAllPostContent()
+    if (!content) throw new Error('No content found')
+    console.log(content, 'content')
 
-    if (!posts) throw new Error('No posts found')
-await updateDataBaseContent({ content: posts })
-    }
-    catch (error) {
-        console.error(error)
+    for (const cont of content) {
+        const updated = await prisma.content.upsert({
+            where: {
+                slug: cont.slug
+            },
+            update: {
+                title: cont.title,
+                author: cont.author,
+                description: cont.description,
+                datePublished: cont.datePublished,
+                published: cont.published,
+                categories: cont.categories
+            },
+            create: {
+                title: cont.title,
+                author: cont.author,
+                description: cont.description,
+                datePublished: cont.datePublished,
+                published: cont.published,
+                slug: cont.slug,
+                categories: cont.categories
+            }
+        })
+        console.log(updated, 'updated')
     }
 }
+
+getThings()
+
+// const updated = await getandUpdate('/app/content/blog/*.mdx')

@@ -1,18 +1,16 @@
-import { type LoaderFunctionArgs, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { getUsers } from '~/.server/user.server';
+import { type LoaderFunctionArgs, json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { getUsers } from '~/.server/user.server'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-    const users = await getUsers();
-    if (!users) throw new Error('No users found');
+    const users = await getUsers()
+    if (!users) throw new Error('No users found')
 
-  return json({users});
+    return json({ users })
 }
 
-
-export default function UsersRoute () {
-    const { users } = useLoaderData<typeof loader>();
-
+export default function UsersRoute() {
+    const { users } = useLoaderData<typeof loader>()
 
     return (
         <div>
@@ -23,6 +21,5 @@ export default function UsersRoute () {
                 ))}
             </ul>
         </div>
-    );
+    )
 }
-

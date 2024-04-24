@@ -10,8 +10,6 @@ function markdown(markdown: string): RenderableTreeNodes {
 
 export { markdown }
 
-
-
 function isString(value: any): value is string {
     return typeof value === 'string'
 }
