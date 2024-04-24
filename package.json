@@ -4,14 +4,13 @@
   "sideEffects": false,
   "type": "module",
   "prisma": {
-    "seed": "tsx prisma/seed.ts",
-    "seed_development": "tsx prisma/prod-seed.ts"
+    "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
     "update:dev": "tsx scripts/prebuild.ts",
     "build": "remix vite:build",
     "postbuild": "npx prisma db push && npx prisma generate",
-    "tst": "npx prisma db push && npx prisma generate && npx prisma db seed_development && tsx scripts/prebuild.ts && remix vite:build",
+    "tst": "npx prisma db push && npx prisma generate && npx prisma db seed && tsx scripts/prebuild.ts && remix vite:build",
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
