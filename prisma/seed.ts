@@ -32,6 +32,11 @@ async function seed() {
   }
   );
 
+  await generateResume();
+  await generateProjects();
+  await generateRandomUsers(10);
+
+  // seed the db with fake mdx posts
 for (const post of mdxPostsToSeed) {
     const categories = post.categories.map((category) => ({
       where: { title: category },
@@ -65,14 +70,36 @@ for (const post of mdxPostsToSeed) {
     }
 }
 
-  await generateResume();
-  await generateProjects();
-  await generateRandomUsers(10);
+  const slugs = await prisma.content.findMany({
+    select: {
+      slug: true
+    }
+  });
 
 
+  //  get a random slug from the slugs array
+  const randomSlug = () => {
+    const index = Math.floor(Math.random() * slugs.length);
+    return slugs[index].slug;
+  }
 
 
-  // seed the db with content
+  const users = await prisma.user.findMany({
+    select: {
+      id:true
+    }
+  });
+  // seed the db with a random number of likes for each post
+
+  for (let i = 0; i < users.length; i++) {
+     await prisma.love.create({
+      data: {
+        userId: users[i].id,
+        contentId: randomSlug(),
+      },
+    });
+
+  }
 
   console.log(`Database has been seeded. 🌱`);
 }
@@ -348,3 +375,5 @@ const mdxPostsToSeed = [
     "slug": "variant-calculator"
   }
 ]
+
+

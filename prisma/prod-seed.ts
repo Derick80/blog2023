@@ -3,36 +3,7 @@ import { education, professionalExperience, pubs, resume_basics, skills } from '
 import { projects } from '~/content/projects/projects';
 
 
-// use faker.js to generate random users
-
 async function seed() {
-
-  //  clean up the db
-  await prisma.category.deleteMany();
-  await prisma.content.deleteMany();
-  await prisma.resume.deleteMany();
-  await prisma.jobSkill.deleteMany();
-  await prisma.professionalExperience.deleteMany();
-  await prisma.duties.deleteMany();
-  await prisma.education.deleteMany();
-  await prisma.publication.deleteMany();
-  await prisma.project.deleteMany();
-  await prisma.projectFeatures.deleteMany();
-  await prisma.technologyStack.deleteMany();
-  await prisma.postImage.deleteMany();
-  await prisma.love.deleteMany();
-  // delete all users except the admin user
-  await prisma.user.deleteMany({
-    where: {
-      NOT: {
-        id:'clukpmixh0000toxl2420bzem'
-      }
-    }
-  }
-  );
-
-
-
 
   await generateResume();
 
@@ -81,7 +52,9 @@ const generateResume= async ()=> {
 
 
     }
+
   }
+
 
   )
   if (init_resume) {
