@@ -1,10 +1,6 @@
 import {
-    json,
-    type LoaderFunctionArgs,
     type MetaFunction
 } from '@remix-run/node'
-import { updateDataBaseContent } from '../.server/content.server'
-import { getAllPostContent } from '../.server/update-content.server'
 import ContactWidget from '..//components/contat-widget'
 
 export const meta: MetaFunction = () => {
@@ -14,19 +10,12 @@ export const meta: MetaFunction = () => {
     ]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    const posts = await getAllPostContent()
-    // console.log(posts, 'posts from loader');
-
-    if (!posts) throw new Error('No posts found')
-    await updateDataBaseContent({ content: posts })
-    return json({ posts })
-}
-
 export default function Index() {
     return (
-        <>
+        <div
+            className='flex flex-col gap-4 items-center justify-center w-full h-full'
+        >
             <ContactWidget />
-        </>
+        </div>
     )
 }
