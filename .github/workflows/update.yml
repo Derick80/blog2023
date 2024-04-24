@@ -9,6 +9,16 @@ jobs:
     update:
         runs-on: ubuntu-latest
         steps:
+            - name: Check current directory
+              run: |
+                pwd
+                ls -lah
+
+            - name: 📂 Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 50
+
             - name: 🛠 Setup node
               uses: actions/setup-node@v4
               with:
@@ -16,11 +26,10 @@ jobs:
 
             - name: 📦 Install dependencies
               run: npm install
+              working-directory: package.json
 
-            - name: 🚀 Update
-              run: npm run tst
+            - name: 🚀 install tsx
+              run: npm install tsx
 
-
-
-
-
+            - name: Update DB
+              run: tsx /scripts/prebuild.ts
