@@ -7,7 +7,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
-    "tsst": "remix vite:build && tsx scripts/prebuild.ts",
+    "update:dev": "tsx scripts/prebuild.ts",
     "build": "remix vite:build",
     "postbuild": "npx prisma db push && npx prisma generate",
     "tst": "npx prisma db push && npx prisma generate && npx prisma db seed && tsx scripts/prebuild.ts && remix vite:build",

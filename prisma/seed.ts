@@ -32,66 +32,47 @@ async function seed() {
   }
   );
 
-  // seed the db with content
-  await Promise.all(
-    mdxPostsToSeed.flat().map(async (content) => {
-      const categories = content.categories.map((category) => {
-        return { create: { value: category } };
-      });
+for (const post of mdxPostsToSeed) {
+    const categories = post.categories.map((category) => ({
+      where: { title: category },
+      create: { title: category },
+    }));
 
-      return prisma.content.create({
-        data: {
-          slug: content.slug,
-          title: content.title,
-          author: content.author,
-          description: content.description,
-          datePublished: content.datePublished,
-          categories: {
-            set: content.categories
-          }
+    try {
+      await prisma.content.upsert({
+        where: { slug: post.slug },
+        update: {
+          title: post.title,
+          author: post.author,
+          description: post.description,
+          datePublished: post.datePublished,
+          published: post.published,
+          categories: { connectOrCreate: categories },
         },
-
-
-        });
-    })
-  );
-
-  const slugs = await prisma.content.findMany({
-    select: {
-      slug: true
+        create: {
+          title: post.title,
+          author: post.author,
+          description: post.description,
+          datePublished: post.datePublished,
+          published: post.published,
+          slug: post.slug,
+          categories: { connectOrCreate: categories },
+        },
+      });
+      console.log(`Post "${post.title}" successfully seeded!`);
+    } catch (error) {
+      console.error(`Error seeding post "${post.title}":`, error);
     }
-  });
-
-
-  //  get a random slug from the slugs array
-  const randomSlug = () => {
-    const index = Math.floor(Math.random() * slugs.length);
-    return slugs[index].slug;
-  }
-
-  await generateRandomUsers(40);
-
-
-
-  const users = await prisma.user.findMany({
-    select: {
-      id:true
-    }
-  });
-
-  for (let i = 0; i < users.length; i++) {
-     await prisma.love.create({
-      data: {
-        userId: users[i].id,
-        contentId: randomSlug(),
-      },
-    });
-
-  }
+}
 
   await generateResume();
-
   await generateProjects();
+  await generateRandomUsers(10);
+
+
+
+
+  // seed the db with content
 
   console.log(`Database has been seeded. 🌱`);
 }
