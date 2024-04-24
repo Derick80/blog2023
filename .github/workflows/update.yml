@@ -31,4 +31,4 @@ jobs:
               run: npm install tsx -G
 
             - name: Update DB
-              run: npx tsc /scripts/prebuild.ts
+              run: npx tsx scripts/prebuild.ts
