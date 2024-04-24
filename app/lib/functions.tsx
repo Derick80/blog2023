@@ -1,7 +1,7 @@
 import { Params, useMatches } from '@remix-run/react'
 import { useMemo } from 'react'
 export type UserType = {
-    id: string
+    userId: string
     email: string
     username: string
     avatarUrl: string

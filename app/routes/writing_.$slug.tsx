@@ -29,7 +29,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
     // I use this to load the file.
     const { frontmatter, content } = await getFile(slug)
-    console.log(content, 'frontmatter')
 
     if (!frontmatter) throw new Error('No frontmatter found')
     if (!content) throw new Error('No content found')
@@ -91,17 +90,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const { intent, contentId } = contentActionSchema.parse(
         Object.fromEntries(formData.entries())
     )
-    console.log(userId, 'userId')
 
-    if (intent === 'like-content') {
-        const liked = await likeContent({ userId, contentId })
-        if (!liked) {
-            return json({ message: 'error' }, { status: 500 })
-        }
-        return json({ message: 'success' }, { status: 200 })
-    }
-
-    return json({ message: 'success' }, { status: 200 })
+    const liked = await likeContent({ userId, contentId })
+    if (!liked) throw new Error('No content found')
+    return json({ liked })
 }
 export default function SlugRoute() {
     const actionData = useActionData<typeof action>()

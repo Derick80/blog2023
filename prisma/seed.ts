@@ -1,6 +1,7 @@
 import { prisma } from '~/.server/prisma.server';
 import { faker } from '@faker-js/faker';
 import { education, professionalExperience, pubs, resume_basics, skills } from '~/content/resume/resume';
+import { projects } from '~/content/projects/projects';
 
 
 // use faker.js to generate random users
@@ -10,7 +11,18 @@ async function seed() {
   //  clean up the db
   await prisma.category.deleteMany();
   await prisma.content.deleteMany();
+  await prisma.resume.deleteMany();
+  await prisma.jobSkill.deleteMany();
+  await prisma.professionalExperience.deleteMany();
+  await prisma.duties.deleteMany();
+  await prisma.education.deleteMany();
+  await prisma.publication.deleteMany();
+  await prisma.project.deleteMany();
+  await prisma.projectFeatures.deleteMany();
+  await prisma.technologyStack.deleteMany();
+  await prisma.postImage.deleteMany();
   await prisma.love.deleteMany();
+  // delete all users except the admin user
   await prisma.user.deleteMany({
     where: {
       NOT: {
@@ -79,6 +91,8 @@ async function seed() {
 
   await generateResume();
 
+  await generateProjects();
+
   console.log(`Database has been seeded. 🌱`);
 }
 
@@ -107,7 +121,7 @@ const generateRandomUsers = async (numberofUsers: number) => {
 }
 
 
-async function generateResume () {
+const generateResume= async ()=> {
   const init_resume = await prisma.resume.create({
     data: {
       title: resume_basics.title,
@@ -188,8 +202,36 @@ async function generateResume () {
   }
 
 }
+const generateProjects = async () => {
+  for (let i = 0; i < projects.length; i++) {
+    await prisma.project.create({
+      data: {
+        title: projects[i].title,
+        description: projects[i].description,
+        primaryImage: projects[i].primaryImage,
+        projectUrl: projects[i].projectUrl,
+        githubUrl: projects[i].githubUrl,
+        status: projects[i].status,
+        features: {
+          create: projects[i].features
+        },
+        technologyStacks: {
+          connectOrCreate: projects[i].technologyStacks.map((tech) => {
+            return {
+              where: { value: tech.value },
+              create: { value: tech.value, url: tech.url }
+            }
+          }
+          )
 
-export const categoriesToSeed = [
+        }
+      }
+    })
+
+  }
+}
+
+ const categoriesToSeed = [
   { value: "javascript", label: "Javascript" },
   { value: "react", label: "React" },
   { value: "node", label: "Node" },
@@ -216,7 +258,7 @@ export const categoriesToSeed = [
 
 
 const mdxPostsToSeed = [
-  [
+
   {
   "title": "ACMG Criteria",
   "author": "Derick Hoskinson, Ph.D.",
@@ -324,5 +366,4 @@ const mdxPostsToSeed = [
     ],
     "slug": "variant-calculator"
   }
-]
 ]

@@ -1,4 +1,4 @@
-import { NavLink } from '@remix-run/react'
+import { Link, NavLink } from '@remix-run/react'
 import { ThemeToggle } from '../theme/theme-toggle'
 import { BrandIcon } from '../brand-icon'
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
@@ -13,7 +13,16 @@ import {
     HomeIcon,
     PersonIcon
 } from '@radix-ui/react-icons'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu'
 import { useRootLoaderData } from '~/root'
+import { Muted } from '../ui/typography'
 
 const navigationLinks = [
     {
@@ -68,32 +77,29 @@ const MainNavigationMenu = () => {
             <BrandIcon />
 
             {navigationLinks.map((link) => (
-                <NavLink
-                    key={link.href}
-                    className={({ isActive }) =>
-                        isActive
-                            ? 'underline flex items-center gap-2'
-                            : 'flex items-center gap-2 '
-                    }
-                    to={link.href}
-                    title={link.name}
-                >
-                    {link.icon}
+                <div className=' md:block' key={link.href}>
+                    <NavLink
+                        className={({ isActive }) =>
+                            isActive
+                                ? 'underline flex items-center gap-2'
+                                : 'flex items-center gap-2 '
+                        }
+                        to={link.href}
+                        title={link.name}
+                    >
+                        {link.icon}
 
-                    <div className='text-base hidden md:block'>{link.name}</div>
-                </NavLink>
+                        <div className='text-base hidden md:block'>
+                            {link.name}
+                        </div>
+                    </NavLink>
+                </div>
             ))}
             <div className='flex items-center justify-between '>
                 {user ? (
-                    <NavLink
-                        className='flex flex-row items-center gap-2'
-                        to='/logout'
-                    >
-                        <ExitIcon />
-                        <div className='text-base hidden md:block'>
-                            Logout
-                        </div>{' '}
-                    </NavLink>
+                    <div className='hidden md:block'>
+                        <AccountDropdown />
+                    </div>
                 ) : (
                     <NavLink
                         className='flex flex-row items-center gap-2'
@@ -126,20 +132,16 @@ const MobileNavigationMenu = () => {
                 <NavLink
                     key={link.href}
                     prefetch='intent'
-                    className=''
+                    className='flex flex-row items-center gap-2'
                     to={link.href}
                 >
-                    {link.name}
+                    {link.icon}
+
+                    <div className='text-base '>{link.name}</div>
                 </NavLink>
             ))}
             {user ? (
-                <NavLink
-                    className='flex flex-row items-center gap-2'
-                    to='/logout'
-                >
-                    <ExitIcon />
-                    <div className='text-base '>Logout</div>{' '}
-                </NavLink>
+                <AccountDropdown />
             ) : (
                 <NavLink to='/login'>
                     <EnterIcon />
@@ -161,5 +163,31 @@ const NavDrawer = () => {
                 <MobileNavigationMenu />
             </SheetContent>
         </Sheet>
+    )
+}
+
+const AccountDropdown = () => {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger className='flex flex-row items-center gap-2'>
+                <PersonIcon />
+                <div className='text-base'>Account</div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuLabel>Account</DropdownMenuLabel>
+                <DropdownMenuItem>
+                    <Link to='/account'>Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <NavLink
+                        className='flex flex-row items-center gap-2'
+                        to='/logout'
+                    >
+                        <ExitIcon />
+                        <div className='text-base '>Logout</div>{' '}
+                    </NavLink>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     )
 }
