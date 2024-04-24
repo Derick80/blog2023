@@ -2,26 +2,6 @@ import { prisma } from '~/.server/prisma.server';
 import { education, professionalExperience, pubs, resume_basics, skills } from '~/content/resume/resume';
 import { projects } from '~/content/projects/projects';
 
-
-async function seed() {
-
-  await generateResume();
-
-  await generateProjects();
-
-  console.log(`Database has been seeded. 🌱`);
-}
-
-seed()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
-
-
 const generateResume= async ()=> {
   const init_resume = await prisma.resume.create({
     data: {
@@ -133,3 +113,24 @@ const generateProjects = async () => {
 
   }
 }
+
+
+async function seed() {
+
+  await generateResume();
+
+  await generateProjects();
+
+  console.log(`Database has been seeded. 🌱`);
+}
+
+seed()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+
+
