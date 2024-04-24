@@ -32,3 +32,5 @@ jobs:
 
             - name: Update DB
               run: npx tsx scripts/prebuild.ts
+              env:
+                DATABASE_URL: ${{ secrets.DATABASE_URL }}
