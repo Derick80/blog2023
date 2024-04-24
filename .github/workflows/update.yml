@@ -31,6 +31,6 @@ jobs:
               run: npm install tsx -G
 
             - name: Update DB
-              run: npx tsx scripts/prebuild.ts
+              run: npm run tst
               env:
                 DATABASE_URL: ${{ secrets.DATABASE_URL }}
