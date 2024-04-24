@@ -23,10 +23,8 @@ jobs:
               uses: actions/setup-node@v4
               with:
                 node-version: 20
-
-            - name: 📦 Install dependencies
-              run: npm install
-              working-directory: package.json
+            - name: 📥 Download deps
+             uses: bahmutov/npm-install@v1
 
             - name: 🚀 install tsx
               run: npm install tsx
