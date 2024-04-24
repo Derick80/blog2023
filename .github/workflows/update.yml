@@ -7,6 +7,9 @@ on:
 
 jobs:
     update:
+        name: 🚀 Update
+        runs-on: ubuntu-latest
+        steps:
             - name: Check current directory
               run: |
                 pwd
