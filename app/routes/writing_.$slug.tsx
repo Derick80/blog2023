@@ -25,6 +25,7 @@ const slugSchema = z.object({
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const { slug } = slugSchema.parse(params)
+
     if (!slug) throw new Error('No slug found')
 
     // I use this to load the file.

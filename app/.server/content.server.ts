@@ -65,42 +65,6 @@ export const likeContent = async ({
 
 type PostModule = { [key: string]: unknown } // Unknown structure for now
 
-export const getAllBlogContent = async (relativePath: string) => {
-    const posts = import.meta.glob(`../content/blog/*.mdx`)
-    if (!posts) throw new Error('No posts found')
-    const keys = Object.keys(posts)
-
-    const postData = await Promise.all(
-        keys.map(async (key) => {
-            const { frontmatter } = (await posts[key]()) as PostModule
-            if (frontmatter && typeof frontmatter === 'object') {
-                // Only process if frontmatter exists and is an object
-                return {
-                    title: frontmatter.title,
-                    author: frontmatter.author,
-                    description: frontmatter.description,
-                    datePublished: frontmatter.datePublished,
-                    published: frontmatter.published,
-                    categories: frontmatter.categories,
-
-                    url: key,
-                    slug: key
-                        .replace('../content/blog/', '')
-                        .replace('.mdx', '')
-                } as Omit<frontmatterType, 'code'>
-            } else {
-                // Handle the case where frontmatter is missing or not an object
-                console.error(
-                    `Error processing post: ${key}. Missing or invalid frontmatter.`
-                )
-                return null // Or some placeholder value if needed
-            }
-        })
-    )
-
-    return postData
-}
-
 export const getPostContent = async (slug: string) => {
     const filePath = path.join(__dirname, '../content/blog', `${slug}.mdx`)
     const fileContents = fs.readFileSync(filePath, 'utf8')
@@ -115,40 +79,22 @@ export const updateDataBaseContent = async ({
 }: {
     content: Omit<frontmatterType, 'code'>[]
 }) => {
-    try {
-        for (const post of content) {
-            const {
-                title,
-                author,
-                description,
-                datePublished,
-                published,
-                slug,
-                categories
-            } = post
-            await prisma.content.upsert({
-                where: {
-                    slug
-                },
-                update: {
-                    title,
-                    author,
-                    description,
-                    datePublished,
-                    published,
-                    categories
-                },
-                create: {
-                    title,
-                    author,
-                    description,
-                    datePublished,
-                    published,
-                    slug,
-                    categories
+    // map content to only slug and categories
+    const slugAndCategories = content.map(({ slug, categories }) => {
+        return {
+            slug,
+            title: slug,
+            categoryId: categories.map((category) => {
+                return {
+                    title: category
                 }
             })
         }
+    })
+
+    console.log(slugAndCategories, 'slugAndCategories')
+
+    try {
     } catch (err) {
         console.error(err)
     } finally {
@@ -156,76 +102,35 @@ export const updateDataBaseContent = async ({
     }
 }
 
-export const getandUpdate = async (relativePath: string) => {
-    const posts = import.meta.glob(`../content/blog/*.mdx`)
-    if (!posts) throw new Error('No posts found')
-    const keys = Object.keys(posts)
+// async functions for retreiving data after first dev.
 
-    const postData = await Promise.all(
-        keys.map(async (key) => {
-            const { frontmatter } = (await posts[key]()) as PostModule
-            if (frontmatter && typeof frontmatter === 'object') {
-                // Only process if frontmatter exists and is an object
-                return {
-                    title: frontmatter.title,
-                    author: frontmatter.author,
-                    description: frontmatter.description,
-                    datePublished: frontmatter.datePublished,
-                    published: frontmatter.published,
-                    categories: frontmatter.categories,
-                    url: key,
-                    slug: key
-                        .replace('../content/blog/', '')
-                        .replace('.mdx', '')
+export const getDbContent = async () => {
+    return await prisma.content.findMany({
+        where: {
+            published: true
+        },
+        include: {
+            categories: {
+                select: {
+                    id: true,
+                    title: true,
+                    contentId: true
                 }
-            } else {
-                // Handle the case where frontmatter is missing or not an object
-                console.error(
-                    `Error processing post: ${key}. Missing or invalid frontmatter.`
-                )
-                return null // Or some placeholder value if needed
+            },
+            loves: {
+                select: {
+                    userId: true,
+                    contentId: true
+                }
+            },
+            _count: {
+                select: {
+                    loves: true
+                }
             }
-        })
-    )
-    if (!postData || postData === null) throw new Error('No posts found')
-
-    try {
-        for (const post of postData) {
-            const {
-                title,
-                author,
-                description,
-                datePublished,
-                published,
-                slug,
-                categories
-            } = post
-            await prisma.content.upsert({
-                where: {
-                    slug
-                },
-                update: {
-                    title,
-                    author,
-                    description,
-                    datePublished,
-                    published,
-                    categories
-                },
-                create: {
-                    title,
-                    author,
-                    description,
-                    datePublished,
-                    published,
-                    slug,
-                    categories
-                }
-            })
+        },
+        orderBy: {
+            datePublished: 'desc'
         }
-    } catch (err) {
-        console.error(err)
-    } finally {
-        console.log('done')
-    }
+    })
 }
