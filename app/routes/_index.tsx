@@ -1,7 +1,7 @@
 import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
-import { updateDataBaseContent } from '~/.server/content.server'
-import { getAllPostContent } from '~/.server/update-content.server'
-import ContactWidget from '~/components/contat-widget'
+import { updateDataBaseContent } from '../.server/content.server'
+import { getAllPostContent } from '../.server/update-content.server'
+import ContactWidget from '..//components/contat-widget'
 
 export const meta: MetaFunction = () => {
     return [

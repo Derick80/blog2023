@@ -1,4 +1,4 @@
-import { frontMatterIntermediateType, frontmatterType } from '~/routes/writing'
+import { frontmatterType } from '../routes/writing'
 import { prisma } from './prisma.server'
 import fs from 'fs';
 import path from 'path';
@@ -40,8 +40,10 @@ export const likeContent = async ({
             }
         }
     })
-    if (hasLiked) {
-        return await prisma.love.delete({
+    console.log(hasLiked, 'hasLiked');
+
+    if (hasLiked !== null) {
+        const liked= await prisma.love.delete({
             where: {
                 contentId_userId: {
                     userId,
@@ -49,13 +51,15 @@ export const likeContent = async ({
                 }
             }
         })
+        return liked
     } else {
-        return await prisma.love.create({
+        const liked= await prisma.love.create({
             data: {
                 userId,
                 contentId
             }
         })
+        return liked
     }
 }
 
@@ -94,48 +98,6 @@ export const getAllBlogContent = async (relativePath: string) => {
     return postData
 }
 
-export const upsertContent = async (content: Omit<frontmatterType, 'code'>[]) => {
-    await Promise.all(
-        content.map(async (content) => {
-            if (content) {
-                return await prisma.content.upsert({
-                    where: {
-                        slug: content.slug
-                    },
-                    update: {
-                        title: content.title,
-                        description: content.description,
-                        author: content.author,
-                        datePublished: content.datePublished,
-                        published: content.published,
-                        categories: content.categories,
-                        updatedAt: new Date()
-                    },
-                    create: {
-                        slug: content.slug,
-                       title: content.title,
-                        description: content.description,
-                        author: content.author,
-                        datePublished: content.datePublished,
-                        published: content.published,
-                        categories: content.categories,
-                        createdAt: new Date(),
-                        updatedAt: new Date()
-                    }
-
-                })
-            }
-        }
-        )
-    )
-    return content
-}
-
-export const updateAllContent = async () => {
-    const posts = await getAllBlogContent('blog')
-    if (!posts) throw new Error('No posts found')
-    return await upsertContent(posts)
-}
 
 
 
@@ -148,6 +110,8 @@ export const getPostContent = async (slug: string) => {
     return data;
 }
 
+
+// updateDataBaseContent is my most recent function for updating the database with new content
 
 export const updateDataBaseContent = async ({ content }: {
     content: Omit<frontmatterType, 'code'>[]

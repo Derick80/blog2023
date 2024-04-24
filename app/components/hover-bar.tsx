@@ -26,22 +26,21 @@ export type HoverBarProps = {
     }
 }
 const HoverBar = ({ contentDetails }: HoverBarProps) => {
+     const [likeCount, setLikeCount] = React.useState(
+        contentDetails._count.loves
+    )
+    // determine if the user is logged in or not. If there is no user the like button will be disabled
+    // if there is a user, the like button will be enabled and the currentUserId will be set to the user's userId and used to determine if the user has liked the post or not
     const user = useOptionalUser()
-    const userId = user?.id
+    const currentUser = user?.userId
+  const hasLiked = contentDetails.loves.some((love) => love.userId === currentUser)
 
-    console.log(user, 'user from HoverBar')
-
+    const [userLiked, setUserLiked] = React.useState(hasLiked)
     // extract contentId from the contentDetails object
     const contentId = contentDetails.loves.map((love) => love.contentId)[0]
 
-    const [likeCount, setLikeCount] = React.useState(
-        contentDetails._count.loves
-    )
-    const hasLiked = contentDetails.loves.some(
-        (love) => love.userId === user?.id
-    )
 
-    const [userLiked, setUserLiked] = React.useState(hasLiked)
+
 
     const likeFetcher = useFetcher()
     const handleLike = async () => {

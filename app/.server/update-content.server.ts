@@ -1,44 +1,8 @@
-import { frontMatterIntermediateType, frontmatterType } from '~/routes/writing'
-import { prisma } from './prisma.server'
+import { frontmatterType } from '../routes/writing'
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-export const upsertContent = async (content: Omit<frontmatterType, 'code'>[]) => {
-    console.log(content, 'content');
 
-    await Promise.all(
-        content.map(async (content) => {
-            if (content) {
-                return await prisma.content.upsert({
-                    where: {
-                        slug: content.slug
-                    },
-                    update: {
-                        title: content.title,
-                        description: content.description,
-                        author: content.author,
-                        datePublished: content.datePublished,
-                        published: content.published,
-                        categories: content.categories,
-                    },
-                    create: {
-                        slug: content.slug,
-                       title: content.title,
-                        description: content.description,
-                        author: content.author,
-                        datePublished: content.datePublished,
-                        published: content.published,
-                        categories: content.categories,
-
-                    }
-
-                })
-            }
-        }
-        )
-    )
-    return content
-}
 export const getAllPostContent =  () => {
     const postsDirectory = path.join(process.cwd(), 'app/content/blog/');
     const fileNames = fs.readdirSync(postsDirectory);
@@ -48,6 +12,7 @@ export const getAllPostContent =  () => {
     const posts = fileNames.map(fileName => {
         const filePath = path.join(postsDirectory, fileName);
         const fileContents = fs.readFileSync(filePath, 'utf8');
+        // @ts-ignore
         const { data } = matter<frontmatterType>(fileContents)
         // add slug to data object
         data.slug = fileName.replace('.mdx', '');
@@ -60,22 +25,3 @@ export const getAllPostContent =  () => {
 
     return posts;
 }
-
-export const updateAllPostContent = async () => {
-    const posts = await getAllPostContent();
-    if (!posts) throw new Error('No posts found');
-    return await upsertContent(posts);
-
-}
-
-// export const updateContent = async (content: Omit<frontmatterType, 'code'>[]) => {
-//     const isInDatabase = await prisma.content.findMany({
-//         where: {
-//             slug: content.slug
-//         }
-//     });
-
-//     if(isInDatabase.length )
-
-
-// }
