@@ -1,6 +1,5 @@
-import { prisma } from '~/.server/prisma.server'
-import { getAllPostContent } from '~/.server/update-content.server'
-
+import { prisma } from '../app/.server/prisma.server'
+import { getAllPostContent } from '../app/.server/update-content.server'
 async function getThings() {
     const content = getAllPostContent()
     if (!content) throw new Error('No content found')
