@@ -116,6 +116,8 @@ const generateProjects = async () => {
 
 
 async function seed() {
+  await prisma.resume.deleteMany();
+  await prisma.professionalExperience.deleteMany();
 
   await generateResume();
 

@@ -6,7 +6,6 @@
 
 import { HeartFilledIcon, HeartIcon, Share1Icon } from '@radix-ui/react-icons'
 import { Button } from './ui/button'
-import { Badge } from './ui/badge'
 import { useOptionalUser } from '~/lib/functions'
 import { useFetcher } from '@remix-run/react'
 import React from 'react'
@@ -16,6 +15,7 @@ import { Muted } from './ui/typography'
 
 export type HoverBarProps = {
     contentDetails: {
+        slug: string
         _count: {
             loves: number
         }
@@ -26,6 +26,8 @@ export type HoverBarProps = {
     }
 }
 const HoverBar = ({ contentDetails }: HoverBarProps) => {
+    console.log(contentDetails, 'contentDetails from HoverBar');
+
     const [likeCount, setLikeCount] = React.useState(
         contentDetails._count.loves
     )
@@ -39,7 +41,8 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
 
     const [userLiked, setUserLiked] = React.useState(hasLiked)
     // extract contentId from the contentDetails object
-    const contentId = contentDetails.loves.map((love) => love.contentId)[0]
+    const contentId = contentDetails.slug
+    console.log(contentId, 'contentId');
 
     const likeFetcher = useFetcher()
     const handleLike = async () => {
@@ -54,7 +57,7 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
         }
         likeFetcher.submit(
             {
-                contentId: contentId,
+                contentId,
                 intent: 'like-content'
             },
             {

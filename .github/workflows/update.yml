@@ -31,6 +31,6 @@ jobs:
               run: npm install tsx -G
 
             - name: Update DB
-              run: npm run tst
+              run: npm run syncdbmdx
               env:
                   DATABASE_URL: ${{ secrets.DATABASE_URL }}

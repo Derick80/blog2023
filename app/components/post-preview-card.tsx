@@ -31,6 +31,9 @@ export default function PostPreviewCard({
     slug,
     setItem
 }: PostPreviewCardProps) {
+    const isCategoryArray = Array.isArray(categories)
+    console.log(isCategoryArray, 'isCategoryArray');
+
     return (
         <>
             <Card className='w-full'>
