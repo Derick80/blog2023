@@ -15,6 +15,7 @@ import {
     updateAllContent,
     upsertContent
 } from '~/.server/content.server'
+import { getAllPostContent } from '~/.server/update-content.server'
 
 export type frontmatterType = {
     title: string
@@ -36,51 +37,16 @@ export type frontMatterIntermediateType = Omit<
 }
 type PostModule = { [key: string]: unknown } // Unknown structure for now
 export async function loader({ request, params }: LoaderFunctionArgs) {
-    const posts = import.meta.glob('../content/blog/*.mdx')
-
+    const posts =  getAllPostContent()
     if (!posts) throw new Error('No posts found')
-    const keys = Object.keys(posts)
 
-    const slugs = keys.map((key) =>
-        key.replace('../content/blog/', '').replace('.mdx', '')
-    )
+        console.log(posts, 'posts');
 
-    const postData = await Promise.all(
-        keys.map(async (key) => {
-            const { frontmatter } = (await posts[key]()) as PostModule
-            if (frontmatter && typeof frontmatter === 'object') {
-                // Only process if frontmatter exists and is an object
-                return {
-                    ...frontmatter,
-                    url: key,
-                    slug: key
-                        .replace('../content/blog/', '')
-                        .replace('.mdx', ''),
-                    code: () =>
-                        import(
-                            `../content/blog/${key.replace('../content/blog/', '').replace('.mdx', '')}.mdx`
-                        )
-                } as frontmatterType
-            } else {
-                // Handle the case where frontmatter is missing or not an object
-                console.error(
-                    `Error processing post: ${key}. Missing or invalid frontmatter.`
-                )
-                return null // Or some placeholder value if needed
-            }
-        })
-    )
-    const categories = postData.map((post) => (post ? post.categories : null))
-
-    const allPosts = postData.filter(
-        (post) => post !== null && post.published === true
-    )
-
-    return json({ allPosts, categories, slugs })
+    return json({posts })
 }
 
 export default function WritingRoute() {
-    const { allPosts, slugs, categories } = useLoaderData<typeof loader>()
+    const { posts } = useLoaderData<typeof loader>()
     const [item, setItem] = React.useState('item-1')
 
     const [value, setValue] = React.useState('item-1')
@@ -100,8 +66,8 @@ export default function WritingRoute() {
                         <h2 className='text-2xl font-bold'>Posts</h2>
                     </AccordionTrigger>
                     <AccordionContent className='flex flex-col gap-2'>
-                        {allPosts
-                            ? allPosts.map(
+                        {posts
+                            ? posts.map(
                                   (post) =>
                                       post && (
                                           <PostPreviewCard

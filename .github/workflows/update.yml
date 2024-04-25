@@ -1,9 +1,8 @@
 name: 🚀 Update
 on:
-  push:
-    branches:
-      - development
-  pull_request: {}
+    push:
+        branches:
+            - development
 
 jobs:
     update:
@@ -12,18 +11,18 @@ jobs:
         steps:
             - name: Check current directory
               run: |
-                pwd
-                ls -lah
+                  pwd
+                  ls -lah
 
             - name: 📂 Checkout
               uses: actions/checkout@v4
               with:
-                fetch-depth: 50
+                  fetch-depth: 50
 
             - name: 🛠 Setup node
               uses: actions/setup-node@v4
               with:
-                node-version: 20
+                  node-version: 20
             - name: 📥 Download deps
               uses: bahmutov/npm-install@v1
 
@@ -31,6 +30,6 @@ jobs:
               run: npm install tsx -G
 
             - name: Update DB
-              run: npm run tst
+              run: npm run syncdbmdx
               env:
-                DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}

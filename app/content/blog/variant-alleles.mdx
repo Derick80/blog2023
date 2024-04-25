@@ -1,10 +1,13 @@
 ---
 title: Variant Alleles
-author: "Derick Hoskinson, Ph.D."
-description: "Overview of VariantAlleles.com"
+author: Derick Hoskinson, Ph.D.
+description: Overview of VariantAlleles.com
 datePublished: '2023-11-15'
 published: true
-categories: ["Fall-2023-Planning", "planning", "documentation"]
+categories:
+    - scoping
+    - planning
+    - documentation
 ---
 
 ## Overview
@@ -42,9 +45,9 @@ VariantAlleles.com will use Clerk for authentication.
 
 ### Components & Styling
 
-VariantAlleles.com will use ShadUi as the componet library.Shadui uses a headless approach and is integrated with TailwindCss for convienent styling and theming. FramerMotion is used for animations and transitions but has minimal presence in the codebase as I haven't focused on animations yet.
+VariantAlleles.com will use ShadUi as the componet library.Shadui uses a headless approach and is integrated with TailwindCss for convienent styling and theming. FramerMotion is used for animations and transitions but has minimal presence in the codebase as I havent focused on animations yet.
 
-I am using the 'New York' icon set from radix-icons. I am also using the 'lucide' icon set for when there is no icon in the radix set.
+I am using the New York icon set from radix-icons. I am also using the lucide icon set for when there is no icon in the radix set.
 
 - [Shadui](https://ui.shadcn.com/)
 - [TailwindCSS](https://tailwindcss.com)
@@ -60,12 +63,12 @@ The PDF Library will use Cloudinary for file upload and storage.
 
 ### Documentation
 
-I'm using mdx-bundler to create the posts and pages for VariantAlleles.com.
+Im using mdx-bundler to create the posts and pages for VariantAlleles.com.
 
 [mdx-bundler](https://github.com/kentcdodds/mdx-bundler)
 
 ## Deployment
 
-VariantAlleles.com will be deployed to Fly.io. A previous version of the app was deployed to Netlify but I had trouble updating from Remix V1 to V2. Perhaps I should document that problem and solution here. I discovered that Netlify doesn't support the version of esbuild that mdx-bundler uses. There is probably a work around but I decided to try Fly.io instead.
+VariantAlleles.com will be deployed to Fly.io. A previous version of the app was deployed to Netlify but I had trouble updating from Remix V1 to V2. Perhaps I should document that problem and solution here. I discovered that Netlify doesnt support the version of esbuild that mdx-bundler uses. There is probably a work around but I decided to try Fly.io instead.
 
 [Fly.io](https://fly.io)

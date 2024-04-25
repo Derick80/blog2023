@@ -14,10 +14,9 @@ import HoverBar from '~/components/hover-bar'
 import { getPostInformation, likeContent } from '~/.server/content.server'
 import { z } from 'zod'
 import { isAuthenticated } from './_auth+/auth.server'
-
 // app/routes/writing.$slug_index.tsx
 const relativePath = 'app/content/blog/'
-const filePath = String([process.cwd(), relativePath, +'*/tsx'])
+const filePath = String([process.cwd() + '/' + relativePath ])
 
 const slugSchema = z.object({
     slug: z.string()
@@ -25,6 +24,8 @@ const slugSchema = z.object({
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const { slug } = slugSchema.parse(params)
+console.log(filePath, 'filePath');
+
     if (!slug) throw new Error('No slug found')
 
     // I use this to load the file.
@@ -33,7 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     if (!frontmatter) throw new Error('No frontmatter found')
     if (!content) throw new Error('No content found')
 
-    const { code } = await bundleMDX({
+    const { code,frontmatter:front,matter } = await bundleMDX({
         source: content,
         cwd: filePath,
         mdxOptions(options, frontmatter) {
@@ -61,8 +62,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
             return options
         }
     })
+    console.log(matter, 'front');
+
     const contentDetails = await getPostInformation(slug)
     if (!contentDetails) throw new Error('No content details found')
+        console.log(contentDetails, 'contentDetails');
 
     return json({ slug, content, code, contentDetails })
 }
@@ -90,6 +94,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const { intent, contentId } = contentActionSchema.parse(
         Object.fromEntries(formData.entries())
     )
+    console.log(contentId, userId, 'contentId, userId');
 
     const liked = await likeContent({ userId, contentId })
     if (!liked) throw new Error('No content found')

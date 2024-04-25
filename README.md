@@ -33,6 +33,15 @@
 
 ## Documentation
 
+### scripts
+I am trying to do a bunch of automation and one thing is to seed my db AND scan my project for updated content and update the db with the new content.
+
+
+```Typescript
+ "firstSeed": "npx prisma db push && npx prisma generate && npx prisma db seed && tsx scripts/init-seed.ts",
+ ```
+This should only be run once during the initial dev and production set up.  Using this at any other time will wipe your db. I should add some type of warning!
+
 
 #zods stf
 // This adds type narrowing by the intent property

@@ -10,6 +10,7 @@ declare module '*.mdx' {
         datePublished: string
         published: boolean
         categories: string[]
+
     }
     export default MDXComponent
 }
