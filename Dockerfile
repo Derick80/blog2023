@@ -1,50 +1,60 @@
-# syntax = docker/dockerfile:1
+# This file is moved to the root directory before building the image
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=21.1.0
-FROM node:${NODE_VERSION}-slim as base
+# base node image
+FROM node:20-bookworm-slim as base
 
-LABEL fly_launch_runtime="Remix/Prisma"
+# set for base and all layer that inherit from it
+ENV NODE_ENV production
 
-# Remix/Prisma app lives here
-WORKDIR /app
+# Install openssl for Prisma
+RUN apt-get update && apt-get install -y fuse3 openssl ca-certificates
 
-# Set production environment
-ENV NODE_ENV=production
+# Install all node_modules, including dev dependencies
+FROM base as deps
 
+WORKDIR /myapp
 
-# Throw-away build stage to reduce size of final image
+ADD package.json package-lock.json .npmrc ./
+RUN npm install --include=dev
+
+# Setup production node_modules
+FROM base as production-deps
+
+WORKDIR /myapp
+
+COPY --from=deps /myapp/node_modules /myapp/node_modules
+ADD package.json package-lock.json .npmrc ./
+RUN npm prune --omit=dev
+
+# Build the app
 FROM base as build
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install -y python-is-python3 pkg-config build-essential openssl
+ARG COMMIT_SHA
+ENV COMMIT_SHA=$COMMIT_SHA
 
-# Install node modules
-COPY --link package.json package-lock.json ./
-RUN npm install --omit=dev
+WORKDIR /myapp
 
-# Generate Prisma Client
-COPY --link prisma .
+COPY --from=deps /myapp/node_modules /myapp/node_modules
+
+ADD prisma .
 RUN npx prisma generate
 
-# Copy application code
-COPY --link . .
+ADD . .
 
-# Build application
-RUN npm run build
-
-# Remove development dependencies
-RUN npm prune --production
-
-
-# Final stage for app image
+# Finally, build the production image with minimal footprint
 FROM base
 
-# Copy built application
-COPY --from=build /app /app
+ENV NODE_ENV="production"
 
-# Entrypoint prepares the database.
+WORKDIR /myapp
 
-# Start the server by default, this can be overwritten at runtime
-CMD [ "npm", "run" ]
+COPY --from=production-deps /myapp/node_modules /myapp/node_modules
+COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
+
+COPY --from=build /myapp/build /myapp/build
+COPY --from=build /myapp/package.json /myapp/package.json
+COPY --from=build /myapp/prisma /myapp/prisma
+
+
+ADD . .
+
