@@ -16,6 +16,7 @@ kill_timeout = '5s'
   PORT = '8080'
 
 [[services]]
+  http_checks = []
   protocol = 'tcp'
   internal_port = 8080
   processes = ['app']
@@ -37,4 +38,4 @@ kill_timeout = '5s'
   [[services.tcp_checks]]
     interval = '15s'
     timeout = '2s'
-    grace_period = '1s'
+    grace_period = '15s'
