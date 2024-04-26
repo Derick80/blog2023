@@ -40,9 +40,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint]
     # only deploy main/development branch on pushes
-    if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') && github.event_name == 'push' }}
+    if: ${{ (github.ref == 'refs/heads/development') && github.event_name == 'push' }}
 
     steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.8.0
+
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
@@ -58,12 +61,6 @@ jobs:
 
       - name: 🚀 Deploy development
         if: ${{ github.ref == 'refs/heads/development' }}
-        run: flyctl deploy --remote-only -a ${{ steps.app_name.outputs.value }}-development
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: 🚀 Deploy Production
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}
+        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} -a ${{ steps.app_name.outputs.value }}-development
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
