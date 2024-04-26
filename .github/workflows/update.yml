@@ -2,7 +2,7 @@ name: 🚀 Update
 on:
     push:
         branches:
-            - development
+            - develodpment
 
 jobs:
     update:
