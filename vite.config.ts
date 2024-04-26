@@ -8,6 +8,7 @@ import mdx from "@mdx-js/rollup";
 import rehypePrettyCode  from 'rehype-pretty-code'
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+
 installGlobals()
 
 export default defineConfig({
