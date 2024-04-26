@@ -14,8 +14,9 @@ permissions:
   actions: write
   contents: read
 
-jobs:vitest:
-    name: ⚡ Vitest
+jobs:
+  lint:
+    name: ⬣ ESLint
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -26,42 +27,43 @@ jobs:vitest:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Install deps
         run: npm install
 
-      - name: ⚡ Run vitest
-        run: npm run test -- --coverage
-    deploy:
-        name: 🚀 Deploy
-        runs-on: ubuntu-latest
-        needs: [lint, typecheck]
-        # only deploy main/development branch on pushes
-        if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') && github.event_name == 'push' }}
+      - name: 🔬 Lint
+        run: npm run lint
 
-        steps:
-        - name: ⬇️ Checkout repo
+  deploy:
+    name: 🚀 Deploy
+    runs-on: ubuntu-latest
+    needs: [lint]
+    # only deploy main/development branch on pushes
+    if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') && github.event_name == 'push' }}
+
+    steps:
+      - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-        - name: 👀 Read app name
+      - name: 👀 Read app name
         uses: SebRollen/toml-action@v1.2.0
-            id: app_name
-            with:
-            file: fly.toml
-            field: app
+        id: app_name
+        with:
+          file: fly.toml
+          field: app
 
-        - name: 🎈 Setup Fly
-            uses: superfly/flyctl-actions/setup-flyctl@1.5
+      - name: 🎈 Setup Fly
+        uses: superfly/flyctl-actions/setup-flyctl@1.5
 
-        - name: 🚀 Deploy Staging
-            if: ${{ github.ref == 'refs/heads/development' }}
-            run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}-development
-            env:
-            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: 🚀 Deploy Staging
+        if: ${{ github.ref == 'refs/heads/development' }}
+        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}-development
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-        - name: 🚀 Deploy Production
-            if: ${{ github.ref == 'refs/heads/main' }}
-            run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}
-            env:
-            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: 🚀 Deploy Production
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
