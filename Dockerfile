@@ -45,16 +45,13 @@ RUN npm run build
 FROM base
 
 ENV NODE_ENV="production"
-ENV INTERNAL_PORT="8080"
 
 WORKDIR /app
 
 COPY --from=production-deps /app/node_modules /app/node_modules
-COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 
 COPY --from=build /app/build /app/build
 COPY --from=build /app/package.json /app/package.json
-COPY --from=build /app/prisma /app/prisma
 
 
 ADD . .

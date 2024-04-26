@@ -11,11 +11,15 @@ kill_timeout = '5s'
 [experimental]
   auto_rollback = true
 
-[services]
- [checks.name_of_your_http_check]
-    grace_period = "30s"
-    interval = "15s"
-    method = "get"
-    port = 5500
-    timeout = "10s"
+
+[checks]
+  [checks.status]
+    port = 3000
     type = "http"
+    interval = "10s"
+    timeout = "2s"
+    grace_period = "5s"
+    method = "GET"
+    path = "/healthcheck"
+    protocol = "http"
+    tls_skip_verify = false
