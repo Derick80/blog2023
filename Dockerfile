@@ -1,13 +1,11 @@
-# This file is moved to the root directory before building the image
-
-# base node image
-FROM node:20-bookworm-slim as base
+ARG NODE_VERSION=21.1.0
+FROM node:${NODE_VERSION}-slim as base
 
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
 
 # Install openssl for Prisma
-RUN apt-get update && apt-get install -y fuse3 openssl ca-certificates
+RUN apt-get update && apt-get install -y openssl
 
 # Install all node_modules, including dev dependencies
 FROM base as deps
