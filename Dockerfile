@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y fuse3 openssl ca-certificates
 # Install all node_modules, including dev dependencies
 FROM base as deps
 
-WORKDIR /myapp
+WORKDIR /app
 
 ADD package.json package-lock.json ./
 RUN npm install --include=dev
@@ -20,9 +20,9 @@ RUN npm install --include=dev
 # Setup production node_modules
 FROM base as production-deps
 
-WORKDIR /myapp
+WORKDIR /app
 
-COPY --from=deps /myapp/node_modules /myapp/node_modules
+COPY --from=deps /app/node_modules /app/node_modules
 ADD package.json package-lock.json ./
 RUN npm prune --omit=dev
 
@@ -32,9 +32,9 @@ FROM base as build
 ARG COMMIT_SHA
 ENV COMMIT_SHA=$COMMIT_SHA
 
-WORKDIR /myapp
+WORKDIR /app
 
-COPY --from=deps /myapp/node_modules /myapp/node_modules
+COPY --from=deps /app/node_modules /app/node_modules
 
 ADD prisma .
 RUN npx prisma generate
@@ -46,14 +46,14 @@ FROM base
 
 ENV NODE_ENV="production"
 
-WORKDIR /myapp
+WORKDIR /app
 
-COPY --from=production-deps /myapp/node_modules /myapp/node_modules
-COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
+COPY --from=production-deps /app/node_modules /app/node_modules
+COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 
-COPY --from=build /myapp/build /myapp/build
-COPY --from=build /myapp/package.json /myapp/package.json
-COPY --from=build /myapp/prisma /myapp/prisma
+COPY --from=build /app/build /app/build
+COPY --from=build /app/package.json /app/package.json
+COPY --from=build /app/prisma /app/prisma
 
 
 ADD . .
