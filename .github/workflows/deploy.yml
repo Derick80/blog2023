@@ -3,7 +3,7 @@ name: 🚀 Deploy
 on:
   push:
     branches:
-      - development
+      - sayce
   pull_request:
 
 concurrency:
