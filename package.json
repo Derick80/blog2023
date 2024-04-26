@@ -10,7 +10,7 @@
     "firstSeed": "npx prisma db push && npx prisma generate && npx prisma db seed && tsx scripts/init-seed.ts",
     "syncdbmdx": "tsx scripts/sync-db-mdx.ts",
     "build": "remix vite:build",
-    "postbuild": "npx prisma db push && npx prisma generate",
+    "postbuild": "npx prisma generate",
     "tst": "npx prisma db push && npx prisma generate && npx prisma db seed && tsx scripts/prebuild.ts && remix vite:build",
     "dev": "remix vite:dev",
     "lint": "eslint",
