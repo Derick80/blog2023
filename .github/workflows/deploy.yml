@@ -56,7 +56,7 @@ jobs:
       - name: 🎈 Setup Fly
         uses: superfly/flyctl-actions/setup-flyctl@1.5
 
-      - name: 🚀 Deploy Staging
+      - name: 🚀 Deploy development
         if: ${{ github.ref == 'refs/heads/development' }}
         run: flyctl deploy --remote-only --app ${{ steps.app_name.outputs.value }}-development
         env:
