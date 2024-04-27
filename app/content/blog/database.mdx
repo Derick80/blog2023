@@ -9,12 +9,31 @@ categories:
     - cockroachdb
     - postgres
 ---
+import {TContainer} from '../../components/tst-container'
 
+# {frontmatter.title}
 ## Context
+
+<TContainer />
 
 VariantAlleles.com will use a distributed SQL database that is compatible with postgres to store data. The database is hosted on cockroachlabs cloud.
 
-
+```ts
+function getImageBuilder (
+    id: string,
+    alt: string = '',
+    { className, style }: { className?: string; style?: CSSProperties } = {},
+): ImageBuilder {
+    function imageBuilder (transformations?: TransformerOption) {
+        return buildImageUrl(id, { transformations })
+    }
+    imageBuilder.alt = alt
+    imageBuilder.id = id
+    imageBuilder.className = className
+    imageBuilder.style = style
+    return imageBuilder
+}
+```
 ## Autolink literals
 
 www.example.com, https://example.com, and contact@example.com.

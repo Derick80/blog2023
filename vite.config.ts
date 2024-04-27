@@ -10,7 +10,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
 installGlobals()
-
+// the mdx plugin is used to compile mdx files but only the about page at the momement. If I remove the mdx plugin then the about page will not work but the mdx-bundler
 export default defineConfig({
   server: {
     port:6236

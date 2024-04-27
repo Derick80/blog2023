@@ -1,4 +1,4 @@
-import { getAllPostContent, seedInitialDbwithContent } from '~/.server/update-content.server'
+import { getAllPostContent, seedInitialDbwithContent } from  '../app/.server/update-content.server'
 
 
 async function getThings() {

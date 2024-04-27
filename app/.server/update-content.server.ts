@@ -43,6 +43,7 @@ export const getAllPostContent = () => {
 }
 
 
+
 export async function getMDXFileContent (slug: string) {
     const basePath = `${process.cwd()}/app/content/blog`
     const source =  fs.readFileSync(path.join(`${basePath}/${slug}.mdx`), 'utf-8')
@@ -150,7 +151,9 @@ export const seedInitialDbwithContent = async (posts: {
 
     await prisma.contentCategory.deleteMany()
     for (let i = 0; i < posts.length; i++) {
+
         await prisma.content.create({
+
             data: {
                 title: posts[i].title,
                 author: posts[i].author,
@@ -161,10 +164,11 @@ export const seedInitialDbwithContent = async (posts: {
 
             },
 
+
         },
 
-
         )
+
     }
     const allPostsSlugs = await prisma.content.findMany({
         select: {
@@ -195,7 +199,9 @@ export const seedInitialDbwithContent = async (posts: {
     // Create the categories in the database with the post.slug connected to it
     for (let i = 0; i < uniqueCategories.length; i++) {
         await prisma.contentCategory.createMany({
-            data: getSlugsWithCategories(uniqueCategories[i])
+            data: getSlugsWithCategories(uniqueCategories[i]),
+                            skipDuplicates: true
+
         })
     }
 

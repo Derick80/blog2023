@@ -1,5 +1,9 @@
 import { Params, useMatches } from '@remix-run/react'
+import React from 'react'
 import { useMemo } from 'react'
+import { Button } from '~/components/ui/button'
+import * as mdxBundler from "mdx-bundler/client/index.js";
+
 export type UserType = {
     userId: string
     email: string
@@ -39,4 +43,34 @@ export function useOptionalUser(): UserType | undefined {
         return undefined
     }
     return data.user
+}
+
+const mdxComponents = {
+  button: Button,
+};
+/**
+ * This should be rendered within a useMemo
+ * @param code the code to get the component from
+ * @returns the component
+ */
+function getMdxComponent(code: string) {
+    const Component = mdxBundler.getMDXComponent(code,
+        {
+            components: mdxComponents,
+        }
+  );
+
+
+
+    return Component;
+}
+
+
+
+export function useMdxComponent(code: string, globals?: Record<string, unknown>) {
+  return React.useMemo(() => {
+
+    const component = getMdxComponent(code);
+    return component;
+  }, [code]);
 }

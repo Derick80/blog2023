@@ -5,11 +5,12 @@ import * as fsp from 'node:fs/promises';
 import fs from 'fs'
 import nodepath from 'path'
 import path from 'path'
-import { bundleMDX } from './bundler.server';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight'
 import remarkSlug from 'remark-slug'
+import remarkAutolinkHeader from 'remark-autolink-headings/index';
+import rehypePrettyCode from 'rehype-pretty-code';
+import { bundleMDX } from 'mdx-bundler';
 
 
 export type PostFrontMatter = {
@@ -20,7 +21,7 @@ export type PostFrontMatter = {
     description: string
     datePublished: string
     published: boolean
-    tags: string[]
+    categories: string[]
 
 }
 
@@ -39,55 +40,31 @@ export const getFile = async (slug: string) => {
     const frontmatter = content.split('---')[1]
     const content1 = content.split('---')[2]
 
-    return { frontmatter, content: content1 }
+    return { frontmatter, content }
 }
 
 
+export async function getMDXFileContent (slug: string) {
+    const basePath = `${process.cwd()}/app/content/blog/`
+    const source = await fsp.readFile(path.join(`${basePath}/${slug}.mdx`), 'utf-8')
+  // bundle the mdx file
 
-//     const postsPath = await fsp.readdir(contentPath, {
-//         withFileTypes: true,
-//     })
+   const data = await bundleMDX<PostFrontMatter>({
+        source,
+       cwd: `${process.cwd()}/app/content/blog`,
+         mdxOptions: options => ({
+        remarkPlugins: [
+          ...(options.remarkPlugins ?? []),
+          remarkSlug,
+          [remarkAutolinkHeader, { behavior: 'wrap' }],
+          remarkGfm,
+        ],
+             rehypePlugins: [...(options.rehypePlugins ?? []),
+                 rehypePrettyCode,
+                 rehypeHighlight    ],
+        }),
+    })
 
-//     console.log(postsPath, 'postsPath');
+        return data
 
-
-//     // loop through the postsPath array and retreive the frontmatter for each post
-//     const posts = (
-//         await Promise.all(
-//             postsPath.map(async (post) => {
-//                 const source = await fsp.readFile(path.join(contentPath, post.name),
-//                     'utf-8'
-//                 )
-//                 console.log(source, 'source');
-
-//                 const { code, frontmatter } = await bundleMDX<PostFrontMatter>({
-//                     source: source.toString(),
-//                     cwd: process.cwd(),
-//                     mdxOptions: options => ({
-//         remarkPlugins: [
-//           ...(options.remarkPlugins ?? []),
-//           remarkSlug,
-//           [rehypeAutolinkHeadings, { behavior: 'wrap' }],
-//           remarkGfm,
-//         ],
-//         rehypePlugins: [...(options.rehypePlugins ?? []), rehypeHighlight],
-//       }),
-//                 })
-//                 console.log(Array.isArray(frontmatter.tags), 'frontmatter.tags');
-
-//                 return {
-//                     code,
-//                     slug: post.name.replace(/\.mdx/, ''),
-//                     title: frontmatter.title,
-//                     author: frontmatter.author,
-//                     description: frontmatter.description,
-//                     date: frontmatter.datePublished,
-//                     tags: frontmatter.tags,
-//                     published: frontmatter.published,
-//                 }
-//             })
-//         )
-//     ).filter((post) => post.published === true)
-
-// return posts
-
+}
