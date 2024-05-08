@@ -26,7 +26,7 @@ export type HoverBarProps = {
     }
 }
 const HoverBar = ({ contentDetails }: HoverBarProps) => {
-    console.log(contentDetails, 'contentDetails from HoverBar');
+    console.log(contentDetails, 'contentDetails from HoverBar')
 
     const [likeCount, setLikeCount] = React.useState(
         contentDetails._count.loves
@@ -42,7 +42,7 @@ const HoverBar = ({ contentDetails }: HoverBarProps) => {
     const [userLiked, setUserLiked] = React.useState(hasLiked)
     // extract contentId from the contentDetails object
     const contentId = contentDetails.slug
-    console.log(contentId, 'contentId');
+    console.log(contentId, 'contentId')
 
     const likeFetcher = useFetcher()
     const handleLike = async () => {

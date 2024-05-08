@@ -32,7 +32,6 @@ export default function PostPreviewCard({
     setItem
 }: PostPreviewCardProps) {
     const isCategoryArray = Array.isArray(categories)
-    console.log(isCategoryArray, 'isCategoryArray');
 
     return (
         <>

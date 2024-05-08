@@ -1,6 +1,9 @@
-import { getAllPostContent,updateDBContent } from '~/.server/update-content.server'
+import {
+    getAllPostContent,
+    updateDBContent
+} from '~/.server/update-content.server'
 
-async function updateDataBaseContent(){
+async function updateDataBaseContent() {
     const posts = getAllPostContent()
     if (!posts) throw new Error('No posts found')
     console.log(posts, 'posts')

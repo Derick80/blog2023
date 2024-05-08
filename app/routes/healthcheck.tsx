@@ -2,7 +2,7 @@
 import { type LoaderFunctionArgs } from '@remix-run/node'
 import { prisma } from '~/.server/prisma.server'
 
-export async function loader ({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
     const host =
         request.headers.get('X-Forwarded-Host') ?? request.headers.get('host')
 
@@ -13,10 +13,10 @@ export async function loader ({ request }: LoaderFunctionArgs) {
             prisma.content.count(),
             fetch(`${new URL(request.url).protocol}${host}`, {
                 method: 'HEAD',
-                headers: { 'X-Healthcheck': 'true' },
+                headers: { 'X-Healthcheck': 'true' }
             }).then((r) => {
                 if (!r.ok) return Promise.reject(r)
-            }),
+            })
         ])
         return new Response('OK')
     } catch (error: unknown) {

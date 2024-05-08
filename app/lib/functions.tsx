@@ -44,33 +44,64 @@ export function useOptionalUser(): UserType | undefined {
     }
     return data.user
 }
+const Paragraph = (props: {
+    children?: React.ReactNode
+}) => {
+    if (typeof props.children !== 'string' && props.children === 'img') {
+        return <>{props.children}</>
+    }
 
-const mdxComponents = {
-  button: Button,
+        return <p
+                className = 'leading-7 [&:not(:first-child)]:mt-6'
+            {  ...props } />
+}
+
+
+const CodeBlock = (props: {
+    children?:React.ReactNode
+})=>{
+
+    return <code
+        className=' text-red-500'
+    {...props} />
+}
+
+const Span = (props: {
+    children?:React.ReactNode
+})=>{
+
+    return <span
+        className=' text-red-500'
+    {...props} />
+}
+ const mdxComponents = {
+     p: Paragraph,
 };
 /**
  * This should be rendered within a useMemo
  * @param code the code to get the component from
  * @returns the component
  */
-function getMdxComponent(code: string) {
-    const Component = mdxBundler.getMDXComponent(code,
-        {
-            components: mdxComponents,
-        }
-  );
+export function getMdxComponent(code: string) {
+  const Component = mdxBundler.getMDXComponent(code);
 
+  function DCHMdxComponent({
+    components,
+    ...rest
+  }: Parameters<typeof Component>["0"]) {
+    return (
+      <Component components={{ ...mdxComponents, ...components }} {...rest} />
+    );
+  }
 
-
-    return Component;
+  return DCHMdxComponent;
 }
 
-
-
-export function useMdxComponent(code: string, globals?: Record<string, unknown>) {
+export function useMdxComponent(code: string) {
   return React.useMemo(() => {
 
     const component = getMdxComponent(code);
     return component;
   }, [code]);
 }
+

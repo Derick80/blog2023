@@ -31,8 +31,7 @@ export const likeContent = async ({
 }: {
     userId: string
     contentId: string
-    }) => {
-
+}) => {
     const hasLiked = await prisma.love.findUnique({
         where: {
             contentId_userId: {
@@ -58,7 +57,7 @@ export const likeContent = async ({
             data: {
                 user: {
                     connect: {
-                        id:userId
+                        id: userId
                     }
                 },
                 content: {

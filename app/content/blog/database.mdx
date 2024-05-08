@@ -10,6 +10,8 @@ categories:
     - postgres
 ---
 import {TContainer} from '../../components/tst-container'
+export const toc = [{depth: 1, value: 'The title'}]
+export const wow = 'wow!'
 
 # {frontmatter.title}
 ## Context
@@ -24,7 +26,8 @@ function getImageBuilder (
     alt: string = '',
     { className, style }: { className?: string; style?: CSSProperties } = {},
 ): ImageBuilder {
-    function imageBuilder (transformations?: TransformerOption) {
+
+function imageBuilder (transformations?: TransformerOption) {
         return buildImageUrl(id, { transformations })
     }
     imageBuilder.alt = alt

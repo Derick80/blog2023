@@ -1,17 +1,15 @@
 import pkg from '@markdoc/markdoc'
 const { parse, transform } = pkg
-import { RenderableTreeNodes } from '@markdoc/markdoc/dist/'
-import * as fsp from 'node:fs/promises';
+import * as fsp from 'node:fs/promises'
 import fs from 'fs'
 import nodepath from 'path'
 import path from 'path'
-import remarkGfm from 'remark-gfm';
+import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import remarkSlug from 'remark-slug'
-import remarkAutolinkHeader from 'remark-autolink-headings/index';
-import rehypePrettyCode from 'rehype-pretty-code';
-import { bundleMDX } from 'mdx-bundler';
-
+import remarkAutolinkHeader from 'remark-autolink-headings/index'
+import rehypePrettyCode from 'rehype-pretty-code'
+import { bundleMDX } from 'mdx-bundler'
 
 export type PostFrontMatter = {
     code: string
@@ -22,11 +20,9 @@ export type PostFrontMatter = {
     datePublished: string
     published: boolean
     categories: string[]
-
 }
 
-export const contentPath = path.join(process.cwd(), '/app/content/')
-
+// may retire this function soon.
 export const getFile = async (slug: string) => {
     const relativePath = 'app/content/blog/'
     const contentPath = nodepath.resolve(
@@ -42,29 +38,82 @@ export const getFile = async (slug: string) => {
 
     return { frontmatter, content }
 }
+const globals = {
+    '@mdx-js/react': {
+        varName: 'MdxJsReact',
+        namedExports: ['useMDXComponents'],
+        defaultExport: false
+    }
+}
 
 
-export async function getMDXFileContent (slug: string) {
+
+// Best way so farf to get an Mdx fiel
+export async function getMDXFileContent(slug: string) {
     const basePath = `${process.cwd()}/app/content/blog/`
-    const source = await fsp.readFile(path.join(`${basePath}/${slug}.mdx`), 'utf-8')
-  // bundle the mdx file
+    const source = await fsp.readFile(
+        path.join(`${basePath}/${slug}.mdx`),
+        'utf-8'
+    )
+    // bundle the mdx file
 
-   const data = await bundleMDX<PostFrontMatter>({
+    const data = await bundleMDX<PostFrontMatter>({
         source,
-       cwd: `${process.cwd()}/app/content/blog`,
-         mdxOptions: options => ({
-        remarkPlugins: [
-          ...(options.remarkPlugins ?? []),
-          remarkSlug,
-          [remarkAutolinkHeader, { behavior: 'wrap' }],
-          remarkGfm,
-        ],
-             rehypePlugins: [...(options.rehypePlugins ?? []),
-                 rehypePrettyCode,
-                 rehypeHighlight    ],
+
+        cwd: `${process.cwd()}/app/content/blog`,
+        mdxOptions: (options) => ({
+            remarkPlugins: [
+                ...(options.remarkPlugins ?? []),
+                remarkSlug,
+                [remarkAutolinkHeader, { behavior: 'wrap' }],
+                remarkGfm
+            ],
+            rehypePlugins: [
+                ...(options.rehypePlugins ?? []),
+                [rehypePrettyCode, options = {
+                    grid: false,
+
+                }],
+                rehypeHighlight
+            ]
         }),
+
+        grayMatterOptions: (options) => {
+      options.excerpt = true
+
+            return {
+                ...options,
+                        providerImportSource: '@mdx-js/react',
+
+    }
+     }
     })
 
-        return data
-
+    return data
 }
+
+
+
+// kcd types for later
+// const re = /\b([-\w]+(?![^{]*}))(?:=(?:"([^"]*)"|'([^']*)'|([^"'\s]+)))?/g
+// export const MdxSchema = z.object({
+//   code: z.string().optional(),
+//   frontmatter: z.object({
+//     slug: z.string(),
+//     title: z.string(),
+//     description: z.string().optional().nullable().default(null),
+//     tags: z.string().optional().nullable(),
+//     img: z.string().optional().nullable().default(null),
+//     timestamp: z.string().optional().nullable().default(null),
+//     published: z.boolean().optional().default(false),
+//     translations: z
+//       .array(
+//         z.object({
+//           lang: z.string(),
+//           href: z.string(),
+//           label: z.string(),
+//         }),
+//       )
+//       .optional(),
+//   }),
+// })

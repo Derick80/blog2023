@@ -97,4 +97,12 @@
     h6 {
         @apply text-lg font-semibold;
     }
+
+
+}
+
+pre {
+    white-space:no-wrap;
+    overflow-x: auto;
+  padding: 1rem 0.5rem;
 }

@@ -9,12 +9,6 @@ import {
 } from '~/components/ui/accordion'
 import PostPreviewCard from '~/components/post-preview-card'
 import { useNonce } from '~/lib/nonce-provider'
-import {
-    getAllBlogContent,
-    getPostContent,
-    updateAllContent,
-    upsertContent
-} from '~/.server/content.server'
 import { getAllPostContent } from '~/.server/update-content.server'
 
 export type frontmatterType = {
@@ -37,12 +31,11 @@ export type frontMatterIntermediateType = Omit<
 }
 type PostModule = { [key: string]: unknown } // Unknown structure for now
 export async function loader({ request, params }: LoaderFunctionArgs) {
-    const posts =  getAllPostContent()
+    const posts = getAllPostContent()
     if (!posts) throw new Error('No posts found')
 
-        console.log(posts, 'posts');
 
-    return json({posts })
+    return json({ posts })
 }
 
 export default function WritingRoute() {

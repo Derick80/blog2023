@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default  {
+export default {
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -17,6 +17,23 @@ export default  {
       },
     },
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+
+            code: {
+              color: "hsl(var(--background))",
+              '&::before': { content: `unset !important` },
+              '&::after': { content: `unset !important` },
+              fontWeight: 'normal',
+            },
+
+
+
+          }
+        }
+      }
+      ,
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -89,6 +106,6 @@ export default  {
       }
     },
   },
-  plugins: [ require( "tailwindcss-animate" ),
+  plugins: [require("tailwindcss-animate"),
   require("@tailwindcss/typography")],
 }

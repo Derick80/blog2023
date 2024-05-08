@@ -4,23 +4,14 @@ import {
     json
 } from '@remix-run/node'
 import { useActionData, useLoaderData } from '@remix-run/react'
-import { getFile, getMDXFileContent } from '~/.server/mdx-compile.server'
-import { bundleMDX } from 'mdx-bundler'
+import { getMDXFileContent } from '~/.server/mdx-compile.server'
 import React from 'react'
-import { getMDXComponent } from 'mdx-bundler/client'
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import rehypePrettyCode from 'rehype-pretty-code'
 import HoverBar from '~/components/hover-bar'
 import { getPostInformation, likeContent } from '~/.server/content.server'
 import { z } from 'zod'
 import { isAuthenticated } from './_auth+/auth.server'
+import {  useMdxComponent } from '~/lib/functions'
 
-
-
-
-// app/routes/writing.$slug_index.tsx
-const relativePath = 'app/content/blog/'
-const filePath = String([process.cwd() + '/' + relativePath ])
 
 const slugSchema = z.object({
     slug: z.string()
@@ -28,56 +19,16 @@ const slugSchema = z.object({
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const { slug } = slugSchema.parse(params)
-console.log(filePath, 'filePath');
 
     if (!slug) throw new Error('No slug found')
-const data = await getMDXFileContent(slug)
-    // I use this to load the file.
-    const {  content } = await getFile(slug)
-
-    if (!content) throw new Error('No content found')
-
-    // bundle the mdx file.  The rehypPrettyCode plugin is used to make the code blocks look nice but the remarkkMdxFrontmatter plugin is used to parse the frontmatter but the bundlemdx doesn't get the frontmatter
-    const { code,frontmatter } = await bundleMDX({
-        source: content,
-        cwd: filePath,
-        mdxOptions(options, frontmatter) {
-            // this is the recommended way to add custom remark/rehype plugins:
-            // The syntax might look weird, but it protects you in case we add/remove
-            // plugins in the future.
-            options.remarkPlugins = [
-                ...(options.remarkPlugins ?? []),
-                remarkMdxFrontmatter
-            ]
-            options.rehypePlugins = [
-                ...(options.rehypePlugins ?? []),
-                rehypePrettyCode
-            ]
-
-            return {
-                options,
-                frontmatter
-            }
-        },
-        // I don't think these are actually doing anything
-        esbuildOptions: (options) => {
-            options.loader = {
-                ...options.loader,
-                '.mdx': 'text',
-                '.tsx': 'tsx'
-            }
-            return options
-        }
-    })
-    console.log(frontmatter, 'front');
-    console.log(data,'data');
-
+    const data = await getMDXFileContent(slug)
+    if (!data) throw new Error('No data found')
 
     const contentDetails = await getPostInformation(slug)
     if (!contentDetails) throw new Error('No content details found')
-        console.log(contentDetails, 'contentDetails');
+    console.log(contentDetails, 'contentDetails')
 
-    return json({ slug,data, content, code, contentDetails })
+    return json({ slug, data, contentDetails })
 }
 const contentActionSchema = z.discriminatedUnion('intent', [
     z.object({
@@ -103,7 +54,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const { intent, contentId } = contentActionSchema.parse(
         Object.fromEntries(formData.entries())
     )
-    console.log(contentId, userId, 'contentId, userId');
+    console.log(contentId, userId, 'contentId, userId')
 
     const liked = await likeContent({ userId, contentId })
     if (!liked) throw new Error('No content found')
@@ -113,35 +64,44 @@ export default function SlugRoute() {
     const actionData = useActionData<typeof action>()
     console.log(actionData, 'actionData')
 
-    const { code,data, contentDetails } = useLoaderData<typeof loader>()
-    const Component = React.useMemo(() => getMDXComponent(data.code), [data.code])
+    const { data, contentDetails } = useLoaderData<typeof loader>()
+
+
+    const Component = useMdxComponent(data.code)
 
     return (
-        <>
-            <div >
-                <HoverBar contentDetails={contentDetails} />
-                <Component
 
-                />
+
+                <div
+                    className=' border-2 w-full'>
+                      <HoverBar contentDetails={ contentDetails } />
+            <div
+            className='flex flex-col gap-5'>
+                <Component />
             </div>
-        </>
+                    </div>
+
+
+
     )
 }
+const Paragraph: React.FC<{ children: React.ReactNode }> = (props) => {
+    if (typeof props.children !== 'string' && props.children === 'img') {
+        return <>{props.children}</>
+    }
 
+        return <p
+                className = 'text-3xl text-purple-500'
+            {  ...props } />
+}
 
-// mdxOptions(options, frontmatter) {
-//     // this is the recommended way to add custom remark/rehype plugins:
-//     // The syntax might look weird, but it protects you in case we add/remove
-//     // plugins in the future.
-//     options.remarkPlugins = [
-//         ...(options.remarkPlugins ?? []),
-//         remarkMdxFrontmatter
-//     ]
-//     options.rehypePlugins = [
-//         ...(options.rehypePlugins ?? []),
-//         rehypePrettyCode
-//     ]
+const Code = (props:string) => {
 
-//     return options
-// }
-//         })
+    return (
+        <code
+
+        >
+            {props}
+            </code>
+    )
+}

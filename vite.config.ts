@@ -23,7 +23,7 @@ remarkPlugins: [
         remarkMdxFrontmatter,
     ],
     rehypePlugins: [
-rehypePrettyCode
+[rehypePrettyCode, {  theme: "tokyonight",}]
     ],
   }),remixDevTools(), remix({
 ignoredRouteFiles:['**/*.css'],
