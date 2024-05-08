@@ -1,10 +1,10 @@
 import { json, LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import ContactWidget from '..//components/contat-widget'
 import {
-    getAllPostContent,
     seedInitialDbwithContent
 } from '~/.server/sync-content.server'
 import { prisma } from '~/.server/prisma.server'
+import { getAllPostContent } from '~/.server/mdx-compile.server'
 
 export const meta: MetaFunction = () => {
     return [
