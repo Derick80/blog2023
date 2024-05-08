@@ -156,7 +156,10 @@ const MobileNavigationMenu = () => {
 const NavDrawer = () => {
     return (
         <Sheet>
-            <SheetTrigger className='block md:hidden'>
+            <SheetTrigger
+                aria-label='mobileMenu'
+
+                className='block md:hidden'>
                 <HamburgerMenuIcon />
             </SheetTrigger>
             <SheetContent side='right'>

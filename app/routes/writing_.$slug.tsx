@@ -3,7 +3,7 @@ import {
     type LoaderFunctionArgs,
     json
 } from '@remix-run/node'
-import { useActionData, useLoaderData } from '@remix-run/react'
+import { NavLink, useActionData, useLoaderData, useMatches, useParams } from '@remix-run/react'
 import { getMDXFileContent } from '~/.server/mdx-compile.server'
 import React from 'react'
 import HoverBar from '~/components/hover-bar'

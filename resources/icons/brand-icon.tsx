@@ -15,7 +15,6 @@ export function BrandIcon({ className }: { className?: string }) {
                         <g>
                             <path
                                 fill='currentColor'
-                                transform-origin='50 50'
                                 transform-box='fillBox'
                                 animation-dur={3}
                                 animation-name='rotate'

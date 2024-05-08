@@ -4,6 +4,7 @@ import {
     TwitterLogoIcon
 } from '@radix-ui/react-icons'
 import { Link } from '@remix-run/react'
+import { H2, H3 } from './ui/typography'
 
 export default function ContactWidget() {
     const socails = [
@@ -24,9 +25,12 @@ export default function ContactWidget() {
         }
     ]
     return (
-        <div className='flex w-full flex-row gap-2'>
+        <div className='flex w-full flex-col gap-2 border-2 border-yellow-500'>
+            <H2>
+                Connect with Me
+            </H2>
             <div className='flex w-full flex-col gap-2'>
-                <h6 className='text-left'>Contact me via Socials</h6>
+                <H3>via Socials</H3>
 
                 {socails.map((social) => (
                     <Link
@@ -37,13 +41,13 @@ export default function ContactWidget() {
                         className='prose flex w-full flex-row items-center gap-2 dark:prose-invert'
                     >
                         {social.icon}
-                        <h6>{social.name}</h6>
+                     {social.name}
                     </Link>
                 ))}
             </div>
             <div className='flex w-full flex-col gap-2'>
-                <h6 className='text-left'>Contact me via Email</h6>
-                <div className='prose dark:prose-invert'>Email coming soon</div>
+                <H3 >via Email</H3>
+                <div className='prose dark:prose-invert'>coming soon</div>
             </div>
         </div>
     )

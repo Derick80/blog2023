@@ -2,7 +2,7 @@ import { GlobeIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { Button } from '../ui/button'
 import { useRootLoaderData } from '~/root'
 import { useFetcher } from '@remix-run/react'
-import { Theme } from '~/.server/theme.server.ts'
+import { Theme } from '~/.server/theme.server'
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip'
 // https://github.com/kentcdodds/kentcdodds.com/blob/main/app/components/navbar.tsx
 export function ThemeToggle() {
@@ -27,6 +27,9 @@ export function ThemeToggle() {
         <Tooltip>
             <TooltipTrigger asChild>
                 <Button
+                    id='changeTheme'
+                    aria-label='changeTheme'
+                    name='changeTheme'
                     type='submit'
                     variant='ghost'
                     onClick={() => onThemeChange(nextMode)}

@@ -11,7 +11,7 @@ import { json } from '@remix-run/node' // or cloudflare/deno
 
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import stylesheet from '~/tailwind.css?url'
-import { getThemeFromCookie } from './.server/theme.server.ts'
+import { getThemeFromCookie } from './.server/theme.server'
 import { getSharedEnvs } from './.server/env.server.js'
 import { getUserId } from './routes/_auth+/auth.server.js'
 import { TooltipProvider } from './components/ui/tooltip.js'
@@ -21,6 +21,7 @@ import NavigationBar from './components/navbar/navigation-bar.js'
 export const links: LinksFunction = () => [
     { rel: 'stylesheet', href: stylesheet }
 ]
+
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const theme = await getThemeFromCookie(request)
@@ -40,6 +41,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
     const { theme } = useLoaderData<typeof loader>()
+
 
     const nonce = useNonce()
     return (

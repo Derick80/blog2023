@@ -22,6 +22,7 @@ const Mybutton = () => {
     const [count, setCount] = React.useState(0)
     return (
         <Button
+            name='ugh'
             onClick={() => {
                 setCount((count) => count + 1)
             }}

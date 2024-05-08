@@ -69,6 +69,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
                 <div className='flex flex-col gap-2 items-start'>
                     <H3>Visit the live site</H3>
                     <Button
+                        name='livesite'
                         variant='ghost'
                         size='default'
                         className='flex flex-row items-center gap-1'

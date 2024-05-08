@@ -1,6 +1,9 @@
-import ContactWidget from '~/components/contat-widget'
+import ContactWidget from '~/components/contact-widget'
 
-export default function ContactRoute() {
+
+
+
+export default function ContactRoute () {
     return (
         <div className=''>
             <ContactWidget />

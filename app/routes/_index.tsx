@@ -1,10 +1,8 @@
-import { json, LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
-import ContactWidget from '..//components/contat-widget'
-import {
-    seedInitialDbwithContent
-} from '~/.server/sync-content.server'
-import { prisma } from '~/.server/prisma.server'
-import { getAllPostContent } from '~/.server/mdx-compile.server'
+import { json, type MetaFunction } from '@remix-run/node'
+import ContactWidget from '../components/contact-widget'
+import { getAllContentFromDB } from '~/.server/content.server'
+import { Link, NavLink, useMatches } from '@remix-run/react'
+import { H1, H2 } from '~/components/ui/typography'
 
 export const meta: MetaFunction = () => {
     return [
@@ -13,42 +11,23 @@ export const meta: MetaFunction = () => {
     ]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    // const posts = await getDbContent()
-    const posts = getAllPostContent()
-    if (!posts) throw new Error('No posts found')
+export async function loader() {
+    const posts = await getAllContentFromDB()
+    // if (!posts) throw new Error('No posts found')
 
-    const categories = posts.map((post) => post.categories).flat()
-    const uniqueCategories = [...new Set(categories)]
+    // const categories = posts.map((post) => post.categories).flat()
+    // const uniqueCategories = [...new Set(categories)]
 
-    const allPostsSlugs = await prisma.content.findMany({
-        select: {
-            slug: true
-        }
-    })
 
-    return json({ posts })
+    return json({  })
 }
 
 export default function Index() {
     return (
         <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
+            <H1>Welcome to DerickCHoskinson.com</H1>
             <ContactWidget />
-        </div>
+            <H2>Browse By Category</H2>
+    </div>
     )
-}
-
-export type frontToDB = {
-    title: string
-    description: string
-    datePublished: string
-    published: boolean
-    categories: {
-        connectOrCreate: {
-            where: { title: string }
-            create: { title: string }
-        }[]
-    }
-
-    slug: string
 }

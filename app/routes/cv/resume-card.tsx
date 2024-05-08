@@ -171,6 +171,7 @@ const ResumeCard = ({ cv }: CV) => {
                                 <CardFooter className='justify-end'>
                                     {pub.pdf && (
                                         <Button
+                                            name='downloadPDF'
                                             variant='outline'
                                             size='sm'
                                             asChild
@@ -184,7 +185,9 @@ const ResumeCard = ({ cv }: CV) => {
                                             </Link>
                                         </Button>
                                     )}
-                                    <Button variant='outline' size='sm' asChild>
+                                    <Button
+                                            name='readAtJournalSite'
+                                        variant='outline' size='sm' asChild>
                                         <Link
                                             to={pub.url}
                                             prefetch='intent'

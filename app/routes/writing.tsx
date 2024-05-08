@@ -23,8 +23,9 @@ export type frontmatterType = {
     code: () => Promise<{ default: React.ComponentType }>
 }
 
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
-    const posts = getAllPostContent()
+    const posts = await getAllPostContent()
     if (!posts) throw new Error('No posts found')
 
 
@@ -36,6 +37,9 @@ export default function WritingRoute() {
     const [item, setItem] = React.useState('item-1')
 
     const [value, setValue] = React.useState('item-1')
+
+
+
     return (
         <div className='flex flex-col items-center justify-around w-full h-full p-2 gap-4'>
             <h1>Writing</h1>
@@ -96,4 +100,9 @@ export function ErrorBoundary() {
             <Scripts nonce={nonce} />
         </div>
     )
+}
+
+
+const BuildBread = (matches: any) => {
+
 }

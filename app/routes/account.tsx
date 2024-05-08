@@ -48,6 +48,7 @@ export default function Account() {
                 <CardFooter>
                     <Form action='/logout' method='POST'>
                         <Button
+                            name='logout'
                             type='submit'
                             variant='destructive'
                             className='w-full'

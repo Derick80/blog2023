@@ -8,6 +8,7 @@ import mdx from "@mdx-js/rollup";
 import rehypePrettyCode  from 'rehype-pretty-code'
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import { visualizer } from "rollup-plugin-visualizer";
 
 installGlobals()
 // the mdx plugin is used to compile mdx files but only the about page at the momement. If I remove the mdx plugin then the about page will not work but the mdx-bundler
@@ -30,6 +31,7 @@ ignoredRouteFiles:['**/*.css'],
     routes: async defineRoutes => {
     return flatRoutes('routes', defineRoutes)
   },
-  }), tsconfigPaths()],
+  }),    visualizer({ emitFile: true }),
+ tsconfigPaths()],
 
 })
