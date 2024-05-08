@@ -23,7 +23,7 @@ export type PostFrontMatter = {
 
 // I am using this in my prebuild script to get all the content from the blog folder and update the database
 // I want to create a github action that will run this script and update the database with the content from the blog folder
-export const getAllPostContent = async () => {
+export const getAllPostContent = async() => {
     const postsDirectory = path.join(process.cwd(), '/app/content/blog/')
     const fileNames = fs.readdirSync(postsDirectory)
 
@@ -34,10 +34,11 @@ export const getAllPostContent = async () => {
         const fileContents = fs.readFileSync(filePath, 'utf8')
 
         // @ts-ignore
-        const { data } = matter<frontmatterType>(fileContents)
+        const { data } = matter<PostFrontMatter>(fileContents)
 
         // add slug to data object
         data.slug = fileName.replace('.mdx', '')
+
 
         // return datePublished as a string AND REMOVE  everything after and including the 'T'
 

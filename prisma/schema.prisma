@@ -70,28 +70,18 @@ model UserImage {
 }
 
 model Content {
-  slug          String            @id @unique
+  slug          String   @id @unique
   title         String
   author        String
   description   String
   content       String?
   datePublished String
   published     Boolean?
-  categories    ContentCategory[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  categories    String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   loves Love[]
-}
-
-model ContentCategory {
-  id        String  @id @default(uuid())
-  title     String  @unique
-  content   Content @relation(fields: [contentId], references: [slug], onDelete: Cascade, onUpdate: Cascade)
-  contentId String
-
-  @@unique([contentId, title])
-  @@index([contentId])
 }
 
 model Love {

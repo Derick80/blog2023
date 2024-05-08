@@ -1,7 +1,8 @@
 import { prisma } from '~/.server/prisma.server';
 import { education, professionalExperience, pubs, resume_basics, skills } from '~/content/resume/resume';
 import { projects } from '~/content/projects/projects';
-import {  getAllPostContent, seedInitialDbwithContent } from '../app/.server/sync-content.server';
+import {   seedInitialDbwithContent, updateDBContent } from '../app/.server/sync-content.server';
+import { getAllPostContent } from '~/.server/mdx-compile.server';
 
 const generateResume= async ()=> {
   const init_resume = await prisma.resume.create({
@@ -116,22 +117,28 @@ const generateProjects = async () => {
 }
 
 
-async function seed() {
+async function seed () {
   await prisma.resume.deleteMany();
   await prisma.project.deleteMany();
   await prisma.professionalExperience.deleteMany();
-
+  await prisma.content.deleteMany()
   await generateResume();
 
   await generateProjects();
- const posts = getAllPostContent()
-    if (!posts) throw new Error('No posts found')
-    console.log(posts, 'posts')
+  const posts = await getAllPostContent()
+  if (!posts) throw new Error('No posts found')
 
-    await seedInitialDbwithContent(posts)
+  // const pArray = Object.entries(posts)
+  const pArray = posts.flat()
+  console.log(pArray,'parray');
 
-  console.log(`Database has been seeded. 🌱`);
+  await seedInitialDbwithContent(
+   pArray
+  )
+    console.log(`Database has been seeded. 🌱`);
+
 }
+
 
 seed()
   .catch((e) => {
@@ -141,5 +148,3 @@ seed()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
-

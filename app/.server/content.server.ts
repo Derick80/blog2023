@@ -7,7 +7,6 @@ export const getAllContentFromDB = async () => {
             published:true
         },
         include: {
-            categories: true,
             loves: true,
             _count: {
                 select: {

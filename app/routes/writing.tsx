@@ -27,13 +27,15 @@ export type frontmatterType = {
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const posts = await getAllPostContent()
     if (!posts) throw new Error('No posts found')
-
+    console.log(Array.isArray(posts));
 
     return json({ posts })
 }
 
 export default function WritingRoute() {
     const { posts } = useLoaderData<typeof loader>()
+    console.log(Array.isArray(posts),'log in client');
+
     const [item, setItem] = React.useState('item-1')
 
     const [value, setValue] = React.useState('item-1')
@@ -59,7 +61,7 @@ export default function WritingRoute() {
                         {posts
                             ? posts.map(
                                   (post) =>
-                                      post && (
+                                      (
                                           <PostPreviewCard
                                               setItem={setValue}
                                               key={post.slug}
