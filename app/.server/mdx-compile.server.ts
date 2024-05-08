@@ -1,16 +1,15 @@
-import pkg from '@markdoc/markdoc'
-const { parse, transform } = pkg
 import * as fsp from 'node:fs/promises'
-import fs from 'fs'
-import nodepath from 'path'
 import path from 'path'
+import fs from 'fs'
+import matter from 'gray-matter'
+
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import remarkSlug from 'remark-slug'
 import remarkAutolinkHeader from 'remark-autolink-headings/index'
 import rehypePrettyCode from 'rehype-pretty-code'
 import { bundleMDX } from 'mdx-bundler'
-
+import { frontmatterType } from '~/routes/writing'
 export type PostFrontMatter = {
     code: string
     slug: string
@@ -22,30 +21,33 @@ export type PostFrontMatter = {
     categories: string[]
 }
 
-// may retire this function soon.
-export const getFile = async (slug: string) => {
-    const relativePath = 'app/content/blog/'
-    const contentPath = nodepath.resolve(
-        process.cwd(),
-        relativePath,
-        slug + '.mdx'
-    )
+// I am using this in my prebuild script to get all the content from the blog folder and update the database
+// I want to create a github action that will run this script and update the database with the content from the blog folder
+export const getAllPostContent = () => {
+    const postsDirectory = path.join(process.cwd(), '/app/content/blog/')
+    const fileNames = fs.readdirSync(postsDirectory)
 
-    const content = fs.readFileSync(contentPath, { encoding: 'utf-8' })
-    // return the frontmatter and the content
-    const frontmatter = content.split('---')[1]
-    const content1 = content.split('---')[2]
+    if (!fileNames.length) throw new Error('No posts found')
 
-    return { frontmatter, content }
+    const posts = fileNames.map((fileName) => {
+        const filePath = path.join(postsDirectory, fileName)
+        const fileContents = fs.readFileSync(filePath, 'utf8')
+
+        // @ts-ignore
+        const { data } = matter<frontmatterType>(fileContents)
+
+        // add slug to data object
+        data.slug = fileName.replace('.mdx', '')
+
+        // return datePublished as a string AND REMOVE  everything after and including the 'T'
+
+        return data
+    })
+
+    // console.log(posts, 'data from getAllPostContent');
+
+    return posts
 }
-const globals = {
-    '@mdx-js/react': {
-        varName: 'MdxJsReact',
-        namedExports: ['useMDXComponents'],
-        defaultExport: false
-    }
-}
-
 
 
 // Best way so farf to get an Mdx fiel

@@ -1,7 +1,7 @@
+import { getAllPostContent } from '~/.server/mdx-compile.server'
 import {
-    getAllPostContent,
     seedInitialDbwithContent
-} from '../app/.server/update-content.server'
+} from '../app/.server/sync-content.server'
 
 async function getThings() {
     const posts = getAllPostContent()

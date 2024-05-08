@@ -7,7 +7,7 @@ import { useActionData, useLoaderData } from '@remix-run/react'
 import { getMDXFileContent } from '~/.server/mdx-compile.server'
 import React from 'react'
 import HoverBar from '~/components/hover-bar'
-import { getPostInformation, likeContent } from '~/.server/content.server'
+import { getContentInfoFromDB, likeContent } from '~/.server/content.server'
 import { z } from 'zod'
 import { isAuthenticated } from './_auth+/auth.server'
 import {  useMdxComponent } from '~/lib/functions'
@@ -17,6 +17,7 @@ const slugSchema = z.object({
     slug: z.string()
 })
 
+// Might do a promise.all here?
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const { slug } = slugSchema.parse(params)
 
@@ -24,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const data = await getMDXFileContent(slug)
     if (!data) throw new Error('No data found')
 
-    const contentDetails = await getPostInformation(slug)
+    const contentDetails = await getContentInfoFromDB(slug)
     if (!contentDetails) throw new Error('No content details found')
     console.log(contentDetails, 'contentDetails')
 

@@ -1,7 +1,7 @@
 import { prisma } from '~/.server/prisma.server';
 import { education, professionalExperience, pubs, resume_basics, skills } from '~/content/resume/resume';
 import { projects } from '~/content/projects/projects';
-import {  getAllPostContent, seedInitialDbwithContent } from '../app/.server/update-content.server';
+import {  getAllPostContent, seedInitialDbwithContent } from '../app/.server/sync-content.server';
 
 const generateResume= async ()=> {
   const init_resume = await prisma.resume.create({

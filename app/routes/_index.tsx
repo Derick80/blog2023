@@ -3,7 +3,7 @@ import ContactWidget from '..//components/contat-widget'
 import {
     getAllPostContent,
     seedInitialDbwithContent
-} from '~/.server/update-content.server'
+} from '~/.server/sync-content.server'
 import { prisma } from '~/.server/prisma.server'
 
 export const meta: MetaFunction = () => {
