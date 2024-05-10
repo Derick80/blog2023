@@ -1,8 +1,10 @@
 ARG NODE_VERSION=21.1.0
 FROM node:${NODE_VERSION}-slim as base
 
+LABEL fly_launch_runtime="Remix"
+
 # set for base and all layer that inherit from it
-ENV NODE_ENV production
+ENV NODE_ENV="production"
 
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl
@@ -55,5 +57,7 @@ COPY --from=build /app/package.json /app/package.json
 
 
 ADD . .
+
+EXPOSE 3000
 
 CMD ["mount"]

@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { redirect } from '@remix-run/node'
-import { setTheme } from '~/.server/theme.server.ts'
+import { setTheme } from '~/.server/theme.server'
 export async function loader() {
     return redirect('/')
 }

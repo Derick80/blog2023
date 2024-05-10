@@ -7,8 +7,10 @@ app = 'remix-blog-m'
 primary_region = 'ord'
 kill_signal = 'SIGINT'
 kill_timeout = '5s'
+processes = [ ]
 
 [experimental]
+  allowed_public_ports = [ ]
   auto_rollback = true
 
 
